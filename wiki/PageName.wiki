@@ -1,0 +1,21 @@
+#summary One-sentence summary of this page.
+
+= IO-Tools release plan =
+
+Release schedule for IO-Tools.
+
+== Version 0.1 ==
+
+ * Initial project build with Eclipse and Maven
+ * Tools for reading from an InputStream the data written to an OutputStream
+
+== Version 0.2 ==
+
+ * Tools for file format detect: Base64, XML, PKCS#7, ZIP, PDF
+ 
+== Later ==
+ 
+ * Recursive format detection
+ * Add other formats (OpenOffice, Word)
+ * BufferedOutputStream to write to a slow OutputStream
+ * ReadAheadInputStream to read from a slow InputStream
