@@ -1,16 +1,5 @@
 package org.iotools.streams;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.Executor;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /*
  * Copyright (c) 2008, Davide Simonetti
  * All rights reserved.
@@ -37,6 +26,16 @@ import org.apache.commons.logging.LogFactory;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.ExecutorService;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * TODO: code example, FIXME: JoinOnClose is not working, but definitely is
@@ -134,11 +133,11 @@ public abstract class OutputStreamToInputStream extends OutputStream {
 
 	public OutputStreamToInputStream(final boolean joinOnClose,
 			final ExecutionModel em) throws IOException {
-		this(joinOnClose, ExecutionService.getExecutor(em));
+		this(joinOnClose, ExecutorServiceFactory.getExecutor(em));
 	}
 
 	public OutputStreamToInputStream(final boolean joinOnClose,
-			final Executor executor) throws IOException {
+			final ExecutorService executor) throws IOException {
 		final String callerId = getCaller();
 		this.wrappedPipedOS = new PipedOutputStream();
 		final PipedInputStream pipedIS = new PipedInputStream(

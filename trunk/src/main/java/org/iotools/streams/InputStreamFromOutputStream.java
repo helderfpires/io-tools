@@ -1,19 +1,5 @@
 package org.iotools.streams;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.Executor;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
-
 /*
  * Copyright (c) 2008, Davide Simonetti
  * All rights reserved.
@@ -40,6 +26,19 @@ import org.apache.log4j.Logger;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Executor;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 /**
  * <p>
@@ -167,7 +166,7 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 	}
 
 	public InputStreamFromOutputStream(final ExecutionModel tmodel) {
-		this("", ExecutionService.getExecutor(tmodel));
+		this("", ExecutorServiceFactory.getExecutor(tmodel));
 	}
 
 	public InputStreamFromOutputStream(final String tname,
