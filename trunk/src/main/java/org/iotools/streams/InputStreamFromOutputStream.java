@@ -6,17 +6,40 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
+
+/*
+ * Copyright (c) 2008, Davide Simonetti
+ * All rights reserved.
+ * Redistribution and use in source and binary forms, 
+ * with or without modification, are permitted provided that the following 
+ * conditions are met:
+ *  * Redistributions of source code must retain the above copyright notice, 
+ *    this list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright notice, 
+ *    this list of conditions and the following disclaimer in the documentation 
+ *    and/or other materials provided with the distribution.
+ *  * Neither the name of Davide Simonetti nor the names of its contributors may
+ *    be used to endorse or promote products derived from this software without 
+ *    specific prior written permission.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+ * ARE DISCLAIMED. 
+ * IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY 
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
 
 /**
  * <p>
@@ -48,48 +71,42 @@ import org.apache.log4j.Logger;
  * </pre>
  * 
  * @author Davide Simonetti
- * 
+ * @version $Revision: 1 $
  */
 public abstract class InputStreamFromOutputStream extends InputStream {
 
-	private final class ExecutingThread implements Runnable {
+	private final class DataProducerRunnable implements Runnable {
 
-		IOException exception = null;
+		private IOException exception = null;
 
 		private final Logger logger = Logger
-				.getLogger(InputStreamFromOutputStream.ExecutingThread.class);
+				.getLogger(InputStreamFromOutputStream.DataProducerRunnable.class);
 
 		private String name = null;
 
 		private OutputStream outputStream = null;
 
-		ExecutingThread(final String threadName, final OutputStream ostream) {
+		DataProducerRunnable(final String threadName, final OutputStream ostream) {
 			this.outputStream = ostream;
 			this.name = threadName;
 		}
 
 		public void run() {
-			InputStreamFromOutputStream.nthread++;
-			logTooManyThreads();
 			final String threadName = getName();
 			InputStreamFromOutputStream.ACTIVE_THREAD_NAMES.add(threadName);
-			this.logger.debug("Numero di thread " + getName()
-					+ " correntemente attivi["
-					+ InputStreamFromOutputStream.nthread + "]");
 			try {
 				produce(this.outputStream);
 			} catch (final Throwable e) {
-				this.logger.error("Errore durante l'elaborazione.", e);
+				this.logger.error("Error during data production.", e);
 				this.exception = new IOException(
-						"Errore nel thread di elaborazione di ["
+						"Error producing data for class ["
 								+ getClass().getName() + "]");
 				this.exception.initCause(e);
 			} finally {
 				closeStream();
-				InputStreamFromOutputStream.nthread--;
 				InputStreamFromOutputStream.ACTIVE_THREAD_NAMES
 						.remove(threadName);
-				this.logger.debug("thread [" + getName() + "] chiuso");
+				this.logger.debug("thread [" + getName() + "] closed");
 			}
 		}
 
@@ -99,35 +116,14 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 			} catch (final IOException e) {
 				if ((e.getMessage() != null)
 						&& (e.getMessage().indexOf("closed") > 0)) {
-					this.logger.debug("Stream gia' chiuso");
+					this.logger.debug("Stream already closed");
 				} else {
-					this.logger.error("Errore di IO tentando di chiudere "
-							+ "l'OutputStream. " + "Probabile deadlock", e);
+					this.logger.error("IOException closing InputStream"
+							+ " Thread might be locked", e);
 				}
 			} catch (final Throwable t) {
-				this.logger.error(
-						"Errore tentando di chiudere l'OutputStream. "
-								+ "Probabile deadlock", t);
-			}
-		}
-
-		private void logTooManyThreads() {
-			this.logger.debug("Thread [" + getName() + "] avviato.");
-			if (InputStreamFromOutputStream.nthread > InputStreamFromOutputStream.THREAD_MAX) {
-				this.logger.warn("Attenzione numero di thread ["
-						+ getClass().getName() + "] =["
-						+ InputStreamFromOutputStream.nthread
-						+ "] dovrebbe essere <"
-						+ InputStreamFromOutputStream.THREAD_MAX + "].");
-			}
-			if (InputStreamFromOutputStream.nthread == InputStreamFromOutputStream.THREAD_MAX) {
-				this.logger.warn("Attenzione numero di thread ["
-						+ getClass().getName() + "] =["
-						+ InputStreamFromOutputStream.nthread
-						+ "] dovrebbe essere <"
-						+ InputStreamFromOutputStream.THREAD_MAX
-						+ "]. Thread attivi:"
-						+ Arrays.toString(getActiveThreadNames()));
+				this.logger.error("Error closing InputStream"
+						+ " Thread might be locked", t);
 			}
 		}
 
@@ -139,15 +135,8 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 	private static final List<String> ACTIVE_THREAD_NAMES = Collections
 			.synchronizedList(new ArrayList<String>());
 
-	private static Executor EXECUTOR = new ThreadPoolExecutor(10, 20, 5,
-			TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(500));
-
 	private static final Log LOG = LogFactory
 			.getLog(InputStreamFromOutputStream.class);
-
-	private static int nthread = 0;
-
-	public static int THREAD_MAX = 80;
 
 	public static final String[] getActiveThreadNames() {
 		final String[] result;
@@ -159,26 +148,11 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 		return result;
 	}
 
-	public static final int getActiveThreads() {
-		return InputStreamFromOutputStream.nthread;
-	}
-
-	private static Executor getExecutor(final ThreadModel tmodel) {
-		switch (tmodel) {
-		case THREAD_PER_INSTANCE:
-		case STATIC_THREAD_POOL:
-		default:
-		}
-		return null;
-	}
-
 	private boolean closeCalled = false;
 
-	private final ExecutingThread executingThread;
+	private final DataProducerRunnable executingRunnable;
 
 	private final PipedInputStream pipedIS;
-
-	private final Executor instanceExecutor;
 
 	/**
 	 * <p>
@@ -186,10 +160,14 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 	 * threading strategy
 	 * </p>
 	 * 
-	 * @see ThreadModel.THREAD_PER_INSTANCE
+	 * @see ExecutionModel.THREAD_PER_INSTANCE
 	 */
 	public InputStreamFromOutputStream() {
-		this(ThreadModel.THREAD_PER_INSTANCE);
+		this(ExecutionModel.THREAD_PER_INSTANCE);
+	}
+
+	public InputStreamFromOutputStream(final ExecutionModel tmodel) {
+		this("", ExecutionService.getExecutor(tmodel));
 	}
 
 	public InputStreamFromOutputStream(final String tname,
@@ -202,16 +180,11 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 		} catch (final IOException e) {
 			throw new RuntimeException("Error during pipe creaton", e);
 		}
-		this.executingThread = new ExecutingThread(callerId, pipedOS);
-		final String tName = this.executingThread.getName();
-		this.instanceExecutor = executor;
-		executor.execute(this.executingThread);
+		this.executingRunnable = new DataProducerRunnable(callerId, pipedOS);
+		final String tName = this.executingRunnable.getName();
+		executor.execute(this.executingRunnable);
 		InputStreamFromOutputStream.LOG.debug("thread [" + tName
 				+ "] queued for start.");
-	}
-
-	public InputStreamFromOutputStream(final ThreadModel tmodel) {
-		this("", getExecutor(tmodel));
 	}
 
 	@Override
@@ -225,8 +198,8 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 	@Override
 	public final int read() throws IOException {
 		final int result = this.pipedIS.read();
-		if ((result < 0) && (this.executingThread.exception != null)) {
-			throw this.executingThread.exception;
+		if ((result < 0) && (this.executingRunnable.exception != null)) {
+			throw this.executingRunnable.exception;
 		}
 		return result;
 	}
@@ -234,8 +207,8 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 	@Override
 	public final int read(final byte[] b) throws IOException {
 		final int result = this.pipedIS.read(b);
-		if ((result < 0) && (this.executingThread.exception != null)) {
-			throw this.executingThread.exception;
+		if ((result < 0) && (this.executingRunnable.exception != null)) {
+			throw this.executingRunnable.exception;
 		}
 		return result;
 	}
@@ -244,8 +217,8 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 	public final int read(final byte[] b, final int off, final int len)
 			throws IOException {
 		final int result = this.pipedIS.read(b, off, len);
-		if ((result < 0) && (this.executingThread.exception != null)) {
-			throw this.executingThread.exception;
+		if ((result < 0) && (this.executingRunnable.exception != null)) {
+			throw this.executingRunnable.exception;
 		}
 		return result;
 
