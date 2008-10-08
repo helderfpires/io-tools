@@ -7,7 +7,8 @@ Release schedule for IO-Tools.
 == Version 0.1 ==
 
  * Initial project build with Eclipse and Maven
- * Tools for reading from an InputStream the data written to an OutputStream
+ * Tools for reading from an `InputStream` the data written to an `OutputStream`
+ * Junit and documentation on wiki.
 
 == Version 0.2 ==
 
