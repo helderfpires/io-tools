@@ -1,0 +1,11 @@
+#summary How to read data written to an OutputStream from an InputStream.
+
+= Introduction =
+
+Add your content here.
+
+
+= Details =
+
+Here is an interesting link
+http://ostermiller.org/convert_java_outputstream_inputstream.html
