@@ -4,7 +4,7 @@
 
 Release schedule for IO-Tools.
 
-== Version 0.1 ==
+== Version 0.1 == _ (nov 2008) _
 
  * Initial project build with Eclipse and Maven
  * Tools for reading from an `InputStream` the data written to an `OutputStream`
