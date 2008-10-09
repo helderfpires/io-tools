@@ -13,7 +13,7 @@ Two main classes in this section are `InputStreamFromOutputStream` and `OutputSt
 === !InputStreamFromOutputStream ===
 This abstract class must be extended and the metod produce() implemented.
 The data who is produced inside the function produce() is written to an `OutputStream` and can be readed back from from this class.
-This is the preferred way to convert data written from an `OutputStream[ into an `InputStream`, because the behaviour of the outer code tends to be more clear.
+This is the preferred way to convert data written from an `OutputStream` into an `InputStream`, because the behaviour of the code tends to be more clear.
 
 Sample usage:
 
@@ -23,7 +23,11 @@ final String dataId=//id of some data.
 final InputStreamFromOutputStream isos = new InputStreamFromOutputStream() {
    @Override
    public void produce(final OutputStream dataSink) throws Exception {
-      //call your application function who produces the data here
+      /*
+       * call your application function who produces the data here
+       * WARNING: we're in another thread here, so this method shouldn't 
+       * write any class field or make assumptions on the state of the class.
+       */
       produceMydata(dataId,dataSink)
    }
  };
