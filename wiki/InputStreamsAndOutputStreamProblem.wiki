@@ -1,4 +1,5 @@
 #summary How to read data written to an OutputStream from an InputStream.
+#labels Featured
 
 = Introduction =
 
@@ -9,9 +10,10 @@ This code was inspired by the following article: http://ostermiller.org/convert_
 
 Two main classes in this section are `InputStreamFromOutputStream` and `OutputStreamToInputStream`
 
-=== InputStreamFromOutputStream ===
+=== !InputStreamFromOutputStream ===
 This abstract class must be extended and the metod produce() implemented.
 The data who is produced inside the function produce() is written to an `OutputStream` and can be readed back from from this class.
+This is the preferred way to convert data written from an `OutputStream[ into an `InputStream`, because the behaviour of the outer code tends to be more clear.
 
 Sample usage:
 
