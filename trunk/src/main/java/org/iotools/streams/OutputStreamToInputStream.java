@@ -31,42 +31,41 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * TODO: code example, FIXME: JoinOnClose is not working, but definitely is
- * needed
+ * TODO: code example
  * 
  * @since 0ct 3, 2008
  * @author dvd.smnt
  * @version $Revision: 1 $
  */
-public abstract class OutputStreamToInputStream extends OutputStream {
+public abstract class OutputStreamToInputStream<T> extends OutputStream {
 
-	private final class DataConsumerRunnable implements Runnable {
-		private InvocationTargetException exception = null;
+	private final class DataConsumerRunnable implements Callable<T> {
 
 		private final InputStream inputstream;
-
-		private Object processResult = null;
 
 		DataConsumerRunnable(final String callerId, final InputStream istream) {
 			this.inputstream = istream;
 		}
 
-		public void run() {
+		public T call() throws Exception {
+			T processResult;
 			try {
-				this.processResult = doRead(this.inputstream);
-			} catch (final Throwable e) {
-				OutputStreamToInputStream.LOG.error("Problem processing.", e);
-				this.exception = new InvocationTargetException(e);
+				processResult = doRead(this.inputstream);
 			} finally {
 				emptyInputStream();
 			}
+			return processResult;
 		}
 
 		/**
@@ -107,28 +106,18 @@ public abstract class OutputStreamToInputStream extends OutputStream {
 				}
 			}
 		}
-
-		Object getResults() throws InvocationTargetException {
-			if (this.exception != null) {
-				throw this.exception;
-			}
-			return this.processResult;
-		}
 	}
 
 	private static final Log LOG = LogFactory
 			.getLog(OutputStreamToInputStream.class);
 
 	private boolean closeCalled = false;
-
-	private final DataConsumerRunnable executingProcess;
-
 	private final boolean joinOnClose;
-
+	private final Future<T> writingResult;
 	private final PipedOutputStream wrappedPipedOS;
 
 	public OutputStreamToInputStream() throws IOException {
-		this(false, ExecutionModel.THREAD_PER_INSTANCE);
+		this(true, ExecutionModel.THREAD_PER_INSTANCE);
 	}
 
 	public OutputStreamToInputStream(final boolean joinOnClose,
@@ -142,26 +131,29 @@ public abstract class OutputStreamToInputStream extends OutputStream {
 		this.wrappedPipedOS = new PipedOutputStream();
 		final PipedInputStream pipedIS = new PipedInputStream(
 				this.wrappedPipedOS);
-		this.executingProcess = new DataConsumerRunnable(callerId, pipedIS);
+
+		final DataConsumerRunnable executingProcess = new DataConsumerRunnable(
+				callerId, pipedIS);
 		this.joinOnClose = joinOnClose;
-		executor.execute(this.executingProcess);
+		this.writingResult = executor.submit(executingProcess);
 	}
 
 	@Override
 	public final void close() throws IOException {
-		this.closeCalled = true;
-		this.wrappedPipedOS.close();
-		if (this.joinOnClose) {
-			// try {
-			// this.executingProcess.join();
-			// } catch (final InterruptedException e) {
-			// final IOException ioe = new IOException(
-			// "errore durante la close()");
-			// ioe.initCause(e);
-			// throw ioe;
-			// }
-			throw new UnsupportedOperationException(
-					"Join on close not yet implemented");
+		if (!this.closeCalled) {
+			this.closeCalled = true;
+			this.wrappedPipedOS.close();
+			if (this.joinOnClose) {
+				// waiting for thread to finish..
+				try {
+					this.writingResult.get();
+				} catch (final Exception e) {
+					final IOException e1 = new IOException(
+							"Problem producing data");
+					e1.initCause(e);
+					throw e1;
+				}
+			}
 		}
 	}
 
@@ -170,19 +162,22 @@ public abstract class OutputStreamToInputStream extends OutputStream {
 		this.wrappedPipedOS.flush();
 	}
 
-	// public final Object getResults() throws InvocationTargetException,
-	// InterruptedException {
-	// tryClose();
-	// this.executingProcess.join();
-	// return this.executingProcess.getResults();
-	// }
-	//
-	// public final Object getResults(final long timeoutMillis)
-	// throws InvocationTargetException, InterruptedException {
-	// tryClose();
-	// this.executingProcess.join(timeoutMillis);
-	// return this.executingProcess.getResults();
-	// }
+	public final T getResults() throws InterruptedException, ExecutionException {
+		if (!this.closeCalled) {
+			throw new IllegalStateException("Method close() must be called"
+					+ " before getResults");
+		}
+		return this.writingResult.get();
+	}
+
+	public final T getResults(final long timeout, final TimeUnit timeunit)
+			throws InterruptedException, ExecutionException, TimeoutException {
+		if (!this.closeCalled) {
+			throw new IllegalStateException("Method close() must be called"
+					+ " before getResults");
+		}
+		return this.writingResult.get(timeout, timeunit);
+	}
 
 	@Override
 	public final void write(final byte[] bytes) throws IOException {
@@ -211,6 +206,6 @@ public abstract class OutputStreamToInputStream extends OutputStream {
 		return result;
 	}
 
-	protected abstract Object doRead(InputStream istream) throws Exception;
+	protected abstract T doRead(InputStream istream) throws Exception;
 
 }
