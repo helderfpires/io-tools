@@ -34,7 +34,7 @@ import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -117,7 +117,7 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 						&& (e.getMessage().indexOf("closed") > 0)) {
 					this.logger.debug("Stream already closed");
 				} else {
-					this.logger.error("IOException closing InputStream"
+					this.logger.error("IOException closing OutputStream"
 							+ " Thread might be locked", e);
 				}
 			} catch (final Throwable t) {
@@ -170,7 +170,7 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 	}
 
 	public InputStreamFromOutputStream(final String tname,
-			final Executor executor) {
+			final ExecutorService executor) {
 		final String callerId = tname + getCaller();
 		PipedOutputStream pipedOS = null;
 		try {
@@ -226,7 +226,13 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 	private String getCaller() {
 		final Exception exception = new Exception();
 		final StackTraceElement[] stes = exception.getStackTrace();
-		final StackTraceElement caller = stes[3];
+		boolean found = false;
+		StackTraceElement caller = null;
+		for (int i = 0; (i < stes.length) && !found; i++) {
+			caller = stes[i];
+			found = !this.getClass().equals(caller.getClass());
+		}
+
 		final String result = getClass().getName().substring(
 				getClass().getPackage().getName().length() + 1)
 				+ "callBy:" + caller.toString();

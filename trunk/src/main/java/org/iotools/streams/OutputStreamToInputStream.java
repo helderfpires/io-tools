@@ -147,12 +147,31 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 				// waiting for thread to finish..
 				try {
 					this.writingResult.get();
+
+				} catch (final ExecutionException e) {
+					final IOException e1 = new IOException(
+							"Problem producing data");
+					e1.initCause(e.getCause());
+					throw e1;
+
 				} catch (final Exception e) {
 					final IOException e1 = new IOException(
 							"Problem producing data");
 					e1.initCause(e);
 					throw e1;
 				}
+			}
+		}
+	}
+
+	public final void close(final long timeout, final TimeUnit tu)
+			throws IOException, InterruptedException, ExecutionException,
+			TimeoutException {
+		if (!this.closeCalled) {
+			this.closeCalled = true;
+			this.wrappedPipedOS.close();
+			if (this.joinOnClose) {
+				this.writingResult.get(timeout, tu);
 			}
 		}
 	}
@@ -168,15 +187,6 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 					+ " before getResults");
 		}
 		return this.writingResult.get();
-	}
-
-	public final T getResults(final long timeout, final TimeUnit timeunit)
-			throws InterruptedException, ExecutionException, TimeoutException {
-		if (!this.closeCalled) {
-			throw new IllegalStateException("Method close() must be called"
-					+ " before getResults");
-		}
-		return this.writingResult.get(timeout, timeunit);
 	}
 
 	@Override

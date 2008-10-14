@@ -26,12 +26,17 @@ package org.iotools.streams;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * This class is responsible of instantiating the right executor given an
@@ -44,37 +49,77 @@ import java.util.concurrent.TimeUnit;
  */
 public final class ExecutorServiceFactory {
 
-	private static class ThreadExecutor extends AbstractExecutorService {
+	private static class OneShotThreadExecutor implements ExecutorService {
+		private final ExecutorService exec = Executors
+				.newSingleThreadExecutor();
 
 		public boolean awaitTermination(final long timeout, final TimeUnit unit)
 				throws InterruptedException {
-			// TODO Auto-generated method stub
-			return false;
+			return this.exec.awaitTermination(timeout, unit);
 		}
 
 		public void execute(final Runnable command) {
-			final Thread thread = new Thread(command);
-			thread.start();
+			this.exec.execute(command);
+			shutdown();
+		}
+
+		public <T> List<Future<T>> invokeAll(
+				final Collection<? extends Callable<T>> tasks)
+				throws InterruptedException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public <T> List<Future<T>> invokeAll(
+				final Collection<? extends Callable<T>> tasks,
+				final long timeout, final TimeUnit unit)
+				throws InterruptedException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public <T> T invokeAny(final Collection<? extends Callable<T>> tasks)
+				throws InterruptedException, ExecutionException {
+
+			return null;
+		}
+
+		public <T> T invokeAny(final Collection<? extends Callable<T>> tasks,
+				final long timeout, final TimeUnit unit)
+				throws InterruptedException, ExecutionException,
+				TimeoutException {
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 		public boolean isShutdown() {
-			// TODO Auto-generated method stub
-			return false;
+			return this.exec.isShutdown();
 		}
 
 		public boolean isTerminated() {
-			// TODO Auto-generated method stub
-			return false;
+			return this.exec.isTerminated();
 		}
 
 		public void shutdown() {
-			// TODO Auto-generated method stub
-
+			this.exec.shutdown();
 		}
 
 		public List<Runnable> shutdownNow() {
-			// TODO Auto-generated method stub
-			return null;
+			return this.exec.shutdownNow();
+		}
+
+		public <T> Future<T> submit(final Callable<T> task) {
+			final Future<T> result = this.exec.submit(task);
+			shutdown();
+			return result;
+		}
+
+		public Future<?> submit(final Runnable task) {
+			return this.exec.submit(task);
+		}
+
+		public <T> Future<T> submit(final Runnable task, final T result) {
+			return this.exec.submit(task, result);
 		}
 
 	}
@@ -82,15 +127,22 @@ public final class ExecutorServiceFactory {
 	private static ExecutorService EXECUTOR = new ThreadPoolExecutor(10, 20, 5,
 			TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(500));
 
+	private static ExecutorService SINGLE_EXECUTOR = Executors
+			.newSingleThreadExecutor();
+
 	public static ExecutorService getExecutor(final ExecutionModel tmodel) {
 		final ExecutorService result;
 		switch (tmodel) {
 		case THREAD_PER_INSTANCE:
-			result = new ThreadExecutor();
+			result = new OneShotThreadExecutor();
 			break;
 		case STATIC_THREAD_POOL:
 			result = ExecutorServiceFactory.EXECUTOR;
 			break;
+		case SINGLE_THREAD:
+			result = ExecutorServiceFactory.SINGLE_EXECUTOR;
+			break;
+
 		default:
 			throw new UnsupportedOperationException("ExecutionModel [" + tmodel
 					+ "] not supported");

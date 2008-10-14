@@ -49,5 +49,11 @@ public enum ExecutionModel {
 	 * threads leaks.
 	 * </p>
 	 */
-	THREAD_PER_INSTANCE
+	THREAD_PER_INSTANCE,
+	/**
+	 * <p>
+	 * Only one thread is shared by all instances.
+	 * </p>
+	 */
+	SINGLE_THREAD
 }
