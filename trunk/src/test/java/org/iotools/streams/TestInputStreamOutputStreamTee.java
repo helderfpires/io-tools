@@ -2,24 +2,16 @@ package org.iotools.streams;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.NullOutputStream;
 
 public class TestInputStreamOutputStreamTee extends TestCase {
-	class NullOutputStream extends OutputStream {
-
-		@Override
-		public void write(final int b) throws IOException {
-		}
-
-	}
-
+	@org.junit.Test
 	public void testReadAtSpecificPosition() throws Exception {
 		final byte[] referenceBytes = "123".getBytes();
 		final ByteArrayInputStream bais = new ByteArrayInputStream(
@@ -33,6 +25,7 @@ public class TestInputStreamOutputStreamTee extends TestCase {
 				.toByteArray()));
 	}
 
+	@org.junit.Test
 	public void testReadWrite() throws Exception {
 		final byte[] testBytes = "testString".getBytes();
 		final InputStream istream = new ByteArrayInputStream(testBytes);
@@ -42,9 +35,9 @@ public class TestInputStreamOutputStreamTee extends TestCase {
 		IOUtils.copy(teeStream, new NullOutputStream());
 		teeStream.close();
 		bos.toByteArray();
-		;
 	}
 
+	@org.junit.Test
 	public void testSuddenClose() throws Exception {
 		final byte[] testBytes = "testString".getBytes();
 		final InputStream istream = new ByteArrayInputStream(testBytes);
