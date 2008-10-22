@@ -145,7 +145,7 @@
 				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
 					<generateReleasePoms>true</generateReleasePoms>
-					<preparationGoals>clean vefrify</preparationGoals>
+					<preparationGoals>clean verify</preparationGoals>
 				</configuration>
 			</plugin>
 			<plugin>
