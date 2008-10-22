@@ -24,7 +24,8 @@
 		</license>
 	</licenses>
 	<scm>
-		<developerConnection>Davide Simonetti</developerConnection>
+		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk</connection>
+		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk</developerConnection>
 		<url>https://io-tools.googlecode.com/svn/trunk</url>
 	</scm>
 
@@ -48,6 +49,12 @@
 			<version>4.4</version>
 			<type>jar</type>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>bouncycastle</groupId>
+			<artifactId>bcprov-jdk15</artifactId>
+			<version>140</version>
+			<type>jar</type>
 		</dependency>
 	</dependencies>
 	<reporting>
