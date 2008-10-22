@@ -26,12 +26,20 @@ package org.iotools.formats;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-/**
- * Enum of detected formats. Some format is "simple", some other is just a way
- * of encoding another kind of content.
- * 
- * @author dvd.smnt
- */
-public enum FormatEnum {
-	BASE64, M7M, PDF, PEM, PKCS7, TIMESTAMP, UNKNOWN, XML, ZIP
+
+class M7MDetectorModule extends AbstractFormatDetectorModule {
+	private static final String M7M = "Content-Type: multipart/mixed; boundary=\"Dike\"";
+
+	public M7MDetectorModule() {
+		super(M7M.length() + 40, FormatEnum.M7M);
+	}
+
+	public boolean detect(final byte[] readedBytes) {
+		boolean result = false;
+		if (readedBytes != null) {
+			final String string = new String(readedBytes);
+			result = string.toLowerCase().contains(M7M.toLowerCase());
+		}
+		return result;
+	}
 }
