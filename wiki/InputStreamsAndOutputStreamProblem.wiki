@@ -3,14 +3,14 @@
 
 = Introduction =
 
-Sometimes a library writes its results to an `OutputStream` and you need to read them back from an `InputStream`.
+Sometimes a library writes its results to an `OutputStream` and you need to read them back from an `InputStream`. The common answer is "use pipes". But it's not as easy at is seems. Classes in the com.iotools.stream package should help.
 
 = Details =
 This code was inspired by the following article: http://ostermiller.org/convert_java_outputstream_inputstream.html
 
 Two main classes in this section are `InputStreamFromOutputStream` and `OutputStreamToInputStream`
 
-=== !InputStreamFromOutputStream ===
+== !InputStreamFromOutputStream ==
 This abstract class must be extended and the metod produce() implemented.
 The data who is produced inside the function produce() is written to an `OutputStream` and can be readed back from from this class.
 This is the preferred way to convert data written from an `OutputStream` into an `InputStream`, because the behaviour of the code tends to be more clear.
@@ -44,3 +44,18 @@ final InputStreamFromOutputStream isos = new InputStreamFromOutputStream() {
 
 }
 }}}
+
+=== !OutputStream2InputStream ===
+
+!ToBeDone.
+
+== Why !ThreadModel ? ==
+If you look the code you shout "Get me out of here!". Yes, agree. But there is a reason why it's so complicated. 
+
+ * To convert an `OutputStream` into an `InputStream` you need a pipe. 
+ * To use a pipe and avoid a sure lock you must put the 2 ends of the pipe on different Threads.
+ * To use threads Java 5 offers a wide range of options, including pools of Threads. In my library i limited these options to a reasonable number and ease of use. The enum `ThreadModel` helps selecting a mode. 
+
+=== Do and Don't Do ===
+
+!ToBeDone.
