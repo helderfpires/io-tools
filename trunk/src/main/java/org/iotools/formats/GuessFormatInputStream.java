@@ -39,7 +39,14 @@ import java.util.Set;
 /**
  * InputStream that wraps the original InputStream and guess the format.
  * 
- * 
+ * To support a new format:
+ * <ul>
+ * <li>implement a new DetectorModule. The metod parse(bytes[]) should return
+ * true when the format is recognized</li>
+ * <li>Extend the enum FormatEnum to provide the new name for the format.</li>
+ * <li>Either register it statically in GuessFormatInputStream with the method
+ * addDetector or pass an instance in the constructor.</li>
+ * </ul>
  * 
  */
 public final class GuessFormatInputStream extends BufferedInputStream {
@@ -53,20 +60,19 @@ public final class GuessFormatInputStream extends BufferedInputStream {
 	static {
 		DETECTORS.put(FormatEnum.PDF, new PdfDetectorModule());
 		DETECTORS.put(FormatEnum.ZIP, new ZipDetectorModule());
+		DETECTORS.put(FormatEnum.M7M, new M7MDetectorModule());
+		DETECTORS.put(FormatEnum.PEM, new PEMDetectorModule());
+		DETECTORS.put(FormatEnum.PKCS7, new PKCS7DetectorModule());
+		// DETECTORS.put(FormatEnum.BASE64, new M7MDetectorModule());
 	}
 
-	public static byte[] readBytesAndReset(final BufferedInputStream input,
-			final int size) throws IOException {
-		final ByteArrayOutputStream baos = new ByteArrayOutputStream(size);
-		final byte[] buffer = new byte[READ_SIZE];
-		long count = 0;
-		int n = 0;
-		while ((-1 != (n = input.read(buffer))) && (count < size)) {
-			baos.write(buffer, 0, n);
-			count += n;
-		}
-		input.reset();
-		return baos.toByteArray();
+	public static void addDetector(final FormatEnum format,
+			final DetectorModule detector) {
+		DETECTORS.put(format, detector);
+	}
+
+	public static Map<FormatEnum, DetectorModule> getDetectorsMap() {
+		return DETECTORS;
 	}
 
 	private static FormatEnum detectFormat(final byte[] bytes,
@@ -118,14 +124,33 @@ public final class GuessFormatInputStream extends BufferedInputStream {
 	private static FormatEnum[] getEnabledFormats(
 			final FormatEnum[] enabledFormats,
 			final DetectorModule[] extraDetectors) {
-		final Set<FormatEnum> enabledFormats1 = new HashSet<FormatEnum>(Arrays
-				.asList(enabledFormats));
+		final Set<FormatEnum> enabledFormats1;
+		if (enabledFormats != null) {
+			enabledFormats1 = new HashSet<FormatEnum>(Arrays
+					.asList(enabledFormats));
+		} else {
+			enabledFormats1 = new HashSet<FormatEnum>();
+		}
 		if (extraDetectors != null) {
 			for (final DetectorModule detector : extraDetectors) {
 				enabledFormats1.add(detector.getDetectedFormat());
 			}
 		}
 		return enabledFormats1.toArray(new FormatEnum[enabledFormats1.size()]);
+	}
+
+	private static byte[] readBytesAndReset(final BufferedInputStream input,
+			final int size) throws IOException {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream(size);
+		final byte[] buffer = new byte[READ_SIZE];
+		long count = 0;
+		int n = 0;
+		while ((-1 != (n = input.read(buffer))) && (count < size)) {
+			baos.write(buffer, 0, n);
+			count += n;
+		}
+		input.reset();
+		return baos.toByteArray();
 	}
 
 	private final FormatEnum[] enabledFormats;

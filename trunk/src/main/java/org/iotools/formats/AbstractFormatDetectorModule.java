@@ -27,7 +27,7 @@ package org.iotools.formats;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-abstract class AbstractFormatDetectorModule implements DetectorModule {
+public abstract class AbstractFormatDetectorModule implements DetectorModule {
 	private final int detectLenght;
 	private final FormatEnum detectedFormat;
 

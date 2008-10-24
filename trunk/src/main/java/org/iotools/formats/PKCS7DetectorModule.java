@@ -1,5 +1,12 @@
 package org.iotools.formats;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /*
  * Copyright (c) 2008, Davide Simonetti
  * All rights reserved.
@@ -26,43 +33,30 @@ package org.iotools.formats;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-/**
- * Enum of detected formats. Some format is "simple", some other is just a way
- * of encoding another kind of content.
- * 
- * If a user need to support a new format he must extend this class. It can't be
- * a Java 5 enum because (AFAIK) they can't be extended.
- * 
- * @since oct 24, 2008
- * @author dvd.smnt
- */
-public class FormatEnum {
-	public static final FormatEnum BASE64 = new FormatEnum("base64", 0);
-	public static final FormatEnum GIF = new FormatEnum("gif", 0);
-	public static final FormatEnum JPEG = new FormatEnum("jpeg", 0);
-	public static final FormatEnum M7M = new FormatEnum("m7m", 0);
-	public static final FormatEnum PDF = new FormatEnum("pdf", 0);
-	public static final FormatEnum PEM = new FormatEnum("pem", 0);
-	public static final FormatEnum PKCS7 = new FormatEnum("pkcs7", 0);
-	public static final FormatEnum TIMESTAMP = new FormatEnum("timestamp", 0);
-	public static final FormatEnum UNKNOWN = new FormatEnum("unknown", 0);
-	public static final FormatEnum XML = new FormatEnum("xml", 0);
-	public static final FormatEnum ZIP = new FormatEnum("zip", 0);
 
-	private final int value;
-	private final String name;
+class PKCS7DetectorModule extends AbstractFormatDetectorModule {
+	private static final Log LOGGER = LogFactory
+			.getLog(PKCS7DetectorModule.class);
 
-	protected FormatEnum(final String enumName, final int enumInt) {
-		this.name = enumName;
-		this.value = enumInt;
+	public PKCS7DetectorModule() {
+		super(90, FormatEnum.PEM);
 	}
 
-	public String getName() {
-		return this.name;
+	public boolean detect(final byte[] readedBytes) {
+		final InputStream buffer = new ByteArrayInputStream(readedBytes);
+		boolean result = false;
+		try {
+			final ASN1Reader pkcsHdrRead = new ASN1Reader(buffer);
+			pkcsHdrRead.check();
+			result = true;
+		} catch (final FormatException e) {
+			LOGGER.debug("PKCS7 not recognized" + "Exception (normal) ["
+					+ e.getMessage() + "]");
+		} catch (final IOException e) {
+			LOGGER.warn("PKCS7 not recognized for an I/O exception", e);
+		} catch (final Throwable e) {
+			LOGGER.warn("PKCS7 not recognized for unexpected exception.", e);
+		}
+		return result;
 	}
-
-	public int getValue() {
-		return this.value;
-	}
-
 }
