@@ -45,16 +45,12 @@ final InputStreamFromOutputStream isos = new InputStreamFromOutputStream() {
 }
 }}}
 
-=== !OutputStream2InputStream ===
+=== !OutputStreamToInputStream ===
 
 !ToBeDone.
 
-== Why !ThreadModel ? ==
-If you look the code you shout "Get me out of here!". Yes, agree. But there is a reason why it's so complicated. 
-
- * To convert an `OutputStream` into an `InputStream` you need a pipe. 
- * To use a pipe and avoid a sure lock you must put the 2 ends of the pipe on different Threads.
- * To use threads Java 5 offers a wide range of options, including pools of Threads. In my library i limited these options to a reasonable number and ease of use. The enum `ThreadModel` helps selecting a mode. 
+== Why !ExecutionModel ? ==
+To convert an `OutputStream` into an `InputStream` you need a pipe. And to use a pipe you need Threads. [ExecutionModel Here] are io-tools options. 
 
 === Do and Don't Do ===
 
