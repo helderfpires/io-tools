@@ -1,3 +1,10 @@
 #summary How Threads are executed
 
+= Introduction =
+
 = Execution Model =
+
+ * STATIC_THREAD_POOL : Threads are taken from a static pool. If the pool is full (10 threads) some slow thread might lock up the pool and other processes might be slowed down.
+ * THREAD_PER_INSTANCE : One thread per instance of `InputStreamFromOutputStream` or `OutputStreamToInputStream`. Slow but each instance can work in isolation. Also if some thread is not correctly closed it might bring to thread leaks.
+ * SINGLE_THREAD : Only one thread is shared by all instances.
+	
