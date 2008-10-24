@@ -1,6 +1,5 @@
 #summary How Threads are executed
 
-= Introduction =
 If you look the code you shout "Get me out of here!". Yes, agree. But there is a reason why it's so complicated. 
  * To convert an `OutputStream` into an `InputStream` you need a pipe. 
  * To use a pipe and avoid a sure lock you must put the 2 ends of the pipe on different Threads.
