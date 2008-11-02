@@ -26,49 +26,17 @@ package org.iotools.formats;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-/**
- * Enum of detected formats. Some format is "simple", some other is just a way
- * of encoding another kind of content.
- * 
- * If a user need to support a new format he must extend this class. It can't be
- * a Java 5 enum because (AFAIK) they can't be extended.
- * 
- * @since oct 24, 2008
- * @author dvd.smnt
- */
-public class FormatEnum {
-	public static final FormatEnum BASE64 = new FormatEnum("base64", 0);
-	public static final FormatEnum GIF = new FormatEnum("gif", 0);
-	public static final FormatEnum JPEG = new FormatEnum("jpeg", 0);
-	public static final FormatEnum M7M = new FormatEnum("m7m", 0);
-	public static final FormatEnum PDF = new FormatEnum("pdf", 0);
-	public static final FormatEnum RTF = new FormatEnum("rtf", 0);
-	public static final FormatEnum PEM = new FormatEnum("pem", 0);
-	public static final FormatEnum PKCS7 = new FormatEnum("pkcs7", 0);
-	public static final FormatEnum TIMESTAMP = new FormatEnum("timestamp", 0);
-	public static final FormatEnum UNKNOWN = new FormatEnum("unknown", 0);
-	public static final FormatEnum XML = new FormatEnum("xml", 0);
-	public static final FormatEnum ZIP = new FormatEnum("zip", 0);
+import java.util.Arrays;
 
-	private final int value;
-	private final String name;
+class RTFDetectorModule extends AbstractFormatDetectorModule {
+	private static final String RTF_HEADER = "{\\rtf";
 
-	protected FormatEnum(final String enumName, final int enumInt) {
-		this.name = enumName;
-		this.value = enumInt;
+	public RTFDetectorModule() {
+		super(RTF_HEADER.length(), FormatEnum.RTF);
 	}
 
-	public String getName() {
-		return this.name;
+	public boolean detect(final byte[] readedBytes) {
+		final byte[] pdfHeader = RTFDetectorModule.RTF_HEADER.getBytes();
+		return Arrays.equals(readedBytes, pdfHeader);
 	}
-
-	public int getValue() {
-		return this.value;
-	}
-
-	@Override
-	public String toString() {
-		return "[" + this.name + "]";
-	}
-
 }
