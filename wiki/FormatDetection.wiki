@@ -1,13 +1,14 @@
 #summary Format Detection Informations
 
 = Introduction =
+Classes in package `org.iotools.formats` try to ease the detection of some widely used file formats.  
+These classes works well in this case: a customer can send a file with multiple formats. 
 
-Add your content here.
+These classes can tell you which is the format of the file "on the fly", without you have to copy it to the disk for reading it twice.
 
 
 = Details =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+
+ * Encoding and formats.
+ * Implementing a Detector.
