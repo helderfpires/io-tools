@@ -46,9 +46,38 @@ final InputStreamFromOutputStream isos = new InputStreamFromOutputStream() {
 }}}
 
 === !OutputStreamToInputStream ===
+Another class that you can use if you need to write to an !OutputStream and read the data written from an !InputStream is `OutputStreamToInputStream` . It works opposite way than the previous one and allow some result to be returned after the processing of the !InputStream.
 
-!ToBeDone.
+Sample usage:
+{{{
+final OutputStreamToInputStream<String> oStream2IStream = new OutputStreamToInputStream<String>() {
+    @Override
+    protected String doRead(final InputStream istream) throws Exception {
+        /*
+         * read from InputStream into a string. Data will be written to the outer class
+         * later (oStream2IStream.write). 
+         */
+        final String result = IOUtils.toString(istream);
+              return result + " was processed.";
+        }
+    };
 
+try {   
+     /*
+     * some data is written to the OutputStream, will be passed to the method
+     * doRead(InputStream i) above and after close() is called the results 
+     * will be available through the getResults() method.
+     */
+     oStream2IStream.write("test".getBytes());
+} finally {
+     // don't miss the close (or a thread would not terminate correctly).
+     oStream2IStream.close();
+}
+String result = oStream2IStream.getResults();
+//result now contains the string "test was processed."
+}}}
+
+Behaviour in case of exception is documented in junits.
 == Why !ExecutionModel ? ==
 To convert an `OutputStream` into an `InputStream` you need a pipe. And to use a pipe you need Threads. [ExecutionModel Here] are io-tools options. 
 
