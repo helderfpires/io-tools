@@ -1,4 +1,5 @@
-package org.iotools.formats;
+package org.iotools.formats.base;
+
 
 /*
  * Copyright (c) 2008, Davide Simonetti
@@ -26,17 +27,23 @@ package org.iotools.formats;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-import java.util.Arrays;
 
-class RTFDetectorModule extends AbstractFormatDetectorModule {
-	private static final String RTF_HEADER = "{\\rtf";
+public abstract class AbstractFormatDetector implements Detector {
+	private final int detectLenght;
+	private final FormatEnum detectedFormat;
 
-	public RTFDetectorModule() {
-		super(RTF_HEADER.length(), FormatEnum.RTF);
+	protected AbstractFormatDetector(final int detectLenght,
+			final FormatEnum detectedFormat) {
+		this.detectLenght = detectLenght;
+		this.detectedFormat = detectedFormat;
 	}
 
-	public boolean detect(final byte[] readedBytes) {
-		final byte[] pdfHeader = RTFDetectorModule.RTF_HEADER.getBytes();
-		return Arrays.equals(readedBytes, pdfHeader);
+	public final FormatEnum getDetectedFormat() {
+		return this.detectedFormat;
 	}
+
+	public final int getDetectLenght() {
+		return this.detectLenght;
+	}
+
 }

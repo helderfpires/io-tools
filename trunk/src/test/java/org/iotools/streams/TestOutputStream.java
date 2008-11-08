@@ -41,65 +41,11 @@ public class TestOutputStream {
 		assertEquals("Active Threads", 0, es.getActiveCount());
 	}
 
-	// public void testNotClosed() throws Exception {
-	// while (inUse) {
-	// wait(10000);
-	// }
-	// inUse = true;
-	//
-	// final OutputStreamToInputStream osisA = new OutputStreamToInputStream() {
-	// @Override
-	// protected Object doRead(final InputStream istream) throws Exception {
-	// final String result = IOUtils.toString(istream);
-	// return result;
-	// }
-	// };
-	//
-	// final String testString = "test test test";
-	// osisA.write(testString.getBytes());
-	// Thread.sleep(1000);
-	// assertEquals("un cadavere", 1, OutputStreamToInputStream
-	// .getActiveThreads());
-	// final String threadName = OutputStreamToInputStream
-	// .getActiveThreadNames()[0];
-	// assertTrue("e' possibile risalire al creatore del thread non morto",
-	// threadName.indexOf("testNotClosed") > 0);
-	//
-	// // cleanup
-	// osisA.close();
-	// inUse = false;
-	// notify();
-	// }
-	//
-	// public synchronized void testRead() throws Exception {
-	// while (inUse) {
-	// wait(10000);
-	// }
-	// inUse = true;
-	// final OutputStreamToInputStream osisA = new OutputStreamToInputStream() {
-	// @Override
-	// protected Object doRead(final InputStream istream) throws Exception {
-	// assertEquals("thread attivi (possibile esecuzione parallela)",
-	// 1, OutputStreamToInputStream.getActiveThreads());
-	// final String result = IOUtils.toString(istream);
-	// return result;
-	// }
-	// };
-	//
-	// final String testString = "test test test";
-	// osisA.write(testString.getBytes());
-	// final Object result = osisA.getResults();
-	// assertEquals("Risultato ", testString, result);
-	// assertEquals("nessun cadavere", 0, OutputStreamToInputStream
-	// .getActiveThreads());
-	// inUse = false;
-	// notify();
-	// }
 	@org.junit.Test
 	public void testReadException() throws Exception {
 		final ThreadPoolExecutor es = (ThreadPoolExecutor) Executors
 				.newFixedThreadPool(1);
-		final OutputStreamToInputStream osisA = new OutputStreamToInputStream(
+		final OutputStreamToInputStream<Object> osisA = new OutputStreamToInputStream<Object>(
 				true, es) {
 			@Override
 			protected Object doRead(final InputStream istream) throws Exception {
@@ -116,6 +62,29 @@ public class TestOutputStream {
 					(e.getCause() instanceof IllegalStateException));
 		}
 		assertEquals("Thread count", 0, es.getActiveCount());
+	}
+
+	@org.junit.Test
+	public void testResult() throws Exception {
+		final OutputStreamToInputStream<String> oStream2IStream = new OutputStreamToInputStream<String>(
+				true, ExecutionModel.SINGLE_THREAD) {
+			@Override
+			protected String doRead(final InputStream istream) throws Exception {
+				// read from InputStream into a string
+				final String result = IOUtils.toString(istream);
+				return result + " was processed.";
+			}
+		};
+
+		final String testString = "test";
+		try {
+			oStream2IStream.write(testString.getBytes());
+		} finally {
+			// don't miss the close (or a thread would not terminate correctly).
+			oStream2IStream.close();
+		}
+		assertEquals("Results are returned", "test was processed.",
+				oStream2IStream.getResults());
 	}
 
 }

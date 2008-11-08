@@ -1,4 +1,4 @@
-package org.iotools.formats;
+package org.iotools.formats.detectors;
 
 /*
  * Copyright (c) 2008, Davide Simonetti
@@ -28,12 +28,15 @@ package org.iotools.formats;
  */
 import java.util.Arrays;
 
+import org.iotools.formats.base.AbstractFormatDetector;
+import org.iotools.formats.base.FormatEnum;
+
 /**
  * Detects zip files
  * 
  * @author dvd.smnt
  */
-public class ZipDetectorModule extends AbstractFormatDetectorModule {
+public class ZipDetectorModule extends AbstractFormatDetector {
 	private static final String ZIP_HEADER = "PK";
 
 	public ZipDetectorModule() {

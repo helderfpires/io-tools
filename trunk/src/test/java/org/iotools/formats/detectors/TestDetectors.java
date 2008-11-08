@@ -1,7 +1,6 @@
-package org.iotools.formats;
+package org.iotools.formats.detectors;
 
-import java.io.DataInputStream;
-import java.io.EOFException;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,21 +12,19 @@ import java.util.Vector;
 
 import junit.framework.TestCase;
 
+import org.iotools.formats.base.Detector;
+import org.iotools.formats.detectors.pksc7.PKCS7Detector;
+
 public class TestDetectors extends TestCase {
 
-	private static void checkDetector(final DetectorModule detector,
+	private static void checkDetector(final Detector detector,
 			final String[] extensions) throws IOException {
 		final String[] goodFiles = listFilesIncludingExtension(extensions);
 		for (final String fileName : goodFiles) {
 			final InputStream is = TestDetectors.class
 					.getResourceAsStream(fileName);
-			final DataInputStream dis = new DataInputStream(is);
-			final byte[] data = new byte[detector.getDetectLenght()];
-			try {
-				dis.readFully(data);
-			} catch (final EOFException e) {
-				// no problems
-			}
+			final byte[] data = readBytesAndReset(is, detector
+					.getDetectLenght());
 			assertTrue("file [" + fileName + "] was not recognized as ["
 					+ detector.getDetectedFormat() + "] by [" + detector + "]",
 					detector.detect(data));
@@ -36,18 +33,26 @@ public class TestDetectors extends TestCase {
 		for (final String fileName : badFiles) {
 			final InputStream is = TestDetectors.class
 					.getResourceAsStream(fileName);
-			final DataInputStream dis = new DataInputStream(is);
-			final byte[] data = new byte[detector.getDetectLenght()];
-			try {
-				dis.readFully(data);
-			} catch (final EOFException e) {
-				// no problems
-			}
+			final byte[] data = readBytesAndReset(is, detector
+					.getDetectLenght());
 			assertTrue("file [" + fileName
 					+ "] WAS UNCORRECTLY recognized as ["
 					+ detector.getDetectedFormat() + "] by [" + detector + "]",
 					detector.detect(data));
 		}
+	}
+
+	private static byte[] readBytesAndReset(final InputStream input,
+			final int size) throws IOException {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream(size);
+		final byte[] buffer = new byte[size];
+		long count = 0;
+		int n = 0;
+		while ((-1 != (n = input.read(buffer))) && (count <= size)) {
+			baos.write(buffer, 0, (int) Math.min(n, size - count));
+			count += n;
+		}
+		return baos.toByteArray();
 	}
 
 	static String[] listFilesExcludingExtension(final String[] forbidden)
@@ -87,13 +92,33 @@ public class TestDetectors extends TestCase {
 	}
 
 	@org.junit.Test
-	public void testPdfDetectorModule() throws Exception {
-		checkDetector(new PdfDetectorModule(), new String[] { ".pdf" });
+	public void testBase64Detector() throws Exception {
+		checkDetector(new Base64Detector(), new String[] { ".b64" });
+	}
+
+	@org.junit.Test
+	public void testM7MDetectorModule() throws Exception {
+		checkDetector(new M7MDetector(), new String[] { ".m7m" });
+	}
+
+	@org.junit.Test
+	public void testPdfDetector() throws Exception {
+		checkDetector(new PdfDetector(), new String[] { ".pdf" });
+	}
+
+	@org.junit.Test
+	public void testPKCS7DetectorModule() throws Exception {
+		checkDetector(new PKCS7Detector(), new String[] { ".p7m" });
 	}
 
 	@org.junit.Test
 	public void testRTFDetectorModule() throws Exception {
 		checkDetector(new RTFDetectorModule(), new String[] { ".rtf" });
+	}
+
+	@org.junit.Test
+	public void testXmlDetector() throws Exception {
+		checkDetector(new XmlDetector(), new String[] { ".xml" });
 	}
 
 	@org.junit.Test

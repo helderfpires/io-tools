@@ -1,4 +1,4 @@
-package org.iotools.formats;
+package org.iotools.formats.detectors;
 
 /*
  * Copyright (c) 2008, Davide Simonetti
@@ -28,15 +28,23 @@ package org.iotools.formats;
  */
 import java.util.Arrays;
 
-class PdfDetectorModule extends AbstractFormatDetectorModule {
+import org.iotools.formats.base.AbstractFormatDetector;
+import org.iotools.formats.base.FormatEnum;
+
+/**
+ * Module for detecting PDF files
+ * 
+ * @author dvd.smnt
+ */
+public class PdfDetector extends AbstractFormatDetector {
 	private static final String PDF_HEADER = "%PDF";
 
-	public PdfDetectorModule() {
+	public PdfDetector() {
 		super(PDF_HEADER.length(), FormatEnum.PDF);
 	}
 
 	public boolean detect(final byte[] readedBytes) {
-		final byte[] pdfHeader = PdfDetectorModule.PDF_HEADER.getBytes();
+		final byte[] pdfHeader = PdfDetector.PDF_HEADER.getBytes();
 		return Arrays.equals(readedBytes, pdfHeader);
 	}
 }

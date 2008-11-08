@@ -1,6 +1,5 @@
-package org.iotools.formats.decoder;
+package org.iotools.formats.base;
 
-import org.iotools.formats.FormatEnum;
 
 /**
  * Interface for extracting the content from an encoding format (es.Base64)
@@ -14,5 +13,5 @@ public interface Decoder {
 
 	FormatEnum getFormat();
 
-	int getRatio();
+	float getRatio();
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.googlecode.io-tools</groupId>
 	<artifactId>io-tools</artifactId>
@@ -53,6 +54,12 @@
 			<groupId>bouncycastle</groupId>
 			<artifactId>bcprov-jdk15</artifactId>
 			<version>140</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>stax</groupId>
+			<artifactId>stax</artifactId>
+			<version>1.2.0</version>
 			<type>jar</type>
 		</dependency>
 	</dependencies>
@@ -152,6 +159,7 @@
 				<artifactId>maven-eclipse-plugin</artifactId>
 				<configuration>
 					<wtpversion>2.0</wtpversion>
+					<downloadSources>true</downloadSources>
 					<buildOutputDirectory>bin</buildOutputDirectory>
 				</configuration>
 			</plugin>

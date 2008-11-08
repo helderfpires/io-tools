@@ -1,4 +1,4 @@
-package org.iotools.formats;
+package org.iotools.formats.detectors.pksc7;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -6,6 +6,8 @@ import java.io.InputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.iotools.formats.base.AbstractFormatDetector;
+import org.iotools.formats.base.FormatEnum;
 
 /*
  * Copyright (c) 2008, Davide Simonetti
@@ -34,11 +36,15 @@ import org.apache.commons.logging.LogFactory;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-class PKCS7DetectorModule extends AbstractFormatDetectorModule {
-	private static final Log LOGGER = LogFactory
-			.getLog(PKCS7DetectorModule.class);
+/**
+ * Class for detecting DER and BER encoded PKCS7 files.
+ * 
+ * @author dvd.smnt
+ */
+public class PKCS7Detector extends AbstractFormatDetector {
+	private static final Log LOGGER = LogFactory.getLog(PKCS7Detector.class);
 
-	public PKCS7DetectorModule() {
+	public PKCS7Detector() {
 		super(90, FormatEnum.PEM);
 	}
 

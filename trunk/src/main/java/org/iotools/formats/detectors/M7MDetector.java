@@ -1,4 +1,8 @@
-package org.iotools.formats;
+package org.iotools.formats.detectors;
+
+import org.iotools.formats.base.AbstractFormatDetector;
+import org.iotools.formats.base.FormatEnum;
+
 
 /*
  * Copyright (c) 2008, Davide Simonetti
@@ -26,11 +30,20 @@ package org.iotools.formats;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-public interface DetectorModule {
 
-	boolean detect(byte[] bytes);
+public class M7MDetector extends AbstractFormatDetector {
+	private static final String M7M = "Content-Type: multipart/mixed; boundary=\"Dike\"";
 
-	FormatEnum getDetectedFormat();
+	public M7MDetector() {
+		super(M7M.length() + 40, FormatEnum.M7M);
+	}
 
-	int getDetectLenght();
+	public boolean detect(final byte[] readedBytes) {
+		boolean result = false;
+		if (readedBytes != null) {
+			final String string = new String(readedBytes);
+			result = string.toLowerCase().contains(M7M.toLowerCase());
+		}
+		return result;
+	}
 }

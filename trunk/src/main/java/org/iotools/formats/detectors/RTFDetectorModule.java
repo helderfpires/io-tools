@@ -1,8 +1,8 @@
-package org.iotools.formats;
+package org.iotools.formats.detectors;
 
 /*
- * Copyright (c) 2008, Davide Simonetti
- * All rights reserved.
+ * Copyright (c) 2008, Davide Simonetti.  All rights reserved.
+ * 
  * Redistribution and use in source and binary forms, 
  * with or without modification, are permitted provided that the following 
  * conditions are met:
@@ -26,20 +26,20 @@ package org.iotools.formats;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+import java.util.Arrays;
 
-class PEMDetectorModule extends AbstractFormatDetectorModule {
-	private static final String PEM = "-----BEGIN PKCS7-----";
+import org.iotools.formats.base.AbstractFormatDetector;
+import org.iotools.formats.base.FormatEnum;
 
-	public PEMDetectorModule() {
-		super(PEM.length() + 10, FormatEnum.PEM);
+public class RTFDetectorModule extends AbstractFormatDetector {
+	private static final String RTF_HEADER = "{\\rtf";
+
+	public RTFDetectorModule() {
+		super(RTF_HEADER.length(), FormatEnum.RTF);
 	}
 
 	public boolean detect(final byte[] readedBytes) {
-		boolean result = false;
-		if (readedBytes != null) {
-			final String string = new String(readedBytes);
-			result = string.toLowerCase().contains(PEM.toLowerCase());
-		}
-		return result;
+		final byte[] pdfHeader = RTFDetectorModule.RTF_HEADER.getBytes();
+		return Arrays.equals(readedBytes, pdfHeader);
 	}
 }

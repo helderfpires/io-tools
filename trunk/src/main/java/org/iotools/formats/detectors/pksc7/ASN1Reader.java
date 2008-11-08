@@ -1,4 +1,4 @@
-package org.iotools.formats;
+package org.iotools.formats.detectors.pksc7;
 
 import java.io.EOFException;
 import java.io.IOException;

@@ -30,11 +30,25 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.iotools.formats.base.Decoder;
+import org.iotools.formats.base.Detector;
+import org.iotools.formats.base.FormatEnum;
+import org.iotools.formats.decoders.Base64Decoder;
+import org.iotools.formats.detectors.Base64Detector;
+import org.iotools.formats.detectors.M7MDetector;
+import org.iotools.formats.detectors.PemDetector;
+import org.iotools.formats.detectors.PdfDetector;
+import org.iotools.formats.detectors.RTFDetectorModule;
+import org.iotools.formats.detectors.ZipDetectorModule;
+import org.iotools.formats.detectors.pksc7.PKCS7Detector;
 
 /**
  * InputStream that wraps the original InputStream and guess the format.
@@ -49,40 +63,49 @@ import java.util.Set;
  * </ul>
  * 
  */
-public final class GuessFormatInputStream extends BufferedInputStream {
+public final class GuessInputStream extends BufferedInputStream {
+	private static final int MAX_LEVELS = 2;
+
 	private static final int READ_SIZE = 4096;
 
 	// private static final Logger LOGGER = Logger
 	// .getLogger(GuessFormatInputStream.class);
 
-	private static final Map<FormatEnum, DetectorModule> DETECTORS = new HashMap<FormatEnum, DetectorModule>();
+	private static final Map<FormatEnum, Detector> DETECTORS = new HashMap<FormatEnum, Detector>();
+	private static final Map<FormatEnum, Decoder> DECODERS = new HashMap<FormatEnum, Decoder>();
 
 	static {
-		DETECTORS.put(FormatEnum.PDF, new PdfDetectorModule());
+		DETECTORS.put(FormatEnum.BASE64, new Base64Detector());
+		DETECTORS.put(FormatEnum.M7M, new M7MDetector());
+		DETECTORS.put(FormatEnum.PDF, new PdfDetector());
+		DETECTORS.put(FormatEnum.PEM, new PemDetector());
+		DETECTORS.put(FormatEnum.PKCS7, new PKCS7Detector());
+		DETECTORS.put(FormatEnum.RTF, new RTFDetectorModule());
 		DETECTORS.put(FormatEnum.ZIP, new ZipDetectorModule());
-		DETECTORS.put(FormatEnum.M7M, new M7MDetectorModule());
-		DETECTORS.put(FormatEnum.PEM, new PEMDetectorModule());
-		DETECTORS.put(FormatEnum.PKCS7, new PKCS7DetectorModule());
-		// DETECTORS.put(FormatEnum.BASE64, new M7MDetectorModule());
+
+		DECODERS.put(FormatEnum.BASE64, new Base64Decoder());
+	}
+
+	public static void addDecoder(final FormatEnum format, final Decoder decoder) {
+		DECODERS.put(format, decoder);
 	}
 
 	public static void addDetector(final FormatEnum format,
-			final DetectorModule detector) {
+			final Detector detector) {
 		DETECTORS.put(format, detector);
 	}
 
-	public static Map<FormatEnum, DetectorModule> getDetectorsMap() {
+	public static Map<FormatEnum, Detector> getDetectorsMap() {
 		return DETECTORS;
 	}
 
 	private static FormatEnum detectFormat(final byte[] bytes,
-			final FormatEnum[] enabledFormats,
-			final DetectorModule[] extraDetectors) {
+			final FormatEnum[] enabledFormats, final Detector[] extraDetectors) {
 		FormatEnum detected = FormatEnum.UNKNOWN;
-		final Set<DetectorModule> detectors = getDetectorModules(
-				enabledFormats, extraDetectors);
+		final Set<Detector> detectors = getDetectorModules(enabledFormats,
+				extraDetectors);
 
-		for (final DetectorModule detectorModule : detectors) {
+		for (final Detector detectorModule : detectors) {
 			final int bytesToCopy = Math.min(detectorModule.getDetectLenght(),
 					bytes.length);
 			final byte[] splittedBytes = Arrays.copyOf(bytes, bytesToCopy);
@@ -94,23 +117,63 @@ public final class GuessFormatInputStream extends BufferedInputStream {
 		return detected;
 	}
 
-	private static int getBufferSize(final FormatEnum[] enabledFormats,
-			final DetectorModule[] extraDetectors) {
-		int detectSize = 1;
-		final Set<DetectorModule> detectors = getDetectorModules(
-				enabledFormats, extraDetectors);
-		for (final DetectorModule detectorModule : detectors) {
-			detectSize = Math.max(detectSize, detectorModule.getDetectLenght());
+	private static FormatEnum[] detectFormats(final byte[] bytes,
+			final FormatEnum[] enabledFormats, final Detector[] extraDetectors) {
+		final Collection<FormatEnum> formats = new ArrayList<FormatEnum>();
+		FormatEnum currentFormat = null;
+		byte[] currentBytes = bytes;
+		for (int i = 0; i < MAX_LEVELS
+				&& (currentFormat == null || DECODERS
+						.containsKey(currentFormat)); i++) {
+			currentFormat = detectFormat(currentBytes, enabledFormats,
+					extraDetectors);
+			formats.add(currentFormat);
+			if (DECODERS.containsKey(currentFormat)) {
+				currentBytes = DECODERS.get(currentFormat).decode(currentBytes);
+			}
 		}
-		return detectSize + 1;
+		return formats.toArray(new FormatEnum[formats.size()]);
 	}
 
-	private static Set<DetectorModule> getDetectorModules(
-			final FormatEnum[] enabledFormats,
-			final DetectorModule[] extraDetectors) {
-		final Set<DetectorModule> modules = new HashSet<DetectorModule>();
+	private static int getBufferSize(final FormatEnum[] enabledFormats,
+			final Detector[] extraDetectors) {
+		int detectSize = 1;
+		final Set<Detector> detectors = getDetectorModules(enabledFormats,
+				extraDetectors);
+		for (final Detector detectorModule : detectors) {
+			detectSize = Math.max(detectSize, detectorModule.getDetectLenght());
+		}
+
+		final Set<Decoder> decoders = getDecoders(enabledFormats);
+		int decodeOffset = 1;
+		for (final Decoder decoder : decoders) {
+			decodeOffset = Math.max(decodeOffset, decoder.getEncodingOffset());
+		}
+
+		float decodeRatio = 1;
+		for (final Decoder decoder : decoders) {
+			decodeRatio = Math.max(decodeRatio, decoder.getRatio());
+		}
+
+		return (int) (detectSize * decodeRatio) + decodeOffset + 1;
+	}
+
+	private static Set<Decoder> getDecoders(final FormatEnum[] enabledFormats) {
+		final Set<Decoder> modules = new HashSet<Decoder>();
 		for (final FormatEnum formatEnum : enabledFormats) {
-			final DetectorModule detectModule = DETECTORS.get(formatEnum);
+			final Decoder decoder = DECODERS.get(formatEnum);
+			if (decoder != null) {
+				modules.add(decoder);
+			}
+		}
+		return modules;
+	}
+
+	private static Set<Detector> getDetectorModules(
+			final FormatEnum[] enabledFormats, final Detector[] extraDetectors) {
+		final Set<Detector> modules = new HashSet<Detector>();
+		for (final FormatEnum formatEnum : enabledFormats) {
+			final Detector detectModule = DETECTORS.get(formatEnum);
 			if (detectModule != null) {
 				modules.add(detectModule);
 			}
@@ -122,8 +185,7 @@ public final class GuessFormatInputStream extends BufferedInputStream {
 	}
 
 	private static FormatEnum[] getEnabledFormats(
-			final FormatEnum[] enabledFormats,
-			final DetectorModule[] extraDetectors) {
+			final FormatEnum[] enabledFormats, final Detector[] extraDetectors) {
 		final Set<FormatEnum> enabledFormats1;
 		if (enabledFormats != null) {
 			enabledFormats1 = new HashSet<FormatEnum>(Arrays
@@ -132,7 +194,7 @@ public final class GuessFormatInputStream extends BufferedInputStream {
 			enabledFormats1 = new HashSet<FormatEnum>();
 		}
 		if (extraDetectors != null) {
-			for (final DetectorModule detector : extraDetectors) {
+			for (final Detector detector : extraDetectors) {
 				enabledFormats1.add(detector.getDetectedFormat());
 			}
 		}
@@ -145,8 +207,8 @@ public final class GuessFormatInputStream extends BufferedInputStream {
 		final byte[] buffer = new byte[READ_SIZE];
 		long count = 0;
 		int n = 0;
-		while ((-1 != (n = input.read(buffer))) && (count < size)) {
-			baos.write(buffer, 0, n);
+		while ((-1 != (n = input.read(buffer))) && (count <= size)) {
+			baos.write(buffer, 0, (int) Math.min(n, size - count));
 			count += n;
 		}
 		input.reset();
@@ -155,20 +217,26 @@ public final class GuessFormatInputStream extends BufferedInputStream {
 
 	private final FormatEnum[] enabledFormats;
 
-	private final FormatEnum format;
+	private final FormatEnum[] format;
 
-	public GuessFormatInputStream(final InputStream istream,
+	public GuessInputStream(final InputStream istream) throws IOException {
+		this(istream, new FormatEnum[] { FormatEnum.BASE64, FormatEnum.M7M,
+				FormatEnum.PDF, FormatEnum.PEM, FormatEnum.PKCS7,
+				FormatEnum.RTF, FormatEnum.ZIP });
+	}
+
+	public GuessInputStream(final InputStream istream,
 			final FormatEnum[] enabledFormats) throws IOException {
 		this(istream, enabledFormats, null);
 	}
 
-	public GuessFormatInputStream(final InputStream istream,
-			final FormatEnum[] enabledFormats,
-			final DetectorModule[] extraDetectors) throws IOException {
+	public GuessInputStream(final InputStream istream,
+			final FormatEnum[] enabledFormats, final Detector[] extraDetectors)
+			throws IOException {
 		super(istream, getBufferSize(enabledFormats, extraDetectors));
 		this.enabledFormats = getEnabledFormats(enabledFormats, extraDetectors);
 		final byte[] bytes = readBytesAndReset(this, super.buf.length - 1);
-		this.format = detectFormat(bytes, enabledFormats, extraDetectors);
+		this.format = detectFormats(bytes, enabledFormats, extraDetectors);
 	}
 
 	public boolean canRecognize(final FormatEnum tenum) {
@@ -176,6 +244,10 @@ public final class GuessFormatInputStream extends BufferedInputStream {
 	}
 
 	public final FormatEnum getFormat() {
+		return this.format[0];
+	}
+
+	public final FormatEnum[] getFormats() {
 		return this.format;
 	}
 }
