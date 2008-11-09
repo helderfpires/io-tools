@@ -1,11 +1,14 @@
 #summary Format Detection Informations
 
 = Introduction =
-Classes in package `org.iotools.formats` try to ease the detection of some widely used file formats.  
-These classes works well in this case: a customer can send a file with multiple formats. 
+Classes in package `org.iotools.formats` try to ease the detection of some widely used file formats.   
 
-These classes can tell you which is the format of the file "on the fly", without you have to copy it to the disk for reading it twice.
+These classes can tell you which is the format of the stream "on the fly", without you have to copy it to the disk for reading it twice.
 
+This project is a small and easy tool.If you need more detailed format detection, and you don't care of streaming you should check out these projects:
+ * [http://droid.sourceforge.net/ droid]
+ * [http://sourceforge.net/projects/jmimemagic jmimemagic]
+ * [http://sourceforge.net/projects/mime-util mime-util]
 
 = Details =
 
