@@ -28,12 +28,29 @@
 		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk</developerConnection>
 		<url>https://io-tools.googlecode.com/svn/trunk</url>
 	</scm>
-
+	<distributionManagement>
+		<site>
+			<id>svn.googlecode</id>
+			<url>scm:svn:https://dvd.smnt@io-tools.googlecode.com/svn/repo</url>
+		</site>
+	</distributionManagement>
 	<dependencies>
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
-			<version>1.1</version>
+			<version>1.1.1</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>bouncycastle</groupId>
+			<artifactId>bcprov-jdk15</artifactId>
+			<version>140</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>stax</groupId>
+			<artifactId>stax</artifactId>
+			<version>1.2.0</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>
@@ -49,18 +66,6 @@
 			<version>4.5</version>
 			<type>jar</type>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>bouncycastle</groupId>
-			<artifactId>bcprov-jdk15</artifactId>
-			<version>140</version>
-			<type>jar</type>
-		</dependency>
-		<dependency>
-			<groupId>stax</groupId>
-			<artifactId>stax</artifactId>
-			<version>1.2.0</version>
-			<type>jar</type>
 		</dependency>
 	</dependencies>
 	<reporting>
@@ -220,13 +225,18 @@
 		<extensions>
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ssh-external</artifactId>
-				<version>1.0-beta-2</version>
+				<artifactId>wagon-scm</artifactId>
+				<version>1.0-beta-4</version>
 			</extension>
 			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-webdav</artifactId>
-				<version>1.0-beta-2</version>
+				<groupId>org.apache.maven.scm</groupId>
+				<artifactId>maven-scm-manager-plexus</artifactId>
+				<version>[1.1,)</version>
+			</extension>
+			<extension>
+				<groupId>org.apache.maven.scm</groupId>
+				<artifactId>maven-scm-provider-svnexe</artifactId>
+				<version>[1.1,)</version>
 			</extension>
 		</extensions>
 	</build>
