@@ -27,7 +27,6 @@ package org.iotools.formats;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -44,9 +43,10 @@ import org.iotools.formats.base.FormatEnum;
 import org.iotools.formats.decoders.Base64Decoder;
 import org.iotools.formats.detectors.Base64Detector;
 import org.iotools.formats.detectors.M7MDetector;
-import org.iotools.formats.detectors.PemDetector;
 import org.iotools.formats.detectors.PdfDetector;
+import org.iotools.formats.detectors.PemDetector;
 import org.iotools.formats.detectors.RTFDetectorModule;
+import org.iotools.formats.detectors.XmlDetector;
 import org.iotools.formats.detectors.ZipDetectorModule;
 import org.iotools.formats.detectors.pksc7.PKCS7Detector;
 
@@ -66,8 +66,6 @@ import org.iotools.formats.detectors.pksc7.PKCS7Detector;
 public final class GuessInputStream extends BufferedInputStream {
 	private static final int MAX_LEVELS = 2;
 
-	private static final int READ_SIZE = 4096;
-
 	// private static final Logger LOGGER = Logger
 	// .getLogger(GuessFormatInputStream.class);
 
@@ -81,6 +79,7 @@ public final class GuessInputStream extends BufferedInputStream {
 		DETECTORS.put(FormatEnum.PEM, new PemDetector());
 		DETECTORS.put(FormatEnum.PKCS7, new PKCS7Detector());
 		DETECTORS.put(FormatEnum.RTF, new RTFDetectorModule());
+		DETECTORS.put(FormatEnum.XML, new XmlDetector());
 		DETECTORS.put(FormatEnum.ZIP, new ZipDetectorModule());
 
 		DECODERS.put(FormatEnum.BASE64, new Base64Decoder());
@@ -176,6 +175,9 @@ public final class GuessInputStream extends BufferedInputStream {
 			final Detector detectModule = DETECTORS.get(formatEnum);
 			if (detectModule != null) {
 				modules.add(detectModule);
+			} else {
+				throw new IllegalArgumentException("Detector for ["
+						+ formatEnum + "] not registred");
 			}
 		}
 		if (extraDetectors != null) {
@@ -203,16 +205,24 @@ public final class GuessInputStream extends BufferedInputStream {
 
 	private static byte[] readBytesAndReset(final BufferedInputStream input,
 			final int size) throws IOException {
-		final ByteArrayOutputStream baos = new ByteArrayOutputStream(size);
-		final byte[] buffer = new byte[READ_SIZE];
-		long count = 0;
+		final int size1 = size - 1;
+		final byte[] buffer = new byte[size1];
+		input.mark(size);
+		int pos = 0;
 		int n = 0;
-		while ((-1 != (n = input.read(buffer))) && (count <= size)) {
-			baos.write(buffer, 0, (int) Math.min(n, size - count));
-			count += n;
+		while ((pos < (size1))
+				&& (-1 != (n = input.read(buffer, pos, (size1 - pos))))) {
+			pos += n;
 		}
 		input.reset();
-		return baos.toByteArray();
+		byte[] result;
+		if (pos == size1) {
+			result = buffer;
+		} else {
+			result = new byte[pos];
+			System.arraycopy(buffer, 0, result, 0, pos);
+		}
+		return result;
 	}
 
 	private final FormatEnum[] enabledFormats;
@@ -235,7 +245,7 @@ public final class GuessInputStream extends BufferedInputStream {
 			throws IOException {
 		super(istream, getBufferSize(enabledFormats, extraDetectors));
 		this.enabledFormats = getEnabledFormats(enabledFormats, extraDetectors);
-		final byte[] bytes = readBytesAndReset(this, super.buf.length - 1);
+		final byte[] bytes = readBytesAndReset(this, super.buf.length);
 		this.format = detectFormats(bytes, enabledFormats, extraDetectors);
 	}
 
