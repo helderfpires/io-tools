@@ -98,6 +98,11 @@ public class TestDetectorsWithFiles extends TestCase {
 	}
 
 	@org.junit.Test
+	public void testGifDetectorModule() throws Exception {
+		checkDetector(new GifDetector(), new String[] { ".gif" });
+	}
+
+	@org.junit.Test
 	public void testM7MDetectorModule() throws Exception {
 		checkDetector(new M7MDetector(), new String[] { ".m7m" });
 	}

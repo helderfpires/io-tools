@@ -43,6 +43,7 @@ import org.iotools.formats.base.Detector;
 import org.iotools.formats.base.FormatEnum;
 import org.iotools.formats.decoders.Base64Decoder;
 import org.iotools.formats.detectors.Base64Detector;
+import org.iotools.formats.detectors.GifDetector;
 import org.iotools.formats.detectors.M7MDetector;
 import org.iotools.formats.detectors.PdfDetector;
 import org.iotools.formats.detectors.PemDetector;
@@ -65,40 +66,69 @@ import org.iotools.formats.detectors.pksc7.PKCS7Detector;
  * 
  */
 public final class GuessInputStream extends BufferedInputStream {
-	private static final int MAX_LEVELS = 2;
+	private static final Map<FormatEnum, Decoder> DECODERS = Collections
+			.synchronizedMap(new HashMap<FormatEnum, Decoder>());
 
 	// private static final Logger LOGGER = Logger
 	// .getLogger(GuessFormatInputStream.class);
 
 	private static final Map<FormatEnum, Detector> DETECTORS = Collections
 			.synchronizedMap(new HashMap<FormatEnum, Detector>());
-	private static final Map<FormatEnum, Decoder> DECODERS = Collections
-			.synchronizedMap(new HashMap<FormatEnum, Decoder>());
+	private static final int MAX_LEVELS = 2;
 
 	static {
-		DETECTORS.put(FormatEnum.BASE64, new Base64Detector());
-		DETECTORS.put(FormatEnum.M7M, new M7MDetector());
-		DETECTORS.put(FormatEnum.PDF, new PdfDetector());
-		DETECTORS.put(FormatEnum.PEM, new PemDetector());
-		DETECTORS.put(FormatEnum.PKCS7, new PKCS7Detector());
-		DETECTORS.put(FormatEnum.RTF, new RTFDetectorModule());
-		DETECTORS.put(FormatEnum.XML, new XmlDetector());
-		DETECTORS.put(FormatEnum.ZIP, new ZipDetectorModule());
+		GuessInputStream.DETECTORS.put(FormatEnum.BASE64, new Base64Detector());
+		GuessInputStream.DETECTORS.put(FormatEnum.GIF, new GifDetector());
+		GuessInputStream.DETECTORS.put(FormatEnum.M7M, new M7MDetector());
+		GuessInputStream.DETECTORS.put(FormatEnum.PDF, new PdfDetector());
+		GuessInputStream.DETECTORS.put(FormatEnum.PEM, new PemDetector());
+		GuessInputStream.DETECTORS.put(FormatEnum.PKCS7, new PKCS7Detector());
+		GuessInputStream.DETECTORS.put(FormatEnum.RTF, new RTFDetectorModule());
+		GuessInputStream.DETECTORS.put(FormatEnum.XML, new XmlDetector());
+		GuessInputStream.DETECTORS.put(FormatEnum.ZIP, new ZipDetectorModule());
 
-		DECODERS.put(FormatEnum.BASE64, new Base64Decoder());
+		GuessInputStream.DECODERS.put(FormatEnum.BASE64, new Base64Decoder());
 	}
 
-	public static void addDecoder(final FormatEnum format, final Decoder decoder) {
-		DECODERS.put(format, decoder);
+	public static void addDecoder(final Decoder decoder) {
+		if (decoder == null) {
+			throw new IllegalArgumentException("decoder is null");
+		}
+		GuessInputStream.DECODERS.put(decoder.getFormat(), decoder);
 	}
 
-	public static void addDetector(final FormatEnum format,
-			final Detector detector) {
-		DETECTORS.put(format, detector);
+	public static void addDecoders(final Decoder[] decoders) {
+		if (decoders == null) {
+			throw new IllegalArgumentException("decoders array is null");
+		}
+		for (final Decoder decoder : decoders) {
+			if (decoder != null) {
+				GuessInputStream.DECODERS.put(decoder.getFormat(), decoder);
+			}
+		}
+	}
+
+	public static void addDetector(final Detector detector) {
+		if (detector == null) {
+			throw new IllegalArgumentException("detector is null");
+		}
+		GuessInputStream.DETECTORS.put(detector.getDetectedFormat(), detector);
+	}
+
+	public static void addDetectors(final Detector[] detectors) {
+		if (detectors == null) {
+			throw new IllegalArgumentException("detectors are null");
+		}
+		for (final Detector detector : detectors) {
+			if (detector != null) {
+				GuessInputStream.DETECTORS.put(detector.getDetectedFormat(),
+						detector);
+			}
+		}
 	}
 
 	public static Map<FormatEnum, Detector> getDetectorsMap() {
-		return DETECTORS;
+		return GuessInputStream.DETECTORS;
 	}
 
 	private static FormatEnum detectFormat(final byte[] bytes,
@@ -124,14 +154,15 @@ public final class GuessInputStream extends BufferedInputStream {
 		final Collection<FormatEnum> formats = new ArrayList<FormatEnum>();
 		FormatEnum currentFormat = null;
 		byte[] currentBytes = bytes;
-		for (int i = 0; i < MAX_LEVELS
-				&& (currentFormat == null || DECODERS
+		for (int i = 0; (i < GuessInputStream.MAX_LEVELS)
+				&& ((currentFormat == null) || GuessInputStream.DECODERS
 						.containsKey(currentFormat)); i++) {
 			currentFormat = detectFormat(currentBytes, enabledFormats,
 					extraDetectors);
 			formats.add(currentFormat);
-			if (DECODERS.containsKey(currentFormat)) {
-				currentBytes = DECODERS.get(currentFormat).decode(currentBytes);
+			if (GuessInputStream.DECODERS.containsKey(currentFormat)) {
+				currentBytes = GuessInputStream.DECODERS.get(currentFormat)
+						.decode(currentBytes);
 			}
 		}
 		return formats.toArray(new FormatEnum[formats.size()]);
@@ -163,7 +194,7 @@ public final class GuessInputStream extends BufferedInputStream {
 	private static Set<Decoder> getDecoders(final FormatEnum[] enabledFormats) {
 		final Set<Decoder> modules = new HashSet<Decoder>();
 		for (final FormatEnum formatEnum : enabledFormats) {
-			final Decoder decoder = DECODERS.get(formatEnum);
+			final Decoder decoder = GuessInputStream.DECODERS.get(formatEnum);
 			if (decoder != null) {
 				modules.add(decoder);
 			}
@@ -175,7 +206,8 @@ public final class GuessInputStream extends BufferedInputStream {
 			final FormatEnum[] enabledFormats, final Detector[] extraDetectors) {
 		final Set<Detector> modules = new HashSet<Detector>();
 		for (final FormatEnum formatEnum : enabledFormats) {
-			final Detector detectModule = DETECTORS.get(formatEnum);
+			final Detector detectModule = GuessInputStream.DETECTORS
+					.get(formatEnum);
 			if (detectModule != null) {
 				modules.add(detectModule);
 			} else {
@@ -233,8 +265,8 @@ public final class GuessInputStream extends BufferedInputStream {
 	private final FormatEnum[] format;
 
 	public GuessInputStream(final InputStream istream) throws IOException {
-		this(istream, DETECTORS.keySet().toArray(
-				new FormatEnum[DETECTORS.keySet().size()]));
+		this(istream, GuessInputStream.DETECTORS.keySet().toArray(
+				new FormatEnum[GuessInputStream.DETECTORS.keySet().size()]));
 	}
 
 	public GuessInputStream(final InputStream istream,

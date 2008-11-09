@@ -6,14 +6,14 @@ import java.io.InputStream;
 
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.DERObject;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.DERObjectIdentifier;
 
 /**
  * 
  * @since 02/oct/08
  * @author dvd.smnt
  */
-final class ASN1Reader {
+public final class ASN1Reader {
 	private static final int CONSTRUCTED = 32;
 	private static final int SEQUENCE = 16;
 
@@ -23,8 +23,26 @@ final class ASN1Reader {
 
 	private InputStream istream = null;
 
-	ASN1Reader(final InputStream istream) {
+	public ASN1Reader(final InputStream istream) {
 		this.istream = istream;
+	}
+
+	/**
+	 * 
+	 * @param expectedObjIdentifier
+	 *            for pkcs7: PKCSObjectIdentifiers.signedData, <br>
+	 *            for timestamp: PKCSObjectIdentifiers.id_ct_TSTInfo.getId()
+	 * @throws IOException
+	 * @throws FormatException
+	 */
+	public void check(final DERObjectIdentifier expectedObjIdentifier)
+			throws IOException, FormatException {
+		try {
+			readSequence(this.istream);
+			readTagID(this.istream, expectedObjIdentifier);
+		} catch (final RuntimeException e) {
+			throw new FormatException("Error reading pkcs7", e);
+		}
 	}
 
 	private int getTagNo(final InputStream is, final int tag)
@@ -121,26 +139,14 @@ final class ASN1Reader {
 		return tag;
 	}
 
-	private void readTagID(final InputStream is) throws IOException,
+	private void readTagID(final InputStream is,
+			final DERObjectIdentifier expectedIdentifier) throws IOException,
 			FormatException {
 		final ASN1InputStream asn1Stream = new ASN1InputStream(is);
 		final DERObject doi = asn1Stream.readObject();
-		// contentType signedData for PKCS7, and
-		// PKCSObjectIdentifiers.id_ct_TSTInfo.getId()
-		if (!PKCSObjectIdentifiers.signedData.equals(doi)) {
-			throw new FormatException("OID atteso signedData["
-					+ PKCSObjectIdentifiers.signedData + "] ottenuto[" + doi
-					+ "]");
-			// }
-		}
-	}
-
-	void check() throws IOException, FormatException {
-		try {
-			readSequence(this.istream);
-			readTagID(this.istream);
-		} catch (final RuntimeException e) {
-			throw new FormatException("Error reading pkcs7", e);
+		if (!expectedIdentifier.equals(doi)) {
+			throw new FormatException("Expected oid signedData["
+					+ expectedIdentifier + "] got[" + doi + "]");
 		}
 	}
 }

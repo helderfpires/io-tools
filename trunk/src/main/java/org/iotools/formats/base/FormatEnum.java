@@ -41,6 +41,9 @@ import java.util.Map;
  * @author dvd.smnt
  */
 public class FormatEnum {
+
+	private static final Map<String, FormatEnum> instanceMap = new HashMap<String, FormatEnum>();
+
 	public static final int BASE64_INT = 0;
 	public static final FormatEnum BASE64 = new FormatEnum("base64",
 			BASE64_INT, "text");
@@ -77,8 +80,6 @@ public class FormatEnum {
 	public static final int ZIP_INT = 1100;
 	public static final FormatEnum ZIP = new FormatEnum("zip", ZIP_INT,
 			"application/zip");
-
-	private static final Map<String, FormatEnum> instanceMap = new HashMap<String, FormatEnum>();
 
 	public static FormatEnum fromName(final String name) {
 		final FormatEnum result = instanceMap.get(name);

@@ -1,12 +1,8 @@
-package org.iotools.formats.detectors.pksc7;
+package org.iotools.formats.detectors;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.iotools.formats.base.AbstractFormatDetector;
 import org.iotools.formats.base.FormatEnum;
 
@@ -37,32 +33,19 @@ import org.iotools.formats.base.FormatEnum;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-/**
- * Class for detecting DER and BER encoded PKCS7 files.
- * 
- * @author dvd.smnt
- */
-public class PKCS7Detector extends AbstractFormatDetector {
-	private static final Log LOGGER = LogFactory.getLog(PKCS7Detector.class);
+public class GifDetector extends AbstractFormatDetector {
+	private static final Pattern GIF_PATTERN = Pattern.compile("GIF8[7-9]a");
 
-	public PKCS7Detector() {
-		super(90, FormatEnum.PEM);
+	public GifDetector() {
+		super(6, FormatEnum.GIF);
 	}
 
 	public boolean detect(final byte[] readedBytes) {
-		final InputStream buffer = new ByteArrayInputStream(readedBytes);
 		boolean result = false;
-		try {
-			final ASN1Reader pkcsHdrRead = new ASN1Reader(buffer);
-			pkcsHdrRead.check(PKCSObjectIdentifiers.signedData);
-			result = true;
-		} catch (final FormatException e) {
-			LOGGER.debug("PKCS7 not recognized" + "Exception (normal) ["
-					+ e.getMessage() + "]");
-		} catch (final IOException e) {
-			LOGGER.warn("PKCS7 not recognized for an I/O exception", e);
-		} catch (final Throwable e) {
-			LOGGER.warn("PKCS7 not recognized for unexpected exception.", e);
+		if (readedBytes != null) {
+			final String string = new String(readedBytes);
+			final Matcher matcher = GIF_PATTERN.matcher(string);
+			result = matcher.matches();
 		}
 		return result;
 	}
