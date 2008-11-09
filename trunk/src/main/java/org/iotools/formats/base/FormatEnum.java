@@ -1,5 +1,9 @@
 package org.iotools.formats.base;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 /*
  * Copyright (c) 2008, Davide Simonetti
  * All rights reserved.
@@ -37,25 +41,75 @@ package org.iotools.formats.base;
  * @author dvd.smnt
  */
 public class FormatEnum {
-	public static final FormatEnum BASE64 = new FormatEnum("base64", 0);
-	public static final FormatEnum GIF = new FormatEnum("gif", 0);
-	public static final FormatEnum JPEG = new FormatEnum("jpeg", 0);
-	public static final FormatEnum M7M = new FormatEnum("m7m", 0);
-	public static final FormatEnum PDF = new FormatEnum("pdf", 0);
-	public static final FormatEnum RTF = new FormatEnum("rtf", 0);
-	public static final FormatEnum PEM = new FormatEnum("pem", 0);
-	public static final FormatEnum PKCS7 = new FormatEnum("pkcs7", 0);
-	public static final FormatEnum TIMESTAMP = new FormatEnum("timestamp", 0);
-	public static final FormatEnum UNKNOWN = new FormatEnum("unknown", 0);
-	public static final FormatEnum XML = new FormatEnum("xml", 0);
-	public static final FormatEnum ZIP = new FormatEnum("zip", 0);
+	public static final int BASE64_INT = 0;
+	public static final FormatEnum BASE64 = new FormatEnum("base64",
+			BASE64_INT, "text");
+	public static final int GIF_INT = 100;
+	public static final FormatEnum GIF = new FormatEnum("gif", GIF_INT,
+			"image/gif");
+	public static final int JPEG_INT = 200;
+	public static final FormatEnum JPEG = new FormatEnum("jpeg", JPEG_INT,
+			"image/jpeg");
+	public static final int M7M_INT = 300;
+	public static final FormatEnum M7M = new FormatEnum("m7m", M7M_INT,
+			"multipart/mixed");
+	public static final int PDF_INT = 400;
+	public static final FormatEnum PDF = new FormatEnum("pdf", PDF_INT,
+			"application/pdf");
+	public static final int RTF_INT = 500;
+	public static final FormatEnum RTF = new FormatEnum("rtf", RTF_INT,
+			"text/rtf");
+	public static final int PEM_INT = 600;
+	public static final FormatEnum PEM = new FormatEnum("pem", PEM_INT,
+			"application/pkcs7-signature");
+	public static final int PKCS7_INT = 700;
+	public static final FormatEnum PKCS7 = new FormatEnum("pkcs7", PKCS7_INT,
+			"application/pkcs7-signature");
+	public static final int TIMESTAMP_INT = 800;
+	public static final FormatEnum TIMESTAMP = new FormatEnum("timestamp",
+			TIMESTAMP_INT, "application/pkcs7-signature");
+	public static final int UNKNOWN_INT = 900;
+	public static final FormatEnum UNKNOWN = new FormatEnum("unknown",
+			UNKNOWN_INT, "application");
+	public static final int XML_INT = 1000;
+	public static final FormatEnum XML = new FormatEnum("xml", XML_INT,
+			"text/xml");
+	public static final int ZIP_INT = 1100;
+	public static final FormatEnum ZIP = new FormatEnum("zip", ZIP_INT,
+			"application/zip");
+
+	private static final Map<String, FormatEnum> instanceMap = new HashMap<String, FormatEnum>();
+
+	public static FormatEnum fromName(final String name) {
+		final FormatEnum result = instanceMap.get(name);
+		if (result == null) {
+			throw new IllegalArgumentException("Name [" + name
+					+ "] not allowed. Allowed names ["
+					+ Arrays.toString(instanceMap.keySet().toArray()) + "]");
+		}
+		return result;
+	}
 
 	private final int value;
 	private final String name;
+	private final String mimeType;
 
-	protected FormatEnum(final String enumName, final int enumInt) {
+	/**
+	 * constructor is protected to allow extensions.
+	 * 
+	 * @param enumName
+	 * @param enumInt
+	 */
+	protected FormatEnum(final String enumName, final int enumInt,
+			final String mime) {
 		this.name = enumName;
 		this.value = enumInt;
+		this.mimeType = mime;
+		instanceMap.put(enumName, this);
+	}
+
+	public String getMimeType() {
+		return this.mimeType;
 	}
 
 	public String getName() {

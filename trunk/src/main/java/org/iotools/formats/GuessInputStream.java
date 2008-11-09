@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -69,8 +70,10 @@ public final class GuessInputStream extends BufferedInputStream {
 	// private static final Logger LOGGER = Logger
 	// .getLogger(GuessFormatInputStream.class);
 
-	private static final Map<FormatEnum, Detector> DETECTORS = new HashMap<FormatEnum, Detector>();
-	private static final Map<FormatEnum, Decoder> DECODERS = new HashMap<FormatEnum, Decoder>();
+	private static final Map<FormatEnum, Detector> DETECTORS = Collections
+			.synchronizedMap(new HashMap<FormatEnum, Detector>());
+	private static final Map<FormatEnum, Decoder> DECODERS = Collections
+			.synchronizedMap(new HashMap<FormatEnum, Decoder>());
 
 	static {
 		DETECTORS.put(FormatEnum.BASE64, new Base64Detector());
@@ -230,9 +233,8 @@ public final class GuessInputStream extends BufferedInputStream {
 	private final FormatEnum[] format;
 
 	public GuessInputStream(final InputStream istream) throws IOException {
-		this(istream, new FormatEnum[] { FormatEnum.BASE64, FormatEnum.M7M,
-				FormatEnum.PDF, FormatEnum.PEM, FormatEnum.PKCS7,
-				FormatEnum.RTF, FormatEnum.ZIP });
+		this(istream, DETECTORS.keySet().toArray(
+				new FormatEnum[DETECTORS.keySet().size()]));
 	}
 
 	public GuessInputStream(final InputStream istream,
