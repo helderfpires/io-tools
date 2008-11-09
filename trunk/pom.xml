@@ -70,18 +70,31 @@
 	</dependencies>
 	<reporting>
 		<plugins>
+
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<aggregate>true</aggregate>
-				</configuration>
+				<reportSets>
+					<reportSet>
+						<configuration>
+							<aggregate>true</aggregate>
+						</configuration>
+						<reports>
+							<report>javadoc</report>
+						</reports>
+					</reportSet>
+				</reportSets>
 			</plugin>
+
+
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<configuration>
 					<aggregate>true</aggregate>
 				</configuration>
 			</plugin>
+
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jxr-maven-plugin</artifactId>
@@ -89,54 +102,37 @@
 					<aggregate>true</aggregate>
 				</configuration>
 			</plugin>
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<aggregate>true</aggregate>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-clover-plugin</artifactId>
-				<configuration>
-					<aggregate>true</aggregate>
-				</configuration>
-			</plugin>
-			<plugin>
+
+			<!--
+				plugin> <artifactId>maven-surefire-plugin</artifactId>
+				<configuration> <aggregate>true</aggregate> </configuration>
+				</plugin
+			-->
+			<!--
+				plugin> <artifactId>maven-clover-plugin</artifactId> <configuration>
+				<aggregate>true</aggregate> </configuration> </plugin
+			-->
+			<!--
+				<plugin> <groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId> <configuration>
+				<targetjdk>1.5</targetjdk> <rulesets>
+				<ruleset>/rulesets/basic.xml</ruleset>
+				ruleset>/rulesets/controversial.xml</ruleset </rulesets>
+				<format>xml</format> <linkXref>true</linkXref>
+				<sourceEncoding>UTF-8</sourceEncoding>
+				<minimumTokens>100</minimumTokens> <aggregate>true</aggregate>
+				</configuration> </plugin> <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-pmd-plugin</artifactId>
-				<configuration>
-					<targetjdk>1.5</targetjdk>
-					<rulesets>
-						<ruleset>/rulesets/basic.xml</ruleset>
-						<!-- ruleset>/rulesets/controversial.xml</ruleset -->
-					</rulesets>
-					<format>xml</format>
-					<linkXref>true</linkXref>
-					<sourceEncoding>UTF-8</sourceEncoding>
-					<minimumTokens>100</minimumTokens>
-					<aggregate>true</aggregate>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-changes-plugin</artifactId>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>changes-report</report>
-							<report>jira-report</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>taglist-maven-plugin</artifactId>
-				<!-- version>2.0</version -->
-				<configuration>
-					<aggregate>true</aggregate>
-				</configuration>
-			</plugin>
+				<artifactId>maven-changes-plugin</artifactId> <reportSets>
+				<reportSet> <reports> <report>changes-report</report>
+				<report>jira-report</report> </reports> </reportSet> </reportSets>
+				</plugin>
+			-->
+			<!--
+				<plugin> <groupId>org.codehaus.mojo</groupId>
+				<artifactId>taglist-maven-plugin</artifactId> <configuration>
+				<aggregate>true</aggregate> </configuration> </plugin>
+			-->
 		</plugins>
 	</reporting>
 	<build>
@@ -231,12 +227,12 @@
 			<extension>
 				<groupId>org.apache.maven.scm</groupId>
 				<artifactId>maven-scm-manager-plexus</artifactId>
-				<version>[1.1,)</version>
+				<version>1.1</version>
 			</extension>
 			<extension>
 				<groupId>org.apache.maven.scm</groupId>
 				<artifactId>maven-scm-provider-svnexe</artifactId>
-				<version>[1.1,)</version>
+				<version>1.1</version>
 			</extension>
 		</extensions>
 	</build>

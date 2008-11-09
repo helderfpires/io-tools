@@ -38,7 +38,6 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
 
 /**
  * <p>
@@ -78,8 +77,8 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 
 		private IOException exception = null;
 
-		private final Logger logger = Logger
-				.getLogger(InputStreamFromOutputStream.DataProducerRunnable.class);
+		private final Log logger = LogFactory
+				.getLog(InputStreamFromOutputStream.DataProducerRunnable.class);
 
 		private String name = null;
 

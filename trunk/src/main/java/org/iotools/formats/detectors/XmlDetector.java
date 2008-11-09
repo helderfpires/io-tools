@@ -36,7 +36,8 @@ import javax.xml.stream.XMLReporter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.iotools.formats.base.AbstractFormatDetector;
 import org.iotools.formats.base.FormatEnum;
 
@@ -66,7 +67,7 @@ public final class XmlDetector extends AbstractFormatDetector {
 
 	private static final int XML_GUESS_SIZE = 8192;
 
-	static final Logger LOGGER = Logger.getLogger(XmlDetector.class);
+	static final Log LOGGER = LogFactory.getLog(XmlDetector.class);
 
 	public XmlDetector() {
 		super(XmlDetector.XML_GUESS_SIZE, FormatEnum.XML);
