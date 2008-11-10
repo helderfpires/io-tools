@@ -5,7 +5,7 @@
 	<artifactId>io-tools</artifactId>
 	<packaging>jar</packaging>
 	<name>IOTools utilities for streams</name>
-	<version>1.1-SNAPSHOT</version>
+	<version>1.0.2</version>
 	<url>http://io-tools.googlecode.com</url>
 	<inceptionYear>2008</inceptionYear>
 	<developers>
@@ -23,9 +23,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk</connection>
-		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk</developerConnection>
-		<url>https://io-tools.googlecode.com/svn/trunk</url>
+		<connection>scm:svn:http://io-tools.googlecode.com/svn/tags/io-tools-1.0.2</connection>
+		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/tags/io-tools-1.0.2</developerConnection>
+		<url>https://io-tools.googlecode.com/svn/tags/io-tools-1.0.2</url>
 	</scm>
 	<distributionManagement>
 		<repository>
