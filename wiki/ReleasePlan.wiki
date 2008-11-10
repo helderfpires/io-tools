@@ -11,15 +11,14 @@ _ (released on oct 22, 2008) _
  * Junit and documentation on wiki.
 
 == Version 1.0 ==
-_ (85% complete) _
+_ (released on nov 10, 2008) _
 
  * Tools for file format detect: Base64, XML, PKCS#7, ZIP, PDF
  * Recursive format detection
  * Junit and documentation.
- * Publish release on repo1.
 
 == Later ==
- 
+ * Publish release on repo1.
  * Add other formats (OpenOffice, Word)
  * `BufferedOutputStream` to write to a slow `OutputStream`
  * `ReadAheadInputStream` to read from a slow `InputStream`
