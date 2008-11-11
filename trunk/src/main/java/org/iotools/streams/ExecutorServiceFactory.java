@@ -63,28 +63,26 @@ public final class ExecutorServiceFactory {
 			shutdown();
 		}
 
-		public <T> List<Future<T>> invokeAll(
-				final Collection<? extends Callable<T>> tasks)
+		public <T> List<Future<T>> invokeAll(final Collection<Callable<T>> tasks)
 				throws InterruptedException {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 		public <T> List<Future<T>> invokeAll(
-				final Collection<? extends Callable<T>> tasks,
-				final long timeout, final TimeUnit unit)
-				throws InterruptedException {
+				final Collection<Callable<T>> tasks, final long timeout,
+				final TimeUnit unit) throws InterruptedException {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
-		public <T> T invokeAny(final Collection<? extends Callable<T>> tasks)
+		public <T> T invokeAny(final Collection<Callable<T>> tasks)
 				throws InterruptedException, ExecutionException {
 
 			return null;
 		}
 
-		public <T> T invokeAny(final Collection<? extends Callable<T>> tasks,
+		public <T> T invokeAny(final Collection<Callable<T>> tasks,
 				final long timeout, final TimeUnit unit)
 				throws InterruptedException, ExecutionException,
 				TimeoutException {

@@ -46,7 +46,7 @@ public class PKCS7Detector extends AbstractFormatDetector {
 	private static final Log LOGGER = LogFactory.getLog(PKCS7Detector.class);
 
 	public PKCS7Detector() {
-		super(90, FormatEnum.PEM);
+		super(90, FormatEnum.PKCS7);
 	}
 
 	public boolean detect(final byte[] readedBytes) {

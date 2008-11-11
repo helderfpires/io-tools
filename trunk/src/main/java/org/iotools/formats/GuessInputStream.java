@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -140,7 +141,8 @@ public final class GuessInputStream extends BufferedInputStream {
 		for (final Detector detectorModule : detectors) {
 			final int bytesToCopy = Math.min(detectorModule.getDetectLenght(),
 					bytes.length);
-			final byte[] splittedBytes = Arrays.copyOf(bytes, bytesToCopy);
+			final byte[] splittedBytes = new byte[bytesToCopy];
+			System.arraycopy(bytes, 0, splittedBytes, 0, bytesToCopy);
 			if (detectorModule.detect(splittedBytes)) {
 				detected = detectorModule.getDetectedFormat();
 				break;
@@ -283,8 +285,21 @@ public final class GuessInputStream extends BufferedInputStream {
 		this.format = detectFormats(bytes, enabledFormats, extraDetectors);
 	}
 
-	public boolean canRecognize(final FormatEnum tenum) {
+	public boolean canDetect(final FormatEnum tenum) {
 		return Arrays.asList(this.enabledFormats).contains(tenum);
+	}
+
+	public boolean canDetectAll(final FormatEnum[] formatEnum) {
+		if (formatEnum == null) {
+			throw new IllegalArgumentException("Parameter formatEnum is null");
+		}
+		boolean result = true;
+		final List<FormatEnum> enabledFormatList = Arrays
+				.asList(this.enabledFormats);
+		for (final FormatEnum formatEnum2 : formatEnum) {
+			result &= enabledFormatList.contains(formatEnum2);
+		}
+		return result;
 	}
 
 	public final FormatEnum getFormat() {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.googlecode.io-tools</groupId>
 	<artifactId>io-tools</artifactId>
@@ -38,6 +39,10 @@
 			<url>scm:svn:https://dvd.smnt@io-tools.googlecode.com/svn/site</url>
 		</site>
 	</distributionManagement>
+	<issueManagement>
+		<system>GoogleIssues</system>
+		<url>http://code.google.com/p/io-tools/issues/list</url>
+	</issueManagement>
 	<dependencies>
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -47,7 +52,7 @@
 		</dependency>
 		<dependency>
 			<groupId>bouncycastle</groupId>
-			<artifactId>bcprov-jdk15</artifactId>
+			<artifactId>bcprov-jdk14</artifactId>
 			<version>140</version>
 			<type>jar</type>
 		</dependency>
@@ -55,6 +60,12 @@
 			<groupId>stax</groupId>
 			<artifactId>stax</artifactId>
 			<version>1.2.0</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.4</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>
@@ -110,10 +121,12 @@
 			<!--
 				plugin> <artifactId>maven-surefire-plugin</artifactId>
 				<configuration> <aggregate>true</aggregate> </configuration>
-				</plugin -->
+				</plugin
+			-->
 			<!--
 				plugin> <artifactId>maven-clover-plugin</artifactId> <configuration>
-				<aggregate>true</aggregate> </configuration> </plugin -->
+				<aggregate>true</aggregate> </configuration> </plugin
+			-->
 			<!--
 				<plugin> <groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId> <configuration>
@@ -229,7 +242,8 @@
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-scm</artifactId>
-				<version>1.0-alpha-5</version>
+				<!-- aspettare l'uscita della beta 5 perche' questa non va -->
+				<version>1.0-beta-4</version>
 			</extension>
 			<extension>
 				<groupId>org.apache.maven.scm</groupId>

@@ -16,11 +16,11 @@ public class TestGuessInputStream {
 	@Test
 	public void testDecoder() throws IOException {
 		final InputStream istream = TestGuessInputStream.class
-				.getResourceAsStream("detectors/test_pdf.pdf.b64");
+				.getResourceAsStream("/testFiles/test_pdf.pdf.b64");
 		final byte[] reference = IOUtils.toByteArray(istream);
 
 		final InputStream istream2 = TestGuessInputStream.class
-				.getResourceAsStream("detectors/test_pdf.pdf.b64");
+				.getResourceAsStream("/testFiles/test_pdf.pdf.b64");
 		final GuessInputStream gis = new GuessInputStream(istream2,
 				new FormatEnum[] { FormatEnum.BASE64, FormatEnum.PDF });
 		assertEquals("Format detected", FormatEnum.BASE64, gis.getFormat());
@@ -34,11 +34,11 @@ public class TestGuessInputStream {
 	@Test
 	public void testEnabledFormat() throws IOException {
 		final InputStream istream = TestGuessInputStream.class
-				.getResourceAsStream("detectors/test_pdf.pdf");
+				.getResourceAsStream("/testFiles/test_pdf.pdf");
 		final byte[] reference = IOUtils.toByteArray(istream);
 
 		final InputStream istream2 = TestGuessInputStream.class
-				.getResourceAsStream("detectors/test_pdf.pdf");
+				.getResourceAsStream("/testFiles/test_pdf.pdf");
 		final GuessInputStream gis = new GuessInputStream(istream2,
 				new FormatEnum[] { FormatEnum.PDF });
 		assertEquals("Format detected", FormatEnum.PDF, gis.getFormat());
@@ -51,11 +51,11 @@ public class TestGuessInputStream {
 	@Test
 	public void testNotEnabledFormat() throws IOException {
 		final InputStream istream = TestGuessInputStream.class
-				.getResourceAsStream("detectors/test_pdf.pdf");
+				.getResourceAsStream("/testFiles/test_pdf.pdf");
 		final byte[] reference = IOUtils.toByteArray(istream);
 
 		final InputStream istream2 = TestGuessInputStream.class
-				.getResourceAsStream("detectors/test_pdf.pdf");
+				.getResourceAsStream("/testFiles/test_pdf.pdf");
 		final GuessInputStream gis = new GuessInputStream(istream2,
 				new FormatEnum[] { FormatEnum.XML });
 		assertEquals("Format detected", FormatEnum.UNKNOWN, gis.getFormat());
