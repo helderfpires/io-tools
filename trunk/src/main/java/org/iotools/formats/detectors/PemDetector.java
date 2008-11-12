@@ -3,7 +3,6 @@ package org.iotools.formats.detectors;
 import org.iotools.formats.base.AbstractFormatDetector;
 import org.iotools.formats.base.FormatEnum;
 
-
 /*
  * Copyright (c) 2008, Davide Simonetti
  * All rights reserved.
@@ -42,7 +41,7 @@ public class PemDetector extends AbstractFormatDetector {
 		boolean result = false;
 		if (readedBytes != null) {
 			final String string = new String(readedBytes);
-			result = string.toLowerCase().contains(PEM.toLowerCase());
+			result = string.toLowerCase().indexOf(PEM.toLowerCase()) >= 0;
 		}
 		return result;
 	}

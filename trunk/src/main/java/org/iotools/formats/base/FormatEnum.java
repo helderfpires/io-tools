@@ -1,8 +1,6 @@
 package org.iotools.formats.base;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import org.apache.commons.lang.enums.ValuedEnum;
 
 /*
  * Copyright (c) 2008, Davide Simonetti
@@ -40,9 +38,12 @@ import java.util.Map;
  * @since oct 24, 2008
  * @author dvd.smnt
  */
-public class FormatEnum {
+public class FormatEnum extends ValuedEnum {
 
-	private static final Map<String, FormatEnum> instanceMap = new HashMap<String, FormatEnum>();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5685026597452193393L;
 
 	public static final int BASE64_INT = 0;
 	public static final FormatEnum BASE64 = new FormatEnum("base64",
@@ -81,18 +82,6 @@ public class FormatEnum {
 	public static final FormatEnum ZIP = new FormatEnum("zip", ZIP_INT,
 			"application/zip");
 
-	public static FormatEnum fromName(final String name) {
-		final FormatEnum result = instanceMap.get(name);
-		if (result == null) {
-			throw new IllegalArgumentException("Name [" + name
-					+ "] not allowed. Allowed names ["
-					+ Arrays.toString(instanceMap.keySet().toArray()) + "]");
-		}
-		return result;
-	}
-
-	private final int value;
-	private final String name;
 	private final String mimeType;
 
 	/**
@@ -103,27 +92,16 @@ public class FormatEnum {
 	 */
 	protected FormatEnum(final String enumName, final int enumInt,
 			final String mime) {
-		this.name = enumName;
-		this.value = enumInt;
+		super(enumName, enumInt);
 		this.mimeType = mime;
-		instanceMap.put(enumName, this);
 	}
 
 	public String getMimeType() {
 		return this.mimeType;
 	}
 
-	public String getName() {
-		return this.name;
-	}
-
-	public int getValue() {
-		return this.value;
-	}
-
-	@Override
 	public String toString() {
-		return "[" + this.name + "]";
+		return "[" + this.getName() + "]";
 	}
 
 }

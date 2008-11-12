@@ -3,7 +3,6 @@ package org.iotools.formats.detectors;
 import org.iotools.formats.base.AbstractFormatDetector;
 import org.iotools.formats.base.FormatEnum;
 
-
 /*
  * Copyright (c) 2008, Davide Simonetti
  * All rights reserved.
@@ -42,7 +41,7 @@ public class M7MDetector extends AbstractFormatDetector {
 		boolean result = false;
 		if (readedBytes != null) {
 			final String string = new String(readedBytes);
-			result = string.toLowerCase().contains(M7M.toLowerCase());
+			result = string.toLowerCase().indexOf(M7M.toLowerCase()) >= 0;
 		}
 		return result;
 	}

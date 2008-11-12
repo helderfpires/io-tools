@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -67,14 +68,14 @@ import org.iotools.formats.detectors.pksc7.PKCS7Detector;
  * 
  */
 public final class GuessInputStream extends BufferedInputStream {
-	private static final Map<FormatEnum, Decoder> DECODERS = Collections
-			.synchronizedMap(new HashMap<FormatEnum, Decoder>());
+	private static final Map DECODERS = Collections
+			.synchronizedMap(new HashMap());
 
 	// private static final Logger LOGGER = Logger
 	// .getLogger(GuessFormatInputStream.class);
 
-	private static final Map<FormatEnum, Detector> DETECTORS = Collections
-			.synchronizedMap(new HashMap<FormatEnum, Detector>());
+	private static final Map DETECTORS = Collections
+			.synchronizedMap(new HashMap());
 	private static final int MAX_LEVELS = 2;
 
 	static {
@@ -102,7 +103,8 @@ public final class GuessInputStream extends BufferedInputStream {
 		if (decoders == null) {
 			throw new IllegalArgumentException("decoders array is null");
 		}
-		for (final Decoder decoder : decoders) {
+		for (int i = 0; i < decoders.length; i++) {
+			final Decoder decoder = decoders[i];
 			if (decoder != null) {
 				GuessInputStream.DECODERS.put(decoder.getFormat(), decoder);
 			}
@@ -120,7 +122,8 @@ public final class GuessInputStream extends BufferedInputStream {
 		if (detectors == null) {
 			throw new IllegalArgumentException("detectors are null");
 		}
-		for (final Detector detector : detectors) {
+		for (int i = 0; i < detectors.length; i++) {
+			final Detector detector = detectors[i];
 			if (detector != null) {
 				GuessInputStream.DETECTORS.put(detector.getDetectedFormat(),
 						detector);
@@ -128,17 +131,31 @@ public final class GuessInputStream extends BufferedInputStream {
 		}
 	}
 
-	public static Map<FormatEnum, Detector> getDetectorsMap() {
+	public static Map getDetectorsMap() {
 		return GuessInputStream.DETECTORS;
+	}
+
+	/**
+	 * This method creates an instance of the GuessInputStream. It checks if the
+	 * InputStream is already an instance of GuessInputStream and do
+	 * optimizations if possible.
+	 * 
+	 * @param istream
+	 * @return
+	 */
+	public static GuessInputStream getInstance(final InputStream istream,
+			final FormatEnum[] enabledFormats) throws IOException {
+		final GuessInputStream result = new GuessInputStream(istream,
+				enabledFormats);
+		return result;
 	}
 
 	private static FormatEnum detectFormat(final byte[] bytes,
 			final FormatEnum[] enabledFormats, final Detector[] extraDetectors) {
 		FormatEnum detected = FormatEnum.UNKNOWN;
-		final Set<Detector> detectors = getDetectorModules(enabledFormats,
-				extraDetectors);
-
-		for (final Detector detectorModule : detectors) {
+		final Set detectors = getDetectorModules(enabledFormats, extraDetectors);
+		for (final Iterator iterator = detectors.iterator(); iterator.hasNext();) {
+			final Detector detectorModule = (Detector) iterator.next();
 			final int bytesToCopy = Math.min(detectorModule.getDetectLenght(),
 					bytes.length);
 			final byte[] splittedBytes = new byte[bytesToCopy];
@@ -153,7 +170,7 @@ public final class GuessInputStream extends BufferedInputStream {
 
 	private static FormatEnum[] detectFormats(final byte[] bytes,
 			final FormatEnum[] enabledFormats, final Detector[] extraDetectors) {
-		final Collection<FormatEnum> formats = new ArrayList<FormatEnum>();
+		final Collection formats = new ArrayList();
 		FormatEnum currentFormat = null;
 		byte[] currentBytes = bytes;
 		for (int i = 0; (i < GuessInputStream.MAX_LEVELS)
@@ -163,40 +180,44 @@ public final class GuessInputStream extends BufferedInputStream {
 					extraDetectors);
 			formats.add(currentFormat);
 			if (GuessInputStream.DECODERS.containsKey(currentFormat)) {
-				currentBytes = GuessInputStream.DECODERS.get(currentFormat)
-						.decode(currentBytes);
+				currentBytes = ((Decoder) GuessInputStream.DECODERS
+						.get(currentFormat)).decode(currentBytes);
 			}
 		}
-		return formats.toArray(new FormatEnum[formats.size()]);
+		return (FormatEnum[]) formats.toArray(new FormatEnum[formats.size()]);
 	}
 
 	private static int getBufferSize(final FormatEnum[] enabledFormats,
 			final Detector[] extraDetectors) {
 		int detectSize = 1;
-		final Set<Detector> detectors = getDetectorModules(enabledFormats,
-				extraDetectors);
-		for (final Detector detectorModule : detectors) {
+		final Set detectors = getDetectorModules(enabledFormats, extraDetectors);
+		for (final Iterator iterator = detectors.iterator(); iterator.hasNext();) {
+			final Detector detectorModule = (Detector) iterator.next();
 			detectSize = Math.max(detectSize, detectorModule.getDetectLenght());
 		}
 
-		final Set<Decoder> decoders = getDecoders(enabledFormats);
+		final Set decoders = getDecoders(enabledFormats);
 		int decodeOffset = 1;
-		for (final Decoder decoder : decoders) {
+		for (final Iterator iterator = decoders.iterator(); iterator.hasNext();) {
+			final Decoder decoder = (Decoder) iterator.next();
 			decodeOffset = Math.max(decodeOffset, decoder.getEncodingOffset());
 		}
 
 		float decodeRatio = 1;
-		for (final Decoder decoder : decoders) {
+		for (final Iterator iterator = decoders.iterator(); iterator.hasNext();) {
+			final Decoder decoder = (Decoder) iterator.next();
 			decodeRatio = Math.max(decodeRatio, decoder.getRatio());
 		}
 
 		return (int) (detectSize * decodeRatio) + decodeOffset + 1;
 	}
 
-	private static Set<Decoder> getDecoders(final FormatEnum[] enabledFormats) {
-		final Set<Decoder> modules = new HashSet<Decoder>();
-		for (final FormatEnum formatEnum : enabledFormats) {
-			final Decoder decoder = GuessInputStream.DECODERS.get(formatEnum);
+	private static Set getDecoders(final FormatEnum[] enabledFormats) {
+		final Set modules = new HashSet();
+		for (int i = 0; i < enabledFormats.length; i++) {
+			final FormatEnum formatEnum = enabledFormats[i];
+			final Decoder decoder = (Decoder) GuessInputStream.DECODERS
+					.get(formatEnum);
 			if (decoder != null) {
 				modules.add(decoder);
 			}
@@ -204,11 +225,12 @@ public final class GuessInputStream extends BufferedInputStream {
 		return modules;
 	}
 
-	private static Set<Detector> getDetectorModules(
-			final FormatEnum[] enabledFormats, final Detector[] extraDetectors) {
-		final Set<Detector> modules = new HashSet<Detector>();
-		for (final FormatEnum formatEnum : enabledFormats) {
-			final Detector detectModule = GuessInputStream.DETECTORS
+	private static Set getDetectorModules(final FormatEnum[] enabledFormats,
+			final Detector[] extraDetectors) {
+		final Set modules = new HashSet();
+		for (int i = 0; i < enabledFormats.length; i++) {
+			final FormatEnum formatEnum = enabledFormats[i];
+			final Detector detectModule = (Detector) GuessInputStream.DETECTORS
 					.get(formatEnum);
 			if (detectModule != null) {
 				modules.add(detectModule);
@@ -225,19 +247,20 @@ public final class GuessInputStream extends BufferedInputStream {
 
 	private static FormatEnum[] getEnabledFormats(
 			final FormatEnum[] enabledFormats, final Detector[] extraDetectors) {
-		final Set<FormatEnum> enabledFormats1;
+		final Set enabledFormats1;
 		if (enabledFormats != null) {
-			enabledFormats1 = new HashSet<FormatEnum>(Arrays
-					.asList(enabledFormats));
+			enabledFormats1 = new HashSet(Arrays.asList(enabledFormats));
 		} else {
-			enabledFormats1 = new HashSet<FormatEnum>();
+			enabledFormats1 = new HashSet();
 		}
 		if (extraDetectors != null) {
-			for (final Detector detector : extraDetectors) {
+			for (int i = 0; i < extraDetectors.length; i++) {
+				final Detector detector = extraDetectors[i];
 				enabledFormats1.add(detector.getDetectedFormat());
 			}
 		}
-		return enabledFormats1.toArray(new FormatEnum[enabledFormats1.size()]);
+		return (FormatEnum[]) enabledFormats1
+				.toArray(new FormatEnum[enabledFormats1.size()]);
 	}
 
 	private static byte[] readBytesAndReset(final BufferedInputStream input,
@@ -267,13 +290,10 @@ public final class GuessInputStream extends BufferedInputStream {
 	private final FormatEnum[] format;
 
 	public GuessInputStream(final InputStream istream) throws IOException {
-		this(istream, GuessInputStream.DETECTORS.keySet().toArray(
-				new FormatEnum[GuessInputStream.DETECTORS.keySet().size()]));
-	}
-
-	public GuessInputStream(final InputStream istream,
-			final FormatEnum[] enabledFormats) throws IOException {
-		this(istream, enabledFormats, null);
+		this(istream, (FormatEnum[]) GuessInputStream.DETECTORS.keySet()
+				.toArray(
+						new FormatEnum[GuessInputStream.DETECTORS.keySet()
+								.size()]));
 	}
 
 	public GuessInputStream(final InputStream istream,
@@ -285,19 +305,27 @@ public final class GuessInputStream extends BufferedInputStream {
 		this.format = detectFormats(bytes, enabledFormats, extraDetectors);
 	}
 
+	/*
+	 * SEE getInstance()
+	 */
+	private GuessInputStream(final InputStream istream,
+			final FormatEnum[] enabledFormats) throws IOException {
+		this(istream, enabledFormats, null);
+	}
+
 	public boolean canDetect(final FormatEnum tenum) {
 		return Arrays.asList(this.enabledFormats).contains(tenum);
 	}
 
-	public boolean canDetectAll(final FormatEnum[] formatEnum) {
-		if (formatEnum == null) {
+	public boolean canDetectAll(final FormatEnum[] formatEnums) {
+		if (formatEnums == null) {
 			throw new IllegalArgumentException("Parameter formatEnum is null");
 		}
 		boolean result = true;
-		final List<FormatEnum> enabledFormatList = Arrays
-				.asList(this.enabledFormats);
-		for (final FormatEnum formatEnum2 : formatEnum) {
-			result &= enabledFormatList.contains(formatEnum2);
+		final List enabledFormatList = Arrays.asList(this.enabledFormats);
+		for (int i = 0; (i < formatEnums.length) && result; i++) {
+			final FormatEnum formatEnum = formatEnums[i];
+			result &= enabledFormatList.contains(formatEnum);
 		}
 		return result;
 	}
