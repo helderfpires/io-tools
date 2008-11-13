@@ -2,7 +2,7 @@
 #labels Featured
 
 = Introduction =
-Classes in package `org.iotools.formats` try to ease the detection of some widely used file formats. The main focus are documents (optionally with digital signature) and images.
+Classes in jar `wazstream.jar` try to ease the detection of some widely used file formats. The main focus are documents (optionally with digital signature) and images.
 
 These classes can tell you which is the format of the stream "on the fly", without you have to copy it to the disk for reading it twice. They're useful when you have an `InputStream` coming for instance from a Database or a content repository, you want to know the format but later you also need the whole stream for further processing.
 
@@ -34,6 +34,9 @@ FormatEnum detectedFormat = gis.getFormat();
 //now you can't use `istream` anymore, you must use only `gis`
 }}}
 
+= Detected formats table =
+
+* PDF
 ----
 To do:
  * Add a new format.
