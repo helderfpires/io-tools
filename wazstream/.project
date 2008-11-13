@@ -1,6 +1,6 @@
 <projectDescription>
   <name>wazstream</name>
-  <comment>Stream Identification Utilities</comment>
+  <comment>Stream identification utilities</comment>
   <projects/>
   <buildSpec>
     <buildCommand>
