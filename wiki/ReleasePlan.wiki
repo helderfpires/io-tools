@@ -15,7 +15,13 @@ _ (released on nov 10, 2008) _
 
  * Tools for file format detect: Base64, XML, PKCS#7, ZIP, PDF
  * Recursive format detection
- * Junit and documentation.
+ * Junit and documentaton.
+
+== Version 1.0.6 ==
+_ (wip 50%) _
+ * Java 1.4 compatibility.
+ * Formats part ( _wazstream_ ) separated from `InputStream` and `OutputStream` ( _easystream_ ) [
+ * 
 
 == Later ==
  * Publish release on repo1.
