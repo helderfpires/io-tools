@@ -1,4 +1,4 @@
-package org.iotools.formats.detectors;
+package org.googlecode.iotools.fmt.detectors;
 
 /*
  * Copyright (c) 2008, Davide Simonetti.  All rights reserved.
@@ -38,8 +38,8 @@ import javax.xml.stream.events.XMLEvent;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.iotools.formats.base.AbstractFormatDetector;
-import org.iotools.formats.base.FormatEnum;
+import org.googlecode.iotools.fmt.base.AbstractFormatDetector;
+import org.googlecode.iotools.fmt.base.FormatEnum;
 
 import com.bea.xml.stream.MXParserFactory;
 

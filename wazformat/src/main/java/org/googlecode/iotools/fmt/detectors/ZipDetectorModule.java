@@ -1,4 +1,4 @@
-package org.iotools.formats.detectors;
+package org.googlecode.iotools.fmt.detectors;
 
 /*
  * Copyright (c) 2008, Davide Simonetti
@@ -28,8 +28,8 @@ package org.iotools.formats.detectors;
  */
 import java.util.Arrays;
 
-import org.iotools.formats.base.AbstractFormatDetector;
-import org.iotools.formats.base.FormatEnum;
+import org.googlecode.iotools.fmt.base.AbstractFormatDetector;
+import org.googlecode.iotools.fmt.base.FormatEnum;
 
 /**
  * Detects zip files

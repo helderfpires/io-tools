@@ -1,8 +1,8 @@
-package org.iotools.formats.decoders;
+package org.googlecode.iotools.fmt.decoders;
 
 import org.bouncycastle.util.encoders.Base64;
-import org.iotools.formats.base.Decoder;
-import org.iotools.formats.base.FormatEnum;
+import org.googlecode.iotools.fmt.base.Decoder;
+import org.googlecode.iotools.fmt.base.FormatEnum;
 
 public class Base64Decoder implements Decoder {
 

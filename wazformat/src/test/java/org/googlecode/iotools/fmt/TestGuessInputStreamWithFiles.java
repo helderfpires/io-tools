@@ -1,4 +1,4 @@
-package org.iotools.formats;
+package org.googlecode.iotools.fmt;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,7 +13,7 @@ import java.util.Vector;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.IOUtils;
-import org.iotools.formats.base.FormatEnum;
+import org.googlecode.iotools.fmt.base.FormatEnum;
 
 public class TestGuessInputStreamWithFiles extends TestCase {
 

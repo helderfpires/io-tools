@@ -1,4 +1,6 @@
-package org.googlecode.iotools.fmt.base;
+package org.goglecode.iotools.streams;
+
+import org.apache.commons.lang.enums.ValuedEnum;
 
 /*
  * Copyright (c) 2008, Davide Simonetti
@@ -26,23 +28,51 @@ package org.googlecode.iotools.fmt.base;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+/**
+ * This class describes how Threads are used
+ * 
+ * @author Davide Simonetti
+ * 
+ */
+public final class ExecutionModel extends ValuedEnum {
+	/**
+	 * <p>
+	 * Only one thread is shared by all instances.
+	 * </p>
+	 */
+	public static final int SINGLE_THREAD_INT = 1;
+	public static final ExecutionModel SINGLE_THREAD = new ExecutionModel(
+			"single-thread", SINGLE_THREAD_INT);
 
-public abstract class AbstractFormatDetector implements Detector {
-	private final int detectLenght;
-	private final FormatEnum detectedFormat;
+	/**
+	 * <p>
+	 * Threads are taken from a static pool.
+	 * </p>
+	 * Some slow thread might lock up the pool and other processes might be
+	 * slowed down
+	 */
+	public static final int STATIC_THREAD_POOL_INT = 2;
+	public static final ExecutionModel STATIC_THREAD_POOL = new ExecutionModel(
+			"static-thread-pool", STATIC_THREAD_POOL_INT);
 
-	protected AbstractFormatDetector(final int detectLenght,
-			final FormatEnum detectedFormat) {
-		this.detectLenght = detectLenght;
-		this.detectedFormat = detectedFormat;
-	}
+	/**
+	 * <p>
+	 * One thread per instance of class. Slow but each instance can work in
+	 * isolation. Also if some thread is not correctly closed there might be
+	 * threads leaks.
+	 * </p>
+	 */
+	public static final int THREAD_PER_INSTANCE_INT = 3;
+	public static final ExecutionModel THREAD_PER_INSTANCE = new ExecutionModel(
+			"thread-per-instance", THREAD_PER_INSTANCE_INT);
 
-	public final FormatEnum getDetectedFormat() {
-		return this.detectedFormat;
-	}
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2830105114123569065L;
 
-	public final int getDetectLenght() {
-		return this.detectLenght;
+	private ExecutionModel(final String name, final int value) {
+		super(name, value);
 	}
 
 }

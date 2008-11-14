@@ -1,4 +1,4 @@
-package org.iotools.formats;
+package org.googlecode.iotools.fmt;
 
 /*
  * Copyright (c) 2008, Davide Simonetti
@@ -40,19 +40,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.iotools.formats.base.Decoder;
-import org.iotools.formats.base.Detector;
-import org.iotools.formats.base.FormatEnum;
-import org.iotools.formats.decoders.Base64Decoder;
-import org.iotools.formats.detectors.Base64Detector;
-import org.iotools.formats.detectors.GifDetector;
-import org.iotools.formats.detectors.M7MDetector;
-import org.iotools.formats.detectors.PdfDetector;
-import org.iotools.formats.detectors.PemDetector;
-import org.iotools.formats.detectors.RTFDetectorModule;
-import org.iotools.formats.detectors.XmlDetector;
-import org.iotools.formats.detectors.ZipDetectorModule;
-import org.iotools.formats.detectors.pksc7.PKCS7Detector;
+import org.googlecode.iotools.fmt.base.Decoder;
+import org.googlecode.iotools.fmt.base.Detector;
+import org.googlecode.iotools.fmt.base.FormatEnum;
+import org.googlecode.iotools.fmt.decoders.Base64Decoder;
+import org.googlecode.iotools.fmt.detectors.Base64Detector;
+import org.googlecode.iotools.fmt.detectors.GifDetector;
+import org.googlecode.iotools.fmt.detectors.M7MDetector;
+import org.googlecode.iotools.fmt.detectors.PdfDetector;
+import org.googlecode.iotools.fmt.detectors.PemDetector;
+import org.googlecode.iotools.fmt.detectors.RTFDetectorModule;
+import org.googlecode.iotools.fmt.detectors.XmlDetector;
+import org.googlecode.iotools.fmt.detectors.ZipDetectorModule;
+import org.googlecode.iotools.fmt.detectors.pksc7.PKCS7Detector;
 
 /**
  * InputStream that wraps the original InputStream and guess the format.

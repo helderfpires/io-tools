@@ -1,4 +1,4 @@
-package org.iotools.formats.detectors.pksc7;
+package org.googlecode.iotools.fmt.detectors.pksc7;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -7,8 +7,8 @@ import java.io.InputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.iotools.formats.base.AbstractFormatDetector;
-import org.iotools.formats.base.FormatEnum;
+import org.googlecode.iotools.fmt.base.AbstractFormatDetector;
+import org.googlecode.iotools.fmt.base.FormatEnum;
 
 /*
  * Copyright (c) 2008, Davide Simonetti
