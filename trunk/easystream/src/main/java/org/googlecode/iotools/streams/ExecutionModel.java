@@ -1,4 +1,4 @@
-package org.googlecode.iotools.fmt.base;
+package org.googlecode.iotools.streams;
 
 /*
  * Copyright (c) 2008, Davide Simonetti
@@ -26,23 +26,34 @@ package org.googlecode.iotools.fmt.base;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+/**
+ * This class describes how Threads are used
+ * 
+ * @author Davide Simonetti
+ * 
+ */
+public enum ExecutionModel {
+	/**
+	 * <p>
+	 * Threads are taken from a static pool.
+	 * </p>
+	 * Some slow thread might lock up the pool and other processes might be
+	 * slowed down
+	 */
 
-public abstract class AbstractFormatDetector implements Detector {
-	private final int detectLenght;
-	private final FormatEnum detectedFormat;
-
-	protected AbstractFormatDetector(final int detectLenght,
-			final FormatEnum detectedFormat) {
-		this.detectLenght = detectLenght;
-		this.detectedFormat = detectedFormat;
-	}
-
-	public final FormatEnum getDetectedFormat() {
-		return this.detectedFormat;
-	}
-
-	public final int getDetectLenght() {
-		return this.detectLenght;
-	}
-
+	STATIC_THREAD_POOL,
+	/**
+	 * <p>
+	 * One thread per instance of class. Slow but each instance can work in
+	 * isolation. Also if some thread is not correctly closed there might be
+	 * threads leaks.
+	 * </p>
+	 */
+	THREAD_PER_INSTANCE,
+	/**
+	 * <p>
+	 * Only one thread is shared by all instances.
+	 * </p>
+	 */
+	SINGLE_THREAD
 }

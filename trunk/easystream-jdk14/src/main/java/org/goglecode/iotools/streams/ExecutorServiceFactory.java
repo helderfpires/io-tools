@@ -1,4 +1,4 @@
-package org.googlecode.iotools.fmt.base;
+package org.goglecode.iotools.streams;
 
 /*
  * Copyright (c) 2008, Davide Simonetti
@@ -26,23 +26,49 @@ package org.googlecode.iotools.fmt.base;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+import EDU.oswego.cs.dl.util.concurrent.Executor;
+import EDU.oswego.cs.dl.util.concurrent.PooledExecutor;
+import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
+import EDU.oswego.cs.dl.util.concurrent.ThreadedExecutor;
 
-public abstract class AbstractFormatDetector implements Detector {
-	private final int detectLenght;
-	private final FormatEnum detectedFormat;
+/**
+ * This class is responsible of instantiating the right executor given an
+ * ExecutionModel
+ * 
+ * TODO: Should return an executorService for joins
+ * 
+ * @author Davide Simonetti
+ * 
+ */
+public final class ExecutorServiceFactory {
 
-	protected AbstractFormatDetector(final int detectLenght,
-			final FormatEnum detectedFormat) {
-		this.detectLenght = detectLenght;
-		this.detectedFormat = detectedFormat;
+	private static Executor QUEUED_EXECUTOR = new QueuedExecutor();
+
+	private static Executor POOLED_EXECUTOR = new PooledExecutor(20);
+
+	private static Executor THREAD_PER_INSTANCE = new ThreadedExecutor();
+
+	public static Executor getExecutor(final ExecutionModel tmodel) {
+		final Executor result;
+		switch (tmodel.getValue()) {
+		case ExecutionModel.THREAD_PER_INSTANCE_INT:
+			result = ExecutorServiceFactory.THREAD_PER_INSTANCE;
+			break;
+		case ExecutionModel.STATIC_THREAD_POOL_INT:
+			result = ExecutorServiceFactory.POOLED_EXECUTOR;
+			break;
+		case ExecutionModel.SINGLE_THREAD_INT:
+			result = ExecutorServiceFactory.QUEUED_EXECUTOR;
+			break;
+
+		default:
+			throw new UnsupportedOperationException("ExecutionModel [" + tmodel
+					+ "] not supported");
+		}
+		return result;
 	}
 
-	public final FormatEnum getDetectedFormat() {
-		return this.detectedFormat;
+	public static void setDefaultExecutor(final Executor executor) {
+		POOLED_EXECUTOR = executor;
 	}
-
-	public final int getDetectLenght() {
-		return this.detectLenght;
-	}
-
 }

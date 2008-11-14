@@ -11,7 +11,9 @@
   <groupId>com.googlecode.io-tools</groupId>
   <version>1.0.6-SNAPSHOT</version>
   <modules>
-    <module>wazstream</module>
+    <module>wazformat</module>
+    <module>easystream</module>
+    <module>easystream-jdk14</module>
   </modules>
   <build>
     <plugins>

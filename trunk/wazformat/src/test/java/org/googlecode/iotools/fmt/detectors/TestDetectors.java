@@ -1,4 +1,4 @@
-package org.iotools.formats.detectors;
+package org.googlecode.iotools.fmt.detectors;
 
 import junit.framework.TestCase;
 

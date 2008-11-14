@@ -1,4 +1,4 @@
-package org.iotools.formats.detectors.pksc7;
+package org.googlecode.iotools.fmt.detectors.pksc7;
 
 class FormatException extends Exception {
 

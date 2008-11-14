@@ -1,4 +1,4 @@
-package org.iotools.formats.base;
+package org.googlecode.iotools.fmt.base;
 
 
 /*

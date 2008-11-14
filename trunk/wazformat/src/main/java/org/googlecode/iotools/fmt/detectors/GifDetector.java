@@ -1,10 +1,10 @@
-package org.iotools.formats.detectors;
+package org.googlecode.iotools.fmt.detectors;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.iotools.formats.base.AbstractFormatDetector;
-import org.iotools.formats.base.FormatEnum;
+import org.googlecode.iotools.fmt.base.AbstractFormatDetector;
+import org.googlecode.iotools.fmt.base.FormatEnum;
 
 /*
  * Copyright (c) 2008, Davide Simonetti
