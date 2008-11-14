@@ -135,7 +135,7 @@ public abstract class OutputStreamToInputStream extends OutputStream {
 		final DataConsumerRunnable executingProcess = new DataConsumerRunnable(
 				callerId, pipedIS);
 		this.joinOnClose = joinOnClose;
-		this.writingResult = executor.execute(executingProcess);
+		this.writingResult = executor.(executingProcess);
 	}
 
 	public final void close() throws IOException {
