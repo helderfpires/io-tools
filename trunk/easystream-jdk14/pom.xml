@@ -10,7 +10,7 @@
 	<groupId>com.googlecode.io-tools</groupId>
 	<artifactId>easystream-jdk14</artifactId>
 	<packaging>jar</packaging>
-	<name>EasyStream</name>
+	<name>EasyStream-jdk14</name>
 	<description>Stream utilities</description>
 	<version>1.0.6-SNAPSHOT</version>
 	<url>http://io-tools.googlecode.com</url>
@@ -30,8 +30,8 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk/easystream</connection>
-		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk/easystream</developerConnection>
+		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk/easystream-jdk14</connection>
+		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk/easystream-jdk14</developerConnection>
 	</scm>
 	<distributionManagement>
 		<repository>
