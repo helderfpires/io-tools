@@ -35,9 +35,9 @@ FormatEnum detectedFormat = gis.getFormat();
 }}}
 
 = Detected formats table =
-_ For a complete list see org.googlecode.iotools.fmt.base.FormatEnum _
+_ For a complete list see org.googlecode.iotools.fmt.base.!FormatEnum _
 
-|| !FormatEnum || !MimeType || Description ||
+|| *!FormatEnum* || *!MimeType* || *Description* ||
 || Gif || image/gif        || Gif images ||
 || PDF || applicatoion/pdf || Adobe Pdf ||
 || Rtf || application/rtf  || Rich text Format ||
