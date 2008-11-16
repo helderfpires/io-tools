@@ -17,7 +17,7 @@ Detection of formats is easy. Here is a sample code:
 {{{
 InputStream istream = ... //inputStream that comes from your application
 //detects all the formats known (PDF, XML, PKCS#7, RTF, XML,GIF, JPEG...)
-GuessInputStream gis = new GuessInputStream(istream, new FormatEnum[] { FormatEnum.XML });
+GuessInputStream gis = GuessInputStream.getInstance(istream, new FormatEnum[] { FormatEnum.XML });
 //here is the result: FormatEnum.UNKNOWN if no format is recognized 
 FormatEnum detectedFormat = gis.getFormat();
 //now you can't use `istream` anymore, you must use only `gis`
@@ -28,15 +28,20 @@ If you want to detect a specific format:
 {{{
 InputStream istream = ... //inputStream that comes from your application
 //detects only xml
-GuessInputStream gis = new GuessInputStream(istream, new FormatEnum[] { FormatEnum.XML });
+GuessInputStream gis = GuessInputStream.getInstance(istream, new FormatEnum[] { FormatEnum.XML });
 //here is the result: FormatEnum.XML if istream is XML FormatEnum.UNKNOWN otherwise 
 FormatEnum detectedFormat = gis.getFormat();
 //now you can't use `istream` anymore, you must use only `gis`
 }}}
 
 = Detected formats table =
+_ For a complete list see org.googlecode.iotools.fmt.base.FormatEnum _
 
-* PDF
+|| !FormatEnum || !MimeType || Description ||
+|| Gif || image/gif        || Gif images ||
+|| PDF || applicatoion/pdf || Adobe Pdf ||
+|| Rtf || application/rtf  || Rich text Format ||
+
 ----
 To do:
  * Add a new format.
