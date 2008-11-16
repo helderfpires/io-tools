@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>io-tools</artifactId>
+  <artifactId>io-tools-parent</artifactId>
   <packaging>pom</packaging>
-  <name>io-tools</name>
+  <name>io-tools-parent</name>
   <description>IO-tools utilites for stream and format detection</description>
   <scm>
 	<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk</connection>
@@ -14,6 +14,7 @@
     <module>wazformat</module>
     <module>easystream</module>
     <module>easystream-jdk14</module>
+    <module>io-tools</module>
   </modules>
   <build>
     <plugins>
