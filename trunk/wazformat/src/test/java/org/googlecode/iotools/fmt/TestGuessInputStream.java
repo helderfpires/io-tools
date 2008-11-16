@@ -29,6 +29,23 @@ public class TestGuessInputStream extends TestCase {
 		assertEquals("Format [1]", FormatEnum.PDF, gis.getFormats()[1]);
 	}
 
+	public void testDoubleWrap() throws IOException {
+		final InputStream istream = new ByteArrayInputStream(
+				"<xml>this is xml</xml>".getBytes());
+		final byte[] reference = IOUtils.toByteArray(istream);
+		istream.reset();
+		final GuessInputStream gis1 = GuessInputStream.getInstance(istream);
+		assertEquals("Format detected", FormatEnum.XML, gis1.getFormat());
+
+		final GuessInputStream gis2 = GuessInputStream.getInstance(gis1,
+				new FormatEnum[] { FormatEnum.PDF });
+
+		assertTrue("Bytes read are same", Arrays.equals(reference, IOUtils
+				.toByteArray(gis2)));
+		assertTrue("inputstream is wrapped",
+				gis2 instanceof GuessInputStreamWrapper);
+	}
+
 	public void testEnabledFormat() throws IOException {
 		final InputStream istream = TestGuessInputStream.class
 				.getResourceAsStream("/testFiles/test_pdf.pdf");

@@ -23,7 +23,7 @@ public class TestGuessInputStreamWithFiles extends TestCase {
 		for (int i = 0; i < goodFiles.length; i++) {
 			final String fileName = goodFiles[i];
 			final InputStream is = new FileInputStream(fileName);
-			final GuessInputStream gis = new GuessInputStream(is);
+			final GuessInputStream gis = GuessInputStream.getInstance(is);
 			assertEquals("file format [" + fileName + "]", expectedFormat, gis
 					.getFormat());
 			final byte[] reference = IOUtils.toByteArray(new FileInputStream(
@@ -35,8 +35,8 @@ public class TestGuessInputStreamWithFiles extends TestCase {
 		final String[] badFiles = listFilesExcludingExtension(extensions);
 		for (int i = 0; i < badFiles.length; i++) {
 			final String fileName = badFiles[i];
-			final GuessInputStream gis = new GuessInputStream(
-					new FileInputStream(fileName));
+			final GuessInputStream gis = GuessInputStream
+					.getInstance(new FileInputStream(fileName));
 			assertTrue("file [" + fileName
 					+ "] WAS UNCORRECTLY recognized as [" + expectedFormat
 					+ "]", !expectedFormat.equals(gis.getFormat()));
