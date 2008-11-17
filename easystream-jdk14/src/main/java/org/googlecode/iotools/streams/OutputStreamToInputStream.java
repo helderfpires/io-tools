@@ -1,4 +1,4 @@
-package org.goglecode.iotools.streams;
+package org.googlecode.iotools.streams;
 
 /*
  * Copyright (c) 2008, Davide Simonetti

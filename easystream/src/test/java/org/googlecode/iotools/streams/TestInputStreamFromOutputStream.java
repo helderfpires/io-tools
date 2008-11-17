@@ -1,23 +1,25 @@
 package org.googlecode.iotools.streams;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.io.IOUtils;
-import org.googlecode.iotools.streams.InputStreamFromOutputStream;
+import org.junit.Test;
 
-public class TestInputStreamFromOutputStream extends TestCase {
+public class TestInputStreamFromOutputStream {
+	@Test
 	public void testExceptionRead() throws Exception {
 		final ThreadPoolExecutor es = (ThreadPoolExecutor) Executors
 				.newFixedThreadPool(1);
 
 		final InputStreamFromOutputStream isos = new InputStreamFromOutputStream(
-				"", es) {
+				es) {
 			@Override
 			public void produce(final OutputStream ostream) throws Exception {
 				ostream.write("test".getBytes());
@@ -34,12 +36,13 @@ public class TestInputStreamFromOutputStream extends TestCase {
 
 	}
 
+	@Test
 	public void testHugeDocument() throws Exception {
 		final ThreadPoolExecutor es = (ThreadPoolExecutor) Executors
 				.newFixedThreadPool(1);
 
 		final InputStreamFromOutputStream isos = new InputStreamFromOutputStream(
-				"", es) {
+				es) {
 			@Override
 			public void produce(final OutputStream ostream) throws Exception {
 				final byte[] buffer = new byte[65536];
@@ -61,12 +64,12 @@ public class TestInputStreamFromOutputStream extends TestCase {
 		assertEquals("Active Trheads", 0, es.getActiveCount());
 	}
 
+	@Test
 	public void testNotClosed() throws Exception {
 		final ThreadPoolExecutor es = (ThreadPoolExecutor) Executors
 				.newFixedThreadPool(1);
 
-		InputStreamFromOutputStream isos = new InputStreamFromOutputStream("",
-				es) {
+		InputStreamFromOutputStream isos = new InputStreamFromOutputStream(es) {
 			@Override
 			public void produce(final OutputStream ostream) throws Exception {
 				while (true) {
@@ -84,13 +87,13 @@ public class TestInputStreamFromOutputStream extends TestCase {
 		assertEquals("Active threads", 0, es.getActiveCount());
 	}
 
-	//
+	@Test
 	public void testProduce() throws Exception {
 		final ThreadPoolExecutor es = (ThreadPoolExecutor) Executors
 				.newFixedThreadPool(1);
 
 		final InputStreamFromOutputStream isos = new InputStreamFromOutputStream(
-				"", es) {
+				es) {
 			@Override
 			protected void produce(final OutputStream ostream) throws Exception {
 				ostream.write("test".getBytes());
@@ -104,12 +107,13 @@ public class TestInputStreamFromOutputStream extends TestCase {
 		assertEquals("Active threads ", 0, es.getActiveCount());
 	}
 
+	@Test
 	public void testSlowProducer() throws Exception {
 		final ThreadPoolExecutor es = (ThreadPoolExecutor) Executors
 				.newFixedThreadPool(1);
 
 		final InputStreamFromOutputStream isos = new InputStreamFromOutputStream(
-				"", es) {
+				es) {
 			@Override
 			public void produce(final OutputStream ostream) throws Exception {
 				final byte[] buffer = new byte[256];

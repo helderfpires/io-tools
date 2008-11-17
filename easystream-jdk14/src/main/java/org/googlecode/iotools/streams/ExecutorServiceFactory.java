@@ -1,6 +1,4 @@
-package org.goglecode.iotools.streams;
-
-import org.apache.commons.lang.enums.ValuedEnum;
+package org.googlecode.iotools.streams;
 
 /*
  * Copyright (c) 2008, Davide Simonetti
@@ -28,51 +26,49 @@ import org.apache.commons.lang.enums.ValuedEnum;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+import EDU.oswego.cs.dl.util.concurrent.Executor;
+import EDU.oswego.cs.dl.util.concurrent.PooledExecutor;
+import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
+import EDU.oswego.cs.dl.util.concurrent.ThreadedExecutor;
+
 /**
- * This class describes how Threads are used
+ * This class is responsible of instantiating the right executor given an
+ * ExecutionModel
+ * 
+ * TODO: Should return an executorService for joins
  * 
  * @author Davide Simonetti
  * 
  */
-public final class ExecutionModel extends ValuedEnum {
-	/**
-	 * <p>
-	 * Only one thread is shared by all instances.
-	 * </p>
-	 */
-	public static final int SINGLE_THREAD_INT = 1;
-	public static final ExecutionModel SINGLE_THREAD = new ExecutionModel(
-			"single-thread", SINGLE_THREAD_INT);
+public final class ExecutorServiceFactory {
 
-	/**
-	 * <p>
-	 * Threads are taken from a static pool.
-	 * </p>
-	 * Some slow thread might lock up the pool and other processes might be
-	 * slowed down
-	 */
-	public static final int STATIC_THREAD_POOL_INT = 2;
-	public static final ExecutionModel STATIC_THREAD_POOL = new ExecutionModel(
-			"static-thread-pool", STATIC_THREAD_POOL_INT);
+	private static Executor QUEUED_EXECUTOR = new QueuedExecutor();
 
-	/**
-	 * <p>
-	 * One thread per instance of class. Slow but each instance can work in
-	 * isolation. Also if some thread is not correctly closed there might be
-	 * threads leaks.
-	 * </p>
-	 */
-	public static final int THREAD_PER_INSTANCE_INT = 3;
-	public static final ExecutionModel THREAD_PER_INSTANCE = new ExecutionModel(
-			"thread-per-instance", THREAD_PER_INSTANCE_INT);
+	private static Executor POOLED_EXECUTOR = new PooledExecutor(20);
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2830105114123569065L;
+	private static Executor THREAD_PER_INSTANCE = new ThreadedExecutor();
 
-	private ExecutionModel(final String name, final int value) {
-		super(name, value);
+	public static Executor getExecutor(final ExecutionModel tmodel) {
+		final Executor result;
+		switch (tmodel.getValue()) {
+		case ExecutionModel.THREAD_PER_INSTANCE_INT:
+			result = ExecutorServiceFactory.THREAD_PER_INSTANCE;
+			break;
+		case ExecutionModel.STATIC_THREAD_POOL_INT:
+			result = ExecutorServiceFactory.POOLED_EXECUTOR;
+			break;
+		case ExecutionModel.SINGLE_THREAD_INT:
+			result = ExecutorServiceFactory.QUEUED_EXECUTOR;
+			break;
+
+		default:
+			throw new UnsupportedOperationException("ExecutionModel [" + tmodel
+					+ "] not supported");
+		}
+		return result;
 	}
 
+	public static void setDefaultExecutor(final Executor executor) {
+		POOLED_EXECUTOR = executor;
+	}
 }
