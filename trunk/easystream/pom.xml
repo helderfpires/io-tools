@@ -24,8 +24,8 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:http://io-tools.googlecode.com/svn/tags/io-tools-1.0.6/easystream</connection>
-		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/tags/io-tools-1.0.6/easystream</developerConnection>
+		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk/easystream</connection>
+		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk/easystream</developerConnection>
 	</scm>
 	<distributionManagement>
 		<repository>
