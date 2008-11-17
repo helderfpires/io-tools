@@ -6,7 +6,7 @@
 	<packaging>jar</packaging>
 	<name>EasyStream</name>
 	<description>Stream utilities</description>
-	<version>1.0.6</version>
+	<version>1.0.7-SNAPSHOT</version>
 	<url>http://io-tools.googlecode.com</url>
 	<inceptionYear>2008</inceptionYear>
 	<developers>
@@ -24,8 +24,8 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:http://io-tools.googlecode.com/svn/tags/io-tools-1.0.6/easystream</connection>
-		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/tags/io-tools-1.0.6/easystream</developerConnection>
+		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk/easystream</connection>
+		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk/easystream</developerConnection>
 	</scm>
 	<distributionManagement>
 		<repository>
