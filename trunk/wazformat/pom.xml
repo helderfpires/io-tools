@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<artifactId>io-tools-parent</artifactId>
-		<groupId>com.googlecode.io-tools</groupId>
-		<version>1.0.6-SNAPSHOT</version>
-	</parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.googlecode.io-tools</groupId>
 	<artifactId>wazformat</artifactId>
 	<packaging>jar</packaging>
 	<name>WaZFormat</name>
 	<description>Format identification utilities</description>
-	<version>1.0.6-SNAPSHOT</version>
+	<version>1.0.6</version>
 	<url>http://io-tools.googlecode.com</url>
 	<inceptionYear>2008</inceptionYear>
 	<developers>
@@ -30,8 +24,8 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk/wazformat</connection>
-		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk/wazformat</developerConnection>
+		<connection>scm:svn:http://io-tools.googlecode.com/svn/tags/io-tools-1.0.6/wazformat</connection>
+		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/tags/io-tools-1.0.6/wazformat</developerConnection>
 	</scm>
 	<distributionManagement>
 		<repository>
@@ -126,12 +120,10 @@
 			<!--
 				plugin> <artifactId>maven-surefire-plugin</artifactId>
 				<configuration> <aggregate>true</aggregate> </configuration>
-				</plugin
-			-->
+				</plugin -->
 			<!--
 				plugin> <artifactId>maven-clover-plugin</artifactId> <configuration>
-				<aggregate>true</aggregate> </configuration> </plugin
-			-->
+				<aggregate>true</aggregate> </configuration> </plugin -->
 			<!--
 				<plugin> <groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId> <configuration>

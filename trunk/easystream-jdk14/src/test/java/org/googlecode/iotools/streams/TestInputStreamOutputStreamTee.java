@@ -9,7 +9,7 @@ import junit.framework.TestCase;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
-import org.goglecode.iotools.streams.TeeInputStreamOutputStream;
+import org.googlecode.iotools.streams.TeeInputStreamOutputStream;
 
 public class TestInputStreamOutputStreamTee extends TestCase {
 

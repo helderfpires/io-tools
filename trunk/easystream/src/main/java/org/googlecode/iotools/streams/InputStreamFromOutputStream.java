@@ -165,12 +165,11 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 	}
 
 	public InputStreamFromOutputStream(final ExecutionModel tmodel) {
-		this("", ExecutorServiceFactory.getExecutor(tmodel));
+		this(ExecutorServiceFactory.getExecutor(tmodel));
 	}
 
-	public InputStreamFromOutputStream(final String tname,
-			final Executor executor) {
-		final String callerId = tname + getCaller();
+	public InputStreamFromOutputStream(final Executor executor) {
+		final String callerId = getCaller();
 		PipedOutputStream pipedOS = null;
 		try {
 			this.pipedIS = new PipedInputStream();
@@ -181,7 +180,7 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 		this.executingRunnable = new DataProducerRunnable(callerId, pipedOS);
 		final String tName = this.executingRunnable.getName();
 		executor.execute(this.executingRunnable);
-		InputStreamFromOutputStream.LOG.debug("thread [" + tName
+		InputStreamFromOutputStream.LOG.debug("thread invoked by[" + tName
 				+ "] queued for start.");
 	}
 
