@@ -35,12 +35,16 @@ FormatEnum detectedFormat = gis.getFormat();
 }}}
 
 = Detected formats table =
-_ For a complete list see org.googlecode.iotools.fmt.base.!FormatEnum _
+For a complete list see _org.googlecode.iotools.fmt.base.!FormatEnum _
 
 || *!FormatEnum* || *!MimeType* || *Description* ||
-|| Gif || image/gif        || Gif images ||
-|| PDF || applicatoion/pdf || Adobe Pdf ||
+|| gif || image/gif        || Gif images ||
+|| jpeg || image/jpeg      || Jpeg images ||
+|| m7m  || multipart/mixed || Infocamere PKCS#7 file + Timestamp ||
+|| pdf || applicatoion/pdf || Adobe Pdf ||
+|| pkcs7 || application/pkcs7-signature || File with PKCS#7 digital signature ||
 || Rtf || application/rtf  || Rich text Format ||
+|| xml || text/xml         || Xml file ||
 
 ----
 To do:
