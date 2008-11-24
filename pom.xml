@@ -5,11 +5,11 @@
   <name>IO-Toools-Aggregator</name>
   <description>IO-tools utilites for stream and format detection</description>
   <scm>
-	<connection>scm:svn:http://io-tools.googlecode.com/svn/tags/io-tools-1.0.7</connection>
-	<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/tags/io-tools-1.0.7</developerConnection>
+	<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk</connection>
+	<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk</developerConnection>
   </scm>
   <groupId>com.googlecode.io-tools</groupId>
-  <version>1.0.7</version>
+  <version>1.0.8-SNAPSHOT</version>
   <modules>
     <module>wazformat</module>
     <module>easystream</module>
