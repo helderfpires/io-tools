@@ -1,9 +1,9 @@
 #summary Description of other utilities included in easystream package
 
-= InputStreams =
+= !InputStreams =
 These are the classess in package `com.gc.iotools.stream.is` all of them extends `InputStream`
 
-== SizeReaderInputStream ==
+== !SizeReaderInputStream ==
 Counts the bytes from the !InputStream passed in the constructor. It can be used to determine the size of a document passed as a stream. This is possible only after the stream has been fully processed (by other parts of the application) or it has been closed.
 {{{
 SizeReaderInputStream srIstream = new SizeReaderInputStream(originalStream);
@@ -13,7 +13,7 @@ srIstream.close();
 long size = srIstream.getSize();
 }}}
 
-= OutputStreams =
+= !OutputStreams =
 These are the classess in package `com.gc.iotools.stream.os` all of them extends `OutputStream`
 
-== SizeRecorderOutputStream ==
+== !SizeRecorderOutputStream ==
