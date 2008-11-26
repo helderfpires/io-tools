@@ -4,11 +4,23 @@
 
 Release schedule for IO-Tools.
 
-== Version 0.1 == 
-_ (released on oct 22, 2008) _
- * Initial project build with Eclipse and Maven
- * Tools for reading from an `InputStream` the data written to an `OutputStream`
- * Junit and documentation on wiki.
+== Version 1.1 ==
+_ (WIP Scheduled for jan 2009) _
+
+ * Publish release on repo1. [http://code.google.com/p/io-tools/issues/detail?id=6 Issue#6]
+ * Add other formats (!OpenOffice, Word) [http://code.google.com/p/io-tools/issues/detail?id=3 Issue#3]
+ * `BufferedOutputStream` to write to a slow `OutputStream`
+ * `ReadAheadInputStream` to read from a slow `InputStream`
+
+== Version 1.0.7 ==
+_ (Released on Nov 24, 2008) _
+ * Package rename to shorten package names and rearrange classes (sorry for that)
+ * Added `SizeReaderInputStream` and `SizeRecorderOutputStream`
+
+== Version 1.0.6 ==
+_ (Releasd on Nov 18, 2008) _
+ * [http://code.google.com/p/io-tools/issues/detail?id=2 Issue#2] Java 1.4 compatibility.
+ * [http://code.google.com/p/io-tools/issues/detail?id=5 Issue#5] Formats part ( _wazstream_ ) separated from `InputStream` and `OutputStream` ( _easystream_ ) 
 
 == Version 1.0 ==
 _ (released on nov 10, 2008) _
@@ -17,16 +29,8 @@ _ (released on nov 10, 2008) _
  * Recursive format detection
  * Junit and documentaton.
 
-== Version 1.0.6 ==
-_ (Release on Nov 18, 2008) _
- * [http://code.google.com/p/io-tools/issues/detail?id=2 Issue#2] Java 1.4 compatibility.
- * [http://code.google.com/p/io-tools/issues/detail?id=5 Issue#5] Formats part ( _wazstream_ ) separated from `InputStream` and `OutputStream` ( _easystream_ ) 
-
-
-== Version 1.1 ==
-_ (WIP) _
-
- * Publish release on repo1. [http://code.google.com/p/io-tools/issues/detail?id=6 Issue#6]
- * Add other formats (!OpenOffice, Word) [http://code.google.com/p/io-tools/issues/detail?id=3 Issue#3]
- * `BufferedOutputStream` to write to a slow `OutputStream`
- * `ReadAheadInputStream` to read from a slow `InputStream`
+== Version 0.1 == 
+_ (released on oct 22, 2008) _
+ * Initial project build with Eclipse and Maven
+ * Tools for reading from an `InputStream` the data written to an `OutputStream`
+ * Junit and documentation on wiki.
