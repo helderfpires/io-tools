@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.googlecode.io-tools</groupId>
 	<artifactId>easystream</artifactId>
 	<packaging>jar</packaging>
 	<name>EasyStream</name>
 	<description>Stream utilities</description>
-	<version>1.0.8-SNAPSHOT</version>
+	<version>1.0.8</version>
 	<url>http://io-tools.googlecode.com</url>
 	<inceptionYear>2008</inceptionYear>
 	<developers>
@@ -25,8 +24,8 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk/easystream</connection>
-		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk/easystream</developerConnection>
+		<connection>scm:svn:http://io-tools.googlecode.com/svn/tags/easystream-1.0.8</connection>
+		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/tags/easystream-1.0.8</developerConnection>
 	</scm>
 	<distributionManagement>
 		<repository>
@@ -115,12 +114,10 @@
 			<!--
 				plugin> <artifactId>maven-surefire-plugin</artifactId>
 				<configuration> <aggregate>true</aggregate> </configuration>
-				</plugin
-			-->
+				</plugin -->
 			<!--
 				plugin> <artifactId>maven-clover-plugin</artifactId> <configuration>
-				<aggregate>true</aggregate> </configuration> </plugin
-			-->
+				<aggregate>true</aggregate> </configuration> </plugin -->
 			<!--
 				<plugin> <groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId> <configuration>
