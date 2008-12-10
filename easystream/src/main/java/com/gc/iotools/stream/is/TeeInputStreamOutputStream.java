@@ -47,7 +47,7 @@ import java.io.OutputStream;
  * </p>
  * 
  * @author dvd.smnt
- * @since Sep 28, 2008
+ * @since 1.0.6
  */
 public final class TeeInputStreamOutputStream extends InputStream {
 
