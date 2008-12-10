@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.googlecode.io-tools</groupId>
 	<artifactId>easystream-jdk14</artifactId>
@@ -56,11 +57,11 @@
 			<type>jar</type>
 		</dependency>
 		<dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>3.1</version>
-            <type>jar</type>
-        </dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.1</version>
+			<type>jar</type>
+		</dependency>
 		<dependency>
 			<groupId>concurrent</groupId>
 			<artifactId>concurrent</artifactId>
@@ -120,10 +121,12 @@
 			<!--
 				plugin> <artifactId>maven-surefire-plugin</artifactId>
 				<configuration> <aggregate>true</aggregate> </configuration>
-				</plugin -->
+				</plugin
+			-->
 			<!--
 				plugin> <artifactId>maven-clover-plugin</artifactId> <configuration>
-				<aggregate>true</aggregate> </configuration> </plugin -->
+				<aggregate>true</aggregate> </configuration> </plugin
+			-->
 			<!--
 				<plugin> <groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId> <configuration>
@@ -149,6 +152,12 @@
 	</reporting>
 	<build>
 		<defaultGoal>install</defaultGoal>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
