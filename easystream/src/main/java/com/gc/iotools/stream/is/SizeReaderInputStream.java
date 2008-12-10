@@ -23,7 +23,7 @@ import java.io.InputStream;
  * </pre>
  * 
  * @author dvd.smnt
- * 
+ * @since 1.0.6
  */
 public class SizeReaderInputStream extends InputStream {
 
@@ -45,8 +45,9 @@ public class SizeReaderInputStream extends InputStream {
 	 * @param istream
 	 *            Stream whose bytes must be counted.
 	 * @param fullReadOnClose
-	 *            if <i>true</i> after the close the inner stream is fully
-	 *            readed and the total size is calculated.
+	 *            if <i>true</i> after the close the inner stream is read
+	 *            completely and the effective size of the inner stream is
+	 *            calculated.
 	 */
 	public SizeReaderInputStream(final InputStream istream,
 			final boolean fullReadOnClose) {
@@ -59,6 +60,12 @@ public class SizeReaderInputStream extends InputStream {
 		return this.innerStream.available();
 	}
 
+	/**
+	 * Closes the inner stream. If <code>fullReadOnClose</code> was set to true
+	 * in the constructor it also count all the bytes of the inner stream.
+	 * 
+	 * @see InputStream.close()
+	 */
 	@Override
 	public void close() throws IOException {
 		if (!this.closeCalled) {
@@ -78,11 +85,11 @@ public class SizeReaderInputStream extends InputStream {
 	}
 
 	/**
-	 * Returns the bytes readed until now or total length of the stream if the
-	 * close() method has been called or EOF was reached.
+	 * Returns the bytes read until now or total length of the stream if the
+	 * <code>close()</code> method has been called or EOF was reached.
 	 * 
-	 * @return bytes readed until now or the total lenght of the stream if
-	 *         close() was called.
+	 * @return bytes read until now or the total length of the stream if close()
+	 *         was called.
 	 */
 	public long getSize() {
 		return this.size;

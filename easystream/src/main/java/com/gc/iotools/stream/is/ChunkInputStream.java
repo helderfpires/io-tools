@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import org.apache.commons.collections.buffer.CircularFifoBuffer;
-import org.apache.commons.lang.ArrayUtils;
 
 import com.gc.iotools.stream.utils.ArrayTools;
 import com.gc.iotools.stream.utils.StreamUtils;
@@ -18,8 +17,8 @@ import com.gc.iotools.stream.utils.StreamUtils;
  * memory.
  * </p>
  * <p>
- * It strips the initial bytes of the stream until a sequence of bytes equal to
- * <code>startMarker</code> is found.
+ * Basically it strips the initial bytes of the stream until a sequence of bytes
+ * equal to <code>startMarker</code> is found.
  * 
  * When a sequence of bytes equals to <code>endMarker</code> is found the stream
  * hide the bytes until a new <code>startMarker</code> is found.
@@ -40,11 +39,52 @@ import com.gc.iotools.stream.utils.StreamUtils;
  * //here bytes contains &quot; bbb &quot;
  * </pre>
  * 
+ * <p>
+ * The class has three operational modes. They can be selected invoking the
+ * constructor with four parameters. These two modes affect how this class
+ * handles multiple chunks in a file.
+ * </p>
+ * <ul>
+ * <li><code>automaticFetch=true</code> <i>(default)</i>. After an
+ * <code>endMarker</code> is found the stream automatically moves to the next
+ * <code>startMarker</code> if found. Usage pattern is shown in the example
+ * above.</li>
+ * <li><code>automaticFetch=false</code> Each chunk need to be fetched invoking
+ * explicitly a <code>{@link fetchNextChunk()}</code> methods. The stream is
+ * initially in an EOF state and <code>{@link fetchNextChunk()}</code> must be
+ * called at first. At this point all the bytes of the stream are shown until an
+ * <code>endMarker</code> is found. At this point the ChunkInputStream is in an
+ * EOF state until a <code>{@link fetchNextChunk()}</code> is invoked.</li>
+ * <li><code>automaticFetch=false</code> and <code>startMarker=null</code> It is
+ * similar to the previous case. It can be used to the src stream on the
+ * <code>endMarker</code>s</li>
+ * </ul>
+ * <p>
+ * Example of <code>automaticFetch=false</code> mode:
+ * </p>
+ * 
+ * <pre>
+ * InputStream is = new ByteArrayInputStream(&quot;aa start bbb stopfff&quot;.getBytes());
+ * ChunckInputStream chunkIs = new ChunkInputStream(is, &quot;rt&quot;.getBytes(), &quot;stop&quot;
+ * 		.getBytes(), false, false);
+ * while (chunkIs.moveToNextChunk()) {
+ * 	byte[] bytes = IOUtils.toByteArray(chunkIs);
+ * 	//here bytes contains &quot; bbb &quot;
+ * }
+ * </pre>
+ * 
  * @author dvd.smnt
  * @since 1.0.7
  */
 public final class ChunkInputStream extends InputStream {
-	// private static Log LOGGER = LogFactory.getLog(ChunkInputStream.class);
+
+	private final boolean automaticFetch;
+
+	private final CircularFifoBuffer buffer;
+
+	private boolean copyToOuter = false;
+
+	private final boolean showMarkers;
 
 	private final byte[] start;
 
@@ -52,21 +92,62 @@ public final class ChunkInputStream extends InputStream {
 
 	private final InputStream wrappedIs;
 
-	private final CircularFifoBuffer buffer;
+	public ChunkInputStream(final InputStream src, final byte[] startMarker,
+			final byte[] stopMarker) {
+		this(src, startMarker, stopMarker, false,
+				((startMarker != null) && (startMarker.length > 0)));
+	}
 
-	private boolean copyToOuter = false;
-
-	public ChunkInputStream(final byte[] startMarker, final byte[] stopMarker,
-			final InputStream wrappedIs) {
-		if (wrappedIs == null) {
+	/**
+	 * Gets an instance of the ChunkInputStream. If
+	 * <code>startMarker!=null</code> the operating mode is set to
+	 * <code>automaticFetch=true</code>
+	 * 
+	 * @param src
+	 *            Source stream. Must not be <code>null</code>.
+	 * @param startMarker
+	 *            When this sequence of bytes is found in the <code>src</code>
+	 *            stream the bytes of the inner stream are shown until an
+	 *            <code>endMarker</code> is found. If this parameter is set to
+	 *            <code>null</code> the stream is initially in an EOF state
+	 *            until a <code>fetchNextChunk()</code> is performed.
+	 * 
+	 * @param stopMarker
+	 *            when this sequence of bytes is found in the <code>src</code>
+	 *            stream the bytes of the inner stream are hidden until a
+	 *            <code>startMarker</code> is found. If this parameter is set to
+	 *            <code>null</code> the stream is made available until the inner
+	 *            stream reaches an EOF.
+	 * @param showMarkers
+	 *            if set to <code>true</code> start and end markers are shown in
+	 *            the outer stream.
+	 * @param automaticFetch
+	 *            enables automatic fetching of <code>startMarker</code>s. If
+	 *            <code>false</code> <code>startMarker</code>s must be fetched
+	 *            manually invoking <code>{@link fetchNextChunk()}</code>
+	 * 
+	 * @see fetchNextChunk()
+	 */
+	public ChunkInputStream(final InputStream src, final byte[] startMarker,
+			final byte[] stopMarker, final boolean showMarkers,
+			final boolean automaticFetch) {
+		if (src == null) {
 			throw new IllegalArgumentException(
 					"Wrapped InputStrem can't be null");
 		}
 		this.start = (startMarker == null ? new byte[0] : startMarker);
 		this.stop = (stopMarker == null ? new byte[0] : stopMarker);
-		this.wrappedIs = new BufferedInputStream(wrappedIs);
+		this.wrappedIs = new BufferedInputStream(src);
 		final int size = Math.max(this.start.length, this.stop.length);
 		this.buffer = new CircularFifoBuffer(size);
+		this.automaticFetch = automaticFetch;
+		if ((this.start.length == 0) && automaticFetch) {
+			throw new IllegalArgumentException("It's not possible to specify "
+					+ "a startMarker"
+					+ (startMarker == null ? "=null" : ".size=0") + " and"
+					+ " automaticFetch=[" + automaticFetch + "]");
+		}
+		this.showMarkers = showMarkers;
 	}
 
 	@Override
@@ -78,6 +159,27 @@ public final class ChunkInputStream extends InputStream {
 	@Override
 	public void close() throws IOException {
 		this.wrappedIs.close();
+	}
+
+	/**
+	 * This method must be called if <code>automaticFetch=false</code> before
+	 * the stream can be used and each time an endMarker has been found to
+	 * proceed to next startMarker.
+	 * 
+	 * @return <code>true</code> if another chunk is available,
+	 *         <code>false</code> otherwise.
+	 * @throws IOException
+	 *             exception thrown if it is impossible to read from the inner
+	 *             stream for some unknown reason.
+	 */
+	public boolean fetchNextChunk() throws IOException {
+		if (this.automaticFetch) {
+			throw new IllegalStateException(
+					"this method shouldn't be called when automaticFetch ["
+							+ this.automaticFetch + "]");
+		}
+		this.copyToOuter = moveToNextStartMarker();
+		return this.copyToOuter;
 	}
 
 	@Override
@@ -92,30 +194,13 @@ public final class ChunkInputStream extends InputStream {
 
 	@Override
 	public int read() throws IOException {
-		findStartMarker();
-		int readed;
-		if (this.copyToOuter) {
-			readed = this.wrappedIs.read();
-			if ((readed >= 0) && (this.stop.length > 0)) {
-				final byte bstop = (byte) readed;
-				if (bstop == this.stop[0]) {
-					this.wrappedIs.mark(this.stop.length + 1);
-					final byte[] stopBuffer = fillStopBuffer(new byte[] { bstop });
-					final boolean foundEndMarker = Arrays.equals(this.stop,
-							stopBuffer);
-					this.copyToOuter = !foundEndMarker;
-					if (!foundEndMarker) {
-						// end marker not found. return normally.
-						this.wrappedIs.reset();
-					} else {
-						readed = this.read();
-					}
-				}
-			}
-		} else {
-			readed = -1;
+		byte[] buf = new byte[1];
+		int rd = read(buf);
+		int result = buf[0];
+		if (rd < 0) {
+			result = rd;
 		}
-		return readed;
+		return result;
 	}
 
 	@Override
@@ -130,25 +215,35 @@ public final class ChunkInputStream extends InputStream {
 		int ret;
 		if (this.copyToOuter) {
 			if (this.stop.length > 0) {
-				this.wrappedIs.mark(len + this.stop.length);
-			}
-			ret = this.wrappedIs.read(b, off, len);
-			if ((ret != -1) && (this.stop.length > 0)) {
-				final byte[] buffer = fillStopBuffer(ArrayUtils.subarray(b, 0,
-						ret));
-				final int position = ArrayTools.indexOf(buffer, this.stop);
-				if (position == -1) {
-					this.wrappedIs.reset();
-					this.wrappedIs.skip(ret);
-				} else {
-					// FIXME: if position == 0 this method breaks the contract
-					// "at least one byte is readed"
-					ret = position;
-					this.wrappedIs.reset();
-					this.wrappedIs.skip(position + this.stop.length);
-					Arrays.fill(b, position, b.length, (byte) 0);
-					this.copyToOuter = false;
+				final int readSize = len - off + this.stop.length;
+				final byte[] tmpBuffer = new byte[readSize];
+				this.wrappedIs.mark(readSize);
+				ret = StreamUtils.tryReadFully(this.wrappedIs, tmpBuffer, 0,
+						readSize);
+				this.wrappedIs.reset();
+				if (ret != -1) {
+					final int position = ArrayTools.indexOf(tmpBuffer,
+							this.stop);
+					if (position == -1) {
+						// stop marker not found
+						ret = Math.min(ret, len - off);
+						this.wrappedIs.skip(ret);
+						System.arraycopy(tmpBuffer, 0, b, off, ret);
+					} else if (position == 0) {
+						this.wrappedIs.skip(this.stop.length);
+						this.copyToOuter = false;
+						ret = this.read(b, off, len);
+					} else {
+						// position >0
+						ret = position;
+						final int bytesToSkip = position + this.stop.length;
+						this.wrappedIs.skip(bytesToSkip);
+						System.arraycopy(tmpBuffer, 0, b, off, position);
+						this.copyToOuter = false;
+					}
 				}
+			} else {
+				ret = this.wrappedIs.read(b, off, len);
 			}
 		} else {
 			ret = -1;
@@ -167,28 +262,25 @@ public final class ChunkInputStream extends InputStream {
 		return super.skip(n);
 	}
 
-	/*
-	 * Read extra bytes needed to check if a stopMarker has been found in the
-	 * end of the reading.
-	 */
-	private byte[] fillStopBuffer(final byte[] readed) throws IOException {
-		final byte[] stopBuffer = new byte[readed.length + this.stop.length - 1];
-		if (this.stop.length > 0) {
-			System.arraycopy(readed, 0, stopBuffer, 0, readed.length);
-			if ((stopBuffer.length - readed.length) > 0) {
-				StreamUtils.tryReadFully(this.wrappedIs, stopBuffer,
-						readed.length, stopBuffer.length - readed.length);
-			}
+	private void findStartMarker() throws IOException {
+		if (!this.copyToOuter && this.automaticFetch) {
+			// if no start marker set copy
+			this.copyToOuter = moveToNextStartMarker();
 		}
-		return stopBuffer;
 	}
 
-	private void findStartMarker() throws IOException {
+	private boolean moveToNextStartMarker() throws IOException {
 		// TODO: skip faster, use array reading
-		if (!this.copyToOuter) {
-			// if no start marker set copy
-			boolean found = (this.start.length == 0);
+		// FIXME: implements showMarkers. Think i need a mark&reset.
+		boolean found;
+		if (this.start.length == 0) {
+			this.wrappedIs.mark(2);
+			// if EOF stop.
+			found = (this.wrappedIs.read() >= 0);
+			this.wrappedIs.reset();
+		} else {
 			int n;
+			found = false;
 			while (!found && ((n = this.wrappedIs.read()) >= 0)) {
 				final Byte byt = new Byte((byte) n);
 				this.buffer.add(byt);
@@ -199,7 +291,7 @@ public final class ChunkInputStream extends InputStream {
 						.toPrimitive(bytes);
 				found = Arrays.equals(this.start, bytesP);
 			}
-			this.copyToOuter = found;
 		}
+		return found;
 	}
 }
