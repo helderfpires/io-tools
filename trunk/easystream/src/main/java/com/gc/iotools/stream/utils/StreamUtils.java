@@ -57,6 +57,9 @@ public final class StreamUtils {
 		while (n < len) {
 			final int count = source.read(buffer, offset + n, len - n);
 			if (count < 0) {
+				if (n == 0) {
+					n = count;
+				}
 				break;
 			}
 			n += count;
