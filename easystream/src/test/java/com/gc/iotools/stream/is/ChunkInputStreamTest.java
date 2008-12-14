@@ -1,7 +1,6 @@
 package com.gc.iotools.stream.is;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -100,6 +99,21 @@ public class ChunkInputStreamTest {
 	@Test
 	public void testReadMultiple() throws IOException {
 		doTest("01st23en45st67en st89", "st", "en", "236789");
+	}
+
+	@Test
+	public void testStandard() throws IOException {
+		ChunkInputStream chunkIs = new ChunkInputStream(
+				ChunkInputStreamTest.class
+						.getResourceAsStream("test.xml"),
+				"<simpledocument>".getBytes(), "</simpledocument>"
+						.getBytes(),
+				false, true);
+		String decoded = IOUtils.toString(chunkIs).trim();
+		assertTrue("doc [" + decoded + "] starts with <document>", decoded
+				.startsWith("<document>"));
+		assertTrue("doc [" + decoded + "] ends with </document>", decoded
+				.endsWith("</document>"));
 	}
 
 	@Test

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.googlecode.io-tools</groupId>
 	<artifactId>easystream-jdk14</artifactId>
@@ -9,6 +10,11 @@
 	<version>1.0.9-SNAPSHOT</version>
 	<url>http://io-tools.googlecode.com</url>
 	<inceptionYear>2008</inceptionYear>
+	<parent>
+		<artifactId>io-tools-parent</artifactId>
+		<groupId>com.googlecode.io-tools</groupId>
+		<version>1.0.9-SNAPSHOT</version>
+	</parent>
 	<developers>
 		<developer>
 			<name>Davide Simonetti</name>
@@ -27,17 +33,6 @@
 		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk/easystream-jdk14</connection>
 		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk/easystream-jdk14</developerConnection>
 	</scm>
-	<distributionManagement>
-		<repository>
-			<id>repo.googlecode</id>
-			<name>googlecode repo</name>
-			<url>scm:svn:https://dvd.smnt@io-tools.googlecode.com/svn/site</url>
-		</repository>
-		<site>
-			<id>site.googlecode</id>
-			<url>scm:svn:https://dvd.smnt@io-tools.googlecode.com/svn/site</url>
-		</site>
-	</distributionManagement>
 	<issueManagement>
 		<system>GoogleIssues</system>
 		<url>http://code.google.com/p/io-tools/issues/list</url>
@@ -82,84 +77,30 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<reporting>
+	<build>
 		<plugins>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<reportSets>
-					<reportSet>
+				<executions>
+					<execution>
+						<id>attach-javadoc</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
 						<configuration>
-							<aggregate>true</aggregate>
+							<aggregate>false</aggregate>
 						</configuration>
-						<reports>
-							<report>javadoc</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<configuration>
-					<aggregate>true</aggregate>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jxr-maven-plugin</artifactId>
-				<configuration>
-					<aggregate>true</aggregate>
-				</configuration>
-			</plugin>
-
-			<!--
-				plugin> <artifactId>maven-surefire-plugin</artifactId>
-				<configuration> <aggregate>true</aggregate> </configuration>
-				</plugin -->
-			<!--
-				plugin> <artifactId>maven-clover-plugin</artifactId> <configuration>
-				<aggregate>true</aggregate> </configuration> </plugin -->
-			<!--
-				<plugin> <groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-pmd-plugin</artifactId> <configuration>
-				<targetjdk>1.5</targetjdk> <rulesets>
-				<ruleset>/rulesets/basic.xml</ruleset>
-				ruleset>/rulesets/controversial.xml</ruleset </rulesets>
-				<format>xml</format> <linkXref>true</linkXref>
-				<sourceEncoding>UTF-8</sourceEncoding>
-				<minimumTokens>100</minimumTokens> <aggregate>true</aggregate>
-				</configuration> </plugin> <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-changes-plugin</artifactId> <reportSets>
-				<reportSet> <reports> <report>changes-report</report>
-				<report>jira-report</report> </reports> </reportSet> </reportSets>
-				</plugin>
-			-->
-			<!--
-				<plugin> <groupId>org.codehaus.mojo</groupId>
-				<artifactId>taglist-maven-plugin</artifactId> <configuration>
-				<aggregate>true</aggregate> </configuration> </plugin>
-			-->
-		</plugins>
-	</reporting>
-	<build>
-		<defaultGoal>install</defaultGoal>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.4</version>
+					</execution>
+					<execution>
+                        <goals>
+                            <goal>test-javadoc</goal>
+                        </goals>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -173,28 +114,6 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-javadoc</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
 				<configuration>
@@ -206,24 +125,11 @@
 					<downloadSources>true</downloadSources>
 				</configuration>
 			</plugin>
+			<!--
+				plugin> <groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>2.0-beta-7</version> </plugin
+			-->
 		</plugins>
-		<extensions>
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-scm</artifactId>
-				<!-- aspettare l'uscita della beta 5 perche' questa non va -->
-				<version>1.0-beta-4</version>
-			</extension>
-			<extension>
-				<groupId>org.apache.maven.scm</groupId>
-				<artifactId>maven-scm-manager-plexus</artifactId>
-				<version>1.1</version>
-			</extension>
-			<extension>
-				<groupId>org.apache.maven.scm</groupId>
-				<artifactId>maven-scm-provider-svnexe</artifactId>
-				<version>1.1</version>
-			</extension>
-		</extensions>
 	</build>
 </project>

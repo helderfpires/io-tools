@@ -29,9 +29,8 @@ package com.gc.iotools.stream.is;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
-import org.apache.commons.collections.buffer.CircularFifoBuffer;
+import org.apache.commons.lang.ArrayUtils;
 
 import com.gc.iotools.stream.utils.ArrayTools;
 import com.gc.iotools.stream.utils.StreamUtils;
@@ -104,9 +103,9 @@ import com.gc.iotools.stream.utils.StreamUtils;
  */
 public final class ChunkInputStream extends InputStream {
 
-	private final boolean automaticFetch;
+	private static final int SKIP_BUFFER_SIZE = 2048;
 
-	private final CircularFifoBuffer buffer;
+	private final boolean automaticFetch;
 
 	private boolean copyToOuter = false;
 
@@ -164,8 +163,6 @@ public final class ChunkInputStream extends InputStream {
 		this.start = (startMarker == null ? new byte[0] : startMarker);
 		this.stop = (stopMarker == null ? new byte[0] : stopMarker);
 		this.wrappedIs = new BufferedInputStream(src);
-		final int size = Math.max(this.start.length, this.stop.length);
-		this.buffer = new CircularFifoBuffer(size);
 		this.automaticFetch = automaticFetch;
 		if ((this.start.length == 0) && automaticFetch) {
 			throw new IllegalArgumentException("It's not possible to specify "
@@ -296,8 +293,6 @@ public final class ChunkInputStream extends InputStream {
 	}
 
 	private boolean moveToNextStartMarker() throws IOException {
-		// TODO: skip faster, use array reading
-		// FIXME: implements showMarkers. Think i need a mark&reset.
 		boolean found;
 		if (this.start.length == 0) {
 			this.wrappedIs.mark(2);
@@ -307,16 +302,32 @@ public final class ChunkInputStream extends InputStream {
 		} else {
 			int n;
 			found = false;
-			while (!found && ((n = this.wrappedIs.read()) >= 0)) {
-				final Byte byt = new Byte((byte) n);
-				this.buffer.add(byt);
-				@SuppressWarnings("unchecked")
-				final Byte[] bytes = (Byte[]) this.buffer
-						.toArray(new Byte[this.buffer.size()]);
-				final byte[] bytesP = org.apache.commons.lang.ArrayUtils
-						.toPrimitive(bytes);
-				found = Arrays.equals(this.start, bytesP);
-			}
+			final byte[] buffer = new byte[ChunkInputStream.SKIP_BUFFER_SIZE
+					+ this.start.length];
+			do {
+				this.wrappedIs.mark(ChunkInputStream.SKIP_BUFFER_SIZE
+						+ this.start.length);
+				n = StreamUtils.tryReadFully(this.wrappedIs, buffer, 0,
+						2048 + this.start.length);
+				if (n > 0) {
+					final int pos = ArrayTools.indexOf(ArrayUtils.subarray(
+							buffer, 0, n), this.start);
+					if (pos >= 0) {
+						// found
+						found = true;
+						this.wrappedIs.reset();
+						final int skip = pos
+								+ (this.showMarkers ? 0 : this.start.length);
+						this.wrappedIs.skip(skip);
+					} else {
+						// not found
+						if (n - this.start.length > 0) {
+							this.wrappedIs.reset();
+							this.wrappedIs.skip(n - this.start.length);
+						}
+					}
+				}
+			} while (!found && (n >= 0));
 		}
 		return found;
 	}
