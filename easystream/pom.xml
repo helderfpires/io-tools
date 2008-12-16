@@ -93,14 +93,6 @@
 							<goal>jar</goal>
 						</goals>
 					</execution>
-					<execution>
-						<goals>
-							<goal>test-javadoc</goal>
-						</goals>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-					</execution>
 				</executions>
 			</plugin>
 		</plugins>

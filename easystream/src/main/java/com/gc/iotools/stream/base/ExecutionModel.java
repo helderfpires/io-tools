@@ -30,9 +30,9 @@ package com.gc.iotools.stream.base;
  * This class describes how Threads are used.
  * 
  * @author dvd.smnt
- * @version $Rev $
  * @since 1.0
  */
+
 public enum ExecutionModel {
 	/**
 	 * <p>
