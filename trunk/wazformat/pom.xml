@@ -33,10 +33,12 @@
 		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk/wazformat</connection>
 		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk/wazformat</developerConnection>
 	</scm>
-	<issueManagement>
-		<system>GoogleIssues</system>
-		<url>http://code.google.com/p/io-tools/issues/list</url>
-	</issueManagement>
+	<distributionManagement>
+		<site>
+			<id>io-tools-web</id>
+			<url>ftp://ftp.jtools.heliohost.org/wazformat</url>
+		</site>
+	</distributionManagement>
 	<dependencies>
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -100,16 +102,9 @@
 							<goal>jar</goal>
 						</goals>
 					</execution>
-					<execution>
-						<goals>
-							<goal>test-javadoc</goal>
-						</goals>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-					</execution>
 				</executions>
 			</plugin>
 		</plugins>
 	</build>
+
 </project>

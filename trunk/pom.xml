@@ -53,7 +53,24 @@
 			<filtering>true</filtering>
 		</resource>
 	</resources>
+	<testResources>
+		<testResource>
+			<directory>src/test/resources</directory>
+			<filtering>true</filtering>
+		</testResource>
+		<testResource>
+			<directory>src/test/java</directory>
+			<filtering>false</filtering>
+			<excludes>
+				<exclude>**/*.java</exclude>
+			</excludes>
+		</testResource>
+	</testResources>
 	<plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-javadoc-plugin</artifactId>
+		</plugin>
 		<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-deploy-plugin</artifactId>
@@ -115,34 +132,28 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.5</version>
 				<reportSets>
 	          			<reportSet>
+ 						<id>report-javadoc</id>
             					<reports>
-              						<report>aggregate</report>
-              						<!-- <report>test-javadoc</report> -->
+              						<report>javadoc</report>
             					</reports>
+						<configuration>
+							<skip>false</skip>
+						</configuration>
           				</reportSet>
         			</reportSets>
 			</plugin>
 			<plugin>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<configuration>
-					<aggregate>true</aggregate>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jxr-maven-plugin</artifactId>
-				<configuration>
-					<aggregate>true</aggregate>
-				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<aggregate>true</aggregate>
-				</configuration>
 			</plugin>
+		      <plugin>
+        		<artifactId>maven-project-info-reports-plugin</artifactId>
+		      </plugin>
 		</plugins>
 	</reporting>
 </project>
