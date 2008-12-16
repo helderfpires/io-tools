@@ -33,12 +33,6 @@
 		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk/wazformat</connection>
 		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk/wazformat</developerConnection>
 	</scm>
-	<distributionManagement>
-		<site>
-			<id>io-tools-web</id>
-			<url>ftp://ftp.jtools.heliohost.org/wazformat</url>
-		</site>
-	</distributionManagement>
 	<dependencies>
 		<dependency>
 			<groupId>commons-logging</groupId>
