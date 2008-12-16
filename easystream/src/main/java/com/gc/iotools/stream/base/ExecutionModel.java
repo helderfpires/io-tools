@@ -27,10 +27,11 @@ package com.gc.iotools.stream.base;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 /**
- * This class describes how Threads are used
+ * This class describes how Threads are used.
  * 
- * @author Davide Simonetti
- * 
+ * @author dvd.smnt
+ * @version $Rev $
+ * @since 1.0
  */
 public enum ExecutionModel {
 	/**
