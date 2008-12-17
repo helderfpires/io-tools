@@ -34,6 +34,7 @@
     <module>easystream</module>
     <module>easystream-jdk14</module>
     <module>wazformat</module>
+    <module>io-tools-project</module>
   </modules>
   <dependencies>
 	<!-- For javadoc plugin-->
