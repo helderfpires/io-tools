@@ -234,6 +234,13 @@ public final class ChunkInputStream extends InputStream {
 	@Override
 	public int read(final byte[] b, final int off, final int len)
 			throws IOException {
+		if ((off | len | (off + len) | (b.length - (off + len))) < 0) {
+			throw new IndexOutOfBoundsException("b.length[" + b.length
+					+ "] offset[" + off + "] length[" + len + "");
+		} else if (len == 0) {
+			return 0;
+		}
+
 		findStartMarker();
 		int ret;
 		if (this.copyToOuter) {
