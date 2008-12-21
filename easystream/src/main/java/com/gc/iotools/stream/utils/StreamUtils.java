@@ -36,6 +36,10 @@ import java.io.InputStream;
  * @since 1.0.8
  */
 public final class StreamUtils {
+	// Utility class: shouldn't be instantiated
+	private StreamUtils() {
+
+	}
 
 	/**
 	 * <p>
@@ -43,7 +47,7 @@ public final class StreamUtils {
 	 * <code>buffer</code>.
 	 * </p>
 	 * <p>
-	 * This utility ensures that either <code>len</code> bytes are readed or the
+	 * This utility ensures that either <code>len</code> bytes are read or the
 	 * end of the stream has been reached.
 	 * </p>
 	 * 
@@ -72,7 +76,7 @@ public final class StreamUtils {
 	 *                negative, or <code>len</code> is greater than
 	 *                <code>b.length - off</code>
 	 * 
-	 * 
+	 * @since 1.0.8
 	 */
 	public static int tryReadFully(final InputStream source,
 			final byte[] buffer, final int offset, final int len)
@@ -92,5 +96,41 @@ public final class StreamUtils {
 			n += count;
 		}
 		return n;
+	}
+
+	/**
+	 * <p>
+	 * Read a specified amount of bytes from the <i>source</i> InputStream and
+	 * place them into the returned byte array.
+	 * </p>
+	 * <p>
+	 * This utility ensures that either <code>size</code> bytes are read or the
+	 * end of the stream has been reached.
+	 * 
+	 * @param source
+	 *            Stream from which the data is read.
+	 * @param size
+	 *            The maximum length of the data read.
+	 * @return byte[] containing the data read from the stream.
+	 *         <code>null</code> if the End Of File has been reached.
+	 * @exception IOException
+	 *                If the first byte cannot be read for any reason other than
+	 *                end of file, or if the input stream has been closed, or if
+	 *                some other I/O error occurs.
+	 * @since 1.0.9
+	 */
+	public static byte[] read(InputStream source, int size) throws IOException {
+		byte[] test = new byte[size];
+		int n = tryReadFully(source, test, 0, size);
+		byte[] result = test;
+		if (n < size) {
+			if (n <= 0) {
+				result = null;
+			} else {
+				result = new byte[n];
+				System.arraycopy(test, 0, result, 0, n);
+			}
+		}
+		return result;
 	}
 }
