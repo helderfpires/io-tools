@@ -5,10 +5,10 @@ import java.io.InputStream;
 
 /**
  * <p>
- * Counts the bytes from the inputStream passed in the constructor. It can be
- * used to determine the size of a document passed as a stream. This is possible
- * only after the stream has been fully processed (by other parts of the
- * application).
+ * Counts the bytes of the <code>InputStream</code> passed in the constructor.
+ * It can be used to determine the size of a document passed as a stream. This
+ * is possible only after the stream has been fully processed (by other parts of
+ * the application).
  * </p>
  * <p>
  * Usage:
@@ -27,20 +27,20 @@ import java.io.InputStream;
  */
 public class SizeReaderInputStream extends InputStream {
 
-	private final InputStream innerStream;
+	private boolean closeCalled = false;
 
 	private final boolean fullReadOnClose;
-	private boolean closeCalled = false;
-	private long size = 0;
+	private final InputStream innerStream;
 	private long markPosition = 0;
+	private long size = 0;
 
 	public SizeReaderInputStream(final InputStream istream) {
 		this(istream, true);
 	}
 
 	/**
-	 * Constructs an SizeReaderInputStream and allow to specify actions to do on
-	 * close.
+	 * Constructs an <code>SizeReaderInputStream</code> and allow to specify
+	 * actions to do on close.
 	 * 
 	 * @param istream
 	 *            Stream whose bytes must be counted.
@@ -61,10 +61,13 @@ public class SizeReaderInputStream extends InputStream {
 	}
 
 	/**
-	 * Closes the inner stream. If <code>fullReadOnClose</code> was set to true
-	 * in the constructor it also count all the bytes of the inner stream.
+	 * Closes the inner stream. If <code>fullReadOnClose</code> was set in the
+	 * constructor it also count all the bytes of the underlying stream.
 	 * 
-	 * @see InputStream.close()
+	 * @see InputStream#close()
+	 * @exception IOException
+	 *                if an I/O error occurs reading the whole content of the
+	 *                stream.
 	 */
 	@Override
 	public void close() throws IOException {
@@ -86,7 +89,7 @@ public class SizeReaderInputStream extends InputStream {
 
 	/**
 	 * Returns the bytes read until now or total length of the stream if the
-	 * <code>close()</code> method has been called or EOF was reached.
+	 * <code>{@link close}</code> method has been called or EOF was reached.
 	 * 
 	 * @return bytes read until now or the total length of the stream if close()
 	 *         was called.

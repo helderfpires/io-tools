@@ -32,20 +32,26 @@ import java.io.OutputStream;
 
 /**
  * <p>
- * While data are read from InputStream they're also written to the OutputStream
- * passed in the constructor.
+ * Try to copy the data from the underlying <code>InputStream</code> to the
+ * <code>OutputStream</code> passed in the constructor. The data copied are
+ * similar to the underlying <code>InputStream</code>.
  * </p>
  * <p>
- * Internal InputStream is closed when method close() is invoked. OutputStream
- * must be closed outside this class.
+ * Underlying <code>InputStream</code> is closed when method
+ * <code>{@linkplain close}</code> is invoked. <code>OutputStream</code> must be
+ * closed outside this class. Bytes skipped are copied to the
+ * <code>OutputStream</code> while <code>mark</code> and <code>reset</code> are
+ * not supported at the moment.
  * </p>
  * <p>
- * When the method <i>close()</i> is invoked all the bytes remaining in the
- * internal InputStream are copied to the OutputStream Difference between this
- * class and the one in Apache commons.io is that when the InputStream is closed
- * all the bytes are copied to the
+ * When the method <code>{@link close}</code> is invoked all the bytes remaining
+ * in the underlying <code>InputStream</code> are copied to the
+ * <code>OutputStream</code>. This behavior is different from this class and
+ * <code>org.apache.commons.io.input.TeeInputStream</code>.
  * </p>
  * 
+ * 
+ * @see org.apache.commons.io.input.TeeInputStream
  * @author dvd.smnt
  * @since 1.0.6
  */
@@ -57,6 +63,17 @@ public final class TeeInputStreamOutputStream extends InputStream {
 
 	private final InputStream source;
 
+	/**
+	 * Creates a <code>TeeInputStreamOutputStream</code> and saves its argument,
+	 * the input stream <code>source</code> and the output stream
+	 * <code>destination</code> for later use.
+	 * 
+	 * @param source
+	 *            The underlying <code>InputStream</code>
+	 * @param destination
+	 *            Data readed from <code>source</code> is also written to this
+	 *            <code>OutputStream</code>.
+	 */
 	public TeeInputStreamOutputStream(final InputStream source,
 			final OutputStream destination) {
 		this.source = source;
@@ -142,8 +159,9 @@ public final class TeeInputStreamOutputStream extends InputStream {
 
 	@Override
 	public long skip(final long n) throws IOException {
-		throw new UnsupportedOperationException("Skip is not supported by ["
-				+ TeeInputStreamOutputStream.class + "]");
+		throw new UnsupportedOperationException(
+				"Skip is not (yet) supported by ["
+						+ TeeInputStreamOutputStream.class + "]");
 	}
 
 }

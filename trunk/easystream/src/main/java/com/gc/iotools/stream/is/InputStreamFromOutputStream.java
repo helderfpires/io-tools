@@ -44,11 +44,15 @@ import com.gc.iotools.stream.base.ExecutorServiceFactory;
 
 /**
  * <p>
- * This class simplifies the use of a pipe, hiding threading issues.
+ * This class allow to read the data written to an OutputStream from an
+ * InputStream.
  * </p>
  * <p>
- * The data who is produced inside the function produce() is written to an
- * OutputStream and can be readed back from from this class.
+ * To use this class you must subclass it and implement the abstract method
+ * {@link produce}. The data who is produced inside this function can be written
+ * to the <code>OutputStream</code> passed as a parameter. Later it can be read
+ * back from from the implementing class (whose ancestor is
+ * <code>java.io.InputStream</code> ).
  * </p>
  * 
  * <pre>
@@ -60,19 +64,17 @@ import com.gc.iotools.stream.base.ExecutorServiceFactory;
  *      produceMydata(dataId,dataSink)
  *   }
  * };
- * try {
  *  //now you can read from the InputStream the data that was written to the 
  *  //OutputStream
  * 	byte[] readed=IOUtils.toByteArray(isos);
- * } catch (final IOException e) {
- * 	Thread.sleep(1000);
- * 	assertEquals(&quot;Active Trheads&quot;, 0, InputStreamFromOutputStream
- * 			.getActiveThreads());
- * }
  * </pre>
+ * <p>
+ * This class encapsulates a pipe and a <code>Thread</code>, hiding the
+ * complexity of using them.
+ * </p>
  * 
- * @author Davide Simonetti
- * @version $Revision: 1 $
+ * @author dvd.smnt
+ * @since 1.0
  */
 public abstract class InputStreamFromOutputStream extends InputStream {
 
@@ -80,7 +82,7 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 
 		private IOException exception = null;
 
-		private final Log logger = LogFactory
+		private final Log LOGGER = LogFactory
 				.getLog(InputStreamFromOutputStream.DataProducerRunnable.class);
 
 		private String name = null;
@@ -98,7 +100,7 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 			try {
 				produce(this.outputStream);
 			} catch (final Throwable e) {
-				this.logger.error("Error during data production.", e);
+				this.LOGGER.error("Error during data production.", e);
 				this.exception = new IOException(
 						"Error producing data for class ["
 								+ getClass().getName() + "]");
@@ -107,7 +109,7 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 				closeStream();
 				InputStreamFromOutputStream.ACTIVE_THREAD_NAMES
 						.remove(threadName);
-				this.logger.debug("thread [" + getName() + "] closed");
+				this.LOGGER.debug("thread [" + getName() + "] closed");
 			}
 		}
 
@@ -117,13 +119,13 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 			} catch (final IOException e) {
 				if ((e.getMessage() != null)
 						&& (e.getMessage().indexOf("closed") > 0)) {
-					this.logger.debug("Stream already closed");
+					this.LOGGER.debug("Stream already closed");
 				} else {
-					this.logger.error("IOException closing OutputStream"
+					this.LOGGER.error("IOException closing OutputStream"
 							+ " Thread might be locked", e);
 				}
 			} catch (final Throwable t) {
-				this.logger.error("Error closing InputStream"
+				this.LOGGER.error("Error closing InputStream"
 						+ " Thread might be locked", t);
 			}
 		}
@@ -157,8 +159,8 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 
 	/**
 	 * <p>
-	 * It creates an InputStreamFromOutputStream with a THREAD_PER_INSTANCE
-	 * threading strategy
+	 * It creates a <code>InputStreamFromOutputStream</code> with a
+	 * THREAD_PER_INSTANCE thread strategy.
 	 * </p>
 	 * 
 	 * @see ExecutionModel.THREAD_PER_INSTANCE
@@ -244,7 +246,7 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 	/**
 	 * <p>
 	 * This method must be implemented to produce the data that must be read
-	 * from the external InputStream.
+	 * from the external <code>InputStream</code>.
 	 * </p>
 	 * <p>
 	 * Special care must be paid passing arguments to this method because it
