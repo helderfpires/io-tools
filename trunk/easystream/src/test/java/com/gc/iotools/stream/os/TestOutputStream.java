@@ -14,7 +14,6 @@ import java.util.concurrent.TimeoutException;
 import org.apache.commons.io.IOUtils;
 
 import com.gc.iotools.stream.base.ExecutionModel;
-import com.gc.iotools.stream.os.OutputStreamToInputStream;
 
 public class TestOutputStream {
 

@@ -26,8 +26,14 @@ package com.gc.iotools.stream.utils;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-public final class ArrayTools {
 
+/**
+ * Miscellaneous utilities for Arrays, i haven't found anywhere.
+ * 
+ * @author dvd.smnt
+ * @since 1.0.9
+ */
+public final class ArrayTools {
 	public static int indexOf(final byte[] src, final byte[] contained) {
 		if (src == null) {
 			throw new IllegalArgumentException("Source array can not be null");
@@ -46,5 +52,10 @@ public final class ArrayTools {
 			result = (found ? (pos - 1) : -1);
 		}
 		return result;
+	}
+
+	// utility class, shouldn't be instantiated
+	private ArrayTools() {
+
 	}
 }

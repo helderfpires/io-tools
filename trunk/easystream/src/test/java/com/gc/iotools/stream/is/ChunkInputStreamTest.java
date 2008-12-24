@@ -1,6 +1,8 @@
 package com.gc.iotools.stream.is;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,55 +15,39 @@ import org.junit.Test;
 
 public class ChunkInputStreamTest {
 	@Test
+	public void testBufferNotModified() throws IOException {
+		final ChunkInputStream chis = getStream("0123456789", "0", "2", false,
+				true);
+		final byte[] bytes = new byte[5];
+		Arrays.fill(bytes, (byte) 1);
+		chis.read(bytes, 1, bytes.length - 1);
+		final byte[] reference = new byte[] { 1, "1".getBytes()[0], 1, 1, 1 };
+		assertArrayEquals("readed buffer", reference, bytes);
+	}
+
+	@Test
 	public void testIncompleteMarkerInEnd() throws IOException {
 		doTest("0123456789", "0", "890", "123456789");
 	}
 
 	@Test
-	public void testNoEndMarker() throws IOException {
-		doTest("012345678", "67", null, "8");
-		doTest("012345678", "0", null, "12345678");
-	}
-
-	@Test
-	public void testNoStartMarker() throws IOException {
-		ChunkInputStream chis = getStream("0123en4567en89", null, "en", false,
-				false);
-		byte[][] reference = new byte[][] { "0123".getBytes(),
-				"4567".getBytes(), "89".getBytes() };
-		int i = 0;
-		int n1 = chis.read(new byte[5], 0, 5);
-		assertEquals("stream not initialized", -1, n1);
-		while (chis.fetchNextChunk()) {
-			byte[] readed = IOUtils.toByteArray(chis);
-			assertArrayEquals("bytes readed", reference[i++], readed);
-		}
-	}
-
-	// Not implemented yet
-	// @Test
-	// public void testIncludeMarkers() throws IOException {
-	// doTest("0123456789", null, "67", "012345");
-	// }
-
-	@Test
 	public void testNoAutomaticFetch() throws IOException {
-		ChunkInputStream chis = getStream("012st3en45st67en   st89", "st",
-				"en", false, false);
-		byte[][] reference = new byte[][] { "3".getBytes(), "67".getBytes(),
-				"89".getBytes() };
+		final ChunkInputStream chis = getStream("012st3en45st67en   st89",
+				"st", "en", false, false);
+		final byte[][] reference = new byte[][] { "3".getBytes(),
+				"67".getBytes(), "89".getBytes() };
 		int i = 0;
-		int n1 = chis.read(new byte[5], 0, 5);
+		final int n1 = chis.read(new byte[5], 0, 5);
 		assertEquals("stream not initialized", -1, n1);
 		while (chis.fetchNextChunk()) {
-			byte[] readed = IOUtils.toByteArray(chis);
+			final byte[] readed = IOUtils.toByteArray(chis);
 			assertArrayEquals("bytes readed", reference[i++], readed);
 		}
-		ChunkInputStream chis1 = getStream("012st3en45st67en   st89", "st",
-				"en", false, false);
-		int rd = chis1.read();
+		final ChunkInputStream chis1 = getStream("012st3en45st67en   st89",
+				"st", "en", false, false);
+		final int rd = chis1.read();
 		assertEquals("stream not initialized", -1, rd);
-		
+
 		i = 0;
 		while (chis1.fetchNextChunk()) {
 			int pos = 0;
@@ -75,25 +61,44 @@ public class ChunkInputStreamTest {
 		}
 	}
 
+	// Not implemented yet
+	// @Test
+	// public void testIncludeMarkers() throws IOException {
+	// doTest("0123456789", null, "67", "012345");
+	// }
+
 	@Test
-	public void testNoZeroLenghtRead() throws IOException {
-		ChunkInputStream chis = getStream("0123456789", "7", "8", false, true);
-		byte[] bytes = new byte[5];
-		int ret = chis.read(bytes);
-		assertEquals("No zero lenght read", -1, ret);
-		ChunkInputStream chis2 = getStream("01234567879", "7", "8", false, true);
-		ret = chis2.read(bytes);
-		assertEquals("No zero lenght read", 1, ret);
+	public void testNoEndMarker() throws IOException {
+		doTest("012345678", "67", null, "8");
+		doTest("012345678", "0", null, "12345678");
 	}
 
 	@Test
-	public void testBufferNotModified() throws IOException {
-		ChunkInputStream chis = getStream("0123456789", "0", "2", false, true);
-		byte[] bytes = new byte[5];
-		Arrays.fill(bytes, (byte) 1);
-		chis.read(bytes, 1, bytes.length - 1);
-		byte[] reference = new byte[] { 1, "1".getBytes()[0], 1, 1, 1 };
-		assertArrayEquals("readed buffer", reference, bytes);
+	public void testNoStartMarker() throws IOException {
+		final ChunkInputStream chis = getStream("0123en4567en89", null, "en",
+				false, false);
+		final byte[][] reference = new byte[][] { "0123".getBytes(),
+				"4567".getBytes(), "89".getBytes() };
+		int i = 0;
+		final int n1 = chis.read(new byte[5], 0, 5);
+		assertEquals("stream not initialized", -1, n1);
+		while (chis.fetchNextChunk()) {
+			final byte[] readed = IOUtils.toByteArray(chis);
+			assertArrayEquals("bytes readed", reference[i++], readed);
+		}
+	}
+
+	@Test
+	public void testNoZeroLenghtRead() throws IOException {
+		final ChunkInputStream chis = getStream("0123456789", "7", "8", false,
+				true);
+		final byte[] bytes = new byte[5];
+		int ret = chis.read(bytes);
+		assertEquals("No zero lenght read", -1, ret);
+		final ChunkInputStream chis2 = getStream("01234567879", "7", "8",
+				false, true);
+		ret = chis2.read(bytes);
+		assertEquals("No zero lenght read", 1, ret);
 	}
 
 	@Test
@@ -103,13 +108,11 @@ public class ChunkInputStreamTest {
 
 	@Test
 	public void testStandard() throws IOException {
-		ChunkInputStream chunkIs = new ChunkInputStream(
-				ChunkInputStreamTest.class
-						.getResourceAsStream("test.xml"),
-				"<simpledocument>".getBytes(), "</simpledocument>"
-						.getBytes(),
+		final ChunkInputStream chunkIs = new ChunkInputStream(
+				ChunkInputStreamTest.class.getResourceAsStream("test.xml"),
+				"<simpledocument>".getBytes(), "</simpledocument>".getBytes(),
 				false, true);
-		String decoded = IOUtils.toString(chunkIs).trim();
+		final String decoded = IOUtils.toString(chunkIs).trim();
 		assertTrue("doc [" + decoded + "] starts with <document>", decoded
 				.startsWith("<document>"));
 		assertTrue("doc [" + decoded + "] ends with </document>", decoded
@@ -132,8 +135,8 @@ public class ChunkInputStreamTest {
 	}
 
 	private ChunkInputStream getStream(final String referencestr,
-			final String start, final String end, boolean showMarkers,
-			boolean automaticFetch) {
+			final String start, final String end, final boolean showMarkers,
+			final boolean automaticFetch) {
 		final InputStream reference = new ByteArrayInputStream(referencestr
 				.getBytes());
 
