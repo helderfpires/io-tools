@@ -8,8 +8,6 @@ import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 
-import com.gc.iotools.stream.is.SizeReaderInputStream;
-
 public class ReadSizeInputStreamTest {
 
 	@org.junit.Test

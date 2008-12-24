@@ -12,8 +12,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
-import com.gc.iotools.stream.is.InputStreamFromOutputStream;
-
 public class TestInputStreamFromOutputStream {
 	@Test
 	public void testExceptionRead() throws Exception {

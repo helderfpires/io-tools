@@ -1,6 +1,9 @@
 package com.gc.iotools.stream.is;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,26 +41,14 @@ public class DiskBufferedInputStreamTest {
 		bis.read(new byte[5]);
 		final byte[] reference = IOUtils.toByteArray(bis);
 		bis.reset();
-		InputStream testStream = new DiskBufferedInputStream(bis, 8192);
+		final InputStream testStream = new DiskBufferedInputStream(bis, 8192);
 		testStream.read(new byte[5]);
 		testStream.mark(80);
 		final byte[] read = StreamUtils.read(testStream, 70);
 		assertEquals("read bytes", 70, read.length);
 		testStream.reset();
-		byte[] content = IOUtils.toByteArray(testStream);
+		final byte[] content = IOUtils.toByteArray(testStream);
 		assertArrayEquals("simple read", reference, content);
-	}
-
-	private String getTmpFileName() {
-		String result = null;
-		final File[] files = this.tmpDir.listFiles();
-		for (final File file : files) {
-			final String name = file.getName();
-			if (name.matches("iotools-diskbufferis.*tmp")) {
-				result = name;
-			}
-		}
-		return result;
 	}
 
 	@Test
@@ -71,7 +62,7 @@ public class DiskBufferedInputStreamTest {
 		bis.read(new byte[5]);
 		final byte[] reference = IOUtils.toByteArray(bis);
 		bis.reset();
-		InputStream testStream = new DiskBufferedInputStream(bis, 80);
+		final InputStream testStream = new DiskBufferedInputStream(bis, 80);
 		testStream.read(new byte[5]);
 		testStream.mark(120);
 		final byte[] readBeforeReset = StreamUtils.read(testStream, 100);
@@ -81,7 +72,7 @@ public class DiskBufferedInputStreamTest {
 		final String tmpFileName = getTmpFileName();
 		assertNotNull("Temporary file created", tmpFileName);
 		testStream.reset();
-		byte[] content = IOUtils.toByteArray(testStream);
+		final byte[] content = IOUtils.toByteArray(testStream);
 		assertArrayEquals("read after reset", reference, content);
 		testStream.close();
 		assertNull("Temporary file [" + tmpFileName + "]deleted",
@@ -117,6 +108,18 @@ public class DiskBufferedInputStreamTest {
 	@Test
 	public void testUnlimitedMark() throws IOException {
 
+	}
+
+	private String getTmpFileName() {
+		String result = null;
+		final File[] files = this.tmpDir.listFiles();
+		for (final File file : files) {
+			final String name = file.getName();
+			if (name.matches("iotools-diskbufferis.*tmp")) {
+				result = name;
+			}
+		}
+		return result;
 	}
 
 }

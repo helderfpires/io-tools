@@ -33,12 +33,44 @@ import java.io.InputStream;
  * General utilities for handling streams.
  * 
  * @author dvd.smnt
- * @since 1.0.8
+ * @since 1.0.9
  */
 public final class StreamUtils {
-	// Utility class: shouldn't be instantiated
-	private StreamUtils() {
-
+	/**
+	 * <p>
+	 * Read a specified amount of bytes from the <i>source</i> InputStream and
+	 * place them into the returned byte array.
+	 * </p>
+	 * <p>
+	 * This utility ensures that either <code>size</code> bytes are read or the
+	 * end of the stream has been reached.
+	 * 
+	 * @param source
+	 *            Stream from which the data is read.
+	 * @param size
+	 *            The maximum length of the data read.
+	 * @return byte[] containing the data read from the stream.
+	 *         <code>null</code> if the End Of File has been reached.
+	 * @exception IOException
+	 *                If the first byte cannot be read for any reason other than
+	 *                end of file, or if the input stream has been closed, or if
+	 *                some other I/O error occurs.
+	 * @since 1.0.9
+	 */
+	public static byte[] read(final InputStream source, final int size)
+			throws IOException {
+		final byte[] test = new byte[size];
+		final int n = tryReadFully(source, test, 0, size);
+		byte[] result = test;
+		if (n < size) {
+			if (n <= 0) {
+				result = null;
+			} else {
+				result = new byte[n];
+				System.arraycopy(test, 0, result, 0, n);
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -98,39 +130,8 @@ public final class StreamUtils {
 		return n;
 	}
 
-	/**
-	 * <p>
-	 * Read a specified amount of bytes from the <i>source</i> InputStream and
-	 * place them into the returned byte array.
-	 * </p>
-	 * <p>
-	 * This utility ensures that either <code>size</code> bytes are read or the
-	 * end of the stream has been reached.
-	 * 
-	 * @param source
-	 *            Stream from which the data is read.
-	 * @param size
-	 *            The maximum length of the data read.
-	 * @return byte[] containing the data read from the stream.
-	 *         <code>null</code> if the End Of File has been reached.
-	 * @exception IOException
-	 *                If the first byte cannot be read for any reason other than
-	 *                end of file, or if the input stream has been closed, or if
-	 *                some other I/O error occurs.
-	 * @since 1.0.9
-	 */
-	public static byte[] read(InputStream source, int size) throws IOException {
-		byte[] test = new byte[size];
-		int n = tryReadFully(source, test, 0, size);
-		byte[] result = test;
-		if (n < size) {
-			if (n <= 0) {
-				result = null;
-			} else {
-				result = new byte[n];
-				System.arraycopy(test, 0, result, 0, n);
-			}
-		}
-		return result;
+	// Utility class: shouldn't be instantiated
+	private StreamUtils() {
+
 	}
 }

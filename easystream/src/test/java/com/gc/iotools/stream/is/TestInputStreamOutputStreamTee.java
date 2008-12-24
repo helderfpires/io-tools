@@ -10,8 +10,6 @@ import junit.framework.TestCase;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 
-import com.gc.iotools.stream.is.TeeInputStreamOutputStream;
-
 public class TestInputStreamOutputStreamTee extends TestCase {
 	@org.junit.Test
 	public void testReadAtSpecificPosition() throws Exception {

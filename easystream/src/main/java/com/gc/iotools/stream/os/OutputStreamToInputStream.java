@@ -47,7 +47,7 @@ import com.gc.iotools.stream.base.ExecutorServiceFactory;
 /**
  * TODO: code example
  * 
- * @since 0ct 3, 2008
+ * @since 1.0
  * @author dvd.smnt
  * @version $Revision: 1 $
  */
@@ -116,8 +116,8 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 
 	private boolean closeCalled = false;
 	private final boolean joinOnClose;
-	private final Future<T> writingResult;
 	private final PipedOutputStream wrappedPipedOS;
+	private final Future<T> writingResult;
 
 	public OutputStreamToInputStream() throws IOException {
 		this(true, ExecutionModel.THREAD_PER_INSTANCE);
