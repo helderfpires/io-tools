@@ -5,10 +5,10 @@
 	<name>IO-Toools-Project-Distribution</name>
 	<description>IO-tools library distribution</description>
 	<groupId>com.googlecode.io-tools</groupId>
-	<version>1.1</version>
+	<version>1.1.1-SNAPSHOT</version>
 	<scm>
-		<connection>scm:svn:http://io-tools.googlecode.com/svn/tags/io-tools-parent-1.1/io-tools-project</connection>
-		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/tags/io-tools-parent-1.1/io-tools-project</developerConnection>
+		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk/io-tools-project</connection>
+		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk/io-tools-project</developerConnection>
 	</scm>
 	<developers>
 		<developer>
