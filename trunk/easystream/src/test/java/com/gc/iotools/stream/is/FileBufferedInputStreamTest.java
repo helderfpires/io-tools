@@ -43,12 +43,23 @@ import com.gc.iotools.stream.utils.StreamUtils;
 
 public class FileBufferedInputStreamTest {
 
-	private File tmpDir;
+	static int getTmpFileNum() {
+		final File tmpDir1 = new File(System.getProperty("java.io.tmpdir"));
+		int result = 0;
+		final File[] files = tmpDir1.listFiles();
+		for (final File file : files) {
+			final String name = file.getName();
+			if (name.matches("iotools-filebufferis.*tmp")) {
+				result++;
+			}
+		}
+		return result;
+	}
 
 	@Before
 	public void setUp() throws Exception {
-		this.tmpDir = new File(System.getProperty("java.io.tmpdir"));
-		final File[] files = this.tmpDir.listFiles();
+		final File tmpDir = new File(System.getProperty("java.io.tmpdir"));
+		final File[] files = tmpDir.listFiles();
 		for (final File file : files) {
 			final String name = file.getName();
 			if (name.matches("iotools-filebufferis.*tmp")) {
@@ -219,17 +230,5 @@ public class FileBufferedInputStreamTest {
 		assertArrayEquals("read after reset", reference, readAfterReset);
 		assertEquals("TempFile Number", 0, getTmpFileNum());
 		testStream.close();
-	}
-
-	private int getTmpFileNum() {
-		int result = 0;
-		final File[] files = this.tmpDir.listFiles();
-		for (final File file : files) {
-			final String name = file.getName();
-			if (name.matches("iotools-filebufferis.*tmp")) {
-				result++;
-			}
-		}
-		return result;
 	}
 }
