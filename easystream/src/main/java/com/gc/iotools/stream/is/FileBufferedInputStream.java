@@ -26,6 +26,7 @@ package com.gc.iotools.stream.is;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -54,12 +55,15 @@ import org.apache.commons.logging.LogFactory;
  * indefinite length of bytes has been read. Check {@link mark } for details.
  * </p>
  * <p>
- * It should be used where performances are not an issue, or as a base class for
- * other implementations. Usually a cache in memory is suitable to speed up the
- * process. {@link DiskBufferedInputStream} provides this kind of buffering.
+ * It's best used when a <i>large</i> sequential read of an
+ * <code>InputStream</code> has to be performed and then the content of the
+ * stream must be available again. Since it's disk based performances of
+ * <code>{@linkplain reset}</code> method are low. When frequent
+ * <code>{@linkplain reset}</code> are needed a cache in memory should be used
+ * to speed up the process.
  * </p>
  * 
- * @see DiskBufferedInputStream
+ * @see BufferedInputStream
  * @author dvd.smnt
  * @since 1.0.9
  */
@@ -135,8 +139,8 @@ public class FileBufferedInputStream extends InputStream {
 	 * position so that subsequent reads re-read the same bytes.
 	 *</p>
 	 * <p>
-	 * This method breaks the contract of the class InputStream allowing to use
-	 * <i>indefinite</i> marking .
+	 * This method extends the original behavior of the class
+	 * <code>InputStream</code> allowing to use <i>indefinite</i> marking.
 	 * <ul>
 	 * <li><code>readLimit > 0</code> The <code>readLimit</code> arguments tells
 	 * this input stream to allow that many bytes to be read before the mark
@@ -148,16 +152,16 @@ public class FileBufferedInputStream extends InputStream {
 	 * <ul>
 	 * </p>
 	 * 
-	 * @param readLimit
+	 * @param markLimit
 	 *            the maximum limit of bytes that can be read before the mark
-	 *            position becomes invalid. If negative allows indefinite
-	 *            marking.
+	 *            position becomes invalid. If negative allows <i>indefinite</i>
+	 *            marking (the mark never becomes invalid).
 	 * 
 	 * @see java.io.InputStream#reset()
 	 */
 	@Override
-	public synchronized void mark(final int readLimit) {
-		final boolean mark = (readLimit != 0);
+	public synchronized void mark(final int markLimit) {
+		final boolean mark = (markLimit != 0);
 		if (mark) {
 			try {
 				if (this.tempFile == null) {
@@ -183,7 +187,7 @@ public class FileBufferedInputStream extends InputStream {
 				cleanup();
 			}
 		}
-		this.markLimit = readLimit;
+		this.markLimit = markLimit;
 	}
 
 	/**
