@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.googlecode.io-tools</groupId>
 	<artifactId>easystream-jdk14</artifactId>
 	<packaging>jar</packaging>
 	<name>EasyStream-jdk14</name>
 	<description>Stream utilities</description>
-	<version>1.0.9-SNAPSHOT</version>
+	<version>1.1</version>
 	<url>http://io-tools.googlecode.com</url>
 	<inceptionYear>2008</inceptionYear>
 	<parent>
 		<artifactId>io-tools-parent</artifactId>
 		<groupId>com.googlecode.io-tools</groupId>
-		<version>1.0.9-SNAPSHOT</version>
+		<version>1.1</version>
 	</parent>
 	<developers>
 		<developer>
@@ -30,8 +29,8 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk/easystream-jdk14</connection>
-		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk/easystream-jdk14</developerConnection>
+		<connection>scm:svn:http://io-tools.googlecode.com/svn/tags/io-tools-parent-1.1/easystream-jdk14</connection>
+		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/tags/io-tools-parent-1.1/easystream-jdk14</developerConnection>
 	</scm>
 	<issueManagement>
 		<system>GoogleIssues</system>
@@ -120,8 +119,7 @@
 			<!--
 				plugin> <groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
-				<version>2.0-beta-7</version> </plugin
-			-->
+				<version>2.0-beta-7</version> </plugin -->
 		</plugins>
 	</build>
 </project>
