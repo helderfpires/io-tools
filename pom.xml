@@ -1,133 +1,128 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>io-tools-parent</artifactId>
-  <packaging>pom</packaging>
-  <name>IO-Toools-Parent</name>
-  <description>IO-tools utilites for stream and format detection</description>
-  <groupId>com.googlecode.io-tools</groupId>
-  <version>1.0.9-SNAPSHOT</version>
-  <scm>
-	<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk</connection>
-	<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk</developerConnection>
-  </scm>
-  <developers>
-	<developer>
-		<name>Davide Simonetti</name>
-		<id>dvd.smnt</id>
-		<email>dvd.smnt@gmail.com</email>
-	</developer>
-  </developers>
-  <licenses>
-	<license>
-		<name>The BSD Software License</name>
-		<url>http://www.opensource.org/licenses/bsd-license.php</url>
-		<distribution>repo</distribution>
-	</license>
-  </licenses>
-  <distributionManagement>
-    <site>
-      <id>io-tools-web</id>
-      <url>ftp://ftp.jtools.heliohost.org/</url>
-    </site>
-  </distributionManagement>
-  <modules>
-    <module>easystream</module>
-    <module>easystream-jdk14</module>
-    <module>wazformat</module>
-    <module>io-tools-project</module>
-  </modules>
-  <dependencies>
-	<!-- For javadoc plugin-->
-	<dependency>
-		<groupId>junit</groupId>
-		<artifactId>junit</artifactId>
-		<version>4.5</version>
-		<type>jar</type>
-		<scope>provided</scope>
-	</dependency>
-  </dependencies> 
-  <build>
-	<defaultGoal>install</defaultGoal>
-	<resources>
-		<resource>
-			<directory>src/main/resources</directory>
-			<filtering>true</filtering>
-		</resource>
-	</resources>
-	<testResources>
-		<testResource>
-			<directory>src/test/resources</directory>
-			<filtering>true</filtering>
-		</testResource>
-		<testResource>
-			<directory>src/test/java</directory>
-			<filtering>false</filtering>
-			<excludes>
-				<exclude>**/*.java</exclude>
-			</excludes>
-		</testResource>
-	</testResources>
-	<plugins>
-		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-javadoc-plugin</artifactId>
-		</plugin>
-		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-deploy-plugin</artifactId>
-			<version>2.4</version>
-		</plugin>
-		<plugin>
-			<artifactId>maven-source-plugin</artifactId>
-			<executions>
-				<execution>
-					<id>attach-sources</id>
-					<goals>
-						<goal>jar</goal>
-					</goals>
-				</execution>
-			</executions>
-		</plugin>
-		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-site-plugin</artifactId>
-			<version>2.0-beta-7</version>
-		</plugin>
-	<!-- plugin>
-		<artifactId>maven-assembly-plugin</artifactId>
-		<version>2.2-beta-2</version>
-		<executions>
-			<execution>
-				<phase>package</phase> 
-				<goals>						
-					<goal>attached</goal>
-				</goals>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>io-tools-parent</artifactId>
+	<packaging>pom</packaging>
+	<name>IO-Toools-Parent</name>
+	<description>IO-tools utilites for stream and format detection</description>
+	<groupId>com.googlecode.io-tools</groupId>
+	<version>1.0.9-SNAPSHOT</version>
+	<scm>
+		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk</connection>
+		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk</developerConnection>
+	</scm>
+	<developers>
+		<developer>
+			<name>Davide Simonetti</name>
+			<id>dvd.smnt</id>
+			<email>dvd.smnt@gmail.com</email>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>The BSD Software License</name>
+			<url>http://www.opensource.org/licenses/bsd-license.php</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<distributionManagement>
+		<repository>
+			<id>jtools-repo</id>
+			<url>ftp://ftp.jtools.heliohost.org/</url>
+		</repository>
+		<site>
+			<id>io-tools-web</id>
+			<url>ftp://ftp.jtools.heliohost.org/</url>
+		</site>
+	</distributionManagement>
+	<modules>
+		<module>easystream</module>
+		<module>easystream-jdk14</module>
+		<module>wazformat</module>
+		<module>io-tools-project</module>
+	</modules>
+	<dependencies>
+		<!-- For javadoc plugin-->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.5</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<defaultGoal>install</defaultGoal>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+			</testResource>
+			<testResource>
+				<directory>src/test/java</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</testResource>
+		</testResources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.4</version>
+			</plugin>
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>2.0-beta-7</version>
+			</plugin>
+			<!--
+				plugin> <artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2-beta-2</version> <executions> <execution>
+				<phase>package</phase> <goals> <goal>attached</goal> </goals>
+				<configuration> <tarLongFileMode>gnu</tarLongFileMode> <descriptors>
+				<descriptor>assembly.xml</descriptor> </descriptors>
+				</configuration> </execution> </executions> </plugin
+			-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>2.0-beta-7</version>
 				<configuration>
-					<tarLongFileMode>gnu</tarLongFileMode>
-					<descriptors>
-						<descriptor>assembly.xml</descriptor>
-					</descriptors>			
+					<excludeModules>easystream-jdk14</excludeModules>
 				</configuration>
-			</execution>
-		</executions>
-	</plugin -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>2.0-beta-7</version>
-        <configuration>
-          <excludeModules>easystream-jdk14</excludeModules>
-        </configuration>
-      </plugin>
-    </plugins>
-	<extensions>
-		<extension>
-			<groupId>org.apache.maven.wagon</groupId>
-			<artifactId>wagon-ftp</artifactId>
-			<version>1.0-beta-4</version>
-		</extension>
-	</extensions>
-    </build>
+			</plugin>
+		</plugins>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ftp</artifactId>
+				<version>1.0-beta-4</version>
+			</extension>
+		</extensions>
+	</build>
 	<reporting>
 		<plugins>
 			<plugin>
@@ -135,16 +130,16 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.5</version>
 				<reportSets>
-	          			<reportSet>
- 						<id>report-javadoc</id>
-            					<reports>
-              						<report>javadoc</report>
-            					</reports>
+					<reportSet>
+						<id>report-javadoc</id>
+						<reports>
+							<report>javadoc</report>
+						</reports>
 						<configuration>
 							<skip>false</skip>
 						</configuration>
-          				</reportSet>
-        			</reportSets>
+					</reportSet>
+				</reportSets>
 			</plugin>
 			<plugin>
 				<artifactId>maven-checkstyle-plugin</artifactId>
@@ -152,9 +147,9 @@
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 			</plugin>
-		      <plugin>
-        		<artifactId>maven-project-info-reports-plugin</artifactId>
-		      </plugin>
+			<plugin>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+			</plugin>
 		</plugins>
 	</reporting>
 </project>
