@@ -17,12 +17,6 @@
 			<email>dvd.smnt@gmail.com</email>
 		</developer>
 	</developers>
-	<distributionManagement>
-		<site>
-			<id>io-tools-web</id>
-			<url>ftp://ftp.jtools.heliohost.org/</url>
-		</site>
-	</distributionManagement>
 	<dependencies>
 		<dependency>
 			<groupId>com.googlecode.io-tools</groupId>
