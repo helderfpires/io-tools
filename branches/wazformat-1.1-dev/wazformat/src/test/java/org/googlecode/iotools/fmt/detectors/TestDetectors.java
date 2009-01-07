@@ -1,5 +1,7 @@
 package org.googlecode.iotools.fmt.detectors;
 
+import com.gc.iotools.fmt.detectors.XmlDetector;
+
 import junit.framework.TestCase;
 
 public class TestDetectors extends TestCase {
