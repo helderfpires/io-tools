@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>io-tools-parent</artifactId>
 	<packaging>pom</packaging>
@@ -26,12 +27,14 @@
 	</licenses>
 	<distributionManagement>
 		<repository>
-			<id>jtools-repo</id>
-			<url>ftp://ftp.jtools.heliohost.org/</url>
+			<uniqueVersion>false</uniqueVersion>
+			<id>java.net-maven2-repository</id>
+			<url>java-net:/maven2-repository/trunk/www/repository/</url>
 		</repository>
 		<site>
-			<id>io-tools-web</id>
-			<url>ftp://ftp.jtools.heliohost.org/</url>
+			<id>io-tools-web-x10</id>
+			<name>jtools-site</name>
+			<url>ftp://ftp.jtools.x10hosting.com/</url>
 		</site>
 	</distributionManagement>
 	<modules>
@@ -74,12 +77,22 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<autoVersionSubmodules>false</autoVersionSubmodules>
+					<generateReleasePoms>true</generateReleasePoms>
+					<!-- install required for assembly plugin -->
+					<preparationGoals>clean install</preparationGoals>
+					<tag>io-tools-{$project.version}</tag>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
 				<version>2.4</version>
+				<configuration>
+					<updateReleaseInfo>true</updateReleaseInfo>
+				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-source-plugin</artifactId>
@@ -103,7 +116,8 @@
 				<phase>package</phase> <goals> <goal>attached</goal> </goals>
 				<configuration> <tarLongFileMode>gnu</tarLongFileMode> <descriptors>
 				<descriptor>assembly.xml</descriptor> </descriptors>
-				</configuration> </execution> </executions> </plugin -->
+				</configuration> </execution> </executions> </plugin
+			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
@@ -118,6 +132,11 @@
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-ftp</artifactId>
 				<version>1.0-beta-4</version>
+			</extension>
+			<extension>
+				<groupId>org.jvnet.wagon-svn</groupId>
+				<artifactId>wagon-svn</artifactId>
+				<version>RELEASE</version>
 			</extension>
 		</extensions>
 	</build>
@@ -150,5 +169,13 @@
 			</plugin>
 		</plugins>
 	</reporting>
+	<repositories>
+		<repository>
+			<id>maven2-repository.dev.java.net</id>
+			<name>Java.net Repository for Maven</name>
+			<url>http://download.java.net/maven/2/</url>
+		</repository>
+	</repositories>
+
 </project>
 
