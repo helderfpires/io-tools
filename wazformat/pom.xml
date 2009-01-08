@@ -33,17 +33,6 @@
 		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk/wazformat</connection>
 		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk/wazformat</developerConnection>
 	</scm>
-	<distributionManagement>
-		<repository>
-			<id>repo.googlecode</id>
-			<name>googlecode repo</name>
-			<url>scm:svn:https://dvd.smnt@io-tools.googlecode.com/svn/site</url>
-		</repository>
-		<site>
-			<id>site.googlecode</id>
-			<url>scm:svn:https://dvd.smnt@io-tools.googlecode.com/svn/site</url>
-		</site>
-	</distributionManagement>
 	<issueManagement>
 		<system>GoogleIssues</system>
 		<url>http://code.google.com/p/io-tools/issues/list</url>
