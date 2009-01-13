@@ -1,6 +1,5 @@
 package com.gc.iotools.fmt.base;
 
-import java.io.InputStream;
 
 /**
  * Interface for extracting the content from an encoding format (es.Base64)
@@ -8,8 +7,11 @@ import java.io.InputStream;
  * @author dvd.smnt
  */
 public interface Decoder {
+	byte[] decode(byte[] encodedBytes);
 
-	InputStream decode(InputStream encodedStream);
+	int getEncodingOffset();
 
 	FormatEnum getFormat();
+
+	float getRatio();
 }

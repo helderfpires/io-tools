@@ -1,4 +1,15 @@
-package com.gc.iotools.fmt.base;
+package com.gc.iotools.fmt.deflen.pksc7;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+
+import com.gc.iotools.fmt.base.FormatEnum;
+import com.gc.iotools.fmt.deflen.AbstractFormatDetector;
 
 /*
  * Copyright (c) 2008, Davide Simonetti
@@ -26,8 +37,34 @@ package com.gc.iotools.fmt.base;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-public interface Detector {
 
-	FormatEnum[] getDetectedFormat();
+/**
+ * Class for detecting DER and BER encoded PKCS7 files.
+ * 
+ * @author dvd.smnt
+ */
+public class PKCS7Detector extends AbstractFormatDetector {
+	private static final Log LOGGER = LogFactory.getLog(PKCS7Detector.class);
 
+	public PKCS7Detector() {
+		super(90, FormatEnum.PKCS7);
+	}
+
+	public boolean detect(final byte[] readedBytes) {
+		final InputStream buffer = new ByteArrayInputStream(readedBytes);
+		boolean result = false;
+		try {
+			final ASN1Reader pkcsHdrRead = new ASN1Reader(buffer);
+			pkcsHdrRead.check(PKCSObjectIdentifiers.signedData);
+			result = true;
+		} catch (final FormatException e) {
+			LOGGER.debug("PKCS7 not recognized" + "Exception (normal) ["
+					+ e.getMessage() + "]");
+		} catch (final IOException e) {
+			LOGGER.warn("PKCS7 not recognized for an I/O exception", e);
+		} catch (final Throwable e) {
+			LOGGER.warn("PKCS7 not recognized for unexpected exception.", e);
+		}
+		return result;
+	}
 }

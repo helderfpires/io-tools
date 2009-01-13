@@ -1,5 +1,6 @@
 package com.gc.iotools.fmt.base;
 
+import org.apache.commons.lang.enums.Enum;
 import org.apache.commons.lang.enums.ValuedEnum;
 
 /*
@@ -82,6 +83,10 @@ public class FormatEnum extends ValuedEnum {
 	public static final FormatEnum ZIP = new FormatEnum("zip", ZIP_INT,
 			"application/zip");
 
+	public static FormatEnum getEnum(final Class clazz, final String name) {
+		return (FormatEnum) Enum.getEnum(clazz, name);
+	}
+
 	private final String mimeType;
 
 	/**
@@ -100,6 +105,7 @@ public class FormatEnum extends ValuedEnum {
 		return this.mimeType;
 	}
 
+	@Override
 	public String toString() {
 		return "[" + this.getName() + "]";
 	}
