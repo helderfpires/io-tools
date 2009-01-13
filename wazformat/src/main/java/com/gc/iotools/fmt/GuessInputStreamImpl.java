@@ -36,12 +36,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.gc.iotools.fmt.base.Decoder;
+import com.gc.iotools.fmt.base.DefiniteLengthDetector;
 import com.gc.iotools.fmt.base.Detector;
 import com.gc.iotools.fmt.base.FormatEnum;
+import com.gc.iotools.fmt.base.IndefiniteLengthDetector;
 
 final class GuessInputStreamImpl extends GuessInputStream {
 	private static final int MAX_LEVELS = 2;
-
 	private static FormatEnum detectFormat(final byte[] bytes,
 			final Detector[] detectors) {
 		FormatEnum detected = FormatEnum.UNKNOWN;
@@ -87,14 +88,12 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		}
 
 		int decodeOffset = 1;
-		for (int i = 0; i < decoders.length; i++) {
-			final Decoder decoder = decoders[i];
+		for (final final Decoder decoder : decoders) {
 			decodeOffset = Math.max(decodeOffset, decoder.getEncodingOffset());
 		}
 
 		float decodeRatio = 1;
-		for (int i = 0; i < decoders.length; i++) {
-			final Decoder decoder = decoders[i];
+		for (final final Decoder decoder : decoders) {
 			decodeRatio = Math.max(decodeRatio, decoder.getRatio());
 		}
 
@@ -103,8 +102,7 @@ final class GuessInputStreamImpl extends GuessInputStream {
 
 	private static Map getDecodersMap(final Decoder[] decoders) {
 		final Map formatsMap = new HashMap();
-		for (int i = 0; i < decoders.length; i++) {
-			final Decoder decoder = decoders[i];
+		for (final final Decoder decoder : decoders) {
 			formatsMap.put(decoder.getFormat(), decoder);
 		}
 		return formatsMap;
@@ -112,8 +110,7 @@ final class GuessInputStreamImpl extends GuessInputStream {
 
 	private static FormatEnum[] getEnabledFormats(final Detector[] detectors) {
 		final Collection formatsColl = new ArrayList();
-		for (int i = 0; i < detectors.length; i++) {
-			final Detector detector = detectors[i];
+		for (final final Detector detector : detectors) {
 			formatsColl.add(detector.getDetectedFormat());
 		}
 		return (FormatEnum[]) formatsColl.toArray(new FormatEnum[formatsColl
@@ -142,9 +139,13 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		return result;
 	}
 
+	private final BufferedInputStream bis;
+
+	private final DefiniteLengthDetector[] defLen;
+
 	private final FormatEnum formats[];
 
-	private final BufferedInputStream bis;
+	private final IndefiniteLengthDetector[] inDefLen;
 
 	public GuessInputStreamImpl(final Detector[] detectors,
 			final Decoder[] decoders, final InputStream istream)
@@ -156,47 +157,58 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		this.formats = detectFormats(bytes, detectors, decoders);
 	}
 
+	@Override
 	public int available() throws IOException {
 		return this.bis.available();
 	}
 
+	@Override
 	public void close() throws IOException {
 		this.bis.close();
 	}
 
+	@Override
 	public final FormatEnum getFormat() {
 		return this.formats[0];
 	}
 
+	@Override
 	public final FormatEnum[] getFormats() {
 		return this.formats;
 	}
 
+	@Override
 	public void mark(final int readlimit) {
 		this.bis.mark(readlimit);
 	}
 
+	@Override
 	public boolean markSupported() {
 		return this.bis.markSupported();
 	}
 
+	@Override
 	public int read() throws IOException {
 		return this.bis.read();
 	}
 
+	@Override
 	public int read(final byte[] b) throws IOException {
 		return this.bis.read(b);
 	}
 
+	@Override
 	public int read(final byte[] b, final int off, final int len)
 			throws IOException {
 		return this.bis.read(b, off, len);
 	}
 
+	@Override
 	public void reset() throws IOException {
 		this.bis.reset();
 	}
 
+	@Override
 	public long skip(final long n) throws IOException {
 		return this.bis.skip(n);
 	}

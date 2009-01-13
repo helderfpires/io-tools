@@ -1,4 +1,6 @@
-package com.gc.iotools.fmt.base;
+package com.gc.iotools.fmt.deflen;
+
+import com.gc.iotools.fmt.base.FormatEnum;
 
 /*
  * Copyright (c) 2008, Davide Simonetti
@@ -26,8 +28,20 @@ package com.gc.iotools.fmt.base;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-public interface Detector {
 
-	FormatEnum[] getDetectedFormat();
+public class M7MDetector extends AbstractFormatDetector {
+	private static final String M7M = "Content-Type: multipart/mixed; boundary=\"Dike\"";
 
+	public M7MDetector() {
+		super(M7M.length() + 40, FormatEnum.M7M);
+	}
+
+	public boolean detect(final byte[] readedBytes) {
+		boolean result = false;
+		if (readedBytes != null) {
+			final String string = new String(readedBytes);
+			result = string.toLowerCase().indexOf(M7M.toLowerCase()) >= 0;
+		}
+		return result;
+	}
 }

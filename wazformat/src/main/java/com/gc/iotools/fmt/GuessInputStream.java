@@ -40,15 +40,15 @@ import com.gc.iotools.fmt.base.Decoder;
 import com.gc.iotools.fmt.base.Detector;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.decoders.Base64Decoder;
-import com.gc.iotools.fmt.detectors.Base64Detector;
-import com.gc.iotools.fmt.detectors.GifDetector;
-import com.gc.iotools.fmt.detectors.M7MDetector;
-import com.gc.iotools.fmt.detectors.PdfDetector;
-import com.gc.iotools.fmt.detectors.PemDetector;
-import com.gc.iotools.fmt.detectors.RTFDetectorModule;
-import com.gc.iotools.fmt.detectors.XmlDetector;
-import com.gc.iotools.fmt.detectors.ZipDetectorModule;
-import com.gc.iotools.fmt.detectors.pksc7.PKCS7Detector;
+import com.gc.iotools.fmt.deflen.Base64Detector;
+import com.gc.iotools.fmt.deflen.GifDetector;
+import com.gc.iotools.fmt.deflen.M7MDetector;
+import com.gc.iotools.fmt.deflen.PdfDetector;
+import com.gc.iotools.fmt.deflen.PemDetector;
+import com.gc.iotools.fmt.deflen.RTFDetectorModule;
+import com.gc.iotools.fmt.deflen.XmlDetector;
+import com.gc.iotools.fmt.deflen.ZipDetectorModule;
+import com.gc.iotools.fmt.deflen.pksc7.PKCS7Detector;
 
 /**
  * InputStream that wraps the original InputStream and guess the format.

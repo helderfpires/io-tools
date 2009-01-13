@@ -1,4 +1,6 @@
-package com.gc.iotools.fmt.base;
+package com.gc.iotools.fmt.deflen;
+
+import com.gc.iotools.fmt.base.FormatEnum;
 
 /*
  * Copyright (c) 2008, Davide Simonetti
@@ -26,8 +28,20 @@ package com.gc.iotools.fmt.base;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-public interface Detector {
 
-	FormatEnum[] getDetectedFormat();
+public class PemDetector extends AbstractFormatDetector {
+	private static final String PEM = "-----BEGIN PKCS7-----";
 
+	public PemDetector() {
+		super(PEM.length() + 10, FormatEnum.PEM);
+	}
+
+	public boolean detect(final byte[] readedBytes) {
+		boolean result = false;
+		if (readedBytes != null) {
+			final String string = new String(readedBytes);
+			result = string.toLowerCase().indexOf(PEM.toLowerCase()) >= 0;
+		}
+		return result;
+	}
 }

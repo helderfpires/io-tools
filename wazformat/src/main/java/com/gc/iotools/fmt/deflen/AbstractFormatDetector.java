@@ -1,4 +1,6 @@
-package com.gc.iotools.fmt.base;
+package com.gc.iotools.fmt.deflen;
+
+import com.gc.iotools.fmt.base.FormatEnum;
 
 /*
  * Copyright (c) 2008, Davide Simonetti
@@ -26,8 +28,33 @@ package com.gc.iotools.fmt.base;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-public interface Detector {
 
-	FormatEnum[] getDetectedFormat();
+public abstract class AbstractFormatDetector implements DefiniteLengthModule {
+	private final int detectLenght;
+	private final FormatEnum detectedFormat;
+
+	protected AbstractFormatDetector(final int detectLenght,
+			final FormatEnum detectedFormat) {
+		this.detectLenght = detectLenght;
+		this.detectedFormat = detectedFormat;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.gc.iotools.fmt.deflen.DefiniteLengthModule#getDetectedFormat()
+	 */
+	public final FormatEnum getDetectedFormat() {
+		return this.detectedFormat;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.gc.iotools.fmt.deflen.DefiniteLengthModule#getDetectLenght()
+	 */
+	public final int getDetectLenght() {
+		return this.detectLenght;
+	}
 
 }
