@@ -1,4 +1,4 @@
-package org.googlecode.iotools.fmt;
+package com.gc.iotools.fmt;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
