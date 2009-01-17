@@ -1,12 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>io-tools-parent</artifactId>
-	<packaging>pom</packaging>
-	<name>IO-Toools-Parent</name>
+	<groupId>net.sf.jsignature</groupId>
+	<artifactId>io-tools</artifactId>
+	<version>1.2-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<name>IO-Toools</name>
 	<description>IO-tools utilites for stream and format detection</description>
-	<groupId>com.googlecode.io-tools</groupId>
-	<version>1.1.1-SNAPSHOT</version>
+	<url>http://io-tools.googlecode.com</url>
+	<inceptionYear>2008</inceptionYear>
 	<scm>
 		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk</connection>
 		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk</developerConnection>
@@ -37,19 +39,61 @@
 			<url>ftp://ftp.jtools.x10hosting.com/</url>
 		</site>
 	</distributionManagement>
-	<modules>
-		<module>easystream</module>
-		<module>easystream-jdk14</module>
-		<module>wazformat</module>
-		<module>io-tools-project</module>
-	</modules>
+	<issueManagement>
+		<system>GoogleIssues</system>
+		<url>http://code.google.com/p/io-tools/issues/list</url>
+	</issueManagement>
+	<repositories>
+		<repository>
+			<id>maven2-repository.dev.java.net</id>
+			<name>Java.net Repository for Maven</name>
+			<url>http://download.java.net/maven/2/</url>
+		</repository>
+	</repositories>
 	<dependencies>
-		<!-- For javadoc plugin-->
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1.1</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.1</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.4</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>bouncycastle</groupId>
+			<artifactId>bcprov-jdk14</artifactId>
+			<version>140</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>stax</groupId>
+			<artifactId>stax</artifactId>
+			<version>1.2.0</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.4</version>
+			<type>jar</type>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.5</version>
 			<type>jar</type>
+			<!-- scope provided for javadoc plugin -->
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
@@ -64,7 +108,7 @@
 		<testResources>
 			<testResource>
 				<directory>src/test/resources</directory>
-				<filtering>true</filtering>
+				<filtering>false</filtering>
 			</testResource>
 			<testResource>
 				<directory>src/test/java</directory>
@@ -75,6 +119,42 @@
 			</testResource>
 		</testResources>
 		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<inherited>false</inherited>
+				<configuration>
+					<fork>true</fork>
+					<source>1.5</source>
+					<target>1.5</target>
+					<meminitial>128m</meminitial>
+					<maxmem>512m</maxmem>
+					<optimize>true</optimize>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<configuration>
+					<wtpversion>2.0</wtpversion>
+					<buildOutputDirectory>bin</buildOutputDirectory>
+					<classpathContainers>
+						<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5</classpathContainer>
+					</classpathContainers>
+					<downloadSources>true</downloadSources>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadoc</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
@@ -105,11 +185,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
-				<version>2.0-beta-7</version>
-			</plugin>
 			<!--
 				plugin> <artifactId>maven-assembly-plugin</artifactId>
 				<version>2.2-beta-2</version> <executions> <execution>
@@ -129,6 +204,7 @@
 		</plugins>
 		<extensions>
 			<extension>
+				<!-- to publish the website -->
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-ftp</artifactId>
 				<version>1.0-beta-4</version>
@@ -169,13 +245,6 @@
 			</plugin>
 		</plugins>
 	</reporting>
-	<repositories>
-		<repository>
-			<id>maven2-repository.dev.java.net</id>
-			<name>Java.net Repository for Maven</name>
-			<url>http://download.java.net/maven/2/</url>
-		</repository>
-	</repositories>
 
 </project>
 
