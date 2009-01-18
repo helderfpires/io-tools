@@ -129,7 +129,6 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<inherited>false</inherited>
 				<configuration>
 					<fork>true</fork>
 					<source>1.5</source>
