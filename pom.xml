@@ -36,7 +36,7 @@
 			<uniqueVersion>false</uniqueVersion>
 			<id>jsignature.sourceforge.repository</id>
 			<name>JSignature Repository</name>
-			<url>scp://shell.sourceforge.net/home/groups/j/js/jsignature/htdocs/m2repo</url>
+			<url>scp://shell.sourceforge.net/home/groups/j/js/jsignature/htdocs/maven2</url>
 		</repository>
 
 		<site>
