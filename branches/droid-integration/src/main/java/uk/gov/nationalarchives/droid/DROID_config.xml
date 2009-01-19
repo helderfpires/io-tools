@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ConfigFile xmlns="http://www.nationalarchives.gov.uk/pronom/ConfigFile">
+    <SigFile>D:\\droid-sourceforge\\resources\\DROID_SignatureFile_V20.xml</SigFile>
+    <SigFileVersion>20</SigFileVersion>
+    <SigFileURL>http://www.nationalarchives.gov.uk/pronom/SignatureFile/proSignatureFileProvider.asp</SigFileURL>
+    <ProxyHost>172.16.0.10</ProxyHost>
+    <ProxyPort>2784</ProxyPort>
+    <PuidResolution>http://pharma:80/PRONOM/</PuidResolution>
+    <BrowserPath>/usr/bin/firefox</BrowserPath>
+    <SigFileCheckFreq>30</SigFileCheckFreq>
+    <DateLastDownload>2006-11-27T11:14:14</DateLastDownload>
+</ConfigFile>
+

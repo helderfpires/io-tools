@@ -1,10 +1,15 @@
-package com.gc.iotools.fmt.detectors;
+package com.gc.iotools.fmt.deflen.pksc7;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
-import com.gc.iotools.fmt.base.AbstractFormatDetector;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+
 import com.gc.iotools.fmt.base.FormatEnum;
+import com.gc.iotools.fmt.deflen.DefiniteLengthModule;
 
 /*
  * Copyright (c) 2008, Davide Simonetti
@@ -33,20 +38,49 @@ import com.gc.iotools.fmt.base.FormatEnum;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-public class GifDetector extends AbstractFormatDetector {
-	private static final Pattern GIF_PATTERN = Pattern.compile("GIF8[7-9]a");
+/**
+ * Class for detecting DER and BER encoded PKCS7 files.
+ * 
+ * @author dvd.smnt
+ */
+public class PKCS7Detector implements DefiniteLengthModule {
+	
+	@Override
+	public void init(FormatEnum fenum, String param) {
 
-	public GifDetector() {
-		super(6, FormatEnum.GIF);
+	}
+
+	private static final Log LOGGER = LogFactory.getLog(PKCS7Detector.class);
+
+	public PKCS7Detector() {
+		
 	}
 
 	public boolean detect(final byte[] readedBytes) {
+		final InputStream buffer = new ByteArrayInputStream(readedBytes);
 		boolean result = false;
-		if (readedBytes != null) {
-			final String string = new String(readedBytes);
-			final Matcher matcher = GIF_PATTERN.matcher(string);
-			result = matcher.matches();
+		try {
+			final ASN1Reader pkcsHdrRead = new ASN1Reader(buffer);
+			pkcsHdrRead.check(PKCSObjectIdentifiers.signedData);
+			result = true;
+		} catch (final FormatException e) {
+			LOGGER.debug("PKCS7 not recognized" + "Exception (normal) ["
+					+ e.getMessage() + "]");
+		} catch (final IOException e) {
+			LOGGER.warn("PKCS7 not recognized for an I/O exception", e);
+		} catch (final Throwable e) {
+			LOGGER.warn("PKCS7 not recognized for unexpected exception.", e);
 		}
 		return result;
+	}
+
+	@Override
+	public int getDetectLenght() {
+		return 90;
+	}
+
+	@Override
+	public FormatEnum getDetectedFormat() {
+		return FormatEnum.PKCS7;
 	}
 }

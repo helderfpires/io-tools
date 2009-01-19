@@ -1,4 +1,4 @@
-package com.gc.iotools.fmt.detectors.pksc7;
+package com.gc.iotools.fmt.deflen.pksc7;
 
 import java.io.EOFException;
 import java.io.IOException;
