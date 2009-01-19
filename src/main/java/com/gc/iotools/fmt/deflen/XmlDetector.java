@@ -1,4 +1,4 @@
-package com.gc.iotools.fmt.detectors;
+package com.gc.iotools.fmt.deflen;
 
 /*
  * Copyright (c) 2008, Davide Simonetti.  All rights reserved.
@@ -40,7 +40,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.bea.xml.stream.MXParserFactory;
-import com.gc.iotools.fmt.base.AbstractFormatDetector;
 import com.gc.iotools.fmt.base.FormatEnum;
 
 /**
@@ -49,7 +48,7 @@ import com.gc.iotools.fmt.base.FormatEnum;
  * @author dvd.smnt
  * @since Nov 8, 2008
  */
-public final class XmlDetector extends AbstractFormatDetector {
+final class XmlDetector implements DefiniteLengthModule {
 
 	private final class MyReporter implements XMLReporter {
 
@@ -70,7 +69,7 @@ public final class XmlDetector extends AbstractFormatDetector {
 	static final Log LOGGER = LogFactory.getLog(XmlDetector.class);
 
 	public XmlDetector() {
-		super(XmlDetector.XML_GUESS_SIZE, FormatEnum.XML);
+
 	}
 
 	public boolean detect(final byte[] readedBytes) {
@@ -116,6 +115,22 @@ public final class XmlDetector extends AbstractFormatDetector {
 					+ XmlDetector.XML_GUESS_SIZE + "] bytes");
 		}
 		return tenum;
+	}
+
+	@Override
+	public int getDetectLenght() {
+		return XmlDetector.XML_GUESS_SIZE;
+	}
+
+	@Override
+	public FormatEnum getDetectedFormat() {
+		return FormatEnum.XML;
+	}
+
+	@Override
+	public void init(FormatEnum fenum, String param) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

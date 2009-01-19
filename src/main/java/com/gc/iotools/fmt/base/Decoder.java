@@ -1,6 +1,5 @@
 package com.gc.iotools.fmt.base;
 
-
 /**
  * Interface for extracting the content from an encoding format (es.Base64)
  * 

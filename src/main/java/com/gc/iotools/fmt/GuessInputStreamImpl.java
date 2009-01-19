@@ -30,37 +30,42 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.gc.iotools.fmt.base.Decoder;
+import com.gc.iotools.fmt.base.DefiniteLengthDetector;
 import com.gc.iotools.fmt.base.Detector;
 import com.gc.iotools.fmt.base.FormatEnum;
+import com.gc.iotools.fmt.base.IndefiniteLengthDetector;
 
 final class GuessInputStreamImpl extends GuessInputStream {
+	@Override
+	protected void finalize() throws Throwable {
+		cleanup();
+		super.finalize();
+	}
+
 	private static final int MAX_LEVELS = 2;
 
+
+
 	private static FormatEnum detectFormat(final byte[] bytes,
-			final Detector[] detectors) {
+			final DefiniteLengthDetector[] detectors,
+			FormatEnum[] enabledFormats) {
 		FormatEnum detected = FormatEnum.UNKNOWN;
-		for (int i = 0; i < detectors.length; i++) {
-			final Detector detector = detectors[i];
-			final int bytesToCopy = Math.min(detector.getDetectLenght(),
-					bytes.length);
-			final byte[] splittedBytes = new byte[bytesToCopy];
-			System.arraycopy(bytes, 0, splittedBytes, 0, bytesToCopy);
-			if (detector.detect(splittedBytes)) {
-				detected = detector.getDetectedFormat();
-				break;
-			}
+		for (int i = 0; (i < detectors.length)
+				&& FormatEnum.UNKNOWN.equals(detected); i++) {
+			final DefiniteLengthDetector detector = detectors[i];
+			detected = detector.detect(enabledFormats, bytes);
 		}
 		return detected;
 	}
 
 	private static FormatEnum[] detectFormats(final byte[] bytes,
-			final Detector[] detectors, final Decoder[] decoders) {
+			final DefiniteLengthDetector[] detectors, final Decoder[] decoders,
+			FormatEnum[] enformats) {
 		final Map decodersMap = getDecodersMap(decoders);
 		final List formats = new ArrayList();
 		FormatEnum currentFormat = null;
@@ -68,7 +73,7 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		for (int i = 0; (i < MAX_LEVELS)
 				&& ((currentFormat == null) || decodersMap
 						.containsKey(currentFormat)); i++) {
-			currentFormat = detectFormat(currentBytes, detectors);
+			currentFormat = detectFormat(currentBytes, detectors, enformats);
 			formats.add(currentFormat);
 			if (decodersMap.containsKey(currentFormat)) {
 				currentBytes = ((Decoder) decodersMap.get(currentFormat))
@@ -87,14 +92,12 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		}
 
 		int decodeOffset = 1;
-		for (int i = 0; i < decoders.length; i++) {
-			final Decoder decoder = decoders[i];
+		for (final final Decoder decoder : decoders) {
 			decodeOffset = Math.max(decodeOffset, decoder.getEncodingOffset());
 		}
 
 		float decodeRatio = 1;
-		for (int i = 0; i < decoders.length; i++) {
-			final Decoder decoder = decoders[i];
+		for (final final Decoder decoder : decoders) {
 			decodeRatio = Math.max(decodeRatio, decoder.getRatio());
 		}
 
@@ -103,21 +106,10 @@ final class GuessInputStreamImpl extends GuessInputStream {
 
 	private static Map getDecodersMap(final Decoder[] decoders) {
 		final Map formatsMap = new HashMap();
-		for (int i = 0; i < decoders.length; i++) {
-			final Decoder decoder = decoders[i];
+		for (final final Decoder decoder : decoders) {
 			formatsMap.put(decoder.getFormat(), decoder);
 		}
 		return formatsMap;
-	}
-
-	private static FormatEnum[] getEnabledFormats(final Detector[] detectors) {
-		final Collection formatsColl = new ArrayList();
-		for (int i = 0; i < detectors.length; i++) {
-			final Detector detector = detectors[i];
-			formatsColl.add(detector.getDetectedFormat());
-		}
-		return (FormatEnum[]) formatsColl.toArray(new FormatEnum[formatsColl
-				.size()]);
 	}
 
 	private static byte[] readBytesAndReset(final BufferedInputStream input,
@@ -142,61 +134,95 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		return result;
 	}
 
+	private final InputStream bis;
+
+	private final DefiniteLengthDetector[] defLen;
+
 	private final FormatEnum formats[];
 
-	private final BufferedInputStream bis;
+	private final IndefiniteLengthDetector[] inDefLen;
 
 	public GuessInputStreamImpl(final Detector[] detectors,
 			final Decoder[] decoders, final InputStream istream)
 			throws IOException {
 		super(getEnabledFormats(detectors));
-		final int bufferSize = getBufferSize(detectors, decoders);
-		this.bis = new BufferedInputStream(istream, bufferSize);
-		final byte[] bytes = readBytesAndReset(this.bis, bufferSize);
-		this.formats = detectFormats(bytes, detectors, decoders);
+		defLen = getDefiniteLenght(detectors);
+		inDefLen = getInDefiniteLenght(detectors);
+		FormatEnum[] enabledFormats;
+		// definite lenght dection
+		final int bufferSize = getBufferSize(defLen, decoders);
+		BufferedInputStream tempStream = new BufferedInputStream(istream,
+				bufferSize);
+		tempStream.mark(bufferSize);
+		byte[] bytes = readBytesAndReset(tempStream, bufferSize);
+		FormatEnum[] formats = detectFormats(bytes, defLen, decoders,
+				enabledFormats);
+		if (formats.length > 0) {
+			this.formats = formats;
+			this.bis = tempStream;
+		} else {
+			
+			// if no result copy to a file
+			// indefinite lenght detection
+
+			// internal stream is
+		}
 	}
 
+	@Override
 	public int available() throws IOException {
 		return this.bis.available();
 	}
 
+	@Override
 	public void close() throws IOException {
+		cleanup();
 		this.bis.close();
+		
 	}
 
+	@Override
 	public final FormatEnum getFormat() {
 		return this.formats[0];
 	}
 
+	@Override
 	public final FormatEnum[] getFormats() {
 		return this.formats;
 	}
 
+	@Override
 	public void mark(final int readlimit) {
 		this.bis.mark(readlimit);
 	}
 
+	@Override
 	public boolean markSupported() {
 		return this.bis.markSupported();
 	}
 
+	@Override
 	public int read() throws IOException {
 		return this.bis.read();
 	}
 
+	@Override
 	public int read(final byte[] b) throws IOException {
 		return this.bis.read(b);
 	}
 
+	@Override
 	public int read(final byte[] b, final int off, final int len)
 			throws IOException {
 		return this.bis.read(b, off, len);
 	}
 
+	@Override
 	public void reset() throws IOException {
 		this.bis.reset();
 	}
 
+	@Override
 	public long skip(final long n) throws IOException {
 		return this.bis.skip(n);
 	}
