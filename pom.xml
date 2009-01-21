@@ -4,7 +4,7 @@
 	<artifactId>io-tools</artifactId>
 	<version>1.1.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>IO-Toools</name>
+	<name>io-tools</name>
 	<description>IO-tools utilites for stream and format detection</description>
 	<url>http://io-tools.googlecode.com</url>
 	<inceptionYear>2008</inceptionYear>
@@ -163,11 +163,10 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
-					<autoVersionSubmodules>false</autoVersionSubmodules>
+					<!-- autoVersionSubmodules>false</autoVersionSubmodules -->
 					<generateReleasePoms>true</generateReleasePoms>
 					<!-- install required for assembly plugin -->
 					<!-- preparationGoals>clean install</preparationGoals -->
-					<tag>io-tools-${releaseVersion}</tag>
 				</configuration>
 			</plugin>
 			<plugin>
