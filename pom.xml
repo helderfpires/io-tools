@@ -167,7 +167,7 @@
 					<generateReleasePoms>true</generateReleasePoms>
 					<!-- install required for assembly plugin -->
 					<preparationGoals>clean install</preparationGoals>
-					<tag>io-tools-{$project.version}</tag>
+					<tag>io-tools-${project.version}</tag>
 				</configuration>
 			</plugin>
 			<plugin>
