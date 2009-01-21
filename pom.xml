@@ -9,8 +9,8 @@
 	<url>http://io-tools.googlecode.com</url>
 	<inceptionYear>2008</inceptionYear>
 	<scm>
-		<connection>scm:svn:http://io-tools.googlecode.com/svn/tags/io-tools-1.1.2</connection>
-		<developerConnection>scm:svn:https://io-tools.googlecode.com/tags/io-tools-1.1.2</developerConnection>
+		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk</connection>
+		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk</developerConnection>
 	</scm>
 	<developers>
 		<developer>
