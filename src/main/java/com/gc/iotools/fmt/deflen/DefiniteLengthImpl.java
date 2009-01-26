@@ -14,7 +14,7 @@ public final class DefiniteLengthImpl implements DefiniteLengthDetector {
 
 	private static FormatId detectFormat(final byte[] bytes,
 			final DefiniteLengthModule[] detectors) {
-		FormatId detected = FormatEnum.UNKNOWN;
+		FormatId detected = new FormatId(FormatEnum.UNKNOWN, null);
 		for (final DefiniteLengthModule detector : detectors) {
 			final int bytesToCopy = Math.min(detector.getDetectLenght(),
 					bytes.length);
@@ -51,7 +51,7 @@ public final class DefiniteLengthImpl implements DefiniteLengthDetector {
 	public FormatEnum[] getDetectedFormat() {
 		Collection<FormatEnum> formats = new HashSet<FormatEnum>();
 		for (DefiniteLengthModule module : this.configuredModules) {
-			formats.add(module.getDetectedFormat());
+			formats.add(module.getDetectedFormat().format);
 		}
 		return formats.toArray(new FormatEnum[formats.size()]);
 	}

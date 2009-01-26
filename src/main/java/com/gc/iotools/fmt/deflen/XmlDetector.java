@@ -41,6 +41,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.bea.xml.stream.MXParserFactory;
 import com.gc.iotools.fmt.base.FormatEnum;
+import com.gc.iotools.fmt.base.FormatId;
 
 /**
  * Detect a file in XML
@@ -123,12 +124,12 @@ final class XmlDetector implements DefiniteLengthModule {
 	}
 
 	@Override
-	public FormatEnum getDetectedFormat() {
-		return FormatEnum.XML;
+	public FormatId getDetectedFormat() {
+		return new FormatId(FormatEnum.XML, null);
 	}
 
 	@Override
-	public void init(FormatEnum fenum, String param) {
+	public void init(FormatId fenum, String param) {
 		// TODO Auto-generated method stub
 
 	}

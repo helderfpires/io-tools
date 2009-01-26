@@ -4,13 +4,13 @@ import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.gc.iotools.fmt.base.FormatEnum;
+import com.gc.iotools.fmt.base.FormatId;
 import com.gc.iotools.stream.utils.ArrayTools;
 
 public class StringDetectorModule implements DefiniteLengthModule {
 	private byte[] byteSequence = null;
 	private int detectLength = -1;
-	private FormatEnum detectedFormat;
+	private FormatId detectedFormat;
 
 	@Override
 	public boolean detect(final byte[] readedBytes) {
@@ -24,7 +24,7 @@ public class StringDetectorModule implements DefiniteLengthModule {
 	}
 
 	@Override
-	public FormatEnum getDetectedFormat() {
+	public FormatId getDetectedFormat() {
 		if (this.detectedFormat == null) {
 			throw new IllegalStateException(
 					"getDetectFormat called before init");
@@ -42,7 +42,7 @@ public class StringDetectorModule implements DefiniteLengthModule {
 	}
 
 	@Override
-	public void init(final FormatEnum fenum, final String param) {
+	public void init(final FormatId fenum, final String param) {
 		final int sepPos = param.indexOf(':');
 		this.byteSequence = param.substring(sepPos).getBytes();
 		final String detectLString = param.substring(0, sepPos);

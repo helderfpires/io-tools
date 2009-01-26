@@ -58,7 +58,7 @@ import com.gc.iotools.fmt.decoders.Base64Decoder;
  * 
  */
 public abstract class GuessInputStream extends InputStream {
-	private final Map DECODERS = Collections.synchronizedMap(new HashMap());
+	private final Map decoders = Collections.synchronizedMap(new HashMap());
 
 	// private static final Logger LOGGER = Logger
 	// .getLogger(GuessFormatInputStream.class);
@@ -66,14 +66,14 @@ public abstract class GuessInputStream extends InputStream {
 	private final Set<DefiniteLengthDetector> definiteLength = new HashSet<DefiniteLengthDetector>();
 
 	{
-		DECODERS.put(FormatEnum.BASE64, new Base64Decoder());
+		decoders.put(FormatEnum.BASE64, new Base64Decoder());
 	}
 
 	public void addDecoder(final Decoder decoder) {
 		if (decoder == null) {
 			throw new IllegalArgumentException("decoder is null");
 		}
-		DECODERS.put(decoder.getFormat(), decoder);
+		decoders.put(decoder.getFormat(), decoder);
 	}
 
 	public void addDecoders(final Decoder[] decoders) {
@@ -83,7 +83,7 @@ public abstract class GuessInputStream extends InputStream {
 		for (int i = 0; i < decoders.length; i++) {
 			final Decoder decoder = decoders[i];
 			if (decoder != null) {
-				DECODERS.put(decoder.getFormat(), decoder);
+				decoders.put(decoder.getFormat(), decoder);
 			}
 		}
 	}
@@ -114,7 +114,7 @@ public abstract class GuessInputStream extends InputStream {
 
 	public static GuessInputStream getInstance(final InputStream istream)
 			throws IOException {
-
+		return null;
 	}
 
 	/**
