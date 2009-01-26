@@ -1,14 +1,14 @@
 package com.gc.iotools.fmt.deflen;
 
-import com.gc.iotools.fmt.base.FormatEnum;
+import com.gc.iotools.fmt.base.FormatId;
 
 public interface DefiniteLengthModule {
 
 	boolean detect(final byte[] readedBytes);
 
-	FormatEnum getDetectedFormat();
+	FormatId getDetectedFormat();
 
 	int getDetectLenght();
 
-	void init(FormatEnum fenum, String param);
+	void init(FormatId fenum, String param);
 }

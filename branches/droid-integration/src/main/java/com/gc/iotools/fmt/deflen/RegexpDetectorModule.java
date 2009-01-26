@@ -1,6 +1,6 @@
 package com.gc.iotools.fmt.deflen;
 
-import com.gc.iotools.fmt.base.FormatEnum;
+import com.gc.iotools.fmt.base.FormatId;
 
 class RegexpDetectorModule implements DefiniteLengthModule {
 
@@ -11,7 +11,7 @@ class RegexpDetectorModule implements DefiniteLengthModule {
 	}
 
 	@Override
-	public FormatEnum getDetectedFormat() {
+	public FormatId getDetectedFormat() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -23,7 +23,7 @@ class RegexpDetectorModule implements DefiniteLengthModule {
 	}
 
 	@Override
-	public void init(final FormatEnum fenum, final String param) {
+	public void init(final FormatId fenum, final String param) {
 		// TODO Auto-generated method stub
 
 	}
