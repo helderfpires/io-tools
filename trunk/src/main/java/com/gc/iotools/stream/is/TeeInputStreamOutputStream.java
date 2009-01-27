@@ -1,7 +1,7 @@
 package com.gc.iotools.stream.is;
 
 /*
- * Copyright (c) 2008, Davide Simonetti
+ * Copyright (c) 2008-2009, Davide Simonetti
  * All rights reserved.
  * Redistribution and use in source and binary forms, 
  * with or without modification, are permitted provided that the following 
@@ -32,52 +32,99 @@ import java.io.OutputStream;
 
 /**
  * <p>
- * Try to copy the data from the underlying <code>InputStream</code> to the
+ * Copies the data from the underlying <code>InputStream</code> to the
  * <code>OutputStream</code> passed in the constructor. The data copied are
  * similar to the underlying <code>InputStream</code>.
  * </p>
  * <p>
- * Underlying <code>InputStream</code> is closed when method
- * <code>{@linkplain close}</code> is invoked. <code>OutputStream</code> must be
- * closed outside this class. Bytes skipped are copied to the
- * <code>OutputStream</code> while <code>mark</code> and <code>reset</code> are
- * not supported at the moment.
- * </p>
- * <p>
- * When the method <code>{@link close}</code> is invoked all the bytes remaining
- * in the underlying <code>InputStream</code> are copied to the
+ * When the method <code>{@link #close()}</code> is invoked all the bytes
+ * remaining in the underlying <code>InputStream</code> are copied to the
  * <code>OutputStream</code>. This behavior is different from this class and
  * <code>org.apache.commons.io.input.TeeInputStream</code>.
  * </p>
+ * <p>
+ * Bytes skipped are copied to the <code>OutputStream</code> while
+ * <code>mark</code> and <code>reset</code> are not supported at the moment.
+ * </p>
+ * <p>
+ * Sample usage:
+ * </p>
  * 
+ * <pre>
+ * 	 InputStream source=... //some data to be readed.
+ *   ByteArrayOutputStream destination1= new ByteArrayOutputStream();
+ *   ByteArrayOutputStream destination2= new ByteArrayOutputStream();
+ *   
+ *   TeeInputStreamOutputStream tee=new TeeInputStreamOutputStream(source,destination1);
+ *   org.apache.commons.io.IOUtils.copy(tee,destination2);
+ *   tee.close();
+ *   //at this point both destination1 and destination2 contains the same bytes.
+ *   byte[] bytes=destination1.getBytes();
+ * </pre>
  * 
- * @see org.apache.commons.io.input.TeeInputStream
  * @author dvd.smnt
  * @since 1.0.6
  */
-public final class TeeInputStreamOutputStream extends InputStream {
+public class TeeInputStreamOutputStream extends InputStream {
 
-	private boolean closed = false;
+	protected boolean closed = false;
 
-	private final OutputStream destination;
+	protected final OutputStream destination;
+	/**
+	 * The source InputStream
+	 */
+	protected final InputStream source;
+	/**
+	 * If <code>true</code> <code>source</code> and <code>destination</code>
+	 * streams are closed when {@link #close()} is invoked.
+	 */
+	protected final boolean closeStreams;
 
-	private final InputStream source;
+	/**
+	 * <p>
+	 * Creates a <code>TeeInputStreamOutputStream</code> and saves its argument,
+	 * the input stream <code>source</code> and the <code>OutputStream</code>
+	 * <code>destination</code> for later use.
+	 * </p>
+	 * </p>When the method {@link #close()} it is invoked the remaining content
+	 * of the <code>source</code> stream is copied to the
+	 * <code>destination</code> and the <code>source</code> and
+	 * <code>destination</code> streams are closed. </p>
+	 * 
+	 * @param source
+	 *            The underlying <code>InputStream</code>
+	 * @param destination
+	 *            Data read from <code>source</code> are also written to this
+	 *            <code>OutputStream</code>.
+	 */
+	public TeeInputStreamOutputStream(final InputStream source,
+			final OutputStream destination) {
+		this(source, destination, true);
+	}
 
 	/**
 	 * Creates a <code>TeeInputStreamOutputStream</code> and saves its argument,
 	 * the input stream <code>source</code> and the output stream
 	 * <code>destination</code> for later use.
 	 * 
+	 * @since 1.2
 	 * @param source
 	 *            The underlying <code>InputStream</code>
 	 * @param destination
-	 *            Data readed from <code>source</code> is also written to this
+	 *            Data read from <code>source</code> are also written to this
 	 *            <code>OutputStream</code>.
+	 * @param closeStreams
+	 *            if <code>true</code> the <code>destination</code> will be
+	 *            closed when the {@link #close()} method is invoked. If
+	 *            <code>false</code> the close method on the underlying streams
+	 *            will not be called (it must be invoked externally).
+	 * 
 	 */
 	public TeeInputStreamOutputStream(final InputStream source,
-			final OutputStream destination) {
+			final OutputStream destination, boolean closeStreams) {
 		this.source = source;
 		this.destination = destination;
+		this.closeStreams = closeStreams;
 	}
 
 	@Override
@@ -87,10 +134,15 @@ public final class TeeInputStreamOutputStream extends InputStream {
 
 	/**
 	 * This method copy all the data eventually remaining in the internal
-	 * <code>InputStream</code> to the <code>OutputStream</code> and closes the
-	 * inner <code>InputStream</code>.
+	 * <code>InputStream</code> to the <code>OutputStream</code>. The standard
+	 * behavior is to close closes the underlying <code>InputStream</code> and
+	 * <code>OutputStream</code>. When the class was constructed with the
+	 * parameter {@link TeeInputStreamOutputStream#closeStreams closeStreams}
+	 * set to false the underlying streams must be closed externally.
 	 * 
-	 * Internal <code>OutputStream</code> must be closed externally.
+	 * @throws IOException
+	 *             thrown when a IO problem occurs in reading or writing the
+	 *             data.
 	 */
 	@Override
 	public void close() throws IOException {
@@ -108,7 +160,10 @@ public final class TeeInputStreamOutputStream extends InputStream {
 						"It's not possible to copy to the OutputStream");
 				e1.initCause(e);
 			}
-			this.source.close();
+			if (this.closeStreams) {
+				this.source.close();
+				this.destination.close();
+			}
 			if (e1 != null) {
 				throw e1;
 			}
@@ -157,11 +212,21 @@ public final class TeeInputStreamOutputStream extends InputStream {
 		throw new IOException("Reset not supported");
 	}
 
+	/**
+	 * @since 1.2
+	 */
 	@Override
 	public long skip(final long n) throws IOException {
-		throw new UnsupportedOperationException(
-				"Skip is not (yet) supported by ["
-						+ TeeInputStreamOutputStream.class + "]");
+		long curPos = 0;
+		int readLen = 0;
+		byte[] buf = new byte[8192];
+		while (curPos < n && readLen >= 0) {
+			readLen = this.read(buf);
+			if (readLen > 0) {
+				curPos += readLen;
+			}
+		}
+		return curPos;
 	}
 
 }
