@@ -11,7 +11,7 @@ import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
 
 public final class DefiniteLengthImpl implements DefiniteLengthDetector {
-
+ 
 	private static FormatId detectFormat(final byte[] bytes,
 			final DefiniteLengthModule[] detectors) {
 		FormatId detected = new FormatId(FormatEnum.UNKNOWN, null);

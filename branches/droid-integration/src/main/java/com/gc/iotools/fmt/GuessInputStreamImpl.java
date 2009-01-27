@@ -3,7 +3,7 @@ package com.gc.iotools.fmt;
 /*
  * Copyright (c) 2008, Davide Simonetti
  * All rights reserved.
- * Redistribution and use in source and binary forms, 
+ * Redistribution and use in source and binary forms,  
  * with or without modification, are permitted provided that the following 
  * conditions are met:
  *  * Redistributions of source code must retain the above copyright notice, 
@@ -92,12 +92,12 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		}
 
 		int decodeOffset = 1;
-		for (final final Decoder decoder : decoders) {
+		for (final Decoder decoder : decoders) {
 			decodeOffset = Math.max(decodeOffset, decoder.getEncodingOffset());
 		}
 
 		float decodeRatio = 1;
-		for (final final Decoder decoder : decoders) {
+		for (final Decoder decoder : decoders) {
 			decodeRatio = Math.max(decodeRatio, decoder.getRatio());
 		}
 
