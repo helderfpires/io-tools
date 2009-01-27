@@ -46,9 +46,14 @@ public class FormatEnum extends ValuedEnum {
 	 */
 	private static final long serialVersionUID = -5685026597452193393L;
 
-	public static final int BASE64_INT = 0;
+	public static final int UNLISTED_INT = 0;
+	public static final FormatEnum UNLISTED = new FormatEnum("unlisted",
+			UNLISTED_INT, "");
+
+	public static final int BASE64_INT = 50;
 	public static final FormatEnum BASE64 = new FormatEnum("base64",
 			BASE64_INT, "text");
+	
 	public static final int GIF_INT = 100;
 	public static final FormatEnum GIF = new FormatEnum("gif", GIF_INT,
 			"image/gif");
@@ -112,3 +117,4 @@ public class FormatEnum extends ValuedEnum {
 	}
 
 }
+

@@ -40,14 +40,12 @@ public final class DefiniteLengthImpl implements DefiniteLengthDetector {
 		this.configuredModules = dfmf.getConfiguredModules();
 	}
 
-	@Override
 	public FormatId detect(final FormatEnum[] enabledFormats,
 			final byte[] bytes) {
 		DefiniteLengthModule[] modules = getModulesForFormats(enabledFormats);
 		return detectFormat(bytes, modules);
 	}
 
-	@Override
 	public FormatEnum[] getDetectedFormat() {
 		Collection<FormatEnum> formats = new HashSet<FormatEnum>();
 		for (DefiniteLengthModule module : this.configuredModules) {
@@ -56,7 +54,6 @@ public final class DefiniteLengthImpl implements DefiniteLengthDetector {
 		return formats.toArray(new FormatEnum[formats.size()]);
 	}
 
-	@Override
 	public int getDetectLength(final FormatEnum[] enabledFormats) {
 		DefiniteLengthModule[] modules = getModulesForFormats(enabledFormats);
 		int detectLen = -1;

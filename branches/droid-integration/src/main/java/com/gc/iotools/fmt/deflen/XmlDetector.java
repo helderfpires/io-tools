@@ -118,17 +118,14 @@ final class XmlDetector implements DefiniteLengthModule {
 		return tenum;
 	}
 
-	@Override
 	public int getDetectLenght() {
 		return XmlDetector.XML_GUESS_SIZE;
 	}
 
-	@Override
 	public FormatId getDetectedFormat() {
 		return new FormatId(FormatEnum.XML, null);
 	}
 
-	@Override
 	public void init(FormatId fenum, String param) {
 		// TODO Auto-generated method stub
 

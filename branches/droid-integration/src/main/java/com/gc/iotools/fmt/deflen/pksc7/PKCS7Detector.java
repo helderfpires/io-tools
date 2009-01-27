@@ -46,7 +46,6 @@ import com.gc.iotools.fmt.deflen.DefiniteLengthModule;
  */
 public class PKCS7Detector implements DefiniteLengthModule {
 	
-	@Override
 	public void init(FormatId fenum, String param) {
 
 	}
@@ -75,12 +74,10 @@ public class PKCS7Detector implements DefiniteLengthModule {
 		return result;
 	}
 
-	@Override
 	public int getDetectLenght() {
 		return 90;
 	}
 
-	@Override
 	public FormatId getDetectedFormat() {
 		return new FormatId(FormatEnum.PKCS7, null);
 	}
