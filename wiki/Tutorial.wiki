@@ -1,9 +1,9 @@
 #summary For beginners: a 5 minutes How To.
 #labels Featured
 
-= Stream Utilities (!EasyStream) =
+= Stream Utilities =
 
-Sometimes a library writes its results to an `OutputStream` and you need to read them back from an `InputStream`. The common answer is "use pipes". But it's not as easy at is seems. Classes in the com.iotools.stream package should help.
+Sometimes a library writes its results to an `OutputStream` and you need to read them back from an `InputStream`. The common answer is "use pipes". But it's not as easy at is seems. Classes in the com.gc.iotools.stream package should help.
 
 Two main classes in this section are `InputStreamFromOutputStream` and `OutputStreamToInputStream`
 
@@ -78,11 +78,28 @@ Behaviour in case of exception is documented in junits.
 === Why !ExecutionModel ? ===
 To convert an `OutputStream` into an `InputStream` you need a pipe. And to use a pipe you need Threads. [ExecutionModel Here] are io-tools options. 
 
+=== !TeeInputStreamOutputStream ===
+Copies the data from the underlying `InputStream` to the `OutputStream` passed in the constructor. The data copied are similar to the underlying `InputStream`.
+
+Sample usage:
+{{{
+ InputStream source=... //some data to be readed.
+ ByteArrayOutputStream destination1= new ByteArrayOutputStream();
+ ByteArrayOutputStream destination2= new ByteArrayOutputStream();
+  
+ TeeInputStreamOutputStream tee=new TeeInputStreamOutputStream(source,destination1);
+ org.apache.commons.io.IOUtils.copy(tee,destination2);
+ tee.close();
+ //at this point both destination1 and destination2 contains the same bytes.
+ byte[] bytes1=destination1.getBytes();
+ byte[] bytes2=destination2.getBytes();
+}}}
+
 === !ChunkInputStream ===
 TODO.
 
 
-= Format Detection (!WazFormat) =
+= Format Detection =
 
 !WazFormat allows to take decision based on the content of a stream without knowing it.
 A common problem is: if the stream is base64 encoded decode it, otherwise use it unchanged.
