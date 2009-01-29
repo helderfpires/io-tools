@@ -38,6 +38,7 @@ import com.gc.iotools.fmt.base.Decoder;
 import com.gc.iotools.fmt.base.DefiniteLengthDetector;
 import com.gc.iotools.fmt.base.Detector;
 import com.gc.iotools.fmt.base.FormatEnum;
+import com.gc.iotools.fmt.base.FormatId;
 import com.gc.iotools.fmt.base.IndefiniteLengthDetector;
 
 final class GuessInputStreamImpl extends GuessInputStream {
@@ -49,45 +50,43 @@ final class GuessInputStreamImpl extends GuessInputStream {
 
 	private static final int MAX_LEVELS = 2;
 
-
-
-	private static FormatEnum detectFormat(final byte[] bytes,
+	private static FormatId detectFormat(final byte[] bytes,
 			final DefiniteLengthDetector[] detectors,
 			FormatEnum[] enabledFormats) {
-		FormatEnum detected = FormatEnum.UNKNOWN;
+		FormatId detected = new FormatId(FormatEnum.UNKNOWN,null);
 		for (int i = 0; (i < detectors.length)
-				&& FormatEnum.UNKNOWN.equals(detected); i++) {
+				&& FormatEnum.UNKNOWN.equals(detected.format); i++) {
 			final DefiniteLengthDetector detector = detectors[i];
 			detected = detector.detect(enabledFormats, bytes);
 		}
 		return detected;
 	}
 
-	private static FormatEnum[] detectFormats(final byte[] bytes,
+	private static FormatId[] detectFormats(final byte[] bytes,
 			final DefiniteLengthDetector[] detectors, final Decoder[] decoders,
 			FormatEnum[] enformats) {
-		final Map decodersMap = getDecodersMap(decoders);
-		final List formats = new ArrayList();
-		FormatEnum currentFormat = null;
+		final Map<FormatEnum, Decoder> decodersMap = getDecodersMap(decoders);
+		final List<FormatId> formats = new ArrayList<FormatId>();
+		FormatId currentFormat = null;
 		byte[] currentBytes = bytes;
 		for (int i = 0; (i < MAX_LEVELS)
 				&& ((currentFormat == null) || decodersMap
 						.containsKey(currentFormat)); i++) {
 			currentFormat = detectFormat(currentBytes, detectors, enformats);
 			formats.add(currentFormat);
-			if (decodersMap.containsKey(currentFormat)) {
+			if (decodersMap.containsKey(currentFormat.format)) {
 				currentBytes = ((Decoder) decodersMap.get(currentFormat))
 						.decode(currentBytes);
 			}
 		}
-		return (FormatEnum[]) formats.toArray(new FormatEnum[formats.size()]);
+		return (FormatId[]) formats.toArray(new FormatId[0]);
 	}
 
-	private static int getBufferSize(final Detector[] detectors,
+	private static int getBufferSize(final DefiniteLengthDetector[] detectors,
 			final Decoder[] decoders) {
 		int detectSize = 1;
 		for (int i = 0; i < detectors.length; i++) {
-			final Detector detector = detectors[i];
+			final DefiniteLengthDetector detector = detectors[i];
 			detectSize = Math.max(detectSize, detector.getDetectLenght());
 		}
 
@@ -104,9 +103,17 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		return (int) (detectSize * decodeRatio) + decodeOffset + 1;
 	}
 
+	private void cleanup() {
+
+	}
+
+	private static FormatEnum[] getEnabledFormats(Detector[] decoders) {
+		return null;
+	}
+
 	private static Map getDecodersMap(final Decoder[] decoders) {
 		final Map formatsMap = new HashMap();
-		for (final final Decoder decoder : decoders) {
+		for (final Decoder decoder : decoders) {
 			formatsMap.put(decoder.getFormat(), decoder);
 		}
 		return formatsMap;
@@ -138,7 +145,7 @@ final class GuessInputStreamImpl extends GuessInputStream {
 
 	private final DefiniteLengthDetector[] defLen;
 
-	private final FormatEnum formats[];
+	private final FormatId formats[];
 
 	private final IndefiniteLengthDetector[] inDefLen;
 
@@ -151,17 +158,16 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		FormatEnum[] enabledFormats;
 		// definite lenght dection
 		final int bufferSize = getBufferSize(defLen, decoders);
-		BufferedInputStream tempStream = new BufferedInputStream(istream,
-				bufferSize);
+		BufferedInputStream tempStream = new BufferedInputStream(istream);
 		tempStream.mark(bufferSize);
 		byte[] bytes = readBytesAndReset(tempStream, bufferSize);
-		FormatEnum[] formats = detectFormats(bytes, defLen, decoders,
+		FormatId[] formats = detectFormats(bytes, defLen, decoders,
 				enabledFormats);
 		if (formats.length > 0) {
 			this.formats = formats;
 			this.bis = tempStream;
 		} else {
-			
+
 			// if no result copy to a file
 			// indefinite lenght detection
 
@@ -178,16 +184,16 @@ final class GuessInputStreamImpl extends GuessInputStream {
 	public void close() throws IOException {
 		cleanup();
 		this.bis.close();
-		
+
 	}
 
 	@Override
-	public final FormatEnum getFormat() {
+	public final FormatId getFormat() {
 		return this.formats[0];
 	}
 
 	@Override
-	public final FormatEnum[] getFormats() {
+	public final FormatId[] getFormats() {
 		return this.formats;
 	}
 
