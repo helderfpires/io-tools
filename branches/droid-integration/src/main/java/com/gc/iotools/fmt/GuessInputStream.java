@@ -40,6 +40,7 @@ import com.gc.iotools.fmt.base.Decoder;
 import com.gc.iotools.fmt.base.DefiniteLengthDetector;
 import com.gc.iotools.fmt.base.Detector;
 import com.gc.iotools.fmt.base.FormatEnum;
+import com.gc.iotools.fmt.base.FormatId;
 import com.gc.iotools.fmt.decoders.Base64Decoder;
 
 /**
@@ -58,7 +59,8 @@ import com.gc.iotools.fmt.decoders.Base64Decoder;
  * 
  */
 public abstract class GuessInputStream extends InputStream {
-	private final Map decoders = Collections.synchronizedMap(new HashMap());
+	public static final Map<FormatEnum, Decoder> DEFAULT_DECODERS = Collections
+			.synchronizedMap(new HashMap<FormatEnum, Decoder>());
 
 	// private static final Logger LOGGER = Logger
 	// .getLogger(GuessFormatInputStream.class);
@@ -66,24 +68,24 @@ public abstract class GuessInputStream extends InputStream {
 	private final Set<DefiniteLengthDetector> definiteLength = new HashSet<DefiniteLengthDetector>();
 
 	{
-		decoders.put(FormatEnum.BASE64, new Base64Decoder());
+		DEFAULT_DECODERS.put(FormatEnum.BASE64, new Base64Decoder());
 	}
 
-	public void addDecoder(final Decoder decoder) {
+	public static void addDefaultDecoder(final Decoder decoder) {
 		if (decoder == null) {
 			throw new IllegalArgumentException("decoder is null");
 		}
-		decoders.put(decoder.getFormat(), decoder);
+		DEFAULT_DECODERS.put(decoder.getFormat(), decoder);
 	}
 
-	public void addDecoders(final Decoder[] decoders) {
+	public void addDefaultDecoders(final Decoder[] decoders) {
 		if (decoders == null) {
 			throw new IllegalArgumentException("decoders array is null");
 		}
 		for (int i = 0; i < decoders.length; i++) {
 			final Decoder decoder = decoders[i];
 			if (decoder != null) {
-				decoders.put(decoder.getFormat(), decoder);
+				DEFAULT_DECODERS.put(decoder.getFormat(), decoder);
 			}
 		}
 	}
@@ -127,8 +129,19 @@ public abstract class GuessInputStream extends InputStream {
 	 */
 	public static GuessInputStream getInstance(final InputStream istream,
 			final FormatEnum[] enabledFormats) throws IOException {
-		final GuessInputStream result;
+		return null;
+	}
 
+	public static GuessInputStream getInstance(final InputStream istream,
+			Class clazz, String droidSignatureFile, String definiteLenghtFile)
+			throws IOException {
+		return null;
+	}
+
+	public static GuessInputStream getInstance(final InputStream istream,
+			FormatEnum[] enabledFormats, Decoder[] decoders,
+			Detector[] detectors) throws IOException {
+		GuessInputStream result;
 		if (istream instanceof GuessInputStream) {
 			final GuessInputStream gis = (GuessInputStream) istream;
 			if (gis.canDetectAll(enabledFormats)) {
@@ -136,24 +149,14 @@ public abstract class GuessInputStream extends InputStream {
 				// wrap.
 				result = new GuessInputStreamWrapper(gis, enabledFormats);
 			} else {
-				result = new GuessInputStreamImpl(detectors, decoders, istream);
+				result = new GuessInputStreamImpl(detectors, decoders,
+						enabledFormats, istream);
 			}
 		} else {
-			result = new GuessInputStreamImpl(detectors, decoders, istream);
+			result = new GuessInputStreamImpl(detectors, decoders,
+					enabledFormats, istream);
 		}
 		return result;
-	}
-
-	public static GuessInputStream getInstance(final InputStream istream,
-			Class clazz, String droidSignatureFile,
-			String definiteLenghtFile) throws IOException {
-
-	}
-
-	public static GuessInputStream getInstance(final InputStream istream,
-			Class clazz, Decoder[] decoders,
-			Detector[] detector) throws IOException {
-
 	}
 
 	private final Collection enabledFormats;
@@ -164,14 +167,14 @@ public abstract class GuessInputStream extends InputStream {
 	}
 
 	public final boolean canDetect(final FormatEnum tenum) {
-
+		return false;
 	}
 
 	public final boolean canDetectAll(final FormatEnum[] formatEnums) {
-
+		return false;
 	}
 
-	public abstract FormatEnum getFormat();
+	public abstract FormatId getFormat();
 
-	public abstract FormatEnum[] getFormats();
+	public abstract FormatId[] getFormats();
 }
