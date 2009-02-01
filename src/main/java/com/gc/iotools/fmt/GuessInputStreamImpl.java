@@ -27,20 +27,21 @@ package com.gc.iotools.fmt;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.gc.iotools.fmt.base.Decoder;
-import com.gc.iotools.fmt.base.StreamDetector;
 import com.gc.iotools.fmt.base.Detector;
+import com.gc.iotools.fmt.base.FileDetector;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
-import com.gc.iotools.fmt.base.FileDetector;
+import com.gc.iotools.fmt.base.StreamDetector;
 
 final class GuessInputStreamImpl extends GuessInputStream {
 	private static final int MAX_LEVELS = 2;
@@ -82,13 +83,29 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		super(enabledFormats);
 		this.defLen = getDefiniteLenght(detectors);
 		this.inDefLen = getInDefiniteLenght(detectors);
+		Collection<FormatId> formats = new ArrayList<FormatId>();
+		final BufferedInputStream bufStream = new BufferedInputStream(istream);
+		File tmpFile = null;
+		Map<FormatEnum, Decoder> decMap = getDecodersMap(decoders);
 		FormatId curFormat;
+		InputStream currentStream = bufStream;
 		do {
-			final BufferedInputStream tempStream = new BufferedInputStream(
-					istream);
-			curFormat = detectFormat(tempStream, this.defLen, enabledFormats);
-
-		} while (FormatEnum.UNKNOWN.equals(curFormat.format));
+			curFormat = detectFormat(currentStream, this.defLen, enabledFormats);
+			if (FormatEnum.UNKNOWN.equals(curFormat.format)) {
+				// copyToFile
+				// do fileDetection;
+			}
+			if (decMap.containsKey(curFormat.format)) {
+				Decoder decoder = decMap.get(curFormat.format);
+				currentStream = decoder.decode(currentStream);
+			}
+		} while (decMap.containsKey(curFormat.format));
+		if (tmpFile == null) {
+			this.bis = bufStream;
+		} else {
+			this.bis = new FileInputStream(tmpFile);
+		}
+		this.formats = formats.toArray(new FormatId[formats.size()]);
 	}
 
 	@Override
