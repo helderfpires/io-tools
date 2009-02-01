@@ -29,12 +29,16 @@ package com.gc.iotools.fmt;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.io.IOUtils;
 
 import com.gc.iotools.fmt.base.Decoder;
 import com.gc.iotools.fmt.base.Detector;
@@ -46,16 +50,18 @@ import com.gc.iotools.fmt.base.StreamDetector;
 final class GuessInputStreamImpl extends GuessInputStream {
 	private static final int MAX_LEVELS = 2;
 
-	private static FormatId detectFormat(final InputStream stream,
+	private static FormatId detectFormatStream(final InputStream stream,
 			final StreamDetector[] detectors, final FormatEnum[] enabledFormats)
 			throws IOException {
 		FormatId detected = new FormatId(FormatEnum.UNKNOWN, null);
-		for (int i = 0; (i < detectors.length)
-				&& FormatEnum.UNKNOWN.equals(detected.format); i++) {
-			final StreamDetector detector = detectors[i];
-			stream.mark(detector.getDetectLength(enabledFormats));
-			detected = detector.detect(enabledFormats, stream);
-			stream.reset();
+		if (detectors != null) {
+			for (int i = 0; (i < detectors.length)
+					&& FormatEnum.UNKNOWN.equals(detected.format); i++) {
+				final StreamDetector detector = detectors[i];
+				stream.mark(detector.getDetectLength(enabledFormats));
+				detected = detector.detect(enabledFormats, stream);
+				stream.reset();
+			}
 		}
 		return detected;
 	}
@@ -89,11 +95,27 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		Map<FormatEnum, Decoder> decMap = getDecodersMap(decoders);
 		FormatId curFormat;
 		InputStream currentStream = bufStream;
+		Collection<File> createdFiles = new ArrayList<File>();
 		do {
-			curFormat = detectFormat(currentStream, this.defLen, enabledFormats);
+			curFormat = detectFormatStream(currentStream, this.defLen,
+					enabledFormats);
 			if (FormatEnum.UNKNOWN.equals(curFormat.format)) {
-				// copyToFile
-				// do fileDetection;
+				// copy original stream to file.
+				if (tmpFile == null) {
+					tmpFile = copyToTempFile(tmpFile, currentStream);
+				}
+				File currentFile;
+				if (bufStream == currentStream) {
+					currentFile = tmpFile;
+				} else {
+					currentFile = copyToTempFile(tmpFile, currentStream);
+					currentStream.close();
+					createdFiles.add(currentFile);
+				}
+				for (FileDetector fileDetect: inDefLen) {
+					curFormat = fileDetect.detect(enabledFormats, currentFile);					
+				}
+			    currentStream = new FileInputStream(currentFile);
 			}
 			if (decMap.containsKey(curFormat.format)) {
 				Decoder decoder = decMap.get(curFormat.format);
@@ -105,7 +127,21 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		} else {
 			this.bis = new FileInputStream(tmpFile);
 		}
+		for (File file : createdFiles) {
+			file.delete();
+		}
 		this.formats = formats.toArray(new FormatId[formats.size()]);
+	}
+
+	private File copyToTempFile(File tmpFile, InputStream currentStream)
+			throws IOException, FileNotFoundException {
+		File currentFile;
+		currentFile = File.createTempFile("iotoos-fmt", ".tmp");
+		final FileOutputStream output = new FileOutputStream(
+				tmpFile);
+		IOUtils.copyLarge(currentStream, output);
+		output.close();
+		return currentFile;
 	}
 
 	@Override
