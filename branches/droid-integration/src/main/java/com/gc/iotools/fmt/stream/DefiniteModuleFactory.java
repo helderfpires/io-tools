@@ -1,4 +1,4 @@
-package com.gc.iotools.fmt.deflen;
+package com.gc.iotools.fmt.stream;
 /*
  * Copyright (c) 2008, Davide Simonetti.  All rights reserved.
  * 

@@ -36,105 +36,45 @@ import java.util.List;
 import java.util.Map;
 
 import com.gc.iotools.fmt.base.Decoder;
-import com.gc.iotools.fmt.base.DefiniteLengthDetector;
+import com.gc.iotools.fmt.base.StreamDetector;
 import com.gc.iotools.fmt.base.Detector;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
-import com.gc.iotools.fmt.base.IndefiniteLengthDetector;
+import com.gc.iotools.fmt.base.FileDetector;
 
 final class GuessInputStreamImpl extends GuessInputStream {
 	private static final int MAX_LEVELS = 2;
 
-	private static FormatId detectFormat(final byte[] bytes,
-			final DefiniteLengthDetector[] detectors,
-			final FormatEnum[] enabledFormats) {
+	private static FormatId detectFormat(final InputStream stream,
+			final StreamDetector[] detectors, final FormatEnum[] enabledFormats)
+			throws IOException {
 		FormatId detected = new FormatId(FormatEnum.UNKNOWN, null);
 		for (int i = 0; (i < detectors.length)
 				&& FormatEnum.UNKNOWN.equals(detected.format); i++) {
-			final DefiniteLengthDetector detector = detectors[i];
-			detected = detector.detect(enabledFormats, bytes);
+			final StreamDetector detector = detectors[i];
+			stream.mark(detector.getDetectLength(enabledFormats));
+			detected = detector.detect(enabledFormats, stream);
+			stream.reset();
 		}
 		return detected;
 	}
 
-	private static FormatId[] detectFormats(final byte[] bytes,
-			final DefiniteLengthDetector[] detectors, final Decoder[] decoders,
-			final FormatEnum[] enformats) {
-		final Map<FormatEnum, Decoder> decodersMap = getDecodersMap(decoders);
-		final List<FormatId> formats = new ArrayList<FormatId>();
-		FormatId currentFormat = null;
-		byte[] currentBytes = bytes;
-		for (int i = 0; (i < MAX_LEVELS)
-				&& ((currentFormat == null) || decodersMap
-						.containsKey(currentFormat)); i++) {
-			currentFormat = detectFormat(currentBytes, detectors, enformats);
-			formats.add(currentFormat);
-			if (decodersMap.containsKey(currentFormat.format)) {
-				currentBytes = (decodersMap.get(currentFormat))
-						.decode(currentBytes);
-			}
-		}
-		return formats.toArray(new FormatId[0]);
-	}
-
-	private static int getBufferSize(final DefiniteLengthDetector[] detectors,
-			final Decoder[] decoders, final FormatEnum[] enabledFormats) {
-		int detectSize = 1;
-		for (final DefiniteLengthDetector detector : detectors) {
-			detectSize = Math.max(detectSize, detector
-					.getDetectLength(enabledFormats));
-		}
-
-		int decodeOffset = 1;
-		for (final Decoder decoder : decoders) {
-			decodeOffset = Math.max(decodeOffset, decoder.getEncodingOffset());
-		}
-
-		float decodeRatio = 1;
-		for (final Decoder decoder : decoders) {
-			decodeRatio = Math.max(decodeRatio, decoder.getRatio());
-		}
-
-		return (int) (detectSize * decodeRatio) + decodeOffset + 1;
-	}
-
-	private static Map getDecodersMap(final Decoder[] decoders) {
-		final Map formatsMap = new HashMap();
+	private static Map<FormatEnum, Decoder> getDecodersMap(
+			final Decoder[] decoders) {
+		final Map<FormatEnum, Decoder> formatsMap = new HashMap<FormatEnum, Decoder>();
 		for (final Decoder decoder : decoders) {
 			formatsMap.put(decoder.getFormat(), decoder);
 		}
 		return formatsMap;
 	}
 
-	private static byte[] readBytesAndReset(final BufferedInputStream input,
-			final int size) throws IOException {
-		final int size1 = size - 1;
-		final byte[] buffer = new byte[size1];
-		input.mark(size);
-		int pos = 0;
-		int n = 0;
-		while ((pos < (size1))
-				&& (-1 != (n = input.read(buffer, pos, (size1 - pos))))) {
-			pos += n;
-		}
-		input.reset();
-		byte[] result;
-		if (pos == size1) {
-			result = buffer;
-		} else {
-			result = new byte[pos];
-			System.arraycopy(buffer, 0, result, 0, pos);
-		}
-		return result;
-	}
-
 	private final InputStream bis;
 
-	private final DefiniteLengthDetector[] defLen;
+	private final StreamDetector[] defLen;
 
 	private final FormatId formats[];
 
-	private final IndefiniteLengthDetector[] inDefLen;
+	private final FileDetector[] inDefLen;
 
 	public GuessInputStreamImpl(final Detector[] detectors,
 			final Decoder[] decoders, final FormatEnum[] enabledFormats,
@@ -142,27 +82,13 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		super(enabledFormats);
 		this.defLen = getDefiniteLenght(detectors);
 		this.inDefLen = getInDefiniteLenght(detectors);
+		FormatId curFormat;
+		do {
+			final BufferedInputStream tempStream = new BufferedInputStream(
+					istream);
+			curFormat = detectFormat(tempStream, this.defLen, enabledFormats);
 
-		// definite lenght dection
-		final int bufferSize = getBufferSize(this.defLen, decoders,
-				enabledFormats);
-		final BufferedInputStream tempStream = new BufferedInputStream(istream);
-		tempStream.mark(bufferSize);
-		final byte[] bytes = readBytesAndReset(tempStream, bufferSize);
-		final FormatId[] formats = detectFormats(bytes, this.defLen, decoders,
-				enabledFormats);
-		if (formats.length > 0) {
-			this.formats = formats;
-			this.bis = tempStream;
-		} else {
-
-			// if no result copy to a file
-			// indefinite lenght detection
-
-			// internal stream is
-			this.formats = null;
-			this.bis = null;
-		}
+		} while (FormatEnum.UNKNOWN.equals(curFormat.format));
 	}
 
 	@Override
@@ -227,21 +153,18 @@ final class GuessInputStreamImpl extends GuessInputStream {
 
 	}
 
-	private DefiniteLengthDetector[] getDefiniteLenght(
-			final Detector[] detectors) {
-		Collection<DefiniteLengthDetector> coll = new ArrayList<DefiniteLengthDetector>();
+	private StreamDetector[] getDefiniteLenght(final Detector[] detectors) {
+		Collection<StreamDetector> coll = new ArrayList<StreamDetector>();
 		for (Detector detector : detectors) {
-			if (detector instanceof DefiniteLengthDetector) {
-				coll.add((DefiniteLengthDetector) detector);
+			if (detector instanceof StreamDetector) {
+				coll.add((StreamDetector) detector);
 			}
 		}
-		
-		return (coll.size() == 0 ? null : coll
-				.toArray(new DefiniteLengthDetector[0]));
+
+		return (coll.size() == 0 ? null : coll.toArray(new StreamDetector[0]));
 	}
 
-	private IndefiniteLengthDetector[] getInDefiniteLenght(
-			final Detector[] detectors) {
+	private FileDetector[] getInDefiniteLenght(final Detector[] detectors) {
 		// TODO Auto-generated method stub
 		return null;
 	}

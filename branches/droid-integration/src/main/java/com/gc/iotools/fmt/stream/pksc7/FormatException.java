@@ -1,4 +1,4 @@
-package com.gc.iotools.fmt.deflen.pksc7;
+package com.gc.iotools.fmt.stream.pksc7;
 
 class FormatException extends Exception {
 

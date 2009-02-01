@@ -1,4 +1,4 @@
-package com.gc.iotools.fmt.deflen;
+package com.gc.iotools.fmt.stream;
 /*
  * Copyright (c) 2008, Davide Simonetti.  All rights reserved.
  * 
@@ -27,29 +27,13 @@ package com.gc.iotools.fmt.deflen;
  */
 import com.gc.iotools.fmt.base.FormatId;
 
-class RegexpDetectorModule implements DefiniteLengthModule {
+public interface DefiniteLengthModule {
 
-	
-	public boolean detect(final byte[] readedBytes) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	boolean detect(final byte[] readedBytes);
 
+	FormatId getDetectedFormat();
 
-	public FormatId getDetectedFormat() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	int getDetectLenght();
 
-
-	public int getDetectLenght() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public void init(final FormatId fenum, final String param) {
-		// TODO Auto-generated method stub
-
-	}
-
+	void init(FormatId fenum, String param);
 }
