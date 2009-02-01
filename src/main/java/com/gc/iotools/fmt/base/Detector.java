@@ -28,6 +28,6 @@ package com.gc.iotools.fmt.base;
  */
 public interface Detector {
 
-	FormatEnum[] getDetectedFormat();
+	FormatEnum[] getDetectedFormats();
 
 }

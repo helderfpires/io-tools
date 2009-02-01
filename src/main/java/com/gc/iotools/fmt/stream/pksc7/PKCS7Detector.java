@@ -1,4 +1,4 @@
-package com.gc.iotools.fmt.deflen.pksc7;
+package com.gc.iotools.fmt.stream.pksc7;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
-import com.gc.iotools.fmt.deflen.DefiniteLengthModule;
+import com.gc.iotools.fmt.stream.DefiniteLengthModule;
 
 /*
  * Copyright (c) 2008, Davide Simonetti

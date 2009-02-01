@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.gc.iotools.fmt.base.Decoder;
-import com.gc.iotools.fmt.base.DefiniteLengthDetector;
+import com.gc.iotools.fmt.base.StreamDetector;
 import com.gc.iotools.fmt.base.Detector;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
@@ -65,7 +65,7 @@ public abstract class GuessInputStream extends InputStream {
 	// private static final Logger LOGGER = Logger
 	// .getLogger(GuessFormatInputStream.class);
 	// Should become a collection to support multiple detectors per format
-	private final Set<DefiniteLengthDetector> definiteLength = new HashSet<DefiniteLengthDetector>();
+	private final Set<StreamDetector> definiteLength = new HashSet<StreamDetector>();
 
 	{
 		DEFAULT_DECODERS.put(FormatEnum.BASE64, new Base64Decoder());

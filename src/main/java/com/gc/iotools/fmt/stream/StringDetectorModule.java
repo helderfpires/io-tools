@@ -1,4 +1,4 @@
-package com.gc.iotools.fmt.deflen;
+package com.gc.iotools.fmt.stream;
 /*
  * Copyright (c) 2008, Davide Simonetti.  All rights reserved.
  * 
@@ -25,9 +25,60 @@ package com.gc.iotools.fmt.deflen;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+import java.util.Arrays;
 
-enum DetectMode {
+import org.apache.commons.lang.StringUtils;
 
-	CLASS, STRING, STRINGNC, REGEXP
+import com.gc.iotools.fmt.base.FormatId;
+import com.gc.iotools.stream.utils.ArrayTools;
+
+public class StringDetectorModule implements DefiniteLengthModule {
+	private byte[] byteSequence = null;
+	private int detectLength = -1;
+	private FormatId detectedFormat;
+
+	
+	public boolean detect(final byte[] readedBytes) {
+		boolean result;
+		if (this.detectLength == this.byteSequence.length) {
+			result = Arrays.equals(readedBytes, this.byteSequence);
+		} else {
+			result = ArrayTools.indexOf(readedBytes, this.byteSequence) >= 0;
+		}
+		return result;
+	}
+
+	
+	public FormatId getDetectedFormat() {
+		if (this.detectedFormat == null) {
+			throw new IllegalStateException(
+					"getDetectFormat called before init");
+		}
+		return this.detectedFormat;
+	}
+
+	
+	public int getDetectLenght() {
+		if (this.byteSequence == null) {
+			throw new IllegalStateException(
+					"getDetectLength called before init");
+		}
+		return this.detectLength;
+	}
+
+
+	public void init(final FormatId fenum, final String param) {
+		final int sepPos = param.indexOf(':');
+		this.byteSequence = param.substring(sepPos).getBytes();
+		final String detectLString = param.substring(0, sepPos);
+		if (StringUtils.isNotBlank(detectLString)) {
+			this.detectLength = Integer.parseInt(detectLString);
+		}
+		if (this.detectLength == 0) {
+			this.detectLength = this.byteSequence.length;
+		}
+
+		this.detectedFormat = fenum;
+	}
 
 }

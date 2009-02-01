@@ -1,4 +1,4 @@
-package com.gc.iotools.fmt.deflen;
+package com.gc.iotools.fmt.stream;
 /*
  * Copyright (c) 2008, Davide Simonetti.  All rights reserved.
  * 
@@ -25,15 +25,9 @@ package com.gc.iotools.fmt.deflen;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-import com.gc.iotools.fmt.base.FormatId;
 
-public interface DefiniteLengthModule {
+enum DetectMode {
 
-	boolean detect(final byte[] readedBytes);
+	CLASS, STRING, STRINGNC, REGEXP
 
-	FormatId getDetectedFormat();
-
-	int getDetectLenght();
-
-	void init(FormatId fenum, String param);
 }

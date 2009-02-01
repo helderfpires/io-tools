@@ -25,9 +25,9 @@ import uk.gov.nationalarchives.droid.xmlReader.SAXModelBuilder;
 
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
-import com.gc.iotools.fmt.base.IndefiniteLengthDetector;
+import com.gc.iotools.fmt.base.FileDetector;
 
-public class DroidDetectorImpl implements IndefiniteLengthDetector {
+public class DroidDetectorImpl implements FileDetector {
 	private static class MyValEnum extends ValuedEnum {
 
 		/**
@@ -109,7 +109,7 @@ public class DroidDetectorImpl implements IndefiniteLengthDetector {
 		return fId;
 	}
 
-	public FormatEnum[] getDetectedFormat() {
+	public FormatEnum[] getDetectedFormats() {
 		// TODO Auto-generated method stub
 		return null;
 	}
