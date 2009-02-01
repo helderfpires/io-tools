@@ -2,7 +2,7 @@
 #labels Featured
 
 = Introduction =
-Classes in jar `wazstream.jar` try to ease the detection of some widely used file formats. The main focus are documents (optionally with digital signature) and images.
+Classes in package `com.gc.iotools.fmt` try to ease the detection of some widely used file formats. The main focus are documents (optionally with digital signature) and images.
 
 These classes can tell you which is the format of the stream "on the fly", without you have to copy it to the disk for reading it twice. They're useful when you have an `InputStream` coming for instance from a Database or a content repository, you want to know the format but later you also need the whole stream for further processing.
 
@@ -47,7 +47,5 @@ For a complete list see _org.googlecode.iotools.fmt.base.!FormatEnum _
 || xml || text/xml         || Xml file ||
 
 ----
-To do:
- * Add a new format.
- * Implementing a Detector.
- * Implementing a Decoder.
+= News =
+A lot of work is in progress to integrate the two libraries mentioned above with the existing detection framework, in order to get the best of the two approaches (some common format detected very fast and with low memory usage, and lots of strange formats supported). If you want to help please check out the `droid-integration` branch.
