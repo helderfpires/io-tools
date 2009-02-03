@@ -1,21 +1,21 @@
 package com.gc.iotools.fmt.stream;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import com.gc.iotools.fmt.base.Decoder;
-import com.gc.iotools.fmt.base.StreamDetector;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
+import com.gc.iotools.fmt.base.StreamDetector;
 
-public final class DefiniteLengthImpl implements StreamDetector {
+public final class StreamDetectorImpl implements StreamDetector {
 
-	private static byte[] readBytesAndReset(final BufferedInputStream input,
+
+	private static byte[] readBytesAndReset(final InputStream input,
 			final int size) throws IOException {
 		final int size1 = size - 1;
 		final byte[] buffer = new byte[size1];
@@ -26,7 +26,6 @@ public final class DefiniteLengthImpl implements StreamDetector {
 				&& (-1 != (n = input.read(buffer, pos, (size1 - pos))))) {
 			pos += n;
 		}
-		input.reset();
 		byte[] result;
 		if (pos == size1) {
 			result = buffer;
@@ -37,68 +36,40 @@ public final class DefiniteLengthImpl implements StreamDetector {
 		return result;
 	}
 
-	private static FormatId detectFormat(final byte[] bytes,
-			final StreamDetector[] detectors, final FormatEnum[] enabledFormats) {
+	private FormatId detectFormat(byte[] bytes,
+			final DefiniteLengthModule[] modules)  {
 		FormatId detected = new FormatId(FormatEnum.UNKNOWN, null);
-		for (int i = 0; (i < detectors.length)
+		for (int i = 0; (i < modules.length)
 				&& FormatEnum.UNKNOWN.equals(detected.format); i++) {
-			final StreamDetector detector = detectors[i];
-			detected = detector.detect(enabledFormats, bytes);
-		}
-		return detected;
-	}
-
-	private static int getBufferSize(final StreamDetector[] detectors,
-			final Decoder[] decoders, final FormatEnum[] enabledFormats) {
-		int detectSize = 1;
-		for (final StreamDetector detector : detectors) {
-			detectSize = Math.max(detectSize, detector
-					.getDetectLength(enabledFormats));
-		}
-
-		int decodeOffset = 1;
-		for (final Decoder decoder : decoders) {
-			decodeOffset = Math.max(decodeOffset, decoder.getEncodingOffset());
-		}
-
-		float decodeRatio = 1;
-		for (final Decoder decoder : decoders) {
-			decodeRatio = Math.max(decodeRatio, decoder.getRatio());
-		}
-
-		return (int) (detectSize * decodeRatio) + decodeOffset + 1;
-	}
-
-	private static FormatId detectFormat(final byte[] bytes,
-			final DefiniteLengthModule[] detectors) {
-		FormatId detected = new FormatId(FormatEnum.UNKNOWN, null);
-		for (final DefiniteLengthModule detector : detectors) {
-			final int bytesToCopy = Math.min(detector.getDetectLenght(),
+			final DefiniteLengthModule module = modules[i];
+			final int bytesToCopy = Math.min(module.getDetectLenght(),
 					bytes.length);
 			final byte[] splittedBytes = new byte[bytesToCopy];
 			System.arraycopy(bytes, 0, splittedBytes, 0, bytesToCopy);
-			if (detector.detect(splittedBytes)) {
-				detected = detector.getDetectedFormat();
-				break;
-			}
+			boolean success = module.detect(splittedBytes);
+			detected = (success ? module.getDetectedFormat() : detected);
 		}
 		return detected;
 	}
 
 	private final DefiniteLengthModule[] configuredModules;
 
-	public DefiniteLengthImpl() {
+	public StreamDetectorImpl() {
 		this(null, null);
 	}
 
-	public DefiniteLengthImpl(final String confFile, final Class<?> enumclass) {
+	public StreamDetectorImpl(final String confFile, final Class<?> enumclass) {
 		final DefiniteModuleFactory dfmf = new DefiniteModuleFactory(confFile,
 				enumclass);
 		this.configuredModules = dfmf.getConfiguredModules();
 	}
 
-	public FormatId detect(final FormatEnum[] enabledFormats, final byte[] bytes) {
+
+	public FormatId detect(final FormatEnum[] enabledFormats,
+			final InputStream stream) throws IOException {
 		DefiniteLengthModule[] modules = getModulesForFormats(enabledFormats);
+		int len=getDetectLength(enabledFormats);
+		byte[] bytes=readBytesAndReset(stream, len);
 		return detectFormat(bytes, modules);
 	}
 

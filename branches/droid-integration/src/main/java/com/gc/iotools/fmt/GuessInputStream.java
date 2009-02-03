@@ -37,10 +37,10 @@ import java.util.Map;
 import java.util.Set;
 
 import com.gc.iotools.fmt.base.Decoder;
-import com.gc.iotools.fmt.base.StreamDetector;
 import com.gc.iotools.fmt.base.Detector;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
+import com.gc.iotools.fmt.base.StreamDetector;
 import com.gc.iotools.fmt.decoders.Base64Decoder;
 
 /**
@@ -62,15 +62,6 @@ public abstract class GuessInputStream extends InputStream {
 	public static final Map<FormatEnum, Decoder> DEFAULT_DECODERS = Collections
 			.synchronizedMap(new HashMap<FormatEnum, Decoder>());
 
-	// private static final Logger LOGGER = Logger
-	// .getLogger(GuessFormatInputStream.class);
-	// Should become a collection to support multiple detectors per format
-	private final Set<StreamDetector> definiteLength = new HashSet<StreamDetector>();
-
-	{
-		DEFAULT_DECODERS.put(FormatEnum.BASE64, new Base64Decoder());
-	}
-
 	public static void addDefaultDecoder(final Decoder decoder) {
 		if (decoder == null) {
 			throw new IllegalArgumentException("decoder is null");
@@ -78,16 +69,28 @@ public abstract class GuessInputStream extends InputStream {
 		DEFAULT_DECODERS.put(decoder.getFormat(), decoder);
 	}
 
-	public void addDefaultDecoders(final Decoder[] decoders) {
-		if (decoders == null) {
-			throw new IllegalArgumentException("decoders array is null");
-		}
-		for (int i = 0; i < decoders.length; i++) {
-			final Decoder decoder = decoders[i];
-			if (decoder != null) {
-				DEFAULT_DECODERS.put(decoder.getFormat(), decoder);
-			}
-		}
+	public static GuessInputStream getInstance(final InputStream istream)
+			throws IOException {
+		return null;
+	}
+
+	public static GuessInputStream getInstance(final InputStream istream,
+			final Class clazz, final String droidSignatureFile,
+			String definiteLenghtFile) throws IOException {
+		return null;
+	}
+
+	/**
+	 * This method creates an instance of the GuessInputStream. It checks if the
+	 * InputStream is already an instance of GuessInputStream and do
+	 * optimizations if possible.
+	 * 
+	 * @param istream
+	 * @return
+	 */
+	public static GuessInputStream getInstance(final InputStream istream,
+			final FormatEnum[] enabledFormats) throws IOException {
+		return null;
 	}
 
 	// public static void addDetector(final Detector detector) {
@@ -114,33 +117,9 @@ public abstract class GuessInputStream extends InputStream {
 	// return GuessInputStream.DETECTORS;
 	// }
 
-	public static GuessInputStream getInstance(final InputStream istream)
-			throws IOException {
-		return null;
-	}
-
-	/**
-	 * This method creates an instance of the GuessInputStream. It checks if the
-	 * InputStream is already an instance of GuessInputStream and do
-	 * optimizations if possible.
-	 * 
-	 * @param istream
-	 * @return
-	 */
 	public static GuessInputStream getInstance(final InputStream istream,
-			final FormatEnum[] enabledFormats) throws IOException {
-		return null;
-	}
-
-	public static GuessInputStream getInstance(final InputStream istream,
-			Class clazz, String droidSignatureFile, String definiteLenghtFile)
-			throws IOException {
-		return null;
-	}
-
-	public static GuessInputStream getInstance(final InputStream istream,
-			FormatEnum[] enabledFormats, Decoder[] decoders,
-			Detector[] detectors) throws IOException {
+			final FormatEnum[] enabledFormats, final Detector[] detectors,
+			final Decoder[] decoders) throws IOException {
 		GuessInputStream result;
 		if (istream instanceof GuessInputStream) {
 			final GuessInputStream gis = (GuessInputStream) istream;
@@ -159,11 +138,31 @@ public abstract class GuessInputStream extends InputStream {
 		return result;
 	}
 
+	// private static final Logger LOGGER = Logger
+	// .getLogger(GuessFormatInputStream.class);
+	// Should become a collection to support multiple detectors per format
+	private final Set<StreamDetector> definiteLength = new HashSet<StreamDetector>();
+
 	private final Collection enabledFormats;
+
+	{
+		DEFAULT_DECODERS.put(FormatEnum.BASE64, new Base64Decoder());
+	}
 
 	protected GuessInputStream(final FormatEnum[] enabledFormats) {
 		this.enabledFormats = Collections.unmodifiableCollection(Arrays
 				.asList(enabledFormats));
+	}
+
+	public void addDefaultDecoders(final Decoder[] decoders) {
+		if (decoders == null) {
+			throw new IllegalArgumentException("decoders array is null");
+		}
+		for (final Decoder decoder : decoders) {
+			if (decoder != null) {
+				DEFAULT_DECODERS.put(decoder.getFormat(), decoder);
+			}
+		}
 	}
 
 	public final boolean canDetect(final FormatEnum tenum) {
