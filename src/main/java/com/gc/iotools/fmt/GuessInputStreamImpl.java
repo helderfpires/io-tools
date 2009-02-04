@@ -208,20 +208,17 @@ final class GuessInputStreamImpl extends GuessInputStream {
 
 	private Set<FormatEnum> getUndetectedFormats(FormatEnum[] enabledFormats,
 			Detector[] detectors) {
-		Set<FormatEnum> result;
-		HashSet<FormatEnum> set = new HashSet<FormatEnum>(Arrays
+		Set<FormatEnum> set = new HashSet<FormatEnum>(Arrays
 				.asList(enabledFormats));
-		if (detectors == null) {
-			result = set;
-		} else {
+		if (detectors != null) {
 			Collection<FormatEnum> detected = new HashSet<FormatEnum>();
 			for (Detector detector : detectors) {
 				detected.addAll(Arrays.asList(detector.getDetectedFormats()));
 			}
 			set.removeAll(detected);
-			result = set.toArray(new FormatEnum[set.size()]);
+			
 		}
-		return result;
+		return set;
 	}
 	
 	private File copyToTempFile(final File tmpFile,
