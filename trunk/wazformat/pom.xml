@@ -4,9 +4,9 @@
 	<groupId>net.sf.jsignature.iotools</groupId>
 	<artifactId>wazformat</artifactId>
     <parent>
-        <artifactId>io-tools-parent</artifactId>
+        <artifactId>io-tools</artifactId>
         <groupId>net.sf.jsignature.iotools</groupId>
-        <version>1.2-SNAPSHOT</version>
+        <version>1.1.5-SNAPSHOT</version>
     </parent>
 	<packaging>jar</packaging>
 	<name>WaZFormat</name>
@@ -29,46 +29,34 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:http://io-tools.googlecode.com/svn/tags/io-tools-parent-1.1/wazformat</connection>
-		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/tags/io-tools-parent-1.1/wazformat</developerConnection>
+		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk/wazformat</connection>
+		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk/wazformat</developerConnection>
 	</scm>
 	<dependencies>
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
-			<version>1.1.1</version>
-			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>bouncycastle</groupId>
 			<artifactId>bcprov-jdk14</artifactId>
-			<version>140</version>
-			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>stax</groupId>
 			<artifactId>stax</artifactId>
-			<version>1.2.0</version>
-			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
-			<version>2.4</version>
-			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>1.4</version>
-			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

@@ -54,8 +54,8 @@
 	</distributionManagement>
 	<modules>
 		<module>easystream</module>
-		<!-- module>wazformat</module>
-		<module>io-tools-project</module -->
+		<module>wazformat</module>
+		<!-- module>io-tools-project</module -->
 	</modules>
 	<dependencies>
 		<dependency>
