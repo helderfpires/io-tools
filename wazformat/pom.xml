@@ -63,17 +63,6 @@
 	<build>
 		<plugins>
 			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<fork>true</fork>
-					<source>1.4</source>
-					<target>1.4</target>
-					<meminitial>128m</meminitial>
-					<maxmem>512m</maxmem>
-					<optimize>true</optimize>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<executions>
