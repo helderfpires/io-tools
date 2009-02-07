@@ -140,6 +140,7 @@
 				<plugin>
 				    <groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
+					<inherited>true</inherited>
 					<configuration>
 						<fork>true</fork>
 						<source>1.5</source>
