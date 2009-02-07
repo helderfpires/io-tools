@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.sf.jsignature.io-tools</groupId>
 	<artifactId>wazformat</artifactId>
-    <parent>
-        <groupId>net.sf.jsignature.io-tools</groupId>
-        <artifactId>io-tools</artifactId>
-        <version>1.1.5-SNAPSHOT</version>
-    </parent>
+	<parent>
+		<groupId>net.sf.jsignature.io-tools</groupId>
+		<artifactId>io-tools</artifactId>
+		<version>1.1.5-SNAPSHOT</version>
+	</parent>
 	<packaging>jar</packaging>
 	<name>WaZFormat</name>
 	<description>Format identification utilities</description>
@@ -61,6 +62,23 @@
 	</dependencies>
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<inherited>true</inherited>
+				<configuration>
+					<fork>true</fork>
+					<source>1.5</source>
+					<target>1.5</target>
+					<meminitial>128m</meminitial>
+					<maxmem>512m</maxmem>
+					<optimize>true</optimize>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
