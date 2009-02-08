@@ -12,7 +12,7 @@
     <module name="TreeWalker">
         <property name="tabWidth" value="4"/>
         <module name="JavadocMethod">
-            <property name="scope" value="protected"/>
+            <property name="scope" value="package"/>
             <property name="excludeScope" value="private"/>
             <property name="allowUndeclaredRTE" value="true"/>
             <property name="logLoadErrors" value="true"/>

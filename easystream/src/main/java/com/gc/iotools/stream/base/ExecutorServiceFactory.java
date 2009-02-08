@@ -94,7 +94,7 @@ public final class ExecutorServiceFactory {
 
 	}
 
-	private static ExecutorService EXECUTOR = new ThreadPoolExecutor(10, 20,
+	private static ExecutorService executor = new ThreadPoolExecutor(10, 20,
 			5, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(500));
 
 	private static final ExecutorService SINGLE_EXECUTOR = Executors
@@ -107,7 +107,7 @@ public final class ExecutorServiceFactory {
 			result = new OneShotThreadExecutor();
 			break;
 		case STATIC_THREAD_POOL:
-			result = ExecutorServiceFactory.EXECUTOR;
+			result = ExecutorServiceFactory.executor;
 			break;
 		case SINGLE_THREAD:
 			result = ExecutorServiceFactory.SINGLE_EXECUTOR;
@@ -121,6 +121,6 @@ public final class ExecutorServiceFactory {
 	}
 
 	public static void setDefaultExecutor(final ExecutorService executor) {
-		ExecutorServiceFactory.EXECUTOR = executor;
+		ExecutorServiceFactory.executor = executor;
 	}
 }

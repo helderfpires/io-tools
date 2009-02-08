@@ -1,7 +1,7 @@
 package com.gc.iotools.stream.os;
 
 /*
- * Copyright (c) 2008, Davide Simonetti
+ * Copyright (c) 2008,2009 Davide Simonetti
  * All rights reserved.
  * Redistribution and use in source and binary forms, 
  * with or without modification, are permitted provided that the following 
@@ -45,14 +45,68 @@ import com.gc.iotools.stream.base.ExecutionModel;
 import com.gc.iotools.stream.base.ExecutorServiceFactory;
 
 /**
- * TODO: code example
+ * <p>
+ * This class is an <code>OutputStream</code> that, when extended, allows to
+ * read the data written to it from the <code>InputStream</code> inside the
+ * method {@linkplain #doRead()}.
+ * </p>
+ * <p>
+ * To use this class you must extend it and implement the method
+ * {@linkplain #doRead()}. Inside this method place the logic that needs to read
+ * the data from the <code>InputStream</code>. Then the data can be written to
+ * this class that implements <code>OutputStream</code>.
+ * </p>
+ * <p>
+ * The {@linkplain #doRead()} call executes in another thread, so there is no
+ * warranty on when it will start and when it will end. Special care must be
+ * taken in passing variables to it: all the arguments must be final and inside
+ * {@linkplain #doRead()} you shouldn't change the variables of the outer class.
+ * </p>
+ * <p>
+ * The method {@link #getResults()} suspend the outer thread and wait for the
+ * read from the internal stream is over. It returns when the
+ * <code>doRead()</code> terminates and has produced its result.
+ * </p>
+ * <p>
+ * Some sample code:
+ * </p>
+ * <code>
+ * <pre>
+ * OutputStreamToInputStream&lt;String&gt; oStream2IStream = 
+ * new OutputStreamToInputStream&lt;String&gt;() {
+ * 	protected String doRead(final InputStream istream) throws Exception {
+ * 		// read from InputStream into a string. Data will be written to the 
+ * 		// outer class later (oStream2IStream.write). 
+ * 		final String result = IOUtils.toString(istream);
+ * 		return result + &quot; was processed.&quot;;
+ * 	}
+ * };
+ * try {
+ * 	// some data is written to the OutputStream, will be passed to the method
+ * 	// doRead(InputStream i) above and after close() is called the results 
+ * 	// will be available through the getResults() method.  
+ * 	oStream2IStream.write(&quot;test&quot;.getBytes());
+ * } finally {
+ * 	// don't miss the close (or a thread would not terminate correctly).
+ * 	oStream2IStream.close();
+ * }
+ * String result = oStream2IStream.getResults();
+ * //result now contains the string &quot;test was processed.&quot;
+ * </pre></code>
  * 
+ * @param <T>
+ *            Type returned by the method {@link #getResults()} after the thread
+ *            has finished.
  * @since 1.0
  * @author dvd.smnt
- * @version $Revision: 1 $
  */
 public abstract class OutputStreamToInputStream<T> extends OutputStream {
-
+	/**
+	 * This class executes in the second thread.
+	 * 
+	 * @author dvd.smnt
+	 * 
+	 */
 	private final class DataConsumerRunnable implements Callable<T> {
 
 		private final InputStream inputstream;
@@ -128,8 +182,20 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 		this(joinOnClose, ExecutorServiceFactory.getExecutor(em));
 	}
 
+	/**
+	 * 
+	 * @param joinOnClose
+	 *            if <code>true</code> the internal thread will be joined when
+	 *            close is invoked.
+	 * @param executor
+	 *            Service for executing the internal thread.
+	 * @throws IOException
+	 */
 	public OutputStreamToInputStream(final boolean joinOnClose,
 			final ExecutorService executor) throws IOException {
+		if (executor == null) {
+			throw new IllegalArgumentException("Executor == null");
+		}
 		final String callerId = getCaller();
 		this.wrappedPipedOS = new PipedOutputStream();
 		final PipedInputStream pipedIS = new PipedInputStream(
@@ -150,16 +216,15 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 				// waiting for thread to finish..
 				try {
 					this.writingResult.get();
-
 				} catch (final ExecutionException e) {
 					final IOException e1 = new IOException(
 							"Problem producing data");
 					e1.initCause(e.getCause());
 					throw e1;
 
-				} catch (final Exception e) {
+				} catch (final InterruptedException e) {
 					final IOException e1 = new IOException(
-							"Problem producing data");
+							"Waiting of the thread has been interrupted");
 					e1.initCause(e);
 					throw e1;
 				}
@@ -184,6 +249,30 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 		this.wrappedPipedOS.flush();
 	}
 
+	/**
+	 * <p>
+	 * This method returns the result of the method {@link #doRead(InputStream)}
+	 * and ensure the previous method is over.
+	 * </p>
+	 * <p>
+	 * This method suspend the calling thread and waits for the function
+	 * {@link #doRead(InputStream)} to finish. It returns when the
+	 * <code>doRead()</code> terminates and has produced its result.
+	 * </p>
+	 * <p>
+	 * It must be called after the method {@link #close()} otherwise a
+	 * <code>IllegalStateException</code> is thrown.
+	 * </p>
+	 * 
+	 * @throws ExecutionException
+	 *             thrown if the method {@linkplain #doRead()} threw an
+	 *             Exception. The <code>getCause()</code> returns the original
+	 *             Exception.
+	 * @throws IllegalStateException
+	 *             when it is called before the method {@link #close()} has been
+	 *             called.
+	 * @return the object returned from the doRead() method.
+	 */
 	public final T getResults() throws InterruptedException,
 			ExecutionException {
 		if (!this.closeCalled) {
@@ -220,6 +309,19 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 		return result;
 	}
 
+	/**
+	 * This method has to be implemented to use this class. It allows to
+	 * retrieve the data written to the outer <code>OutputStream</code> from the
+	 * <code>InputStream</code> passed as a parameter.
+	 * 
+	 * @param istream
+	 *            The InputStream where the data can be retrieved.
+	 * @return Optionally returns a result of the elaboration.
+	 * @throws Exception
+	 *             If an <code>Exception</code> occurs during the elaboration it
+	 *             can be thrown. Will be returned in the method
+	 *             {@link #getResults()}.
+	 */
 	protected abstract T doRead(InputStream istream) throws Exception;
 
 }

@@ -52,7 +52,7 @@ public class TestGuessInputStreamWithFiles extends TestCase {
 		String filePath = URLDecoder.decode(fileURL.getPath(), "UTF-8");
 		final File dir = new File(filePath);
 		final String[] files = dir.list();
-		final Collection goodFiles = new Vector();
+		final Collection<String> goodFiles = new Vector<String>();
 		if (!filePath.endsWith(File.separator)) {
 			filePath = filePath + File.separator;
 		}
@@ -78,7 +78,7 @@ public class TestGuessInputStreamWithFiles extends TestCase {
 		String filePath = URLDecoder.decode(fileURL.getPath(), "UTF-8");
 		final File dir = new File(filePath);
 		final String[] files = dir.list();
-		final Collection goodFiles = new Vector();
+		final Collection<String> goodFiles = new Vector<String>();
 		if (!filePath.endsWith(File.separator)) {
 			filePath = filePath + File.separator;
 		}

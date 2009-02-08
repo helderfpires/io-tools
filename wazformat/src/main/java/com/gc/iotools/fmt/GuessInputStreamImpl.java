@@ -45,15 +45,17 @@ final class GuessInputStreamImpl extends GuessInputStream {
 	private static FormatEnum detectFormat(final byte[] bytes,
 			final Detector[] detectors) {
 		FormatEnum detected = FormatEnum.UNKNOWN;
-		for (int i = 0; i < detectors.length; i++) {
-			final Detector detector = detectors[i];
-			final int bytesToCopy = Math.min(detector.getDetectLenght(),
-					bytes.length);
-			final byte[] splittedBytes = new byte[bytesToCopy];
-			System.arraycopy(bytes, 0, splittedBytes, 0, bytesToCopy);
-			if (detector.detect(splittedBytes)) {
-				detected = detector.getDetectedFormat();
-				break;
+		if (bytes.length > 0) {
+			for (int i = 0; i < detectors.length; i++) {
+				final Detector detector = detectors[i];
+				final int bytesToCopy = Math.min(detector.getDetectLenght(),
+						bytes.length);
+				final byte[] splittedBytes = new byte[bytesToCopy];
+				System.arraycopy(bytes, 0, splittedBytes, 0, bytesToCopy);
+				if (detector.detect(splittedBytes)) {
+					detected = detector.getDetectedFormat();
+					break;
+				}
 			}
 		}
 		return detected;
@@ -89,7 +91,8 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		int decodeOffset = 1;
 		for (int i = 0; i < decoders.length; i++) {
 			final Decoder decoder = decoders[i];
-			decodeOffset = Math.max(decodeOffset, decoder.getEncodingOffset());
+			decodeOffset = Math
+					.max(decodeOffset, decoder.getEncodingOffset());
 		}
 
 		float decodeRatio = 1;
