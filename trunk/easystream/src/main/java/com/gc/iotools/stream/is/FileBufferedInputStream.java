@@ -1,7 +1,7 @@
 package com.gc.iotools.stream.is;
 
 /*
- * Copyright (c) 2008, Davide Simonetti
+ * Copyright (c) 2008,2009 Davide Simonetti
  * All rights reserved.
  * Redistribution and use in source and binary forms, 
  * with or without modification, are permitted provided that the following 
@@ -26,7 +26,6 @@ package com.gc.iotools.stream.is;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -68,20 +67,23 @@ import org.apache.commons.logging.LogFactory;
  * @since 1.0.9
  */
 public class FileBufferedInputStream extends InputStream {
+	private static final int BUFFER_SIZE = 8192;
 	private static final Log LOG = LogFactory
 			.getLog(FileBufferedInputStream.class);
-	/*
+	/**
 	 * Position of cursor into the marked stream if 0 the cursor is at the
-	 * beginning
+	 * beginning.
 	 */
 	private long currentPosition = 0;
 	private InputStream fileIs = null;
 	private OutputStream fileOs;
 	private int markLimit = 0;
-	/*
-	 * -1 no marking <br> 0 the mark is at the beginning of the marking stream
-	 * <br> >0 need a skip because the mark was in the middle of the marking
-	 * stream (multiple marks)<br>
+	/**
+	 * -1 no marking <br>
+	 * 0 the mark is at the beginning of the marking stream <br>
+	 * >0 need a skip because the mark was in the middle of the marking stream
+	 * (multiple marks)<br>
+	 * .
 	 */
 	private long markPos = 0;
 	private final InputStream original;
@@ -142,14 +144,14 @@ public class FileBufferedInputStream extends InputStream {
 	 * This method extends the original behavior of the class
 	 * <code>InputStream</code> allowing to use <i>indefinite</i> marking.
 	 * <ul>
-	 * <li><code>readLimit > 0</code> The <code>readLimit</code> arguments tells
-	 * this input stream to allow that many bytes to be read before the mark
-	 * position gets invalidated.</li>
+	 * <li><code>readLimit&gt; 0</code> The <code>readLimit</code> arguments
+	 * tells this input stream to allow that many bytes to be read before the
+	 * mark position gets invalidated.</li>
 	 * <li><code>readLimit == 0</code> Invalidate the all the current marks and
 	 * clean up the temporary files.</li>
-	 * <li><code>readLimit < 0 </code> Set up an indefinite mark: reset can be
-	 * invoked regardless on how many bytes have been read.</li>
-	 * <ul>
+	 * <li><code>readLimit &lt; 0 </code> Set up an indefinite mark: reset can
+	 * be invoked regardless on how many bytes have been read.</li>
+	 * </ul>
 	 * </p>
 	 * 
 	 * @param markLimit
@@ -165,8 +167,8 @@ public class FileBufferedInputStream extends InputStream {
 		if (mark) {
 			try {
 				if (this.tempFile == null) {
-					this.tempFile = File.createTempFile("iotools-filebufferis",
-							".tmp");
+					this.tempFile = File.createTempFile(
+							"iotools-filebufferis", ".tmp");
 					this.tempFile.deleteOnExit();
 					this.currentPosition = 0;
 				}
@@ -316,13 +318,14 @@ public class FileBufferedInputStream extends InputStream {
 		}
 	}
 
-	private int readAndWriteToOs(final byte[] b, final int off, final int len,
-			final boolean markActive) throws IOException {
+	private int readAndWriteToOs(final byte[] b, final int off,
+			final int len, final boolean markActive) throws IOException {
 		final int n = this.original.read(b, off, len);
 		if ((n > 0) && markActive) {
 			this.currentPosition += n;
+			final boolean markInsideLimit = (this.currentPosition - this.markPos) < this.markLimit;
 			if ((this.markLimit < 0)
-					|| ((this.markLimit > 0) && ((this.currentPosition - this.markPos) < this.markLimit))) {
+					|| ((this.markLimit > 0) && markInsideLimit)) {
 				this.fileOs.write(b, off, n);
 			} else {
 				// if markLimit exceeded invalidate the mark.
@@ -334,7 +337,7 @@ public class FileBufferedInputStream extends InputStream {
 	}
 
 	private void skipAndCopy(final long n) throws IOException {
-		final byte[] buf = new byte[8192];
+		final byte[] buf = new byte[BUFFER_SIZE];
 
 		for (long i = 0, readed = 0; (i < n) && (readed >= 0); i += readed) {
 			final int maxLen = (int) Math.min(buf.length, n - i);

@@ -34,6 +34,13 @@ package com.gc.iotools.stream.utils;
  * @since 1.0.9
  */
 public final class ArrayTools {
+	/**
+	 * Find the index of the contained array in the src array.
+	 * 
+	 * @param src
+	 * @param contained
+	 * @return
+	 */
 	public static int indexOf(final byte[] src, final byte[] contained) {
 		if (src == null) {
 			throw new IllegalArgumentException("Source array can not be null");
@@ -54,7 +61,9 @@ public final class ArrayTools {
 		return result;
 	}
 
-	// utility class, shouldn't be instantiated
+	/**
+	 * utility class, shouldn't be instantiated.
+	 */
 	private ArrayTools() {
 
 	}

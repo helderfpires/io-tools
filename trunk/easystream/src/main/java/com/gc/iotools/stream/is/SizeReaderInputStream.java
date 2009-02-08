@@ -27,6 +27,8 @@ import java.io.InputStream;
  */
 public class SizeReaderInputStream extends InputStream {
 
+	private static final int BUF_SIZE = 32768;
+
 	private boolean closeCalled = false;
 
 	private final boolean fullReadOnClose;
@@ -76,7 +78,7 @@ public class SizeReaderInputStream extends InputStream {
 			this.closeCalled = true;
 			try {
 				if (this.fullReadOnClose) {
-					final byte[] buffer = new byte[32768];
+					final byte[] buffer = new byte[BUF_SIZE];
 					while (this.read(buffer) >= 0) {
 						// Do nothing, just throw away the bytes and count them.
 					}

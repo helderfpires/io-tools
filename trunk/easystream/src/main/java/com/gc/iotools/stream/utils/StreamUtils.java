@@ -93,20 +93,22 @@ public final class StreamUtils {
 	 *            the start offset in array <code>buffer</code> at which the
 	 *            data is written.
 	 * @param len
+	 *            maximum length of the bytes read.
+	 * 
 	 * @return the total number of bytes read into the buffer, or
 	 *         <code>-1</code> if there is no more data because the end of the
 	 *         stream has been reached.
 	 * 
-	 * @exception IOException
+	 * @throws IOException
 	 *                If the first byte cannot be read for any reason other than
 	 *                end of file, or if the input stream has been closed, or if
 	 *                some other I/O error occurs.
 	 * @exception NullPointerException
-	 *                If <code>b</code> is <code>null</code>.
+	 *             If <code>b</code> is <code>null</code>.
 	 * @exception IndexOutOfBoundsException
-	 *                If <code>off</code> is negative, <code>len</code> is
-	 *                negative, or <code>len</code> is greater than
-	 *                <code>b.length - off</code>
+	 *             If <code>off</code> is negative, <code>len</code> is
+	 *             negative, or <code>len</code> is greater than
+	 *             <code>b.length - off</code>
 	 * 
 	 * @since 1.0.8
 	 */
@@ -130,7 +132,9 @@ public final class StreamUtils {
 		return n;
 	}
 
-	// Utility class: shouldn't be instantiated
+	/**
+	 * Utility class: shouldn't be instantiated.
+	 */
 	private StreamUtils() {
 
 	}

@@ -38,21 +38,29 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * This class is responsible of instantiating the right executor given an
- * ExecutionModel
+ * ExecutionModel.
  * 
  * TODO: Should return an executorService for joins
  * 
  * @author Davide Simonetti
- * 
+ * @since 1.0.2
  */
 public final class ExecutorServiceFactory {
 
-	private static class OneShotThreadExecutor extends AbstractExecutorService {
+	/**
+	 * Users should not instantiate this class directly.
+	 */
+	private ExecutorServiceFactory() {
+
+	}
+
+	private static class OneShotThreadExecutor extends
+			AbstractExecutorService {
 		private final ExecutorService exec = Executors
 				.newSingleThreadExecutor();
 
-		public boolean awaitTermination(final long timeout, final TimeUnit unit)
-				throws InterruptedException {
+		public boolean awaitTermination(final long timeout,
+				final TimeUnit unit) throws InterruptedException {
 			return this.exec.awaitTermination(timeout, unit);
 		}
 
@@ -86,10 +94,10 @@ public final class ExecutorServiceFactory {
 
 	}
 
-	private static ExecutorService EXECUTOR = new ThreadPoolExecutor(10, 20, 5,
-			TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(500));
+	private static ExecutorService EXECUTOR = new ThreadPoolExecutor(10, 20,
+			5, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(500));
 
-	private static ExecutorService SINGLE_EXECUTOR = Executors
+	private static final ExecutorService SINGLE_EXECUTOR = Executors
 			.newSingleThreadExecutor();
 
 	public static ExecutorService getExecutor(final ExecutionModel tmodel) {
@@ -106,8 +114,8 @@ public final class ExecutorServiceFactory {
 			break;
 
 		default:
-			throw new UnsupportedOperationException("ExecutionModel [" + tmodel
-					+ "] not supported");
+			throw new UnsupportedOperationException("ExecutionModel ["
+					+ tmodel + "] not supported");
 		}
 		return result;
 	}
