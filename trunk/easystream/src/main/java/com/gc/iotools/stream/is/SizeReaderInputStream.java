@@ -53,6 +53,9 @@ public class SizeReaderInputStream extends InputStream {
 	 */
 	public SizeReaderInputStream(final InputStream istream,
 			final boolean fullReadOnClose) {
+		if (istream == null) {
+			throw new IllegalArgumentException("InputStream can't be null");
+		}
 		this.innerStream = istream;
 		this.fullReadOnClose = fullReadOnClose;
 	}
