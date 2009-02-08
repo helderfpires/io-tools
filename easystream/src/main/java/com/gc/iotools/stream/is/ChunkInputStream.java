@@ -57,9 +57,10 @@ import com.gc.iotools.stream.utils.StreamUtils;
  * </p>
  * 
  * <pre>
- * InputStream is = new ByteArrayInputStream(&quot;aa start bbb stopfff&quot;.getBytes());
- * ChunckInputStream chunkIs = new ChunkInputStream(&quot;rt&quot;.getBytes(), &quot;stop&quot;
- * 		.getBytes(), is);
+ * InputStream is = new ByteArrayInputStream(
+ * 					&quot;aa start bbb stopfff&quot;.getBytes());
+ * ChunckInputStream chunkIs = new ChunkInputStream(
+ * 					&quot;rt&quot;.getBytes(), &quot;stop&quot;.getBytes(), is);
  * byte[] bytes = IOUtils.toByteArray(chunkIs);
  * //here bytes contains &quot; bbb &quot;
  * </pre>
@@ -89,9 +90,11 @@ import com.gc.iotools.stream.utils.StreamUtils;
  * </p>
  * 
  * <pre>
- * InputStream is = new ByteArrayInputStream(&quot;aa start bbb stopfff&quot;.getBytes());
- * ChunckInputStream chunkIs = new ChunkInputStream(is, &quot;rt&quot;.getBytes(), &quot;stop&quot;
- * 		.getBytes(), false, false);
+ * InputStream is = new ByteArrayInputStream(
+ * 				&quot;aa start bbb stopfff&quot;.getBytes());
+ * ChunckInputStream chunkIs = new ChunkInputStream(is, 
+ * 				&quot;rt&quot;.getBytes(), &quot;stop&quot;.getBytes(), 
+ * 				false, false);
  * while (chunkIs.moveToNextChunk()) {
  * 	byte[] bytes = IOUtils.toByteArray(chunkIs);
  * 	//here bytes contains &quot; bbb &quot;
@@ -117,6 +120,25 @@ public final class ChunkInputStream extends InputStream {
 
 	private final InputStream wrappedIs;
 
+	/**
+	 * Constructs a <code>ChunkInputStream</code>.
+	 * 
+	 * @param src
+	 *            Source stream. Must not be <code>null</code>.
+	 * @param startMarker
+	 *            When this sequence of bytes is found in the <code>src</code>
+	 *            stream the bytes of the inner stream are shown until an
+	 *            <code>endMarker</code> is found. If this parameter is set to
+	 *            <code>null</code> the stream is initially in an EOF state
+	 *            until a <code>fetchNextChunk()</code> is performed.
+	 * 
+	 * @param stopMarker
+	 *            when this sequence of bytes is found in the <code>src</code>
+	 *            stream the bytes of the inner stream are hidden until a
+	 *            <code>startMarker</code> is found. If this parameter is set to
+	 *            <code>null</code> the stream is made available until the inner
+	 *            stream reaches an EOF.
+	 */
 	public ChunkInputStream(final InputStream src, final byte[] startMarker,
 			final byte[] stopMarker) {
 		this(src, startMarker, stopMarker, false,
@@ -165,20 +187,27 @@ public final class ChunkInputStream extends InputStream {
 		this.wrappedIs = new BufferedInputStream(src);
 		this.automaticFetch = automaticFetch;
 		if ((this.start.length == 0) && automaticFetch) {
-			throw new IllegalArgumentException("It's not possible to specify "
-					+ "a startMarker"
-					+ (startMarker == null ? "=null" : ".size=0") + " and"
-					+ " automaticFetch=[" + automaticFetch + "]");
+			throw new IllegalArgumentException(
+					"It's not possible to specify " + "a startMarker"
+							+ (startMarker == null ? "=null" : ".size=0")
+							+ " and" + " automaticFetch=[" + automaticFetch
+							+ "]");
 		}
 		this.showMarkers = showMarkers;
 	}
 
+	/**
+	 * {@inheritDoc}.
+	 */
 	@Override
 	public int available() throws IOException {
 		findStartMarker();
 		return this.wrappedIs.available();
 	}
 
+	/**
+	 * {@inheritDoc}.
+	 */
 	@Override
 	public void close() throws IOException {
 		this.wrappedIs.close();
@@ -205,16 +234,25 @@ public final class ChunkInputStream extends InputStream {
 		return this.copyToOuter;
 	}
 
+	/**
+	 * {@inheritDoc}.
+	 */
 	@Override
 	public synchronized void mark(final int readlimit) {
 		this.wrappedIs.mark(readlimit);
 	}
 
+	/**
+	 * {@inheritDoc}.
+	 */
 	@Override
 	public boolean markSupported() {
 		return this.wrappedIs.markSupported();
 	}
 
+	/**
+	 * {@inheritDoc}.
+	 */
 	@Override
 	public int read() throws IOException {
 		final byte[] buf = new byte[1];
@@ -226,11 +264,17 @@ public final class ChunkInputStream extends InputStream {
 		return result;
 	}
 
+	/**
+	 * {@inheritDoc}.
+	 */
 	@Override
 	public int read(final byte[] b) throws IOException {
 		return this.read(b, 0, b.length);
 	}
 
+	/**
+	 * {@inheritDoc}.
+	 */
 	@Override
 	public int read(final byte[] b, final int off, final int len)
 			throws IOException {
@@ -281,11 +325,17 @@ public final class ChunkInputStream extends InputStream {
 		return ret;
 	}
 
+	/**
+	 * {@inheritDoc}.
+	 */
 	@Override
 	public synchronized void reset() throws IOException {
 		this.wrappedIs.reset();
 	}
 
+	/**
+	 * {@inheritDoc}.
+	 */
 	@Override
 	public long skip(final long n) throws IOException {
 		findStartMarker();
@@ -315,7 +365,7 @@ public final class ChunkInputStream extends InputStream {
 				this.wrappedIs.mark(ChunkInputStream.SKIP_BUFFER_SIZE
 						+ this.start.length);
 				n = StreamUtils.tryReadFully(this.wrappedIs, buffer, 0,
-						2048 + this.start.length);
+						SKIP_BUFFER_SIZE + this.start.length);
 				if (n > 0) {
 					final int pos = ArrayTools.indexOf(ArrayUtils.subarray(
 							buffer, 0, n), this.start);

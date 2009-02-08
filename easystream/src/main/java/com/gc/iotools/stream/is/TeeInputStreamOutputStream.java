@@ -55,7 +55,8 @@ import java.io.OutputStream;
  *   ByteArrayOutputStream destination1= new ByteArrayOutputStream();
  *   ByteArrayOutputStream destination2= new ByteArrayOutputStream();
  *   
- *   TeeInputStreamOutputStream tee=new TeeInputStreamOutputStream(source,destination1);
+ *   TeeInputStreamOutputStream tee=
+ *                          new TeeInputStreamOutputStream(source,destination1);
  *   org.apache.commons.io.IOUtils.copy(tee,destination2);
  *   tee.close();
  *   //at this point both destination1 and destination2 contains the same bytes.
@@ -66,12 +67,16 @@ import java.io.OutputStream;
  * @since 1.0.6
  */
 public class TeeInputStreamOutputStream extends InputStream {
+	/**
+	 * Buffer size used in skip() operations. 
+	 */
+	private static final int BUF_SIZE = 8192;
 
 	protected boolean closed = false;
 
 	protected final OutputStream destination;
 	/**
-	 * The source InputStream
+	 * The source InputStream.
 	 */
 	protected final InputStream source;
 	/**
@@ -86,7 +91,7 @@ public class TeeInputStreamOutputStream extends InputStream {
 	 * the input stream <code>source</code> and the <code>OutputStream</code>
 	 * <code>destination</code> for later use.
 	 * </p>
-	 * </p>When the method {@link #close()} it is invoked the remaining content
+	 * <p>When the method {@link #close()} it is invoked the remaining content
 	 * of the <code>source</code> stream is copied to the
 	 * <code>destination</code> and the <code>source</code> and
 	 * <code>destination</code> streams are closed. </p>
@@ -121,7 +126,7 @@ public class TeeInputStreamOutputStream extends InputStream {
 	 * 
 	 */
 	public TeeInputStreamOutputStream(final InputStream source,
-			final OutputStream destination, boolean closeStreams) {
+			final OutputStream destination, final boolean closeStreams) {
 		this.source = source;
 		this.destination = destination;
 		this.closeStreams = closeStreams;
@@ -151,7 +156,7 @@ public class TeeInputStreamOutputStream extends InputStream {
 			this.closed = true;
 			try {
 				int n = 0;
-				final byte[] buffer = new byte[8192];
+				final byte[] buffer = new byte[BUF_SIZE];
 				while ((n = this.source.read(buffer)) > 0) {
 					this.destination.write(buffer, 0, n);
 				}
@@ -212,14 +217,16 @@ public class TeeInputStreamOutputStream extends InputStream {
 		throw new IOException("Reset not supported");
 	}
 
-	/**
-	 * @since 1.2
-	 */
+/**
+ * 
+ * {@inheritDoc}
+ * @since 1.2
+ */
 	@Override
 	public long skip(final long n) throws IOException {
 		long curPos = 0;
 		int readLen = 0;
-		byte[] buf = new byte[8192];
+		byte[] buf = new byte[BUF_SIZE];
 		while (curPos < n && readLen >= 0) {
 			readLen = this.read(buf);
 			if (readLen > 0) {

@@ -91,6 +91,9 @@ public class SizeLimitInputStream extends InputStream {
 		this.maxSize = maxSize;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int available() throws IOException {
 		return Math.min(this.in.available(), (int) getBytesLeft());
@@ -101,6 +104,10 @@ public class SizeLimitInputStream extends InputStream {
 	 * Close the underlying stream. Calling this method may make data on the
 	 * underlying stream unavailable.
 	 * </p>
+	 * {@inheritDoc}
+	 * @throws IOException
+	 *             Exception is thrown when some IO error happens in the
+	 *             underlying stream.
 	 */
 	@Override
 	public void close() throws IOException {
@@ -144,12 +151,18 @@ public class SizeLimitInputStream extends InputStream {
 		return this.maxSize;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void mark(final int readlimit) {
 		this.in.mark(readlimit);
 		this.markPosition = this.currentPosition;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean markSupported() {
 		return this.in.markSupported();
@@ -180,6 +193,9 @@ public class SizeLimitInputStream extends InputStream {
 		return this.read(b, 0, b.length);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int read(final byte[] b, final int off, final int len)
 			throws IOException {
@@ -196,6 +212,9 @@ public class SizeLimitInputStream extends InputStream {
 		return bytesReaded;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void reset() throws IOException {
 		this.in.reset();
@@ -203,6 +222,9 @@ public class SizeLimitInputStream extends InputStream {
 		this.markPosition = 0;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public long skip(final long n) throws IOException {
 		long result;

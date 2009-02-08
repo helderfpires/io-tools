@@ -8,25 +8,26 @@ import java.io.InputStream;
  * @version $Revision: 1 $
  */
 class BigDocumentIstream extends InputStream {
-	private long _lenght = 0;
-	private long _postion = 0;
+	private static final int MODULO = 256;
+	private long lenght = 0;
+	private long postion = 0;
 
 	public BigDocumentIstream(final long length) {
-		this._lenght = length;
+		this.lenght = length;
 	}
 
 	@Override
 	public int read() {
-		if (this._postion >= this._lenght) {
+		if (this.postion >= this.lenght) {
 			return -1;
 		}
-		final int result = (int) (this._postion % 256);
-		this._postion++;
+		final int result = (int) (this.postion % MODULO);
+		this.postion++;
 		return result;
 	}
 
 	@Override
 	public synchronized void reset() {
-		this._postion = 0;
+		this.postion = 0;
 	}
 }

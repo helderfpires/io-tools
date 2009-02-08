@@ -184,7 +184,8 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 		this.wrappedPipedOS.flush();
 	}
 
-	public final T getResults() throws InterruptedException, ExecutionException {
+	public final T getResults() throws InterruptedException,
+			ExecutionException {
 		if (!this.closeCalled) {
 			throw new IllegalStateException("Method close() must be called"
 					+ " before getResults");

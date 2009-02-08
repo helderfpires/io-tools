@@ -77,19 +77,22 @@ import com.gc.iotools.stream.base.ExecutorServiceFactory;
  * @since 1.0
  */
 public abstract class InputStreamFromOutputStream extends InputStream {
-
+	/**
+	 * This inner class run in another thread and calls the
+	 * {@link #produce(OutputStream)} method.
+	 * 
+	 * @author dvd.smnt
+	 */
 	private final class DataProducerRunnable implements Runnable {
 
 		private IOException exception = null;
-
-		private final Log LOGGER = LogFactory
-				.getLog(InputStreamFromOutputStream.DataProducerRunnable.class);
 
 		private String name = null;
 
 		private OutputStream outputStream = null;
 
-		DataProducerRunnable(final String threadName, final OutputStream ostream) {
+		DataProducerRunnable(final String threadName,
+				final OutputStream ostream) {
 			this.outputStream = ostream;
 			this.name = threadName;
 		}
@@ -100,7 +103,8 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 			try {
 				produce(this.outputStream);
 			} catch (final Throwable e) {
-				this.LOGGER.error("Error during data production.", e);
+				InputStreamFromOutputStream.LOG.error(
+						"Error during data production.", e);
 				this.exception = new IOException(
 						"Error producing data for class ["
 								+ getClass().getName() + "]");
@@ -109,7 +113,8 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 				closeStream();
 				InputStreamFromOutputStream.ACTIVE_THREAD_NAMES
 						.remove(threadName);
-				this.LOGGER.debug("thread [" + getName() + "] closed");
+				InputStreamFromOutputStream.LOG.debug("thread [" + getName()
+						+ "] closed");
 			}
 		}
 
@@ -119,18 +124,21 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 			} catch (final IOException e) {
 				if ((e.getMessage() != null)
 						&& (e.getMessage().indexOf("closed") > 0)) {
-					this.LOGGER.debug("Stream already closed");
+					InputStreamFromOutputStream.LOG
+							.debug("Stream already closed");
 				} else {
-					this.LOGGER.error("IOException closing OutputStream"
-							+ " Thread might be locked", e);
+					InputStreamFromOutputStream.LOG.error(
+							"IOException closing OutputStream"
+									+ " Thread might be locked", e);
 				}
 			} catch (final Throwable t) {
-				this.LOGGER.error("Error closing InputStream"
-						+ " Thread might be locked", t);
+				InputStreamFromOutputStream.LOG.error(
+						"Error closing InputStream"
+								+ " Thread might be locked", t);
 			}
 		}
 
-		final String getName() {
+		String getName() {
 			return this.name;
 		}
 	}
@@ -139,14 +147,13 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 			.synchronizedList(new ArrayList<String>());
 
 	private static final Log LOG = LogFactory
-			.getLog(InputStreamFromOutputStream.class);
+			.getLog(InputStreamFromOutputStream.DataProducerRunnable.class);
 
 	public static final String[] getActiveThreadNames() {
 		final String[] result;
 		synchronized (InputStreamFromOutputStream.ACTIVE_THREAD_NAMES) {
 			result = InputStreamFromOutputStream.ACTIVE_THREAD_NAMES
-					.toArray(new String[InputStreamFromOutputStream.ACTIVE_THREAD_NAMES
-							.size()]);
+					.toArray(new String[0]);
 		}
 		return result;
 	}
