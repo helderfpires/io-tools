@@ -8,7 +8,8 @@ Sometimes a library writes its results to an `OutputStream` and you need to read
 Two main classes in this section are `InputStreamFromOutputStream` and `OutputStreamToInputStream`
 
 === !InputStreamFromOutputStream ===
-This abstract class must be extended and the metod produce() implemented.
+
+This abstract class must be extended and the metod `produce()` implemented.
 The data who is produced inside the function produce() is written to an `OutputStream` and can be readed back from from this class.
 This is the preferred way to convert data written from an `OutputStream` into an `InputStream`, because the behaviour of the code tends to be more clear.
 
@@ -42,6 +43,8 @@ final InputStreamFromOutputStream isos = new InputStreamFromOutputStream() {
 }
 }}}
 
+For further information consult the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/InputStreamFromOutputStream.html api javadoc].
+
 === !OutputStreamToInputStream ===
 Another class that you can use if you need to write to an !OutputStream and read the data written from an !InputStream is `OutputStreamToInputStream` . It works opposite way than the previous one and allow some result to be returned after the processing of the !InputStream.
 
@@ -74,7 +77,8 @@ String result = oStream2IStream.getResults();
 //result now contains the string "test was processed."
 }}}
 
-Behaviour in case of exception is documented in junits.
+For further information see the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/os/OutputStreamToInputStream.html api javadoc].
+
 === Why !ExecutionModel ? ===
 To convert an `OutputStream` into an `InputStream` you need a pipe. And to use a pipe you need Threads. [ExecutionModel Here] are io-tools options. 
 
@@ -109,5 +113,7 @@ InputStream data=//can be either base64 or raw
 GuessInputStream gis = GuessInputStream.getInstance(data, new FormatEnum[] { FormatEnum.BASE64 });
 InputStream dataDecoded = (FormatEnum.BASE64.equals(gis.getFormat()) ? new Base64.InputStream(gis) : gis);
 }}}
+
+Further information are available [FormatDetection here].
 
 (*Base64 is available [http://iharder.sourceforge.net/current/java/base64/ here])
