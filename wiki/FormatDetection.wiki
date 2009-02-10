@@ -1,5 +1,4 @@
 #summary Format Detection Informations
-#labels Featured
 
 = Introduction =
 Classes in package `com.gc.iotools.fmt` try to ease the detection of some widely used file formats. The main focus are documents (optionally with digital signature) and images.
