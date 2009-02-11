@@ -27,8 +27,6 @@ package com.gc.iotools.fmt.stream;
  */
 import java.util.Arrays;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.gc.iotools.fmt.base.FormatId;
 import com.gc.iotools.stream.utils.ArrayTools;
 
@@ -37,7 +35,6 @@ public class StringDetectorModule implements DefiniteLengthModule {
 	private int detectLength = -1;
 	private FormatId detectedFormat;
 
-	
 	public boolean detect(final byte[] readedBytes) {
 		boolean result;
 		if (this.detectLength == this.byteSequence.length) {
@@ -69,12 +66,12 @@ public class StringDetectorModule implements DefiniteLengthModule {
 
 	public void init(final FormatId fenum, final String param) {
 		final int sepPos = param.indexOf(':');
-		this.byteSequence = param.substring(sepPos).getBytes();
-		final String detectLString = param.substring(0, sepPos);
-		if (StringUtils.isNotBlank(detectLString)) {
+		this.byteSequence = param.substring(sepPos + 1).getBytes();
+		if (sepPos > 0) {
+			final String detectLString = param.substring(0, sepPos);
 			this.detectLength = Integer.parseInt(detectLString);
 		}
-		if (this.detectLength == 0) {
+		if (this.detectLength <= 0) {
 			this.detectLength = this.byteSequence.length;
 		}
 

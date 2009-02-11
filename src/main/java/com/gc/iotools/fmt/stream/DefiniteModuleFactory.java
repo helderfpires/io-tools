@@ -78,16 +78,16 @@ public class DefiniteModuleFactory {
 					"Problem reading configuration file[" + confFile
 							+ "] line[" + lineNumber + "]", e);
 		}
-		this.modules = modulesColl.toArray(new DefiniteLengthModule[modulesColl
-				.size()]);
+		this.modules = modulesColl.toArray(new DefiniteLengthModule[0]);
 	}
 
 	private DefiniteLengthModule getInstance(final String curLine,
 			final int lineNo) {
 		final String enumName = curLine.split("=")[0];
 		final FormatId fenum = getFormatId(enumName);
-		final String method = curLine.substring(enumName.length() + 1, enumName
-				.indexOf(':'));
+		final String paramLine = curLine.substring(enumName.length() + 1,
+				curLine.length());
+		String method = paramLine.substring(0, paramLine.indexOf(':'));
 		final DetectMode selectedMode = DetectMode
 				.valueOf(method.toUpperCase());
 		final String params = curLine.substring(enumName.length()
@@ -99,6 +99,9 @@ public class DefiniteModuleFactory {
 			break;
 		case STRING:
 			result = new StringDetectorModule();
+			break;
+		case STRINGNC:
+			result = new StringncDetectorModule();
 			break;
 		case CLASS:
 			result = instantiateClass(lineNo, params);

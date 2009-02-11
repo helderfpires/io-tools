@@ -1,4 +1,4 @@
-package com.gc.iotools.fmt.stream;
+package com.gc.iotools.fmt.stream.custom;
 
 /*
  * Copyright (c) 2008, Davide Simonetti.  All rights reserved.
@@ -42,6 +42,7 @@ import org.apache.commons.logging.LogFactory;
 import com.bea.xml.stream.MXParserFactory;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
+import com.gc.iotools.fmt.stream.DefiniteLengthModule;
 
 /**
  * Detect a file in XML
@@ -49,7 +50,7 @@ import com.gc.iotools.fmt.base.FormatId;
  * @author dvd.smnt
  * @since Nov 8, 2008
  */
-final class XmlDetector implements DefiniteLengthModule {
+public final class XmlModule implements DefiniteLengthModule {
 
 	private final class MyReporter implements XMLReporter {
 
@@ -67,15 +68,15 @@ final class XmlDetector implements DefiniteLengthModule {
 
 	private static final int XML_GUESS_SIZE = 8192;
 
-	static final Log LOGGER = LogFactory.getLog(XmlDetector.class);
+	static final Log LOGGER = LogFactory.getLog(XmlModule.class);
 
-	public XmlDetector() {
+	public XmlModule() {
 
 	}
 
 	public boolean detect(final byte[] readedBytes) {
 		final XMLInputFactory factory = XMLInputFactory.newInstance(
-				MXParserFactory.class.getName(), XmlDetector.class
+				MXParserFactory.class.getName(), XmlModule.class
 						.getClassLoader());
 		factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
 		factory.setXMLReporter(new MyReporter());
@@ -88,18 +89,18 @@ final class XmlDetector implements DefiniteLengthModule {
 			while (parser.hasNext()) {
 				currentEvent++;
 				final XMLEvent event = parser.nextEvent();
-				XmlDetector.LOGGER.debug("Found XML event ["
+				XmlModule.LOGGER.debug("Found XML event ["
 						+ event.getEventType() + "]");
 			}
 			xmlDetected = true;
-			XmlDetector.LOGGER.debug("XML detected (EOF reach)");
+			XmlModule.LOGGER.debug("XML detected (EOF reach)");
 		} catch (final XMLStreamException e) {
 			if ((e.getMessage() != null)
 					&& (e.getMessage().indexOf("end of stream") >= 0)
-					&& (readedBytes.length == XmlDetector.XML_GUESS_SIZE)) {
+					&& (readedBytes.length == XmlModule.XML_GUESS_SIZE)) {
 				xmlDetected = evaluateException(currentEvent);
 			} else {
-				XmlDetector.LOGGER.debug("XML not detected " + e);
+				XmlModule.LOGGER.debug("XML not detected " + e);
 			}
 		}
 		return xmlDetected;
@@ -109,17 +110,17 @@ final class XmlDetector implements DefiniteLengthModule {
 		boolean tenum = false;
 		if (currentElem != -1) {
 			tenum = true;
-			XmlDetector.LOGGER.debug("XML (partial parsing) [" + currentElem
+			XmlModule.LOGGER.debug("XML (partial parsing) [" + currentElem
 					+ "]");
 		} else {
-			XmlDetector.LOGGER.debug("No xml found in first ["
-					+ XmlDetector.XML_GUESS_SIZE + "] bytes");
+			XmlModule.LOGGER.debug("No xml found in first ["
+					+ XmlModule.XML_GUESS_SIZE + "] bytes");
 		}
 		return tenum;
 	}
 
 	public int getDetectLenght() {
-		return XmlDetector.XML_GUESS_SIZE;
+		return XmlModule.XML_GUESS_SIZE;
 	}
 
 	public FormatId getDetectedFormat() {

@@ -93,7 +93,7 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		this.fileDetectors = getInDefiniteLenght(detectors);
 		final Collection<FormatId> formats = new ArrayList<FormatId>();
 		final BufferedInputStream bufStream = new BufferedInputStream(istream);
-		File tmpFile = null;
+		File originalFile = null;
 		final Map<FormatEnum, Decoder> decMap = getDecodersMap(decoders);
 		FormatId curFormat;
 		InputStream currentStream = bufStream;
@@ -101,22 +101,25 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		do {
 			curFormat = detectFormatStream(currentStream, this.streamDetectors,
 					enabledFormats);
+			final Set<FileDetector> enableDetectors = getEnabledFileDetectors(
+					enabledFormats, this.streamDetectors, this.fileDetectors);
 			if (FormatEnum.UNKNOWN.equals(curFormat.format)
-					&& this.fileDetectors != null) {
+					&& (enableDetectors.size() > 0)) {
+
 				// copy original stream to file.
-				if (tmpFile == null) {
-					tmpFile = copyToTempFile(tmpFile, currentStream);
+				if (originalFile == null) {
+					originalFile = copyToTempFile(bufStream);
 				}
 				File currentFile;
 				if (bufStream == currentStream) {
-					currentFile = tmpFile;
+					currentFile = originalFile;
 				} else {
-					currentFile = copyToTempFile(tmpFile, currentStream);
+					currentFile = copyToTempFile(currentStream);
 					currentStream.close();
 					// schedule for deletion
 					createdFiles.add(currentFile);
 				}
-				for (final FileDetector fileDetect : this.fileDetectors) {
+				for (final FileDetector fileDetect : enableDetectors) {
 					curFormat = fileDetect.detect(enabledFormats, currentFile);
 				}
 				currentStream = new FileInputStream(currentFile);
@@ -126,10 +129,10 @@ final class GuessInputStreamImpl extends GuessInputStream {
 				currentStream = decoder.decode(currentStream);
 			}
 		} while (decMap.containsKey(curFormat.format));
-		if (tmpFile == null) {
+		if (originalFile == null) {
 			this.bis = bufStream;
 		} else {
-			this.bis = new FileInputStream(tmpFile);
+			this.bis = new FileInputStream(originalFile);
 		}
 		for (final File file : createdFiles) {
 			file.delete();
@@ -150,12 +153,7 @@ final class GuessInputStreamImpl extends GuessInputStream {
 	}
 
 	@Override
-	public final FormatId getFormat() {
-		return this.formats[0];
-	}
-
-	@Override
-	public final FormatId[] getFormats() {
+	public final FormatId[] identify() {
 		return this.formats;
 	}
 
@@ -198,35 +196,11 @@ final class GuessInputStreamImpl extends GuessInputStream {
 	private void cleanup() {
 
 	}
-	
-	private FileDetector[] getEnabledFileDetectors(FormatEnum[] enabledFormats,
-			StreamDetector[] definiteLength, FileDetector fileDetector) {
-		Set<FormatEnum> undetectedFormats = getUndetectedFormats(
-				enabledFormats, definiteLength);
 
-	}
-
-	private Set<FormatEnum> getUndetectedFormats(FormatEnum[] enabledFormats,
-			Detector[] detectors) {
-		Set<FormatEnum> set = new HashSet<FormatEnum>(Arrays
-				.asList(enabledFormats));
-		if (detectors != null) {
-			Collection<FormatEnum> detected = new HashSet<FormatEnum>();
-			for (Detector detector : detectors) {
-				detected.addAll(Arrays.asList(detector.getDetectedFormats()));
-			}
-			set.removeAll(detected);
-			
-		}
-		return set;
-	}
-	
-	private File copyToTempFile(final File tmpFile,
-			final InputStream currentStream) throws IOException,
-			FileNotFoundException {
-		File currentFile;
-		currentFile = File.createTempFile("iotoos-fmt", ".tmp");
-		final FileOutputStream output = new FileOutputStream(tmpFile);
+	private File copyToTempFile(final InputStream currentStream)
+			throws IOException, FileNotFoundException {
+		final File currentFile = File.createTempFile("iotoos-fmt", ".tmp");
+		final FileOutputStream output = new FileOutputStream(currentFile);
 		IOUtils.copyLarge(currentStream, output);
 		output.close();
 		return currentFile;
@@ -243,6 +217,30 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		return (coll.size() == 0 ? null : coll.toArray(new StreamDetector[0]));
 	}
 
+	private Set<FileDetector> getEnabledFileDetectors(
+			final FormatEnum[] enabledFormats,
+			final StreamDetector[] definiteLength,
+			final FileDetector[] fileDetectors) {
+		final Set<FileDetector> result = new HashSet<FileDetector>();
+		if (fileDetectors != null) {
+			final Set<FormatEnum> undetectedFormats = getUndetectedFormats(
+					enabledFormats, definiteLength);
+			for (final FileDetector fileDetector : fileDetectors) {
+				final FormatEnum[] formats = fileDetector.getDetectedFormats();
+				boolean found = false;
+				for (int i = 0; (i < formats.length) && !found; i++) {
+					final FormatEnum formatEnum = formats[i];
+					found = undetectedFormats.contains(formatEnum);
+				}
+				if (found) {
+					result.add(fileDetector);
+					undetectedFormats.removeAll(Arrays.asList(formats));
+				}
+			}
+		}
+		return result;
+	}
+
 	private FileDetector[] getInDefiniteLenght(final Detector[] detectors) {
 		final Collection<FileDetector> coll = new ArrayList<FileDetector>();
 		for (final Detector detector : detectors) {
@@ -252,6 +250,21 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		}
 
 		return (coll.size() == 0 ? null : coll.toArray(new FileDetector[0]));
+	}
+
+	private Set<FormatEnum> getUndetectedFormats(
+			final FormatEnum[] enabledFormats, final Detector[] detectors) {
+		final Set<FormatEnum> set = new HashSet<FormatEnum>(Arrays
+				.asList(enabledFormats));
+		if (detectors != null) {
+			final Collection<FormatEnum> detected = new HashSet<FormatEnum>();
+			for (final Detector detector : detectors) {
+				detected.addAll(Arrays.asList(detector.getDetectedFormats()));
+			}
+			set.removeAll(detected);
+
+		}
+		return set;
 	}
 
 	@Override

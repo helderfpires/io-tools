@@ -14,7 +14,6 @@ import com.gc.iotools.fmt.base.StreamDetector;
 
 public final class StreamDetectorImpl implements StreamDetector {
 
-
 	private static byte[] readBytesAndReset(final InputStream input,
 			final int size) throws IOException {
 		final int size1 = size - 1;
@@ -37,17 +36,25 @@ public final class StreamDetectorImpl implements StreamDetector {
 	}
 
 	private FormatId detectFormat(byte[] bytes,
-			final DefiniteLengthModule[] modules)  {
+			final DefiniteLengthModule[] modules) {
 		FormatId detected = new FormatId(FormatEnum.UNKNOWN, null);
-		for (int i = 0; (i < modules.length)
-				&& FormatEnum.UNKNOWN.equals(detected.format); i++) {
-			final DefiniteLengthModule module = modules[i];
-			final int bytesToCopy = Math.min(module.getDetectLenght(),
-					bytes.length);
-			final byte[] splittedBytes = new byte[bytesToCopy];
-			System.arraycopy(bytes, 0, splittedBytes, 0, bytesToCopy);
-			boolean success = module.detect(splittedBytes);
-			detected = (success ? module.getDetectedFormat() : detected);
+		if (bytes.length > 0) {
+			for (int i = 0; (i < modules.length)
+					&& FormatEnum.UNKNOWN.equals(detected.format); i++) {
+				final DefiniteLengthModule module = modules[i];
+				final int detectLenght = module.getDetectLenght();
+				if (detectLenght <= 0) {
+					throw new IllegalStateException("Module ["
+							+ module.getDetectedFormat()
+							+ "] request a detect size of [" + detectLenght
+							+ "]");
+				}
+				final int bytesToCopy = Math.min(detectLenght, bytes.length);
+				final byte[] splittedBytes = new byte[bytesToCopy];
+				System.arraycopy(bytes, 0, splittedBytes, 0, bytesToCopy);
+				boolean success = module.detect(splittedBytes);
+				detected = (success ? module.getDetectedFormat() : detected);
+			}
 		}
 		return detected;
 	}
@@ -55,7 +62,7 @@ public final class StreamDetectorImpl implements StreamDetector {
 	private final DefiniteLengthModule[] configuredModules;
 
 	public StreamDetectorImpl() {
-		this(null, null);
+		this("deflen.properties", FormatEnum.class);
 	}
 
 	public StreamDetectorImpl(final String confFile, final Class<?> enumclass) {
@@ -64,19 +71,19 @@ public final class StreamDetectorImpl implements StreamDetector {
 		this.configuredModules = dfmf.getConfiguredModules();
 	}
 
-
 	public FormatId detect(final FormatEnum[] enabledFormats,
 			final InputStream stream) throws IOException {
 		DefiniteLengthModule[] modules = getModulesForFormats(enabledFormats);
-		int len=getDetectLength(enabledFormats);
-		byte[] bytes=readBytesAndReset(stream, len);
+		int len = getDetectLength(enabledFormats);
+		byte[] bytes = readBytesAndReset(stream, len);
 		return detectFormat(bytes, modules);
 	}
 
 	public FormatEnum[] getDetectedFormats() {
 		Collection<FormatEnum> formats = new HashSet<FormatEnum>();
 		for (DefiniteLengthModule module : this.configuredModules) {
-			formats.add(module.getDetectedFormat().format);
+			final FormatId detectedFormat = module.getDetectedFormat();
+			formats.add(detectedFormat.format);
 		}
 		return formats.toArray(new FormatEnum[formats.size()]);
 	}
@@ -95,7 +102,7 @@ public final class StreamDetectorImpl implements StreamDetector {
 		Collection<DefiniteLengthModule> modules = new ArrayList<DefiniteLengthModule>();
 		List<FormatEnum> reqFormatList = Arrays.asList(requestedFormats);
 		for (DefiniteLengthModule module : this.configuredModules) {
-			if (reqFormatList.contains(module.getDetectedFormat())) {
+			if (reqFormatList.contains(module.getDetectedFormat().format)) {
 				modules.add(module);
 			}
 		}

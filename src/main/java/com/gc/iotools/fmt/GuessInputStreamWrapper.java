@@ -53,17 +53,9 @@ final class GuessInputStreamWrapper extends GuessInputStream {
 	}
 
 	@Override
-	public FormatId getFormat() {
-		FormatId fenum = this.gis.getFormat();
-		if (!canDetect(fenum.format)) {
-			fenum = new FormatId(FormatEnum.UNKNOWN, null);
-		}
-		return fenum;
-	}
-
-	@Override
-	public FormatId[] getFormats() {
-		return this.gis.getFormats();
+	public FormatId[] identify() {
+		throw new UnsupportedOperationException("to do");
+		// return this.gis.identify();
 	}
 
 	@Override

@@ -28,6 +28,7 @@ package com.gc.iotools.fmt;
  */
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -36,12 +37,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import uk.gov.nationalarchives.droid.DroidDetectorImpl;
+
 import com.gc.iotools.fmt.base.Decoder;
 import com.gc.iotools.fmt.base.Detector;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
 import com.gc.iotools.fmt.base.StreamDetector;
 import com.gc.iotools.fmt.decoders.Base64Decoder;
+import com.gc.iotools.fmt.stream.StreamDetectorImpl;
 
 /**
  * InputStream that wraps the original InputStream and guess the format.
@@ -71,13 +75,27 @@ public abstract class GuessInputStream extends InputStream {
 
 	public static GuessInputStream getInstance(final InputStream istream)
 			throws IOException {
-		return null;
+		return getInstance(istream, FormatEnum.values());
 	}
 
 	public static GuessInputStream getInstance(final InputStream istream,
 			final Class clazz, final String droidSignatureFile,
-			String definiteLenghtFile) throws IOException {
-		return null;
+			String streamConfigFile) throws IOException {
+		if (droidSignatureFile == null && streamConfigFile == null) {
+			throw new IllegalArgumentException(
+					"both configuration files are null.");
+		}
+		Collection<Detector> detectors = new HashSet<Detector>();
+		if (streamConfigFile != null) {
+			Detector stream = new StreamDetectorImpl(streamConfigFile, clazz);
+			detectors.add(stream);
+		}
+		if (droidSignatureFile != null) {
+			Detector stream = new DroidDetectorImpl(clazz, droidSignatureFile);
+			detectors.add(stream);
+		}
+		return getInstance(istream, null, detectors.toArray(new Detector[0]),
+				DEFAULT_DECODERS.values().toArray(new Decoder[0]));
 	}
 
 	/**
@@ -143,7 +161,7 @@ public abstract class GuessInputStream extends InputStream {
 	// Should become a collection to support multiple detectors per format
 	private final Set<StreamDetector> definiteLength = new HashSet<StreamDetector>();
 
-	private final Collection enabledFormats;
+	private final Collection<FormatEnum> enabledFormats;
 
 	{
 		DEFAULT_DECODERS.put(FormatEnum.BASE64, new Base64Decoder());
@@ -165,15 +183,41 @@ public abstract class GuessInputStream extends InputStream {
 		}
 	}
 
-	public final boolean canDetect(final FormatEnum tenum) {
-		return false;
+	public final boolean canDetect(final FormatEnum formatEnum) {
+		if (formatEnum == null) {
+			throw new IllegalArgumentException("Parameter formatEnum is null");
+		}
+		return this.enabledFormats.contains(formatEnum);
 	}
 
 	public final boolean canDetectAll(final FormatEnum[] formatEnums) {
-		return false;
+		if (formatEnums == null) {
+			throw new IllegalArgumentException("Parameter formatEnums is null");
+		}
+		boolean result = true;
+		for (int i = 0; i < formatEnums.length && result; i++) {
+			FormatEnum formatEnum = formatEnums[i];
+			result &= this.enabledFormats.contains(formatEnum);
+		}
+		return result;
 	}
 
-	public abstract FormatId getFormat();
+	public final FormatEnum getFormat(){
+		return getFormatId().format;
+	}
 
-	public abstract FormatId[] getFormats();
+	public final FormatId getFormatId() {
+		return identify()[0];
+	}
+	
+	public final FormatEnum[] getFormats() {
+		FormatId[] formats = identify();
+		Collection<FormatEnum> result = new ArrayList<FormatEnum>();
+		for (FormatId formatId : formats) {
+			result.add(formatId.format);
+		}
+		return result.toArray(new FormatEnum[0]);
+	}
+	
+	public abstract FormatId[] identify();
 }
