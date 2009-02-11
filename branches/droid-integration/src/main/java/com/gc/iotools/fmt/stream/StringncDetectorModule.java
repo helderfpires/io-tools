@@ -1,4 +1,5 @@
 package com.gc.iotools.fmt.stream;
+
 /*
  * Copyright (c) 2008, Davide Simonetti.  All rights reserved.
  * 
@@ -25,40 +26,57 @@ package com.gc.iotools.fmt.stream;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+import java.util.Arrays;
+
 import com.gc.iotools.fmt.base.FormatId;
+import com.gc.iotools.stream.utils.ArrayTools;
 
-class RegexpDetectorModule implements DefiniteLengthModule {
-	private FormatId detectedFormat = null;
-	
+public class StringncDetectorModule implements DefiniteLengthModule {
+	private byte[] byteSequence = null;
+	private int detectLength = -1;
+	private FormatId detectedFormat;
+
 	public boolean detect(final byte[] readedBytes) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean result;
+		String readString = new String(readedBytes);
+		String ucaseStr = readString.toUpperCase();
+		if (this.detectLength == this.byteSequence.length) {
+			result = Arrays.equals(readedBytes, ucaseStr.getBytes());
+		} else {
+			result = ArrayTools.indexOf(readedBytes, ucaseStr.getBytes()) >= 0;
+		}
+		return result;
 	}
-
 
 	public FormatId getDetectedFormat() {
-		return detectedFormat;
+		if (this.detectedFormat == null) {
+			throw new IllegalStateException(
+					"getDetectFormat called before init");
+		}
+		return this.detectedFormat;
 	}
 
-
 	public int getDetectLenght() {
-		// TODO Auto-generated method stub
-		return 1;
+		if (this.byteSequence == null) {
+			throw new IllegalStateException(
+					"getDetectLength called before init");
+		}
+		return this.detectLength;
 	}
 
 	public void init(final FormatId fenum, final String param) {
-		// final int sepPos = param.indexOf(':');
-		// this.byteSequence = param.substring(sepPos).getBytes();
-		// final String detectLString = param.substring(0, sepPos);
-		// if (StringUtils.isNotBlank(detectLString)) {
-		// this.detectLength = Integer.parseInt(detectLString);
-		// }
-		// if (this.detectLength == 0) {
-		// this.detectLength = this.byteSequence.length;
-		// }
+		final int sepPos = param.indexOf(':');
+		this.byteSequence = param.substring(sepPos + 1).toUpperCase()
+				.getBytes();
+		if (sepPos > 0) {
+			final String detectLString = param.substring(0, sepPos);
+			this.detectLength = Integer.parseInt(detectLString);
+		}
+		if (this.detectLength <= 0) {
+			this.detectLength = this.byteSequence.length;
+		}
 
 		this.detectedFormat = fenum;
-
 	}
 
 }

@@ -27,7 +27,13 @@ package com.gc.iotools.fmt.stream;
  */
 
 enum DetectMode {
-
-	CLASS, STRING, STRINGNC, REGEXP
+	/**
+	 * A custom class is made for detection
+	 */
+	CLASS,
+	/**
+	 * 
+	 */
+	STRING, STRINGNC, REGEXP
 
 }

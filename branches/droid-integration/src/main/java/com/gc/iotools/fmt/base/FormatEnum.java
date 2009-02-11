@@ -1,5 +1,7 @@
 package com.gc.iotools.fmt.base;
 
+import java.util.List;
+
 import org.apache.commons.lang.enums.Enum;
 import org.apache.commons.lang.enums.ValuedEnum;
 
@@ -51,41 +53,41 @@ public class FormatEnum extends ValuedEnum {
 			UNLISTED_INT, "");
 
 	public static final int BASE64_INT = 50;
-	public static final FormatEnum BASE64 = new FormatEnum("base64",
+	public static final FormatEnum BASE64 = new FormatEnum("BASE64",
 			BASE64_INT, "text");
 	
 	public static final int GIF_INT = 100;
-	public static final FormatEnum GIF = new FormatEnum("gif", GIF_INT,
+	public static final FormatEnum GIF = new FormatEnum("GIF", GIF_INT,
 			"image/gif");
 	public static final int JPEG_INT = 200;
-	public static final FormatEnum JPEG = new FormatEnum("jpeg", JPEG_INT,
+	public static final FormatEnum JPEG = new FormatEnum("JPEG", JPEG_INT,
 			"image/jpeg");
 	public static final int M7M_INT = 300;
-	public static final FormatEnum M7M = new FormatEnum("m7m", M7M_INT,
+	public static final FormatEnum M7M = new FormatEnum("M7M", M7M_INT,
 			"multipart/mixed");
 	public static final int PDF_INT = 400;
-	public static final FormatEnum PDF = new FormatEnum("pdf", PDF_INT,
+	public static final FormatEnum PDF = new FormatEnum("PDF", PDF_INT,
 			"application/pdf");
 	public static final int RTF_INT = 500;
-	public static final FormatEnum RTF = new FormatEnum("rtf", RTF_INT,
+	public static final FormatEnum RTF = new FormatEnum("RTF", RTF_INT,
 			"text/rtf");
 	public static final int PEM_INT = 600;
-	public static final FormatEnum PEM = new FormatEnum("pem", PEM_INT,
+	public static final FormatEnum PEM = new FormatEnum("PEM", PEM_INT,
 			"application/pkcs7-signature");
 	public static final int PKCS7_INT = 700;
-	public static final FormatEnum PKCS7 = new FormatEnum("pkcs7", PKCS7_INT,
+	public static final FormatEnum PKCS7 = new FormatEnum("PKCS7", PKCS7_INT,
 			"application/pkcs7-signature");
 	public static final int TIMESTAMP_INT = 800;
-	public static final FormatEnum TIMESTAMP = new FormatEnum("timestamp",
+	public static final FormatEnum TIMESTAMP = new FormatEnum("TIMESTAMP",
 			TIMESTAMP_INT, "application/pkcs7-signature");
 	public static final int UNKNOWN_INT = 900;
-	public static final FormatEnum UNKNOWN = new FormatEnum("unknown",
+	public static final FormatEnum UNKNOWN = new FormatEnum("UNKNOWN",
 			UNKNOWN_INT, "application");
 	public static final int XML_INT = 1000;
-	public static final FormatEnum XML = new FormatEnum("xml", XML_INT,
+	public static final FormatEnum XML = new FormatEnum("XML", XML_INT,
 			"text/xml");
 	public static final int ZIP_INT = 1100;
-	public static final FormatEnum ZIP = new FormatEnum("zip", ZIP_INT,
+	public static final FormatEnum ZIP = new FormatEnum("ZIP", ZIP_INT,
 			"application/zip");
 
 	public static FormatEnum getEnum(final Class clazz, final String name) {
@@ -116,5 +118,11 @@ public class FormatEnum extends ValuedEnum {
 		return "[" + getName() + "]";
 	}
 
+	@SuppressWarnings("unchecked")
+	public static FormatEnum[] values() {
+		final List<FormatEnum> enumList = getEnumList(FormatEnum.class);
+		return enumList
+				.toArray(new FormatEnum[0]);
+	}
 }
 

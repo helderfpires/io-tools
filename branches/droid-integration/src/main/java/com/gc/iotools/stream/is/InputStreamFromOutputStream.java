@@ -1,7 +1,7 @@
 package com.gc.iotools.stream.is;
 
 /*
- * Copyright (c) 2008, Davide Simonetti
+ * Copyright (c) 2008, 2009 Davide Simonetti
  * All rights reserved.
  * Redistribution and use in source and binary forms, 
  * with or without modification, are permitted provided that the following 
