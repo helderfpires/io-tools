@@ -26,6 +26,7 @@ package com.gc.iotools.stream.is;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -65,7 +66,10 @@ import org.apache.commons.logging.LogFactory;
  * @see BufferedInputStream
  * @author dvd.smnt
  * @since 1.0.9
+ * @deprecated
+ * @see StoreBufferedInputSteam
  */
+@Deprecated
 public class FileBufferedInputStream extends InputStream {
 	private static final int BUFFER_SIZE = 8192;
 	private static final Log LOG = LogFactory
