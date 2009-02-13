@@ -57,10 +57,9 @@ import com.gc.iotools.stream.utils.StreamUtils;
  * </p>
  * 
  * <pre>
- * InputStream is = new ByteArrayInputStream(
- * 					&quot;aa start bbb stopfff&quot;.getBytes());
- * ChunckInputStream chunkIs = new ChunkInputStream(
- * 					&quot;rt&quot;.getBytes(), &quot;stop&quot;.getBytes(), is);
+ * InputStream is = new ByteArrayInputStream(&quot;aa start bbb stopfff&quot;.getBytes());
+ * ChunckInputStream chunkIs = new ChunkInputStream(&quot;rt&quot;.getBytes(), &quot;stop&quot;
+ * 		.getBytes(), is);
  * byte[] bytes = IOUtils.toByteArray(chunkIs);
  * //here bytes contains &quot; bbb &quot;
  * </pre>
@@ -76,11 +75,11 @@ import com.gc.iotools.stream.utils.StreamUtils;
  * <code>startMarker</code> if found. Usage pattern is shown in the example
  * above.</li>
  * <li><code>automaticFetch=false</code> Each chunk need to be fetched invoking
- * explicitly a <code>{@link fetchNextChunk()}</code> methods. The stream is
- * initially in an EOF state and <code>{@link fetchNextChunk()}</code> must be
+ * explicitly a <code>{@link #fetchNextChunk()}</code> methods. The stream is
+ * initially in an EOF state and <code>{@link #fetchNextChunk()}</code> must be
  * called at first. At this point all the bytes of the stream are shown until an
  * <code>endMarker</code> is found. At this point the ChunkInputStream is in an
- * EOF state until a <code>{@link fetchNextChunk()}</code> is invoked.</li>
+ * EOF state until a <code>{@link #fetchNextChunk()}</code> is invoked.</li>
  * <li><code>automaticFetch=false</code> and <code>startMarker=null</code> It is
  * similar to the previous case. It can be used to the src stream on the
  * <code>endMarker</code>s</li>
@@ -90,11 +89,9 @@ import com.gc.iotools.stream.utils.StreamUtils;
  * </p>
  * 
  * <pre>
- * InputStream is = new ByteArrayInputStream(
- * 				&quot;aa start bbb stopfff&quot;.getBytes());
- * ChunckInputStream chunkIs = new ChunkInputStream(is, 
- * 				&quot;rt&quot;.getBytes(), &quot;stop&quot;.getBytes(), 
- * 				false, false);
+ * InputStream is = new ByteArrayInputStream(&quot;aa start bbb stopfff&quot;.getBytes());
+ * ChunckInputStream chunkIs = new ChunkInputStream(is, &quot;rt&quot;.getBytes(), &quot;stop&quot;
+ * 		.getBytes(), false, false);
  * while (chunkIs.moveToNextChunk()) {
  * 	byte[] bytes = IOUtils.toByteArray(chunkIs);
  * 	//here bytes contains &quot; bbb &quot;
@@ -171,7 +168,7 @@ public final class ChunkInputStream extends InputStream {
 	 * @param automaticFetch
 	 *            enables automatic fetching of <code>startMarker</code>s. If
 	 *            <code>false</code> <code>startMarker</code>s must be fetched
-	 *            manually invoking <code>{@link fetchNextChunk()}</code>
+	 *            manually invoking <code>{@link #fetchNextChunk()}</code>
 	 * 
 	 * @see fetchNextChunk()
 	 */

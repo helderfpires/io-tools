@@ -103,8 +103,8 @@ public class SizeLimitInputStream extends InputStream {
 	 * <p>
 	 * Close the underlying stream. Calling this method may make data on the
 	 * underlying stream unavailable.
-	 * </p>
-	 * {@inheritDoc}
+	 * </p> {@inheritDoc}
+	 * 
 	 * @throws IOException
 	 *             Exception is thrown when some IO error happens in the
 	 *             underlying stream.
@@ -233,7 +233,7 @@ public class SizeLimitInputStream extends InputStream {
 		} else {
 			result = this.in.skip(Math.min(n, getBytesLeft()));
 			if (result > 0) {
-				currentPosition += result;
+				this.currentPosition += result;
 			}
 		}
 		return result;

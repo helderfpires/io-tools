@@ -11,6 +11,7 @@ class BigDocumentIstream extends InputStream {
 	private static final int MODULO = 256;
 	private long lenght = 0;
 	private long postion = 0;
+	private long markPos = 0;
 
 	public BigDocumentIstream(final long length) {
 		this.lenght = length;
@@ -26,8 +27,18 @@ class BigDocumentIstream extends InputStream {
 		return result;
 	}
 
-	@Override
-	public synchronized void reset() {
+
+	public synchronized void resetToBeginning() {
 		this.postion = 0;
+	}
+
+	@Override
+	public synchronized void mark(int threshold) {
+		this.markPos = this.postion;
+	}
+
+	 @Override
+	public synchronized void reset() {
+		this.postion = this.markPos;
 	}
 }

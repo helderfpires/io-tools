@@ -26,9 +26,7 @@ package com.gc.iotools.stream.is;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,7 +74,7 @@ public class FileBufferedInputStreamTest {
 		final BigDocumentIstream bis = new BigDocumentIstream(1000);
 		bis.read(new byte[5]);
 		final byte[] reference = IOUtils.toByteArray(bis);
-		bis.reset();
+		bis.resetToBeginning();
 		final InputStream testStream = new FileBufferedInputStream(bis);
 		testStream.read(new byte[5]);
 		testStream.mark(140);
@@ -104,7 +102,7 @@ public class FileBufferedInputStreamTest {
 		final BigDocumentIstream bis = new BigDocumentIstream(1000);
 		bis.read(new byte[5]);
 		final byte[] reference = IOUtils.toByteArray(bis);
-		bis.reset();
+		bis.resetToBeginning();
 		final InputStream testStream = new FileBufferedInputStream(bis);
 		testStream.read(new byte[5]);
 		testStream.mark(50);
@@ -126,7 +124,7 @@ public class FileBufferedInputStreamTest {
 		final BigDocumentIstream bis = new BigDocumentIstream(1000);
 		bis.read(new byte[5]);
 		final byte[] reference = IOUtils.toByteArray(bis);
-		bis.reset();
+		bis.resetToBeginning();
 		final InputStream testStream = new FileBufferedInputStream(bis);
 		testStream.read(new byte[5]);
 		testStream.mark(120);
@@ -161,7 +159,7 @@ public class FileBufferedInputStreamTest {
 	public void testSimpleRead() throws IOException {
 		final BigDocumentIstream bis = new BigDocumentIstream(32768);
 		final byte[] reference = IOUtils.toByteArray(bis);
-		bis.reset();
+		bis.resetToBeginning();
 		final byte[] test = IOUtils
 				.toByteArray(new FileBufferedInputStream(bis));
 		assertArrayEquals("simple read", reference, test);
@@ -172,7 +170,7 @@ public class FileBufferedInputStreamTest {
 		final BigDocumentIstream bis = new BigDocumentIstream(1000);
 		bis.read(new byte[5]);
 		final byte[] reference = IOUtils.toByteArray(bis);
-		bis.reset();
+		bis.resetToBeginning();
 		final InputStream testStream = new FileBufferedInputStream(bis);
 		testStream.skip(5);
 		testStream.mark(-1);
@@ -218,7 +216,7 @@ public class FileBufferedInputStreamTest {
 		final BigDocumentIstream bis = new BigDocumentIstream(1000);
 		bis.read(new byte[5]);
 		final byte[] reference = IOUtils.toByteArray(bis);
-		bis.reset();
+		bis.resetToBeginning();
 		final InputStream testStream = new FileBufferedInputStream(bis);
 		testStream.read(new byte[5]);
 		testStream.mark(-1);
