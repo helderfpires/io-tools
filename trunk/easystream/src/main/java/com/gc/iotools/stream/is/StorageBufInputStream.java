@@ -140,8 +140,4 @@ public class StorageBufInputStream extends AbstractInputStreamWrapper {
 		this.sourcePosition = this.markPosition;
 	}
 
-	public void resetToBeginning() {
-		this.resettableIsPosition = 0;
-		this.storage.seek(0);
-	}
 }

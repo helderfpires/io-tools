@@ -140,8 +140,8 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 		this.sourcePosition = this.markPosition;
 	}
 
-	public void resetToBeginning() {
-		this.resettableIsPosition = 0;
-		this.storage.seek(0);
+	public void seek(long position) {
+		this.resettableIsPosition = position;
+		this.storage.seek(position);
 	}
 }
