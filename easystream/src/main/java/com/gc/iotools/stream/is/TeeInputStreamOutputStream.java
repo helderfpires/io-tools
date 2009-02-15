@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.gc.iotools.stream.base.AbstractInputStreamWrapper;
+
 /**
  * <p>
  * Copies the data from the underlying <code>InputStream</code> to the
@@ -66,19 +68,14 @@ import java.io.OutputStream;
  * @author dvd.smnt
  * @since 1.0.6
  */
-public class TeeInputStreamOutputStream extends InputStream {
+public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	/**
-	 * Buffer size used in skip() operations. 
+	 * Buffer size used in skip() operations.
 	 */
 	private static final int BUF_SIZE = 8192;
 
-	protected boolean closed = false;
-
 	protected final OutputStream destination;
-	/**
-	 * The source InputStream.
-	 */
-	protected final InputStream source;
+
 	/**
 	 * If <code>true</code> <code>source</code> and <code>destination</code>
 	 * streams are closed when {@link #close()} is invoked.
@@ -91,10 +88,12 @@ public class TeeInputStreamOutputStream extends InputStream {
 	 * the input stream <code>source</code> and the <code>OutputStream</code>
 	 * <code>destination</code> for later use.
 	 * </p>
-	 * <p>When the method {@link #close()} it is invoked the remaining content
-	 * of the <code>source</code> stream is copied to the
-	 * <code>destination</code> and the <code>source</code> and
-	 * <code>destination</code> streams are closed. </p>
+	 * <p>
+	 * When the method {@link #close()} it is invoked the remaining content of
+	 * the <code>source</code> stream is copied to the <code>destination</code>
+	 * and the <code>source</code> and <code>destination</code> streams are
+	 * closed.
+	 * </p>
 	 * 
 	 * @param source
 	 *            The underlying <code>InputStream</code>
@@ -127,7 +126,7 @@ public class TeeInputStreamOutputStream extends InputStream {
 	 */
 	public TeeInputStreamOutputStream(final InputStream source,
 			final OutputStream destination, final boolean closeStreams) {
-		this.source = source;
+		super(source);
 		this.destination = destination;
 		this.closeStreams = closeStreams;
 	}
@@ -150,28 +149,26 @@ public class TeeInputStreamOutputStream extends InputStream {
 	 *             data.
 	 */
 	@Override
-	public void close() throws IOException {
-		if (!this.closed) {
-			IOException e1 = null;
-			this.closed = true;
-			try {
-				int n = 0;
-				final byte[] buffer = new byte[BUF_SIZE];
-				while ((n = this.source.read(buffer)) > 0) {
-					this.destination.write(buffer, 0, n);
-				}
-			} catch (final IOException e) {
-				e1 = new IOException(
-						"It's not possible to copy to the OutputStream");
-				e1.initCause(e);
+	public void closeOnce() throws IOException {
+
+		IOException e1 = null;
+		try {
+			int n = 0;
+			final byte[] buffer = new byte[BUF_SIZE];
+			while ((n = this.source.read(buffer)) > 0) {
+				this.destination.write(buffer, 0, n);
 			}
-			if (this.closeStreams) {
-				this.source.close();
-				this.destination.close();
-			}
-			if (e1 != null) {
-				throw e1;
-			}
+		} catch (final IOException e) {
+			e1 = new IOException(
+					"It's not possible to copy to the OutputStream");
+			e1.initCause(e);
+		}
+		if (this.closeStreams) {
+			this.source.close();
+			this.destination.close();
+		}
+		if (e1 != null) {
+			throw e1;
 		}
 	}
 
@@ -203,7 +200,7 @@ public class TeeInputStreamOutputStream extends InputStream {
 	}
 
 	@Override
-	public int read(final byte[] b, final int off, final int len)
+	public int innerRead(final byte[] b, final int off, final int len)
 			throws IOException {
 		final int result = this.source.read(b, off, len);
 		if (result > 0) {
@@ -215,25 +212,6 @@ public class TeeInputStreamOutputStream extends InputStream {
 	@Override
 	public void reset() throws IOException {
 		throw new IOException("Reset not supported");
-	}
-
-/**
- * 
- * {@inheritDoc}
- * @since 1.2
- */
-	@Override
-	public long skip(final long n) throws IOException {
-		long curPos = 0;
-		int readLen = 0;
-		byte[] buf = new byte[BUF_SIZE];
-		while (curPos < n && readLen >= 0) {
-			readLen = this.read(buf);
-			if (readLen > 0) {
-				curPos += readLen;
-			}
-		}
-		return curPos;
 	}
 
 }
