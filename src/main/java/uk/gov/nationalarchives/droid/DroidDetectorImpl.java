@@ -9,6 +9,7 @@ import java.net.URL;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.enums.ValuedEnum;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,9 +24,9 @@ import uk.gov.nationalarchives.droid.signatureFile.DroidFileFormat;
 import uk.gov.nationalarchives.droid.signatureFile.FFSignatureFile;
 import uk.gov.nationalarchives.droid.xmlReader.SAXModelBuilder;
 
+import com.gc.iotools.fmt.base.FileDetector;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
-import com.gc.iotools.fmt.base.FileDetector;
 
 public class DroidDetectorImpl implements FileDetector {
 	private static class MyValEnum extends ValuedEnum {
@@ -49,6 +50,7 @@ public class DroidDetectorImpl implements FileDetector {
 	 * Namespace for the xml file format signatures file
 	 */
 	public static final String SIGNATURE_FILE_NS = "http://www.nationalarchives.gov.uk/pronom/SignatureFile";
+	public static final String SIGNATURE_FILE = "DROID_SignatureFile_V20.xml";
 	private final Class<?> formatEnumClass;
 	private final URL confFile;
 
@@ -63,7 +65,10 @@ public class DroidDetectorImpl implements FileDetector {
 					+ "] should be an subclass of [" + FormatEnum.class + "]");
 		}
 		this.formatEnumClass = clazz;
-		this.confFile = DroidDetectorImpl.class.getResource(confFileStr);
+
+		final String configurationFile = StringUtils.isBlank(confFileStr) ? SIGNATURE_FILE
+				: confFileStr;
+		this.confFile = DroidDetectorImpl.class.getResource(configurationFile);
 		try {
 			if (this.confFile == null || this.confFile.openConnection() == null) {
 				throw new IllegalArgumentException("Configuration file ["

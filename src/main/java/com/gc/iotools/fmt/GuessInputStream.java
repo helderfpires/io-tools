@@ -108,7 +108,15 @@ public abstract class GuessInputStream extends InputStream {
 	 */
 	public static GuessInputStream getInstance(final InputStream istream,
 			final FormatEnum[] enabledFormats) throws IOException {
-		return null;
+
+		Collection<Detector> detectors = new HashSet<Detector>();
+		Detector stream = new StreamDetectorImpl();
+		detectors.add(stream);
+		Detector stream1 = new DroidDetectorImpl(null, null);
+		detectors.add(stream1);
+		return getInstance(istream, enabledFormats, detectors
+				.toArray(new Detector[0]), DEFAULT_DECODERS.values().toArray(
+				new Decoder[0]));
 	}
 
 	// public static void addDetector(final Detector detector) {
@@ -202,14 +210,14 @@ public abstract class GuessInputStream extends InputStream {
 		return result;
 	}
 
-	public final FormatEnum getFormat(){
+	public final FormatEnum getFormat() {
 		return getFormatId().format;
 	}
 
 	public final FormatId getFormatId() {
 		return identify()[0];
 	}
-	
+
 	public final FormatEnum[] getFormats() {
 		FormatId[] formats = identify();
 		Collection<FormatEnum> result = new ArrayList<FormatEnum>();
@@ -218,6 +226,6 @@ public abstract class GuessInputStream extends InputStream {
 		}
 		return result.toArray(new FormatEnum[0]);
 	}
-	
+
 	public abstract FormatId[] identify();
 }

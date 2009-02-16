@@ -119,7 +119,7 @@ public final class XmlModule implements DefiniteLengthModule {
 		return tenum;
 	}
 
-	public int getDetectLenght() {
+	public int getDetectLength() {
 		return XmlModule.XML_GUESS_SIZE;
 	}
 

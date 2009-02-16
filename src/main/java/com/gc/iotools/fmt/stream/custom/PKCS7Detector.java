@@ -74,7 +74,7 @@ public class PKCS7Detector implements DefiniteLengthModule {
 		return result;
 	}
 
-	public int getDetectLenght() {
+	public int getDetectLength() {
 		return 90;
 	}
 

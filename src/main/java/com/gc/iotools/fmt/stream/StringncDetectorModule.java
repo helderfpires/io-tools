@@ -26,13 +26,10 @@ package com.gc.iotools.fmt.stream;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-import java.util.Arrays;
-
 import com.gc.iotools.fmt.base.FormatId;
-import com.gc.iotools.stream.utils.ArrayTools;
 
 public class StringncDetectorModule implements DefiniteLengthModule {
-	private byte[] byteSequence = null;
+	private String byteSequence = null;
 	private int detectLength = -1;
 	private FormatId detectedFormat;
 
@@ -40,10 +37,10 @@ public class StringncDetectorModule implements DefiniteLengthModule {
 		boolean result;
 		String readString = new String(readedBytes);
 		String ucaseStr = readString.toUpperCase();
-		if (this.detectLength == this.byteSequence.length) {
-			result = Arrays.equals(readedBytes, ucaseStr.getBytes());
+		if (this.detectLength == this.byteSequence.length()) {
+			result = byteSequence.equals(ucaseStr);
 		} else {
-			result = ArrayTools.indexOf(readedBytes, ucaseStr.getBytes()) >= 0;
+			result = ucaseStr.contains(byteSequence);
 		}
 		return result;
 	}
@@ -56,7 +53,7 @@ public class StringncDetectorModule implements DefiniteLengthModule {
 		return this.detectedFormat;
 	}
 
-	public int getDetectLenght() {
+	public int getDetectLength() {
 		if (this.byteSequence == null) {
 			throw new IllegalStateException(
 					"getDetectLength called before init");
@@ -66,17 +63,20 @@ public class StringncDetectorModule implements DefiniteLengthModule {
 
 	public void init(final FormatId fenum, final String param) {
 		final int sepPos = param.indexOf(':');
-		this.byteSequence = param.substring(sepPos + 1).toUpperCase()
-				.getBytes();
+		this.byteSequence = param.substring(sepPos + 1).toUpperCase();
 		if (sepPos > 0) {
 			final String detectLString = param.substring(0, sepPos);
 			this.detectLength = Integer.parseInt(detectLString);
 		}
 		if (this.detectLength <= 0) {
-			this.detectLength = this.byteSequence.length;
+			this.detectLength = this.byteSequence.length();
 		}
 
 		this.detectedFormat = fenum;
 	}
-
+	@Override
+	public String toString() {
+		return "StringNCModule [" + detectedFormat + "] len[" + detectLength
+				+ "] strIgnoreCase [" + byteSequence + "]";
+	}
 }

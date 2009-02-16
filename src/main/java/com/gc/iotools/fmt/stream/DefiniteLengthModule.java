@@ -33,7 +33,7 @@ public interface DefiniteLengthModule {
 
 	FormatId getDetectedFormat();
 
-	int getDetectLenght();
+	int getDetectLength();
 
 	void init(FormatId fenum, String param);
 }
