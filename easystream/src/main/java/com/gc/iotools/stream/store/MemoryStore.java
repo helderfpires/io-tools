@@ -1,12 +1,13 @@
-package com.gc.iotools.stream.storage;
+package com.gc.iotools.stream.store;
 
-public class MemoryStorage implements SeekableStorage {
+public class MemoryStore implements SeekableStore {
 	private long position = 0;
 
 	private byte[] buffer = new byte[0];
 
 	public void cleanup() {
-
+		buffer = new byte[0];
+		position = 0;
 	}
 
 	public int get(final byte[] bytes, final int offset, final int length) {
@@ -14,9 +15,10 @@ public class MemoryStorage implements SeekableStorage {
 				- this.position);
 		int result;
 		if (effectiveLength > 0) {
-		System.arraycopy(this.buffer, (int) this.position, bytes, offset,
-				effectiveLength);
-		result = effectiveLength;
+			System.arraycopy(this.buffer, (int) this.position, bytes, offset,
+					effectiveLength);
+			result = effectiveLength;
+			position += effectiveLength;
 		} else {
 			result = -1;
 		}
@@ -32,7 +34,7 @@ public class MemoryStorage implements SeekableStorage {
 		this.buffer = tmpBuffer;
 	}
 
-	public void seek(long position) {
+	public void seek(final long position) {
 		this.position = position;
 	}
 

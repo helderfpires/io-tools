@@ -178,7 +178,7 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 
 	@Override
 	public boolean markSupported() {
-		return false;
+		return this.source.markSupported();
 	}
 
 	@Override

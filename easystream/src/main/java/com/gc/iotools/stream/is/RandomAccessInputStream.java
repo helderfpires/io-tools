@@ -30,9 +30,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.gc.iotools.stream.base.AbstractInputStreamWrapper;
-import com.gc.iotools.stream.storage.MemoryStorage;
-import com.gc.iotools.stream.storage.SeekableStorage;
-import com.gc.iotools.stream.storage.Storage;
+import com.gc.iotools.stream.store.MemoryStore;
+import com.gc.iotools.stream.store.SeekableStore;
+import com.gc.iotools.stream.store.Store;
 
 /**
  * <p>
@@ -41,7 +41,7 @@ import com.gc.iotools.stream.storage.Storage;
  * <code>{@link #mark()}</code> and <code>{@link #reset()}</code> methods.
  * </p>
  * <p>
- * It buffers the <code>source</code> stream into a {@linkplain Storage}. The
+ * It buffers the <code>source</code> stream into a {@linkplain Store}. The
  * implementation can be changed to fit the application needs (cache on disk
  * rather than in memory).
  * </p>
@@ -57,7 +57,7 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	private long sourcePosition = 0;
 	private long resettableIsPosition = 0;
 	private long markPosition = 0;
-	private final SeekableStorage storage;
+	private final SeekableStore storage;
 
 	public RandomAccessInputStream(final InputStream source) {
 		this(source, 32768);
@@ -66,11 +66,11 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	public RandomAccessInputStream(final InputStream source,
 			final int threshold) {
 		super(source);
-		this.storage = new MemoryStorage();
+		this.storage = new MemoryStore();
 	}
 
 	public RandomAccessInputStream(final InputStream source,
-			final SeekableStorage storage) {
+			final SeekableStore storage) {
 		super(source);
 		this.storage = storage;
 	}
@@ -141,7 +141,8 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 		this.sourcePosition = this.markPosition;
 	}
 
-	public void seek(long position) {
+	public void seek(long position) throws IOException {
+		// if position > size seek...
 		this.resettableIsPosition = position;
 		this.storage.seek(position);
 	}

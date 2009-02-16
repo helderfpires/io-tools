@@ -67,7 +67,7 @@ import org.apache.commons.logging.LogFactory;
  * @author dvd.smnt
  * @since 1.0.9
  * @deprecated
- * @see StoreBufferedInputSteam
+ * @see RandomAccessInputSteam
  */
 @Deprecated
 public class FileBufferedInputStream extends InputStream {

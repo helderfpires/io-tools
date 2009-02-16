@@ -30,8 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.gc.iotools.stream.base.AbstractInputStreamWrapper;
-import com.gc.iotools.stream.storage.MemoryStorage;
-import com.gc.iotools.stream.storage.Storage;
+import com.gc.iotools.stream.store.MemoryStore;
+import com.gc.iotools.stream.store.Store;
 
 /**
  * <p>
@@ -40,7 +40,7 @@ import com.gc.iotools.stream.storage.Storage;
  * <code>{@link #mark()}</code> and <code>{@link #reset()}</code> methods.
  * </p>
  * <p>
- * It buffers the <code>source</code> stream into a {@linkplain Storage}. The
+ * It buffers the <code>source</code> stream into a {@linkplain Store}. The
  * implementation can be changed to fit the application needs (cache on disk
  * rather than in memory).
  * </p>
@@ -56,7 +56,7 @@ public class StorageBufInputStream extends AbstractInputStreamWrapper {
 	private long sourcePosition = 0;
 	private long resettableIsPosition = 0;
 	private long markPosition = 0;
-	private final Storage storage;
+	private final Store store;
 
 	public StorageBufInputStream(final InputStream source) {
 		this(source, 32768);
@@ -65,13 +65,13 @@ public class StorageBufInputStream extends AbstractInputStreamWrapper {
 	public StorageBufInputStream(final InputStream source,
 			final int threshold) {
 		super(source);
-		this.storage = new MemoryStorage();
+		this.store = new MemoryStore();
 	}
 
 	public StorageBufInputStream(final InputStream source,
-			final Storage storage) {
+			final Store store) {
 		super(source);
-		this.storage = storage;
+		this.store = store;
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class StorageBufInputStream extends AbstractInputStreamWrapper {
 
 	@Override
 	protected void closeOnce() throws IOException {
-		this.storage.cleanup();
+		this.store.cleanup();
 		this.source.close();
 	}
 
@@ -97,13 +97,13 @@ public class StorageBufInputStream extends AbstractInputStreamWrapper {
 			if (n > 0) {
 				this.sourcePosition += n;
 				this.resettableIsPosition += n;
-				this.storage.put(b, off, n);
+				this.store.put(b, off, n);
 			}
 		} else if (this.resettableIsPosition < this.sourcePosition) {
 			// resetIS has been called. Read from buffer;n
 			final int efflen = (int) Math.min(len, this.sourcePosition
 					- this.resettableIsPosition);
-			n = this.storage.get(b, off, efflen);
+			n = this.store.get(b, off, efflen);
 			if (n <= 0) {
 				throw new IllegalStateException(
 						"Problem reading from buffer. Expecting bytes ["
