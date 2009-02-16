@@ -18,7 +18,6 @@ public final class StreamDetectorImpl implements StreamDetector {
 			final int size) throws IOException {
 		final int size1 = size - 1;
 		final byte[] buffer = new byte[size1];
-		input.mark(size);
 		int pos = 0;
 		int n = 0;
 		while ((pos < (size1))
@@ -42,7 +41,7 @@ public final class StreamDetectorImpl implements StreamDetector {
 			for (int i = 0; (i < modules.length)
 					&& FormatEnum.UNKNOWN.equals(detected.format); i++) {
 				final DefiniteLengthModule module = modules[i];
-				final int detectLenght = module.getDetectLenght();
+				final int detectLenght = module.getDetectLength();
 				if (detectLenght <= 0) {
 					throw new IllegalStateException("Module ["
 							+ module.getDetectedFormat()
@@ -92,7 +91,7 @@ public final class StreamDetectorImpl implements StreamDetector {
 		DefiniteLengthModule[] modules = getModulesForFormats(enabledFormats);
 		int detectLen = -1;
 		for (DefiniteLengthModule module : modules) {
-			detectLen = Math.max(detectLen, module.getDetectLenght());
+			detectLen = Math.max(detectLen, module.getDetectLength());
 		}
 		return detectLen;
 	}

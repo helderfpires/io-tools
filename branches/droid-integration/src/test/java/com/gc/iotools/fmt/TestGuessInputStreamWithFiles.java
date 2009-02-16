@@ -9,6 +9,7 @@ import junit.framework.TestCase;
 import org.apache.commons.io.IOUtils;
 
 import com.gc.iotools.fmt.base.FormatEnum;
+import com.gc.iotools.fmt.base.TestUtils;
 
 public class TestGuessInputStreamWithFiles extends TestCase {
 
@@ -72,7 +73,10 @@ public class TestGuessInputStreamWithFiles extends TestCase {
 	public void testZipDetectorModule() throws Exception {
 		checkDetector(FormatEnum.ZIP, new String[] { ".zip" });
 	}
+
 	public void testZeroLengthModule() throws Exception {
-		checkDetector(FormatEnum.UNKNOWN, new String[] { ".zln" });
+		checkDetector(FormatEnum.UNKNOWN,
+				new String[] { ".zln", ".txt",
+				".png", ".jpg", ".bmp" });
 	}
 }

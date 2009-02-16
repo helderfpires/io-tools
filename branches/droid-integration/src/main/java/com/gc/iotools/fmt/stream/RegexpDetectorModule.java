@@ -25,14 +25,18 @@ package com.gc.iotools.fmt.stream;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+import java.util.regex.Pattern;
+
 import com.gc.iotools.fmt.base.FormatId;
 
 class RegexpDetectorModule implements DefiniteLengthModule {
 	private FormatId detectedFormat = null;
+	private Pattern pattern = null;
+	private int detectLength = 1;
 	
 	public boolean detect(final byte[] readedBytes) {
-		// TODO Auto-generated method stub
-		return false;
+		String readed = new String(readedBytes);
+		return this.pattern.matcher(readed).matches();
 	}
 
 
@@ -41,24 +45,17 @@ class RegexpDetectorModule implements DefiniteLengthModule {
 	}
 
 
-	public int getDetectLenght() {
-		// TODO Auto-generated method stub
-		return 1;
+	public int getDetectLength() {
+		return this.detectLength;
 	}
 
 	public void init(final FormatId fenum, final String param) {
-		// final int sepPos = param.indexOf(':');
-		// this.byteSequence = param.substring(sepPos).getBytes();
-		// final String detectLString = param.substring(0, sepPos);
-		// if (StringUtils.isNotBlank(detectLString)) {
-		// this.detectLength = Integer.parseInt(detectLString);
-		// }
-		// if (this.detectLength == 0) {
-		// this.detectLength = this.byteSequence.length;
-		// }
-
+		final int sepPos = param.indexOf(':');
+		String patternStr = param.substring(sepPos + 1);
+		this.pattern = Pattern.compile(patternStr);
 		this.detectedFormat = fenum;
-
+		final String detectLString = param.substring(0, sepPos);
+		this.detectLength = Integer.parseInt(detectLString);
 	}
 
 }

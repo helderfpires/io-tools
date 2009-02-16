@@ -5,14 +5,14 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import com.gc.iotools.fmt.TestUtils;
+import com.gc.iotools.fmt.base.TestUtils;
 
 public class TestPkcs7Module extends TestCase {
 	@org.junit.Test
 	public void testDetect() throws Exception {
 		PKCS7Detector p7 = new PKCS7Detector();
 		final Map<String, byte[]> goodMap = TestUtils.getBytesForFiles(
-				new String[] { "p7m" }, p7.getDetectLenght(), true);
+				new String[] { "p7m" }, p7.getDetectLength(), true);
 		for (String fname : goodMap.keySet()) {
 			assertTrue("file [" + fname + "]is not detected", p7.detect(goodMap
 					.get(fname)));
@@ -23,7 +23,7 @@ public class TestPkcs7Module extends TestCase {
 	public void testNotDetect() throws IOException {
 		PKCS7Detector p7 = new PKCS7Detector();
 		final Map<String, byte[]> badMap = TestUtils.getBytesForFiles(
-				new String[] { "p7m" }, p7.getDetectLenght(), false);
+				new String[] { "p7m" }, p7.getDetectLength(), false);
 		for (String fname : badMap.keySet()) {
 			assertFalse(
 					"file [" + fname + "]is detected as p7while should not",

@@ -9,9 +9,9 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.gc.iotools.fmt.TestUtils;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
+import com.gc.iotools.fmt.base.TestUtils;
 import com.gc.iotools.stream.is.SizeReaderInputStream;
 
 public class TestStreamModule {
@@ -19,12 +19,12 @@ public class TestStreamModule {
 
 	static {
 		// enabledFormats.put(FormatEnum.PEM, "pem");
-		enabledFormats.put(FormatEnum.M7M, "m7m");
-		enabledFormats.put(FormatEnum.PDF, "pdf");
-		enabledFormats.put(FormatEnum.PKCS7, "p7m");
-		enabledFormats.put(FormatEnum.RTF, "rtf");
-		enabledFormats.put(FormatEnum.XML, "xml");
-		enabledFormats.put(FormatEnum.ZIP, "zip");
+		enabledFormats.put(FormatEnum.M7M, ".m7m");
+		enabledFormats.put(FormatEnum.PDF, ".pdf");
+		enabledFormats.put(FormatEnum.PKCS7, ".p7m");
+		enabledFormats.put(FormatEnum.RTF, ".rtf");
+		enabledFormats.put(FormatEnum.XML, ".xml");
+		enabledFormats.put(FormatEnum.ZIP, ".zip");
 
 	}
 
