@@ -1,8 +1,12 @@
 package com.gc.iotools.stream.storage;
 
-public class ThresholdStorage implements Storage {
+import java.io.File;
+import java.io.RandomAccessFile;
+
+public class ThresholdStorage implements SeekableStorage {
 	private final int treshold;
-	
+	private File fileStorage;
+	private RandomAccessFile fileAccess;
 	private long size = 0;
 	private long position = 0;
 
@@ -35,7 +39,13 @@ public class ThresholdStorage implements Storage {
 			ms.put(bytes, offset, length);
 			size +=length;
 		} else {
-			
+			if(size<treshold){
+				//empty the memory buffer and init the file buffer
+				ms.cleanup();
+			}else{
+				//check if the fileAccess is well positioned.
+				this.fileAccess.write(bytes, offset, length);
+			}
 		}
 	}
 

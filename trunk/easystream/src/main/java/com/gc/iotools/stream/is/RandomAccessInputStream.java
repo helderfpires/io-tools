@@ -31,6 +31,7 @@ import java.io.InputStream;
 
 import com.gc.iotools.stream.base.AbstractInputStreamWrapper;
 import com.gc.iotools.stream.storage.MemoryStorage;
+import com.gc.iotools.stream.storage.SeekableStorage;
 import com.gc.iotools.stream.storage.Storage;
 
 /**
@@ -56,7 +57,7 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	private long sourcePosition = 0;
 	private long resettableIsPosition = 0;
 	private long markPosition = 0;
-	private final Storage storage;
+	private final SeekableStorage storage;
 
 	public RandomAccessInputStream(final InputStream source) {
 		this(source, 32768);
@@ -69,7 +70,7 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	}
 
 	public RandomAccessInputStream(final InputStream source,
-			final Storage storage) {
+			final SeekableStorage storage) {
 		super(source);
 		this.storage = storage;
 	}

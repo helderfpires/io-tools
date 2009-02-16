@@ -1,6 +1,6 @@
 package com.gc.iotools.stream.storage;
 
-public class MemoryStorage implements Storage {
+public class MemoryStorage implements SeekableStorage {
 	private long position = 0;
 
 	private byte[] buffer = new byte[0];
