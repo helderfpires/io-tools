@@ -36,17 +36,17 @@ import org.junit.Test;
 
 import com.gc.iotools.stream.utils.StreamUtils;
 
-public class StorageBufInputStreamTest {
+public class RandomAccessInputStreamTest {
 
 	@Test
 	public void testFullReadAndReset() throws IOException {
 		final BigDocumentIstream bis = new BigDocumentIstream(131072);
 		final byte[] reference = IOUtils.toByteArray(bis);
 		bis.resetToBeginning();
-		final StorageBufInputStream ris = new StorageBufInputStream(bis);
+		final RandomAccessInputStream ris = new RandomAccessInputStream(bis);
 		final byte[] test = IOUtils.toByteArray(ris);
 		assertArrayEquals("simple read", reference, test);
-		ris.resetToBeginning();
+		ris.seek(0);
 		final byte[] test2 = IOUtils.toByteArray(ris);
 		assertArrayEquals("simple read", reference, test2);
 	}
@@ -56,9 +56,7 @@ public class StorageBufInputStreamTest {
 		final BigDocumentIstream bis = new BigDocumentIstream(131072);
 		final byte[] reference = IOUtils.toByteArray(bis);
 		bis.resetToBeginning();
-
-		final StorageBufInputStream ris = new StorageBufInputStream(bis);
-
+		final RandomAccessInputStream ris = new RandomAccessInputStream(bis);
 		ris.read(new byte[5]);
 		ris.mark(150);
 		final byte[] b = new byte[100];
@@ -69,7 +67,7 @@ public class StorageBufInputStreamTest {
 		byte[] bytes = StreamUtils.read(ris, 200);
 		assertArrayEquals("correct position after reset", ArrayUtils
 				.subarray(reference, 5, 205), bytes);
-		ris.resetToBeginning();
+		ris.seek(0);
 		final byte[] test2 = IOUtils.toByteArray(ris);
 		assertArrayEquals("full read after resetToBeginning", reference,
 				test2);
@@ -80,14 +78,14 @@ public class StorageBufInputStreamTest {
 		final BigDocumentIstream bis = new BigDocumentIstream(131072);
 		final byte[] reference = IOUtils.toByteArray(bis);
 		bis.resetToBeginning();
-		final StorageBufInputStream ris = new StorageBufInputStream(bis);
+		final RandomAccessInputStream ris = new RandomAccessInputStream(bis);
 		final byte[] b = new byte[5];
 		ris.read(b);
 		ris.skip(32768);
 		ris.read(b);
 		assertArrayEquals("read correct position", ArrayUtils.subarray(
 				reference, 32768 + 5, 32768 + 10), b);
-		ris.resetToBeginning();
+		ris.seek(0);
 		final byte[] test2 = IOUtils.toByteArray(ris);
 		assertArrayEquals("skip and reset read", reference, test2);
 	}
