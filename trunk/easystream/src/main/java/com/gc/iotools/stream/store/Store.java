@@ -1,8 +1,8 @@
-package com.gc.iotools.stream.storage;
+package com.gc.iotools.stream.store;
 
 import java.io.IOException;
 
-public interface Storage {
+public interface Store {
 
 	void cleanup();
 
