@@ -33,7 +33,7 @@ class BigDocumentIstream extends InputStream {
 	}
 
 	@Override
-	public synchronized void mark(int threshold) {
+	public synchronized void mark(final int threshold) {
 		this.markPos = this.postion;
 	}
 
