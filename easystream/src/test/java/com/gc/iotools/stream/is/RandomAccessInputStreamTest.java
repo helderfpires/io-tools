@@ -90,4 +90,19 @@ public class RandomAccessInputStreamTest {
 		assertArrayEquals("skip and reset read", reference, test2);
 	}
 
+	@Test
+	public void testSeek() throws IOException {
+		final BigDocumentIstream bis = new BigDocumentIstream(131072);
+		final byte[] reference = IOUtils.toByteArray(bis);
+		bis.resetToBeginning();
+		final RandomAccessInputStream ris = new RandomAccessInputStream(bis);
+		ris.seek(50);
+		final byte[] b = new byte[5];
+		ris.read(b);
+		assertArrayEquals("read correct position", ArrayUtils.subarray(
+				reference, 50, 55), b);
+		ris.seek(0);
+		final byte[] test2 = IOUtils.toByteArray(ris);
+		assertArrayEquals("skip and reset read", reference, test2);
+	}
 }

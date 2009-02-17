@@ -76,6 +76,7 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 
 	protected final OutputStream destination;
 
+	private long innerStreamPosition;
 	/**
 	 * If <code>true</code> <code>source</code> and <code>destination</code>
 	 * streams are closed when {@link #close()} is invoked.
@@ -131,6 +132,9 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 		this.closeStreams = closeStreams;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int available() throws IOException {
 		return this.source.available();
@@ -171,16 +175,23 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 			throw e1;
 		}
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void mark(final int readlimit) {
+		this.innerStreamPosition=position;
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean markSupported() {
 		return this.source.markSupported();
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int read() throws IOException {
 		final int result = this.source.read();
@@ -189,7 +200,9 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 		}
 		return result;
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int read(final byte[] b) throws IOException {
 		final int result = this.source.read(b);
@@ -208,7 +221,9 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 		}
 		return result;
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void reset() throws IOException {
 		throw new IOException("Reset not supported");
