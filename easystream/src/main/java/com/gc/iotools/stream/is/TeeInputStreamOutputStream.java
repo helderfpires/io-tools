@@ -42,11 +42,10 @@ import com.gc.iotools.stream.base.AbstractInputStreamWrapper;
  * When the method <code>{@link #close()}</code> is invoked all the bytes
  * remaining in the underlying <code>InputStream</code> are copied to the
  * <code>OutputStream</code>. This behavior is different from this class and
- * <code>org.apache.commons.io.input.TeeInputStream</code>.
+ * {@code TeeInputStream} in Apache commons-io.
  * </p>
  * <p>
- * Bytes skipped are copied to the <code>OutputStream</code> while
- * <code>mark</code> and <code>reset</code> are not supported at the moment.
+ * Bytes skipped are copied to the <code>OutputStream</code>.
  * </p>
  * <p>
  * Sample usage:
@@ -65,6 +64,7 @@ import com.gc.iotools.stream.base.AbstractInputStreamWrapper;
  *   byte[] bytes=destination1.getBytes();
  * </pre>
  * 
+ * @see org.apache.commons.io.input.TeeInputStream
  * @author dvd.smnt
  * @since 1.0.6
  */
@@ -74,9 +74,13 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 */
 	private static final int BUF_SIZE = 8192;
 
-	protected final OutputStream destination;
+	private long markPosition = 0;
 
-	private long innerStreamPosition;
+	private long destinationPosition = 0;
+
+	private long sourcePosition = 0;
+
+	protected final OutputStream destination;
 	/**
 	 * If <code>true</code> <code>source</code> and <code>destination</code>
 	 * streams are closed when {@link #close()} is invoked.
@@ -141,30 +145,36 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	}
 
 	/**
-	 * This method copy all the data eventually remaining in the internal
-	 * <code>InputStream</code> to the <code>OutputStream</code>. The standard
-	 * behavior is to close closes the underlying <code>InputStream</code> and
-	 * <code>OutputStream</code>. When the class was constructed with the
-	 * parameter {@link TeeInputStreamOutputStream#closeStreams closeStreams}
-	 * set to false the underlying streams must be closed externally.
+	 * <p>
+	 * This method is called when the method {@link #close()} is invoked. It
+	 * copies all the data eventually remaining in the source
+	 * <code>InputStream</code> passed in the constructor to the destination
+	 * <code>OutputStream</code>.
+	 * </p>
+	 * <p>
+	 * The standard behavior is to close both the underlying
+	 * <code>InputStream</code> and <code>OutputStream</code>. When the class
+	 * was constructed with the parameter
+	 * {@link TeeInputStreamOutputStream#closeStreams closeStreams} set to false
+	 * the underlying streams must be closed externally.
 	 * 
 	 * @throws IOException
 	 *             thrown when a IO problem occurs in reading or writing the
 	 *             data.
+	 * @see #close()
 	 */
 	@Override
 	public void closeOnce() throws IOException {
 
 		IOException e1 = null;
 		try {
-			int n = 0;
 			final byte[] buffer = new byte[BUF_SIZE];
-			while ((n = this.source.read(buffer)) > 0) {
-				this.destination.write(buffer, 0, n);
+			while (innerRead(buffer, 0, BUF_SIZE) > 0) {
+				// empty block: just throw bytes away
 			}
 		} catch (final IOException e) {
 			e1 = new IOException(
-					"It's not possible to copy to the OutputStream");
+					"It's not possible to copy to the destination OutputStream.");
 			e1.initCause(e);
 		}
 		if (this.closeStreams) {
@@ -175,13 +185,43 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 			throw e1;
 		}
 	}
+
+	@Override
+	public int innerRead(final byte[] b, final int off, final int len)
+			throws IOException {
+		final int result = this.source.read(b, off, len);
+		if (result > 0) {
+			if (this.sourcePosition + result > this.destinationPosition) {
+				final int newLen = (int) (this.sourcePosition + result - this.destinationPosition);
+				final int newOff = off + (result - newLen);
+				this.destination.write(b, newOff, newLen);
+				this.destinationPosition += newLen;
+			}
+			this.sourcePosition += result;
+		}
+		return result;
+	}
+
 	/**
-	 * {@inheritDoc}
+	 * <p>
+	 * Marks the current position in this input stream. A subsequent call to the
+	 * <code>reset</code> method repositions this stream at the last marked
+	 * position so that subsequent reads re-read the same bytes.
+	 * </p>
+	 * 
+	 * @param readLimit
+	 *            the maximum limit of bytes that can be read before the mark
+	 *            position becomes invalid.
+	 * @see #reset()
+	 * @see java.io.InputStream#mark(int)
+	 * @since 1.2
 	 */
 	@Override
-	public void mark(final int readlimit) {
-		this.innerStreamPosition=position;
+	public void mark(final int readLimit) {
+		this.source.mark(readLimit);
+		this.markPosition = this.sourcePosition;
 	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -189,6 +229,7 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	public boolean markSupported() {
 		return this.source.markSupported();
 	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -196,37 +237,38 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	public int read() throws IOException {
 		final int result = this.source.read();
 		if (result >= 0) {
-			this.destination.write(result);
-		}
-		return result;
-	}
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int read(final byte[] b) throws IOException {
-		final int result = this.source.read(b);
-		if (result > 0) {
-			this.destination.write(b, 0, result);
+			this.sourcePosition++;
+			if (this.sourcePosition > this.destinationPosition) {
+				this.destination.write(result);
+				this.destinationPosition++;
+			}
 		}
 		return result;
 	}
 
-	@Override
-	public int innerRead(final byte[] b, final int off, final int len)
-			throws IOException {
-		final int result = this.source.read(b, off, len);
-		if (result > 0) {
-			this.destination.write(b, off, result);
-		}
-		return result;
-	}
 	/**
-	 * {@inheritDoc}
+	 * <p>
+	 * Repositions this stream to the position at the time the <code>mark</code>
+	 * method was last called on this input stream.
+	 * </p>
+	 * <p>
+	 * After <code>reset</code> method is called the data is not copied anymore
+	 * to the destination OutputStream until the position where
+	 * <code>reset</code> was issued is reached again. This ensures the data
+	 * copied to the destination OutputStream reflects the data contained in the
+	 * source InputStream (the one passed in the constructor).
+	 * </p>
+	 * 
+	 * @see #mark()
+	 * @see java.io.InputStream#reset()
+	 * @exception IOException
+	 *                If the source stream has an exception in calling reset().
+	 * @since 1.2
 	 */
 	@Override
-	public void reset() throws IOException {
-		throw new IOException("Reset not supported");
+	public synchronized void reset() throws IOException {
+		this.source.reset();
+		this.sourcePosition = this.markPosition;
 	}
 
 }

@@ -100,15 +100,15 @@ public final class StreamUtils {
 	 *         stream has been reached.
 	 * 
 	 * @throws IOException
-	 *                If the first byte cannot be read for any reason other than
-	 *                end of file, or if the input stream has been closed, or if
-	 *                some other I/O error occurs.
+	 *             If the first byte cannot be read for any reason other than
+	 *             end of file, or if the input stream has been closed, or if
+	 *             some other I/O error occurs.
 	 * @exception NullPointerException
-	 *             If <code>b</code> is <code>null</code>.
+	 *                If <code>b</code> is <code>null</code>.
 	 * @exception IndexOutOfBoundsException
-	 *             If <code>off</code> is negative, <code>len</code> is
-	 *             negative, or <code>len</code> is greater than
-	 *             <code>b.length - off</code>
+	 *                If <code>off</code> is negative, <code>len</code> is
+	 *                negative, or <code>len</code> is greater than
+	 *                <code>b.length - off</code>
 	 * 
 	 * @since 1.0.8
 	 */

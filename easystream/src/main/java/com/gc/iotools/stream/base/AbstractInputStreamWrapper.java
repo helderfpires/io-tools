@@ -3,7 +3,23 @@ package com.gc.iotools.stream.base;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * <p>
+ * Provides common functionality to the easystream library:
+ * <ul>
+ * <li>holds a source InputStream</li>
+ * <li>provide a {@linkplain #closeOnce()} method that's called exactly once.</li>
+ * <li>provide an implementation of {@linkplain #skip()} and
+ * {@linkplain #read()} methods.</li>
+ * <li>Keeps track of the position in the source stream over mark and reset.</li>
+ * </ul>
+ * </p>
+ * 
+ * @author dvd.smnt
+ * @since 1.2
+ */
 public abstract class AbstractInputStreamWrapper extends InputStream {
+
 	private static final int SKIP_SIZE = 8192;
 	protected final InputStream source;
 
@@ -25,6 +41,14 @@ public abstract class AbstractInputStreamWrapper extends InputStream {
 			throws IOException;
 
 	@Override
+	public int read() throws IOException {
+		final byte[] buf = new byte[1];
+		final int n = this.read(buf);
+		final int result = (n > 0 ? buf[0] : n);
+		return result;
+	}
+
+	@Override
 	public final int read(final byte[] b, final int off, final int len)
 			throws IOException {
 		checkReadArguments(b, off, len);
@@ -39,8 +63,8 @@ public abstract class AbstractInputStreamWrapper extends InputStream {
 	public long skip(final long n) throws IOException {
 		long curPos = 0;
 		int readLen = 0;
-		byte[] buf = new byte[SKIP_SIZE];
-		while (curPos < n && readLen >= 0) {
+		final byte[] buf = new byte[SKIP_SIZE];
+		while ((curPos < n) && (readLen >= 0)) {
 			readLen = this.read(buf, 0, (int) Math.min(buf.length, n));
 			if (readLen > 0) {
 				curPos += readLen;
@@ -54,20 +78,15 @@ public abstract class AbstractInputStreamWrapper extends InputStream {
 		if (b == null) {
 			throw new NullPointerException(
 					"Buffer for read(b,off,len) is null");
-		} else if ((off < 0) || (off > b.length) || (len < 0)
-				|| ((off + len) > b.length) || ((off + len) < 0)) {
+		} else if (off < 0) {
+			throw new IndexOutOfBoundsException(
+					"read(b,off,len) called with off < 0 ");
+		} else if ((off > b.length) || (len < 0) || ((off + len) > b.length)
+				|| ((off + len) < 0)) {
 			throw new IndexOutOfBoundsException();
 		} else if (this.closeCalled) {
 			throw new IllegalStateException("Stream already closed");
 		}
-	}
-
-	@Override
-	public int read() throws IOException {
-		final byte[] buf = new byte[1];
-		final int n = this.read(buf);
-		final int result = (n > 0 ? buf[0] : n);
-		return result;
 	}
 
 	protected abstract void closeOnce() throws IOException;

@@ -1,4 +1,5 @@
 package com.gc.iotools.stream.store;
+
 /*
  * Copyright (c) 2008, 2009 Davide Simonetti
  * All rights reserved.
@@ -40,18 +41,13 @@ import org.apache.commons.logging.LogFactory;
 public class ThresholdStore implements SeekableStore {
 	private static final Log LOG = LogFactory.getLog(ThresholdStore.class);
 
-	@Override
-	protected void finalize() throws Throwable {
-		cleanup();
-	}
-
 	private static final int BUF_SIZE = 8192;
+
 	private final int treshold;
 	private File fileStorage;
 	private RandomAccessFile fileAccess;
 	private long size = 0;
 	private long position = 0;
-
 	private final MemoryStore ms = new MemoryStore();
 
 	public ThresholdStore(final int treshold) {
@@ -65,7 +61,7 @@ public class ThresholdStore implements SeekableStore {
 		if (this.fileAccess != null) {
 			try {
 				this.fileAccess.close();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				LOG.warn("Exception in closing the temporary "
 						+ "stream associated to file ["
 						+ this.fileStorage.getName() + "] it "
@@ -75,7 +71,7 @@ public class ThresholdStore implements SeekableStore {
 			this.fileAccess = null;
 		}
 		if (this.fileStorage != null) {
-			boolean deleted = this.fileStorage.delete();
+			final boolean deleted = this.fileStorage.delete();
 			if (!deleted) {
 				this.fileStorage.deleteOnExit();
 				LOG.warn("Exception in deleting the temporary " + "file ["
@@ -94,7 +90,7 @@ public class ThresholdStore implements SeekableStore {
 			result = this.ms.get(bytes, offset, length);
 		} else {
 			if (this.position != this.fileAccess.getFilePointer()) {
-				this.fileAccess.seek(position);
+				this.fileAccess.seek(this.position);
 			}
 			result = this.fileAccess.read(bytes, offset, length);
 		}
@@ -113,8 +109,8 @@ public class ThresholdStore implements SeekableStore {
 						"tmp");
 				this.fileAccess = new RandomAccessFile(this.fileStorage, "rw");
 				int len;
-				byte[] buffer = new byte[BUF_SIZE];
-				while ((len = ms.get(buffer, 0, buffer.length)) > 0) {
+				final byte[] buffer = new byte[BUF_SIZE];
+				while ((len = this.ms.get(buffer, 0, buffer.length)) > 0) {
 					this.fileAccess.write(buffer, 0, len);
 				}
 				this.ms.cleanup();
@@ -145,6 +141,11 @@ public class ThresholdStore implements SeekableStore {
 			throw new IOException("Seek at posiotion [" + position
 					+ "]outside buffer size[" + this.size + "]");
 		}
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		cleanup();
 	}
 
 }

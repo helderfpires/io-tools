@@ -49,9 +49,9 @@ public final class ArrayTools {
 		if (src.length >= contained.length) {
 			boolean found = false;
 			int pos = 0;
-			for (; pos <= (src.length - contained.length) && !found; pos++) {
+			for (; (pos <= (src.length - contained.length)) && !found; pos++) {
 				boolean equals = true;
-				for (int j = 0; j < contained.length && equals; j++) {
+				for (int j = 0; (j < contained.length) && equals; j++) {
 					equals = (src[pos + j] == contained[j]);
 					found = (j == (contained.length - 1)) && equals;
 				}

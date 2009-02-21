@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.gc.iotools.stream.base.AbstractInputStreamWrapper;
-import com.gc.iotools.stream.store.MemoryStore;
 import com.gc.iotools.stream.store.SeekableStore;
 import com.gc.iotools.stream.store.Store;
 import com.gc.iotools.stream.store.ThresholdStore;
@@ -42,17 +41,22 @@ import com.gc.iotools.stream.store.ThresholdStore;
  * multiple times, and to support the <code>mark</code> and <code>reset</code>
  * methods.
  * </p>
+ * <p>
  * When the <code>RandomAccessInputStream</code> is created, an internal
  * {@linkplain Store} is created. As bytes from the stream are read or skipped,
- * the internal store is refilled as necessary from the source input stream. The
- * implementation can be changed to fit the application needs (cache on disk
- * rather than in memory). </p>
+ * the internal <code>store</code> is refilled as necessary from the source
+ * input stream. The implementation of <code>store</code> can be changed to fit
+ * the application needs (cache on disk rather than in memory).
+ * </p>
  * <p>
  * It also adds the functionality of marking an <code>InputStream</code> without
  * specifying a mark length, thus allowing a <code>reset</code> after an
- * indefinite length of bytes has been read. Check {@link #mark() } for details.
+ * indefinite length of bytes has been read. Check the {@link #mark()} javadoc
+ * for details.
  * </p>
  * 
+ * @author dvd.smnt
+ * @see com.gc.iotools.stream.store.Store
  * @since 1.2
  */
 public class RandomAccessInputStream extends AbstractInputStreamWrapper {
@@ -60,14 +64,14 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	/**
 	 * Position of reading in the source stream.
 	 */
-	private long sourcePosition = 0;
+	protected long sourcePosition = 0;
 	/**
 	 * Position of read cursor in the RandomAccessInputStream.
 	 */
-	private long randomAccessIsPosition = 0;
-	private long markPosition = 0;
-	private long markLimit = -1;
-	private final SeekableStore store;
+	protected long randomAccessIsPosition = 0;
+	protected long markPosition = 0;
+	protected long markLimit = 0;
+	protected final SeekableStore store;
 
 	public RandomAccessInputStream(final InputStream source) {
 		this(source, DEFAULT_TRHESHOLD);
@@ -87,15 +91,9 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 
 	@Override
 	public int available() throws IOException {
-		return (int)Math.min(sourcePosition
-				- randomAccessIsPosition
-				+ this.source.available(), Integer.MAX_VALUE);
-	}
-
-	@Override
-	protected void closeOnce() throws IOException {
-		this.store.cleanup();
-		this.source.close();
+		return (int) Math.min(this.sourcePosition
+				- this.randomAccessIsPosition + this.source.available(),
+				Integer.MAX_VALUE);
 	}
 
 	@Override
@@ -123,6 +121,7 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 			this.randomAccessIsPosition += n;
 		} else {
 			/*
+			 * shouldn't be here. refactor throw exception
 			 * randomAccessIsPosition > sourcePosition. A reset() was called on
 			 * the StorageBufInputStream. just read from source don't buffer.
 			 */
@@ -134,9 +133,37 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 		return n;
 	}
 
+	/**
+	 * <p>
+	 * Marks the current position in this input stream. A subsequent call to the
+	 * {@linkplain #reset()} method repositions this stream at the last marked
+	 * position so that subsequent reads re-read the same bytes.
+	 *</p>
+	 * <p>
+	 * This method extends the original behavior of the class
+	 * <code>InputStream</code> allowing to use <i>indefinite</i> marking.
+	 * <ul>
+	 * <li><code>readLimit&gt; 0</code> The <code>readLimit</code> arguments
+	 * tells this input stream to allow that many bytes to be read before the
+	 * mark position gets invalidated.</li>
+	 * <li><code>readLimit == 0</code> Invalidate the all the current marks and
+	 * clean up the temporary files.</li>
+	 * <li><code>readLimit &lt; 0 </code> Set up an indefinite mark: reset can
+	 * be invoked regardless on how many bytes have been read.</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param readLimit
+	 *            the maximum limit of bytes that can be read before the mark
+	 *            position becomes invalid. If negative allows <i>indefinite</i>
+	 *            marking (the mark never becomes invalid).
+	 * 
+	 * @see RandomAccessInputStream#reset()
+	 * @see java.io.InputStream#reset()
+	 */
 	@Override
-	public synchronized void mark(final int readlimit) {
-		this.markLimit = readlimit;
+	public synchronized void mark(final int readLimit) {
+		this.markLimit = readLimit;
 		this.markPosition = this.randomAccessIsPosition;
 	}
 
@@ -145,24 +172,55 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 		return true;
 	}
 
+	/**
+	 * <p>
+	 * Repositions this stream to the position at the time the <code>mark</code>
+	 * method was last called on this input stream.
+	 * </p>
+	 * <p>
+	 * After invoking <code>mark</code> it can be invoked multiple times and it
+	 * always reset the stream at the previously marked position.
+	 * </p>
+	 * 
+	 * @exception IOException
+	 *                if this stream has not been marked or if the mark has been
+	 *                invalidated.
+	 * @see RandomAccessInputStream#mark(int)
+	 * @see java.io.InputStream#reset()
+	 */
 	@Override
 	public synchronized void reset() throws IOException {
-		this.randomAccessIsPosition = this.markPosition;
-		store.seek(markPosition);
+		if ((this.markLimit < 0)
+				|| (this.randomAccessIsPosition - this.markPosition <= this.markLimit)) {
+			this.randomAccessIsPosition = this.markPosition;
+			this.store.seek(this.markPosition);
+		} else {
+			throw new IOException("Reset to an invalid mark.");
+		}
+
 	}
 
-	public void seek(long position) throws IOException {
-		final long len = position - randomAccessIsPosition;
+	/**
+	 * {@inheritDoc}.
+	 */
+	public void seek(final long position) throws IOException {
+		final long len = position - this.randomAccessIsPosition;
 		if (len > 0) {
-			long n = skip(len);
+			final long n = skip(len);
 			if (n < len) {
 				throw new IOException("Requested seek to [" + position
 						+ "] but the stream is only ["
-						+ (n + randomAccessIsPosition) + "] bytes long.");
+						+ (n + this.randomAccessIsPosition) + "] bytes long.");
 			}
 		} else {
 			this.randomAccessIsPosition = position;
 			this.store.seek(position);
 		}
+	}
+
+	@Override
+	protected void closeOnce() throws IOException {
+		this.store.cleanup();
+		this.source.close();
 	}
 }

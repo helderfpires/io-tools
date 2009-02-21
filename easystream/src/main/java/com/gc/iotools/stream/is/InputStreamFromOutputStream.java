@@ -34,7 +34,10 @@ import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Executor;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -73,49 +76,45 @@ import com.gc.iotools.stream.base.ExecutorServiceFactory;
  * complexity of using them.
  * </p>
  * 
+ * @param <T>
+ * 
  * @author dvd.smnt
  * @since 1.0
  */
-public abstract class InputStreamFromOutputStream extends InputStream {
+public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	/**
 	 * This inner class run in another thread and calls the
 	 * {@link #produce(OutputStream)} method.
 	 * 
 	 * @author dvd.smnt
 	 */
-	private final class DataProducerRunnable implements Runnable {
+	private final class DataProducer implements Callable<T> {
 
-		private IOException exception = null;
+		private final String name;
 
-		private String name = null;
+		private final OutputStream outputStream;
 
-		private OutputStream outputStream = null;
-
-		DataProducerRunnable(final String threadName,
-				final OutputStream ostream) {
+		DataProducer(final String threadName, final OutputStream ostream) {
 			this.outputStream = ostream;
 			this.name = threadName;
 		}
 
-		public void run() {
+		public T call() throws Exception {
 			final String threadName = getName();
+			T result;
 			InputStreamFromOutputStream.ACTIVE_THREAD_NAMES.add(threadName);
+			InputStreamFromOutputStream.LOG.debug("thread [" + threadName
+					+ "] started.");
 			try {
-				produce(this.outputStream);
-			} catch (final Throwable e) {
-				InputStreamFromOutputStream.LOG.error(
-						"Error during data production.", e);
-				this.exception = new IOException(
-						"Error producing data for class ["
-								+ getClass().getName() + "]");
-				this.exception.initCause(e);
+				result = produce(this.outputStream);
 			} finally {
 				closeStream();
 				InputStreamFromOutputStream.ACTIVE_THREAD_NAMES
 						.remove(threadName);
-				InputStreamFromOutputStream.LOG.debug("thread [" + getName()
-						+ "] closed");
+				InputStreamFromOutputStream.LOG.debug("thread [" + threadName
+						+ "] closed.");
 			}
+			return result;
 		}
 
 		private void closeStream() {
@@ -141,13 +140,14 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 		String getName() {
 			return this.name;
 		}
+
 	}
 
 	private static final List<String> ACTIVE_THREAD_NAMES = Collections
 			.synchronizedList(new ArrayList<String>());
 
 	private static final Log LOG = LogFactory
-			.getLog(InputStreamFromOutputStream.DataProducerRunnable.class);
+			.getLog(InputStreamFromOutputStream.DataProducer.class);
 
 	public static final String[] getActiveThreadNames() {
 		final String[] result;
@@ -160,7 +160,7 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 
 	private boolean closeCalled = false;
 
-	private final DataProducerRunnable executingRunnable;
+	private final Future<T> futureResult;
 
 	private final PipedInputStream pipedIS;
 
@@ -180,7 +180,7 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 		this(ExecutorServiceFactory.getExecutor(tmodel));
 	}
 
-	public InputStreamFromOutputStream(final Executor executor) {
+	public InputStreamFromOutputStream(final ExecutorService executor) {
 		final String callerId = getCaller();
 		PipedOutputStream pipedOS = null;
 		try {
@@ -189,10 +189,10 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 		} catch (final IOException e) {
 			throw new RuntimeException("Error during pipe creaton", e);
 		}
-		this.executingRunnable = new DataProducerRunnable(callerId, pipedOS);
-		final String tName = this.executingRunnable.getName();
-		executor.execute(this.executingRunnable);
-		InputStreamFromOutputStream.LOG.debug("thread invoked by[" + tName
+		final Callable<T> executingCallable = new DataProducer(callerId,
+				pipedOS);
+		this.futureResult = executor.submit(executingCallable);
+		InputStreamFromOutputStream.LOG.debug("thread invoked by[" + callerId
 				+ "] queued for start.");
 	}
 
@@ -204,20 +204,37 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 		}
 	}
 
-	@Override
-	public final int read() throws IOException {
-		final int result = this.pipedIS.read();
-		if ((result < 0) && (this.executingRunnable.exception != null)) {
-			throw this.executingRunnable.exception;
+	/**
+	 * @since 1.2
+	 * @return
+	 * @throws Exception
+	 */
+	public T getResult() throws Exception {
+		if (!this.closeCalled) {
+			throw new IllegalStateException(
+					"getResult() called before close()."
+							+ "This method can be called only "
+							+ "after the stream has been closed.");
+		}
+		T result;
+		try {
+			result = this.futureResult.get();
+		} catch (final ExecutionException e) {
+			final Throwable cause = e.getCause();
+			if (cause instanceof Exception) {
+				throw (Exception) cause;
+			} else {
+				throw e;
+			}
 		}
 		return result;
 	}
 
 	@Override
-	public final int read(final byte[] b) throws IOException {
-		final int result = this.pipedIS.read(b);
-		if ((result < 0) && (this.executingRunnable.exception != null)) {
-			throw this.executingRunnable.exception;
+	public final int read() throws IOException {
+		final int result = this.pipedIS.read();
+		if (result < 0) {
+			checkException();
 		}
 		return result;
 	}
@@ -226,11 +243,26 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 	public final int read(final byte[] b, final int off, final int len)
 			throws IOException {
 		final int result = this.pipedIS.read(b, off, len);
-		if ((result < 0) && (this.executingRunnable.exception != null)) {
-			throw this.executingRunnable.exception;
+		if (result < 0) {
+			checkException();
 		}
 		return result;
+	}
 
+	private void checkException() throws IOException {
+		try {
+			this.futureResult.get();
+		} catch (final ExecutionException e) {
+			final Throwable t = e.getCause();
+			IOException e1 = new IOException("Exception producing data");
+			e1.initCause(t);
+			throw e1;
+		} catch (final InterruptedException e) {
+			IOException e1 = new IOException("Thread interrupted");
+			e1.initCause(e);
+			throw e1;
+
+		}
 	}
 
 	private String getCaller() {
@@ -260,10 +292,17 @@ public abstract class InputStreamFromOutputStream extends InputStream {
 	 * executes in another thread.
 	 * </p>
 	 * 
+	 * @return The implementing class can use this to return a result of data
+	 *         production. The result will be available through the method
+	 *         <code>getResult</code>
 	 * @param dataSink
+	 *            the implementing class should write data to this stream.
 	 * @throws Exception
+	 *             the exception eventually thrown by the implementing class is
+	 *             returned by the {@linkplain #read()} methods.
+	 * @see #getResult()
 	 */
-	protected abstract void produce(final OutputStream dataSink)
+	protected abstract T produce(final OutputStream dataSink)
 			throws Exception;
 
 }
