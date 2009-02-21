@@ -107,11 +107,11 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * @author dvd.smnt
 	 * 
 	 */
-	private final class DataConsumerRunnable implements Callable<T> {
+	private final class DataConsumer implements Callable<T> {
 
 		private final InputStream inputstream;
 
-		DataConsumerRunnable(final String callerId, final InputStream istream) {
+		DataConsumer(final String callerId, final InputStream istream) {
 			this.inputstream = istream;
 		}
 
@@ -201,8 +201,8 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 		final PipedInputStream pipedIS = new PipedInputStream(
 				this.wrappedPipedOS);
 
-		final DataConsumerRunnable executingProcess = new DataConsumerRunnable(
-				callerId, pipedIS);
+		final DataConsumer executingProcess = new DataConsumer(callerId,
+				pipedIS);
 		this.joinOnClose = joinOnClose;
 		this.writingResult = executor.submit(executingProcess);
 	}

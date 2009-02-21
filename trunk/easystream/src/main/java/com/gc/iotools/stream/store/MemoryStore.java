@@ -1,4 +1,5 @@
 package com.gc.iotools.stream.store;
+
 /*
  * Copyright (c) 2008, 2009 Davide Simonetti
  * All rights reserved.
@@ -36,8 +37,8 @@ public class MemoryStore implements SeekableStore {
 	private byte[] buffer = new byte[0];
 
 	public void cleanup() {
-		buffer = new byte[0];
-		position = 0;
+		this.buffer = new byte[0];
+		this.position = 0;
 	}
 
 	public int get(final byte[] bytes, final int offset, final int length) {
@@ -48,7 +49,7 @@ public class MemoryStore implements SeekableStore {
 			System.arraycopy(this.buffer, (int) this.position, bytes, offset,
 					effectiveLength);
 			result = effectiveLength;
-			position += effectiveLength;
+			this.position += effectiveLength;
 		} else {
 			result = -1;
 		}

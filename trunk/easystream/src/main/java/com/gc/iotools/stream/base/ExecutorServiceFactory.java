@@ -1,7 +1,7 @@
 package com.gc.iotools.stream.base;
 
 /*
- * Copyright (c) 2008, Davide Simonetti
+ * Copyright (c) 2008,2009 Davide Simonetti
  * All rights reserved.
  * Redistribution and use in source and binary forms, 
  * with or without modification, are permitted provided that the following 
@@ -48,12 +48,9 @@ import java.util.concurrent.TimeUnit;
 public final class ExecutorServiceFactory {
 
 	/**
-	 * Users should not instantiate this class directly.
+	 * Executor that stops after a single execution.
+	 * 
 	 */
-	private ExecutorServiceFactory() {
-
-	}
-
 	private static class OneShotThreadExecutor extends
 			AbstractExecutorService {
 		private final ExecutorService exec = Executors
@@ -122,5 +119,12 @@ public final class ExecutorServiceFactory {
 
 	public static void setDefaultExecutor(final ExecutorService executor) {
 		ExecutorServiceFactory.executor = executor;
+	}
+
+	/**
+	 * Users should not instantiate this class directly.
+	 */
+	private ExecutorServiceFactory() {
+
 	}
 }

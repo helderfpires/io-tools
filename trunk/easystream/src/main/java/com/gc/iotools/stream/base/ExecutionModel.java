@@ -1,7 +1,7 @@
 package com.gc.iotools.stream.base;
 
 /*
- * Copyright (c) 2008, Davide Simonetti
+ * Copyright (c) 2008,2009 Davide Simonetti
  * All rights reserved.
  * Redistribution and use in source and binary forms, 
  * with or without modification, are permitted provided that the following 
@@ -26,11 +26,17 @@ package com.gc.iotools.stream.base;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 /**
- * This class describes how Threads are used.
+ * <p>
+ * This class enumerates the policies for instantiating <code>Threads</code> in
+ * classes of EasyStream library that needs of them.
+ * </p>
  * 
  * @author dvd.smnt
  * @since 1.0
+ * @see #com.gc.iotools.stream.is.InputStreamFromOutputStream(ExecutionModel em)
+ * @see #com.gc.iotools.stream.os.OutputStreamToInputStream(ExecutionModel em)
  */
 
 public enum ExecutionModel {
@@ -38,8 +44,12 @@ public enum ExecutionModel {
 	 * <p>
 	 * Threads are taken from a static pool.
 	 * </p>
+	 * <p>
 	 * Some slow thread might lock up the pool and other processes might be
-	 * slowed down
+	 * slowed down.
+	 * </p>
+	 * 
+	 * @see java.util.concurrent.ThreadPoolExecutor
 	 */
 
 	STATIC_THREAD_POOL,
@@ -53,7 +63,7 @@ public enum ExecutionModel {
 	THREAD_PER_INSTANCE,
 	/**
 	 * <p>
-	 * Only one thread is shared by all instances.
+	 * Only one thread is shared by all instances (slow).
 	 * </p>
 	 */
 	SINGLE_THREAD
