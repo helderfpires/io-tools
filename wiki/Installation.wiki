@@ -4,18 +4,7 @@
 =Installation=
 
 ==Maven 2==
-
-The artifacts are deployed on `dev.java.net` repository. You have to add the following lines to enable it.
-{{{
-<repository>
-  <id>maven2-repository.dev.java.net</id>
-  <name>Java.net Repository for Maven</name>
-  <url>http://download.java.net/maven/2/</url>
-  <layout>default</layout>
-</repository>
-}}}
-
-If you want to use the stream utilities add the following dependency to your pom.xml:
+io-tools artifacts are deployed on Maven central repository. So if you want to use the stream utilities you just have to add the following dependency to your pom.xml:
 
 {{{
 <dependency>
@@ -35,6 +24,39 @@ While if you're interested in the format detection library you have to add:
 	<version>[1.1.5,)</version>
 	<type>jar</type>
 </dependency>
+}}}
+
+=== Logging configuration ===
+You further have to configure the logging use your favourite logging engine. This library uses slf4j engine, so if you already use it in your application no configuration is needed.
+
+If you want to redirect the logs on the jdk logging you must add the following dependency to your pom.xml:
+{{{
+  <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jdk14</artifactId>
+      <version>1.5.6</version>
+  </dependency>
+}}} 
+
+While to use commons logging you must add the following dependency to your pom.xml:
+{{{
+  <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jcl</artifactId>
+      <version>1.5.6</version>
+  </dependency>
+}}} 
+
+=== Release Candidates===
+Release candidates are deployed on `dev.java.net` repository. You have to add the following lines to your pom.xml to download them:
+
+{{{
+<repository>
+  <id>maven2-repository.dev.java.net</id>
+  <name>Java.net Repository for Maven</name>
+  <url>http://download.java.net/maven/2/</url>
+  <layout>default</layout>
+</repository>
 }}}
 
 ==Other==
