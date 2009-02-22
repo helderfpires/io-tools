@@ -18,10 +18,10 @@ public class TestInputStreamFromOutputStream {
 		final ThreadPoolExecutor es = (ThreadPoolExecutor) Executors
 				.newFixedThreadPool(1);
 
-		final InputStreamFromOutputStream isos = new InputStreamFromOutputStream(
+		final InputStreamFromOutputStream<Void> isos = new InputStreamFromOutputStream<Void>(
 				es) {
 			@Override
-			public void produce(final OutputStream ostream) throws Exception {
+			public Void produce(final OutputStream ostream) throws Exception {
 				ostream.write("test".getBytes());
 				throw new Exception("Test Exception");
 			}
@@ -41,15 +41,16 @@ public class TestInputStreamFromOutputStream {
 		final ThreadPoolExecutor es = (ThreadPoolExecutor) Executors
 				.newFixedThreadPool(1);
 
-		final InputStreamFromOutputStream isos = new InputStreamFromOutputStream(
+		final InputStreamFromOutputStream<Void> isos = new InputStreamFromOutputStream<Void>(
 				es) {
 			@Override
-			public void produce(final OutputStream ostream) throws Exception {
+			public Void produce(final OutputStream ostream) throws Exception {
 				final byte[] buffer = new byte[65536];
 				for (int i = 0; i < 255; i++) {
 					Arrays.fill(buffer, (byte) i);
 					ostream.write(buffer);
 				}
+				return null;
 			}
 		};
 
@@ -69,9 +70,10 @@ public class TestInputStreamFromOutputStream {
 		final ThreadPoolExecutor es = (ThreadPoolExecutor) Executors
 				.newFixedThreadPool(1);
 
-		InputStreamFromOutputStream isos = new InputStreamFromOutputStream(es) {
+		InputStreamFromOutputStream<Void> isos = new InputStreamFromOutputStream<Void>(
+				es) {
 			@Override
-			public void produce(final OutputStream ostream) throws Exception {
+			public Void produce(final OutputStream ostream) throws Exception {
 				while (true) {
 					ostream.write("test".getBytes());
 				}
@@ -92,18 +94,21 @@ public class TestInputStreamFromOutputStream {
 		final ThreadPoolExecutor es = (ThreadPoolExecutor) Executors
 				.newFixedThreadPool(1);
 
-		final InputStreamFromOutputStream isos = new InputStreamFromOutputStream(
+		final InputStreamFromOutputStream<String> isos = new InputStreamFromOutputStream<String>(
 				es) {
 			@Override
-			protected void produce(final OutputStream ostream) throws Exception {
+			protected String produce(final OutputStream ostream)
+					throws Exception {
 				ostream.write("test".getBytes());
+				return "return";
 			}
 		};
 		final byte[] b = new byte[255];
 		final int n = isos.read(b);
 		assertEquals("byte letti", 4, n);
-		assertEquals("stringa letta", "test", new String(b).substring(0, n));
+		assertEquals("string read", "test", new String(b).substring(0, n));
 		isos.close();
+		assertEquals("Return value", "return", isos.getResult());
 		assertEquals("Active threads ", 0, es.getActiveCount());
 	}
 
@@ -112,16 +117,17 @@ public class TestInputStreamFromOutputStream {
 		final ThreadPoolExecutor es = (ThreadPoolExecutor) Executors
 				.newFixedThreadPool(1);
 
-		final InputStreamFromOutputStream isos = new InputStreamFromOutputStream(
+		final InputStreamFromOutputStream<Void> isos = new InputStreamFromOutputStream<Void>(
 				es) {
 			@Override
-			public void produce(final OutputStream ostream) throws Exception {
+			public Void produce(final OutputStream ostream) throws Exception {
 				final byte[] buffer = new byte[256];
 				for (int i = 0; i < 10; i++) {
 					Arrays.fill(buffer, (byte) i);
 					Thread.sleep(100);
 					ostream.write(buffer);
 				}
+				return null;
 			}
 		};
 

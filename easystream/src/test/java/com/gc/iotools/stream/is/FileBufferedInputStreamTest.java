@@ -160,8 +160,8 @@ public class FileBufferedInputStreamTest {
 		final BigDocumentIstream bis = new BigDocumentIstream(32768);
 		final byte[] reference = IOUtils.toByteArray(bis);
 		bis.resetToBeginning();
-		final byte[] test = IOUtils
-				.toByteArray(new FileBufferedInputStream(bis));
+		final byte[] test = IOUtils.toByteArray(new FileBufferedInputStream(
+				bis));
 		assertArrayEquals("simple read", reference, test);
 	}
 
@@ -180,8 +180,8 @@ public class FileBufferedInputStreamTest {
 		testStream.reset();
 		testStream.skip(5);
 		final byte[] readAfterReset = StreamUtils.read(testStream, 10);
-		assertArrayEquals("read after reset", ArrayUtils.subarray(reference, 5,
-				15), readAfterReset);
+		assertArrayEquals("read after reset", ArrayUtils.subarray(reference,
+				5, 15), readAfterReset);
 		testStream.mark(20);
 		testStream.skip(5);
 		byte[] read = StreamUtils.read(testStream, 15);

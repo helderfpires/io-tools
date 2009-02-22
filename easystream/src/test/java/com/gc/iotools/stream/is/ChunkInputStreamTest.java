@@ -1,8 +1,6 @@
 package com.gc.iotools.stream.is;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,8 +14,8 @@ import org.junit.Test;
 public class ChunkInputStreamTest {
 	@Test
 	public void testBufferNotModified() throws IOException {
-		final ChunkInputStream chis = getStream("0123456789", "0", "2", false,
-				true);
+		final ChunkInputStream chis = getStream("0123456789", "0", "2",
+				false, true);
 		final byte[] bytes = new byte[5];
 		Arrays.fill(bytes, (byte) 1);
 		chis.read(bytes, 1, bytes.length - 1);
@@ -90,8 +88,8 @@ public class ChunkInputStreamTest {
 
 	@Test
 	public void testNoZeroLenghtRead() throws IOException {
-		final ChunkInputStream chis = getStream("0123456789", "7", "8", false,
-				true);
+		final ChunkInputStream chis = getStream("0123456789", "7", "8",
+				false, true);
 		final byte[] bytes = new byte[5];
 		int ret = chis.read(bytes);
 		assertEquals("No zero lenght read", -1, ret);
@@ -110,8 +108,8 @@ public class ChunkInputStreamTest {
 	public void testStandard() throws IOException {
 		final ChunkInputStream chunkIs = new ChunkInputStream(
 				ChunkInputStreamTest.class.getResourceAsStream("test.xml"),
-				"<simpledocument>".getBytes(), "</simpledocument>".getBytes(),
-				false, true);
+				"<simpledocument>".getBytes(),
+				"</simpledocument>".getBytes(), false, true);
 		final String decoded = IOUtils.toString(chunkIs).trim();
 		assertTrue("doc [" + decoded + "] starts with <document>", decoded
 				.startsWith("<document>"));
@@ -155,7 +153,8 @@ public class ChunkInputStreamTest {
 		return chIs;
 	}
 
-	private byte[] readWithSingleByte(final InputStream is) throws IOException {
+	private byte[] readWithSingleByte(final InputStream is)
+			throws IOException {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		int n = 0;
 		while ((n = is.read()) >= 0) {

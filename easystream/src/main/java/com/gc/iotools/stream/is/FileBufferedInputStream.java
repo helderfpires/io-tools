@@ -35,8 +35,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -72,8 +72,8 @@ import org.apache.commons.logging.LogFactory;
 @Deprecated
 public class FileBufferedInputStream extends InputStream {
 	private static final int BUFFER_SIZE = 8192;
-	private static final Log LOG = LogFactory
-			.getLog(FileBufferedInputStream.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(FileBufferedInputStream.class);
 	/**
 	 * Position of cursor into the marked stream if 0 the cursor is at the
 	 * beginning.

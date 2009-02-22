@@ -38,8 +38,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.gc.iotools.stream.base.ExecutionModel;
 import com.gc.iotools.stream.base.ExecutorServiceFactory;
@@ -165,8 +165,8 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 		}
 	}
 
-	private static final Log LOG = LogFactory
-			.getLog(OutputStreamToInputStream.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(OutputStreamToInputStream.class);
 
 	private boolean closeCalled = false;
 	private final boolean joinOnClose;

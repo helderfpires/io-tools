@@ -64,13 +64,29 @@ public class RandomAccessInputStreamTest {
 		assertArrayEquals("correct position after mark", ArrayUtils.subarray(
 				reference, 5, 105), b);
 		ris.reset();
-		byte[] bytes = StreamUtils.read(ris, 200);
+		final byte[] bytes = StreamUtils.read(ris, 200);
 		assertArrayEquals("correct position after reset", ArrayUtils
 				.subarray(reference, 5, 205), bytes);
 		ris.seek(0);
 		final byte[] test2 = IOUtils.toByteArray(ris);
 		assertArrayEquals("full read after resetToBeginning", reference,
 				test2);
+	}
+
+	@Test
+	public void testSeek() throws IOException {
+		final BigDocumentIstream bis = new BigDocumentIstream(131072);
+		final byte[] reference = IOUtils.toByteArray(bis);
+		bis.resetToBeginning();
+		final RandomAccessInputStream ris = new RandomAccessInputStream(bis);
+		ris.seek(50);
+		final byte[] b = new byte[5];
+		ris.read(b);
+		assertArrayEquals("read correct position", ArrayUtils.subarray(
+				reference, 50, 55), b);
+		ris.seek(0);
+		final byte[] test2 = IOUtils.toByteArray(ris);
+		assertArrayEquals("skip and reset read", reference, test2);
 	}
 
 	@Test
@@ -85,22 +101,6 @@ public class RandomAccessInputStreamTest {
 		ris.read(b);
 		assertArrayEquals("read correct position", ArrayUtils.subarray(
 				reference, 32768 + 5, 32768 + 10), b);
-		ris.seek(0);
-		final byte[] test2 = IOUtils.toByteArray(ris);
-		assertArrayEquals("skip and reset read", reference, test2);
-	}
-
-	@Test
-	public void testSeek() throws IOException {
-		final BigDocumentIstream bis = new BigDocumentIstream(131072);
-		final byte[] reference = IOUtils.toByteArray(bis);
-		bis.resetToBeginning();
-		final RandomAccessInputStream ris = new RandomAccessInputStream(bis);
-		ris.seek(50);
-		final byte[] b = new byte[5];
-		ris.read(b);
-		assertArrayEquals("read correct position", ArrayUtils.subarray(
-				reference, 50, 55), b);
 		ris.seek(0);
 		final byte[] test2 = IOUtils.toByteArray(ris);
 		assertArrayEquals("skip and reset read", reference, test2);
