@@ -18,6 +18,11 @@ class BigDocumentIstream extends InputStream {
 	}
 
 	@Override
+	public synchronized void mark(final int threshold) {
+		this.markPos = this.postion;
+	}
+
+	@Override
 	public int read() {
 		if (this.postion >= this.lenght) {
 			return -1;
@@ -27,18 +32,12 @@ class BigDocumentIstream extends InputStream {
 		return result;
 	}
 
+	@Override
+	public synchronized void reset() {
+		this.postion = this.markPos;
+	}
 
 	public synchronized void resetToBeginning() {
 		this.postion = 0;
-	}
-
-	@Override
-	public synchronized void mark(final int threshold) {
-		this.markPos = this.postion;
-	}
-
-	 @Override
-	public synchronized void reset() {
-		this.postion = this.markPos;
 	}
 }

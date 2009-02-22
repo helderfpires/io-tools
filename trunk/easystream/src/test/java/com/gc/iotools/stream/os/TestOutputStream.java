@@ -1,8 +1,6 @@
 package com.gc.iotools.stream.os;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +22,8 @@ public class TestOutputStream {
 		final OutputStreamToInputStream<String> osisA = new OutputStreamToInputStream<String>(
 				true, es) {
 			@Override
-			protected String doRead(final InputStream istream) throws Exception {
+			protected String doRead(final InputStream istream)
+					throws Exception {
 				Thread.sleep(1000);
 				final String result = IOUtils.toString(istream);
 				return result;
@@ -50,7 +49,8 @@ public class TestOutputStream {
 		final OutputStreamToInputStream<Object> osisA = new OutputStreamToInputStream<Object>(
 				true, es) {
 			@Override
-			protected Object doRead(final InputStream istream) throws Exception {
+			protected Object doRead(final InputStream istream)
+					throws Exception {
 				throw new IllegalStateException("testException");
 			}
 		};
@@ -71,7 +71,8 @@ public class TestOutputStream {
 		final OutputStreamToInputStream<String> oStream2IStream = new OutputStreamToInputStream<String>(
 				true, ExecutionModel.SINGLE_THREAD) {
 			@Override
-			protected String doRead(final InputStream istream) throws Exception {
+			protected String doRead(final InputStream istream)
+					throws Exception {
 				// read from InputStream into a string
 				final String result = IOUtils.toString(istream);
 				return result + " was processed.";

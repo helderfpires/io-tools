@@ -11,8 +11,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.gc.iotools.stream.store.ThresholdStore;
-
 public class ThresholdStorageTest {
 
 	static int getTmpFileNum() {

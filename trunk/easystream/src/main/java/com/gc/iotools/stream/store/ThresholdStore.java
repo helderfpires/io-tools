@@ -31,15 +31,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author dvd.smnt
  * @since 1.2
  */
 public class ThresholdStore implements SeekableStore {
-	private static final Log LOG = LogFactory.getLog(ThresholdStore.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ThresholdStore.class);
 
 	private static final int BUF_SIZE = 8192;
 

@@ -39,8 +39,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.gc.iotools.stream.base.ExecutionModel;
 import com.gc.iotools.stream.base.ExecutorServiceFactory;
@@ -146,8 +146,8 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	private static final List<String> ACTIVE_THREAD_NAMES = Collections
 			.synchronizedList(new ArrayList<String>());
 
-	private static final Log LOG = LogFactory
-			.getLog(InputStreamFromOutputStream.DataProducer.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(InputStreamFromOutputStream.DataProducer.class);
 
 	public static final String[] getActiveThreadNames() {
 		final String[] result;
