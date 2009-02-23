@@ -3,14 +3,16 @@
 = IO-Tools release plan =
 
 Release schedule for IO-Tools.
+== Version 1.2 ==
+_ (WIP Scheduled for mid march 2009) _
+ * Format identification using droid (70 formats identified).
+ * `RandomAccessInputStream` to read content of an `InputStream` multiple times.
+ * Improved javadocs.
 
 == Version 1.1 ==
-_ (WIP Scheduled for jan 2009) _
+_ (Released on Dec 28, 2008) _
 
  * Publish release on repo1. [http://code.google.com/p/io-tools/issues/detail?id=6 Issue#6]
- * Add other formats (!OpenOffice, Word) [http://code.google.com/p/io-tools/issues/detail?id=3 Issue#3]
- * `BufferedOutputStream` to write to a slow `OutputStream`
- * `ReadAheadInputStream` to read from a slow `InputStream`
 
 == Version 1.0.7 ==
 _ (Released on Nov 24, 2008) _
