@@ -7,6 +7,7 @@ Release schedule for IO-Tools.
 _ (WIP Scheduled for mid march 2009) _
  * Format identification using droid (70 formats identified).
  * `RandomAccessInputStream` to read content of an `InputStream` multiple times.
+ * `InputStreamFromOutputStream` can now return a result other than the written stream.
  * Improved javadocs.
 
 == Version 1.1 ==
