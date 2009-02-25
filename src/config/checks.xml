@@ -35,7 +35,9 @@
         <module name="RedundantImport"/>
         <module name="UnusedImports"/>
         <module name="FileLength"/>
-        <module name="LineLength"/>
+        <module name="LineLength">
+            <property name="severity" value="ignore"/>
+        </module>
         <module name="MethodLength"/>
         <module name="ParameterNumber"/>
         <module name="EmptyForIteratorPad"/>
@@ -65,7 +67,9 @@
             <property name="severity" value="ignore"/>
         </module>
         <module name="DoubleCheckedLocking"/>
-        <module name="EmptyStatement"/>
+        <module name="EmptyStatement">
+            <property name="severity" value="ignore"/>
+        </module>
         <module name="EqualsHashCode"/>
         <module name="HiddenField">
             <property name="severity" value="ignore"/>
@@ -98,6 +102,12 @@
             <property name="severity" value="ignore"/>
         </module>
         <module name="UpperEll"/>
+        <module name="DeclarationOrder">
+            <property name="severity" value="ignore"/>
+        </module>
+        <module name="ModifiedControlVariable"/>
+        <module name="ClassFanOutComplexity"/>
+        <module name="NPathComplexity"/>
     </module>
     <module name="PackageHtml"/>
     <module name="NewlineAtEndOfFile"/>

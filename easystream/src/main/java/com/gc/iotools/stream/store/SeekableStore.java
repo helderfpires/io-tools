@@ -33,6 +33,12 @@ package com.gc.iotools.stream.store;
  */
 import java.io.IOException;
 
+/**
+ * Store that can be seeked.
+ * 
+ * @author dvd.smnt
+ * @since 1.2
+ */
 public interface SeekableStore extends Store {
 	void seek(long position) throws IOException;
 }

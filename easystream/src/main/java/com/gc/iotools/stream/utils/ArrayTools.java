@@ -38,8 +38,10 @@ public final class ArrayTools {
 	 * Find the index of the contained array in the src array.
 	 * 
 	 * @param src
+	 *            Source array
 	 * @param contained
-	 * @return
+	 *            Array to search for
+	 * @return index at which contained array is found or -1 if not found.
 	 */
 	public static int indexOf(final byte[] src, final byte[] contained) {
 		if (src == null) {
