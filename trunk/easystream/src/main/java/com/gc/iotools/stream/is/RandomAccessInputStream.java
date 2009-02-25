@@ -46,7 +46,9 @@ import com.gc.iotools.stream.store.ThresholdStore;
  * {@linkplain Store} is created. As bytes from the stream are read or skipped,
  * the internal <code>store</code> is refilled as necessary from the source
  * input stream. The implementation of <code>store</code> can be changed to fit
- * the application needs (cache on disk rather than in memory).
+ * the application needs: cache on disk rather than in memory. The default
+ * <code>store</code> implementation caches 64K in memory and then write the
+ * content on disk.
  * </p>
  * <p>
  * It also adds the functionality of marking an <code>InputStream</code> without
@@ -60,7 +62,7 @@ import com.gc.iotools.stream.store.ThresholdStore;
  * @since 1.2
  */
 public class RandomAccessInputStream extends AbstractInputStreamWrapper {
-	private static final int DEFAULT_TRHESHOLD = 32768;
+	private static final int DEFAULT_TRHESHOLD = 32768 * 2;
 	/**
 	 * Position of reading in the source stream.
 	 */
@@ -167,6 +169,11 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 		this.markPosition = this.randomAccessIsPosition;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @return Always return true for this kind of stream.
+	 */
 	@Override
 	public boolean markSupported() {
 		return true;

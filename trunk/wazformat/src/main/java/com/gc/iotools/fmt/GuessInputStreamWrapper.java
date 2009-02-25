@@ -29,6 +29,7 @@ package com.gc.iotools.fmt;
 import java.io.IOException;
 
 import com.gc.iotools.fmt.base.FormatEnum;
+import com.gc.iotools.fmt.base.FormatId;
 
 /**
  * This class shields detections of formats not requested. It's useful when the
@@ -46,43 +47,44 @@ final class GuessInputStreamWrapper extends GuessInputStream {
 		this.gis = gis;
 	}
 
+	@Override
 	public int available() throws IOException {
 		return this.gis.available();
 	}
 
-	public FormatEnum getFormat() {
-		FormatEnum fenum = this.gis.getFormat();
-		if (!canDetect(fenum)) {
-			fenum = FormatEnum.UNKNOWN;
-		}
-		return fenum;
+	@Override
+	public FormatId[] identify() {
+		throw new UnsupportedOperationException("to do");
+		// return this.gis.identify();
 	}
 
-	public FormatEnum[] getFormats() {
-		return this.gis.getFormats();
-	}
-
+	@Override
 	public boolean markSupported() {
 		return this.gis.markSupported();
 	}
 
+	@Override
 	public int read() throws IOException {
 		return this.gis.read();
 	}
 
+	@Override
 	public int read(final byte[] b) throws IOException {
 		return this.gis.read(b);
 	}
 
+	@Override
 	public int read(final byte[] b, final int off, final int len)
 			throws IOException {
 		return this.gis.read(b, off, len);
 	}
 
+	@Override
 	public void reset() throws IOException {
 		this.gis.reset();
 	}
 
+	@Override
 	public long skip(final long n) throws IOException {
 		return this.gis.skip(n);
 	}

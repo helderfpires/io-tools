@@ -9,8 +9,6 @@ import junit.framework.TestCase;
 
 import org.apache.commons.io.IOUtils;
 
-import com.gc.iotools.fmt.GuessInputStream;
-import com.gc.iotools.fmt.GuessInputStreamWrapper;
 import com.gc.iotools.fmt.base.FormatEnum;
 
 public class TestGuessInputStream extends TestCase {

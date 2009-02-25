@@ -3,7 +3,7 @@ package com.gc.iotools.fmt;
 /*
  * Copyright (c) 2008, Davide Simonetti
  * All rights reserved.
- * Redistribution and use in source and binary forms, 
+ * Redistribution and use in source and binary forms,  
  * with or without modification, are permitted provided that the following 
  * conditions are met:
  *  * Redistributions of source code must retain the above copyright notice, 
@@ -27,180 +27,255 @@ package com.gc.iotools.fmt;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.io.IOUtils;
 
 import com.gc.iotools.fmt.base.Decoder;
 import com.gc.iotools.fmt.base.Detector;
+import com.gc.iotools.fmt.base.FileDetector;
 import com.gc.iotools.fmt.base.FormatEnum;
+import com.gc.iotools.fmt.base.FormatId;
+import com.gc.iotools.fmt.base.StreamDetector;
 
 final class GuessInputStreamImpl extends GuessInputStream {
-	private static final int MAX_LEVELS = 2;
 
-	private static FormatEnum detectFormat(final byte[] bytes,
-			final Detector[] detectors) {
-		FormatEnum detected = FormatEnum.UNKNOWN;
-		if (bytes.length > 0) {
-			for (int i = 0; i < detectors.length; i++) {
-				final Detector detector = detectors[i];
-				final int bytesToCopy = Math.min(detector.getDetectLenght(),
-						bytes.length);
-				final byte[] splittedBytes = new byte[bytesToCopy];
-				System.arraycopy(bytes, 0, splittedBytes, 0, bytesToCopy);
-				if (detector.detect(splittedBytes)) {
-					detected = detector.getDetectedFormat();
-					break;
-				}
+	private static FormatId detectFormatStream(final InputStream stream,
+			final StreamDetector[] detectors, final FormatEnum[] enabledFormats)
+			throws IOException {
+		FormatId detected = new FormatId(FormatEnum.UNKNOWN, null);
+		if (detectors != null) {
+			for (int i = 0; (i < detectors.length)
+					&& FormatEnum.UNKNOWN.equals(detected.format); i++) {
+				final StreamDetector detector = detectors[i];
+				stream.mark(detector.getDetectLength(enabledFormats));
+				detected = detector.detect(enabledFormats, stream);
+				stream.reset();
 			}
 		}
 		return detected;
 	}
 
-	private static FormatEnum[] detectFormats(final byte[] bytes,
-			final Detector[] detectors, final Decoder[] decoders) {
-		final Map decodersMap = getDecodersMap(decoders);
-		final List formats = new ArrayList();
-		FormatEnum currentFormat = null;
-		byte[] currentBytes = bytes;
-		for (int i = 0; (i < MAX_LEVELS)
-				&& ((currentFormat == null) || decodersMap
-						.containsKey(currentFormat)); i++) {
-			currentFormat = detectFormat(currentBytes, detectors);
-			formats.add(currentFormat);
-			if (decodersMap.containsKey(currentFormat)) {
-				currentBytes = ((Decoder) decodersMap.get(currentFormat))
-						.decode(currentBytes);
-			}
-		}
-		return (FormatEnum[]) formats.toArray(new FormatEnum[formats.size()]);
-	}
-
-	private static int getBufferSize(final Detector[] detectors,
+	private static Map<FormatEnum, Decoder> getDecodersMap(
 			final Decoder[] decoders) {
-		int detectSize = 1;
-		for (int i = 0; i < detectors.length; i++) {
-			final Detector detector = detectors[i];
-			detectSize = Math.max(detectSize, detector.getDetectLenght());
-		}
-
-		int decodeOffset = 1;
-		for (int i = 0; i < decoders.length; i++) {
-			final Decoder decoder = decoders[i];
-			decodeOffset = Math
-					.max(decodeOffset, decoder.getEncodingOffset());
-		}
-
-		float decodeRatio = 1;
-		for (int i = 0; i < decoders.length; i++) {
-			final Decoder decoder = decoders[i];
-			decodeRatio = Math.max(decodeRatio, decoder.getRatio());
-		}
-
-		return (int) (detectSize * decodeRatio) + decodeOffset + 1;
-	}
-
-	private static Map getDecodersMap(final Decoder[] decoders) {
-		final Map formatsMap = new HashMap();
-		for (int i = 0; i < decoders.length; i++) {
-			final Decoder decoder = decoders[i];
+		final Map<FormatEnum, Decoder> formatsMap = new HashMap<FormatEnum, Decoder>();
+		for (final Decoder decoder : decoders) {
 			formatsMap.put(decoder.getFormat(), decoder);
 		}
 		return formatsMap;
 	}
 
-	private static FormatEnum[] getEnabledFormats(final Detector[] detectors) {
-		final Collection formatsColl = new ArrayList();
-		for (int i = 0; i < detectors.length; i++) {
-			final Detector detector = detectors[i];
-			formatsColl.add(detector.getDetectedFormat());
-		}
-		return (FormatEnum[]) formatsColl.toArray(new FormatEnum[formatsColl
-				.size()]);
-	}
+	private final InputStream bis;
 
-	private static byte[] readBytesAndReset(final BufferedInputStream input,
-			final int size) throws IOException {
-		final int size1 = size - 1;
-		final byte[] buffer = new byte[size1];
-		input.mark(size);
-		int pos = 0;
-		int n = 0;
-		while ((pos < (size1))
-				&& (-1 != (n = input.read(buffer, pos, (size1 - pos))))) {
-			pos += n;
-		}
-		input.reset();
-		byte[] result;
-		if (pos == size1) {
-			result = buffer;
-		} else {
-			result = new byte[pos];
-			System.arraycopy(buffer, 0, result, 0, pos);
-		}
-		return result;
-	}
+	private final StreamDetector[] streamDetectors;
 
-	private final FormatEnum formats[];
+	private final FormatId formats[];
 
-	private final BufferedInputStream bis;
+	private final FileDetector[] fileDetectors;
 
 	public GuessInputStreamImpl(final Detector[] detectors,
-			final Decoder[] decoders, final InputStream istream)
-			throws IOException {
-		super(getEnabledFormats(detectors));
-		final int bufferSize = getBufferSize(detectors, decoders);
-		this.bis = new BufferedInputStream(istream, bufferSize);
-		final byte[] bytes = readBytesAndReset(this.bis, bufferSize);
-		this.formats = detectFormats(bytes, detectors, decoders);
+			final Decoder[] decoders, final FormatEnum[] enabledFormats,
+			final InputStream istream) throws IOException {
+		super(enabledFormats);
+		this.streamDetectors = getDefiniteLenght(detectors);
+		this.fileDetectors = getInDefiniteLenght(detectors);
+		final Collection<FormatId> formats = new ArrayList<FormatId>();
+		final BufferedInputStream bufStream = new BufferedInputStream(istream);
+		File originalFile = null;
+		final Map<FormatEnum, Decoder> decMap = getDecodersMap(decoders);
+		FormatId curFormat;
+		InputStream currentStream = bufStream;
+		final Collection<File> createdFiles = new ArrayList<File>();
+		do {
+			curFormat = detectFormatStream(currentStream, this.streamDetectors,
+					enabledFormats);
+			if (FormatEnum.UNKNOWN.equals(curFormat.format)) {
+				final Set<FileDetector> enableDetectors = getEnabledFileDetectors(
+						enabledFormats, this.streamDetectors,
+						this.fileDetectors);
+				if (enableDetectors.size() > 0) {
+
+					// copy original stream to file.
+					if (originalFile == null) {
+						originalFile = copyToTempFile(bufStream);
+					}
+					File currentFile;
+					if (bufStream == currentStream) {
+						currentFile = originalFile;
+					} else {
+						currentFile = copyToTempFile(currentStream);
+						currentStream.close();
+						// schedule for deletion
+						createdFiles.add(currentFile);
+					}
+					for (final FileDetector fileDetect : enableDetectors) {
+						curFormat = fileDetect.detect(enabledFormats,
+								currentFile);
+					}
+					currentStream = new FileInputStream(currentFile);
+				}
+			}
+			if (decMap.containsKey(curFormat.format)) {
+				final Decoder decoder = decMap.get(curFormat.format);
+				currentStream = decoder.decode(currentStream);
+			}
+			formats.add(curFormat);
+		} while (decMap.containsKey(curFormat.format));
+		if (originalFile == null) {
+			this.bis = bufStream;
+		} else {
+			this.bis = new FileInputStream(originalFile);
+		}
+		for (final File file : createdFiles) {
+			file.delete();
+		}
+		this.formats = formats.toArray(new FormatId[formats.size()]);
 	}
 
+	@Override
 	public int available() throws IOException {
 		return this.bis.available();
 	}
 
+	@Override
 	public void close() throws IOException {
+		cleanup();
 		this.bis.close();
+
 	}
 
-	public final FormatEnum getFormat() {
-		return this.formats[0];
-	}
-
-	public final FormatEnum[] getFormats() {
+	@Override
+	public final FormatId[] identify() {
 		return this.formats;
 	}
 
+	@Override
 	public void mark(final int readlimit) {
 		this.bis.mark(readlimit);
 	}
 
+	@Override
 	public boolean markSupported() {
 		return this.bis.markSupported();
 	}
 
+	@Override
 	public int read() throws IOException {
 		return this.bis.read();
 	}
 
+	@Override
 	public int read(final byte[] b) throws IOException {
 		return this.bis.read(b);
 	}
 
+	@Override
 	public int read(final byte[] b, final int off, final int len)
 			throws IOException {
 		return this.bis.read(b, off, len);
 	}
 
+	@Override
 	public void reset() throws IOException {
 		this.bis.reset();
 	}
 
+	@Override
 	public long skip(final long n) throws IOException {
 		return this.bis.skip(n);
+	}
+
+	private void cleanup() {
+
+	}
+
+	private File copyToTempFile(final InputStream currentStream)
+			throws IOException, FileNotFoundException {
+		final File currentFile = File.createTempFile("iotoos-fmt", ".tmp");
+		final FileOutputStream output = new FileOutputStream(currentFile);
+		IOUtils.copyLarge(currentStream, output);
+		output.close();
+		return currentFile;
+	}
+
+	private StreamDetector[] getDefiniteLenght(final Detector[] detectors) {
+		final Collection<StreamDetector> coll = new ArrayList<StreamDetector>();
+		for (final Detector detector : detectors) {
+			if (detector instanceof StreamDetector) {
+				coll.add((StreamDetector) detector);
+			}
+		}
+
+		return (coll.size() == 0 ? null : coll.toArray(new StreamDetector[0]));
+	}
+
+	private Set<FileDetector> getEnabledFileDetectors(
+			final FormatEnum[] enabledFormats,
+			final StreamDetector[] definiteLength,
+			final FileDetector[] fileDetectors) {
+		final Set<FileDetector> result = new HashSet<FileDetector>();
+		if (fileDetectors != null) {
+			final Set<FormatEnum> undetectedFormats = getUndetectedFormats(
+					enabledFormats, definiteLength);
+			for (final FileDetector fileDetector : fileDetectors) {
+				final FormatEnum[] formats = fileDetector.getDetectedFormats();
+				boolean found = false;
+				if (formats != null) {
+					for (int i = 0; (i < formats.length) && !found; i++) {
+						final FormatEnum formatEnum = formats[i];
+						found = undetectedFormats.contains(formatEnum);
+					}
+				}
+				if (found) {
+					result.add(fileDetector);
+					undetectedFormats.removeAll(Arrays.asList(formats));
+				}
+			}
+		}
+		return result;
+	}
+
+	private FileDetector[] getInDefiniteLenght(final Detector[] detectors) {
+		final Collection<FileDetector> coll = new ArrayList<FileDetector>();
+		for (final Detector detector : detectors) {
+			if (detector instanceof FileDetector) {
+				coll.add((FileDetector) detector);
+			}
+		}
+
+		return (coll.size() == 0 ? null : coll.toArray(new FileDetector[0]));
+	}
+
+	private Set<FormatEnum> getUndetectedFormats(
+			final FormatEnum[] enabledFormats, final Detector[] detectors) {
+		final Set<FormatEnum> set = new HashSet<FormatEnum>(Arrays
+				.asList(enabledFormats));
+		if (detectors != null) {
+			final Collection<FormatEnum> detected = new HashSet<FormatEnum>();
+			for (final Detector detector : detectors) {
+				detected.addAll(Arrays.asList(detector.getDetectedFormats()));
+			}
+			set.removeAll(detected);
+
+		}
+		return set;
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		cleanup();
+		super.finalize();
 	}
 }

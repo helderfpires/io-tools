@@ -39,7 +39,8 @@ import org.slf4j.LoggerFactory;
  * @since 1.2
  */
 public class ThresholdStore implements SeekableStore {
-	private static final Logger LOG = LoggerFactory.getLogger(ThresholdStore.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(ThresholdStore.class);
 
 	private static final int BUF_SIZE = 8192;
 
@@ -52,6 +53,11 @@ public class ThresholdStore implements SeekableStore {
 
 	public ThresholdStore(final int treshold) {
 		this.treshold = treshold;
+	}
+
+	public ThresholdStore(final int treshold, File file) {
+		this.treshold = treshold;
+		this.fileStorage = file;
 	}
 
 	public void cleanup() {
@@ -70,12 +76,12 @@ public class ThresholdStore implements SeekableStore {
 			}
 			this.fileAccess = null;
 		}
-		if (this.fileStorage != null) {
+		if (this.fileStorage != null && this.fileStorage.exists()) {
 			final boolean deleted = this.fileStorage.delete();
 			if (!deleted) {
 				this.fileStorage.deleteOnExit();
-				LOG.warn("Exception in deleting the temporary " + "file ["
-						+ this.fileStorage.getName() + "] it "
+				LOG.warn("Temporary file [" + this.fileStorage.getName()
+						+ "] was not deleted. It "
 						+ "is possible to continue but some"
 						+ " resources are not released.");
 			}
@@ -105,8 +111,10 @@ public class ThresholdStore implements SeekableStore {
 		} else {
 			if (this.size < this.treshold) {
 				// empty the memory buffer and init the file buffer
-				this.fileStorage = File.createTempFile("iotools-storage",
-						"tmp");
+				if (this.fileStorage == null) {
+					this.fileStorage = File.createTempFile("iotools-storage",
+							".tmp");
+				}
 				this.fileAccess = new RandomAccessFile(this.fileStorage, "rw");
 				int len;
 				final byte[] buffer = new byte[BUF_SIZE];
@@ -143,6 +151,9 @@ public class ThresholdStore implements SeekableStore {
 		}
 	}
 
+	/**
+	 * Clean up the temporary files eventually open.
+	 */
 	@Override
 	protected void finalize() throws Throwable {
 		cleanup();

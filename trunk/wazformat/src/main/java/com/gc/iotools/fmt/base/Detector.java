@@ -1,6 +1,5 @@
 package com.gc.iotools.fmt.base;
 
-
 /*
  * Copyright (c) 2008, Davide Simonetti
  * All rights reserved.
@@ -29,9 +28,6 @@ package com.gc.iotools.fmt.base;
  */
 public interface Detector {
 
-	boolean detect(byte[] bytes);
+	FormatEnum[] getDetectedFormats();
 
-	FormatEnum getDetectedFormat();
-
-	int getDetectLenght();
 }

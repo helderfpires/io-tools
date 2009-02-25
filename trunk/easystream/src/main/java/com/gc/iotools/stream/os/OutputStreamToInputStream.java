@@ -111,7 +111,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 
 		private final InputStream inputstream;
 
-		DataConsumer(final String callerId, final InputStream istream) {
+		DataConsumer(final InputStream istream) {
 			this.inputstream = istream;
 		}
 
@@ -125,9 +125,6 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 			return processResult;
 		}
 
-		/**
-		 * 
-		 */
 		private void emptyInputStream() {
 			boolean closed = false;
 			try {
@@ -173,40 +170,66 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	private final PipedOutputStream wrappedPipedOS;
 	private final Future<T> writingResult;
 
+	/**
+	 * <p>
+	 * Creates a new <code>OutputStreamToInputStream</code>. It uses the default
+	 * {@link ExecutionModel#THREAD_PER_INSTANCE} thread instantiation strategy.
+	 * This means that a new thread is created for every instance of
+	 * <code>OutputStreamToInputStream</code>.
+	 * </p>
+	 * 
+	 * @throws IOException
+	 *             Exception thrown if pipe can't be created.
+	 */
 	public OutputStreamToInputStream() throws IOException {
 		this(true, ExecutionModel.THREAD_PER_INSTANCE);
 	}
 
+	/**
+	 * Constructs a new <code>OutputStreamToInputStream</code>.
+	 * 
+	 * @see ExecutionModel
+	 * @param joinOnClose
+	 *            if <code>true</code> the internal thread will be joined when
+	 *            close is invoked.
+	 * @param executionModel
+	 * @exception IOException
+	 *                Exception thrown if pipe can't be created.
+	 */
 	public OutputStreamToInputStream(final boolean joinOnClose,
-			final ExecutionModel em) throws IOException {
-		this(joinOnClose, ExecutorServiceFactory.getExecutor(em));
+			final ExecutionModel executionModel) throws IOException {
+		this(joinOnClose, ExecutorServiceFactory.getExecutor(executionModel));
 	}
 
 	/**
+	 * Constructs a new <code>OutputStreamToInputStream</code>.
 	 * 
 	 * @param joinOnClose
 	 *            if <code>true</code> the internal thread will be joined when
 	 *            close is invoked.
-	 * @param executor
+	 * @param executorService
 	 *            Service for executing the internal thread.
 	 * @throws IOException
+	 *             Exception thrown if pipe can't be created.
 	 */
 	public OutputStreamToInputStream(final boolean joinOnClose,
-			final ExecutorService executor) throws IOException {
-		if (executor == null) {
-			throw new IllegalArgumentException("Executor == null");
+			final ExecutorService executorService) throws IOException {
+		if (executorService == null) {
+			throw new IllegalArgumentException(
+					"executor service can't be null");
 		}
-		final String callerId = getCaller();
 		this.wrappedPipedOS = new PipedOutputStream();
 		final PipedInputStream pipedIS = new PipedInputStream(
 				this.wrappedPipedOS);
 
-		final DataConsumer executingProcess = new DataConsumer(callerId,
-				pipedIS);
+		final DataConsumer executingProcess = new DataConsumer(pipedIS);
 		this.joinOnClose = joinOnClose;
-		this.writingResult = executor.submit(executingProcess);
+		this.writingResult = executorService.submit(executingProcess);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final void close() throws IOException {
 		if (!this.closeCalled) {
@@ -244,6 +267,9 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final void flush() throws IOException {
 		this.wrappedPipedOS.flush();
@@ -264,12 +290,14 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * <code>IllegalStateException</code> is thrown.
 	 * </p>
 	 * 
-	 * @throws ExecutionException
-	 *             thrown if the method {@linkplain #doRead()} threw an
-	 *             Exception. The <code>getCause()</code> returns the original
-	 *             Exception.
+	 * @exception InterruptedException
+	 *                Thrown when the thread is interrupted.
+	 * @exception ExecutionException
+	 *                Thrown if the method {@linkplain #doRead()} threw an
+	 *                Exception. The <code>getCause()</code> returns the
+	 *                original Exception.
 	 * @throws IllegalStateException
-	 *             when it is called before the method {@link #close()} has been
+	 *             When it is called before the method {@link #close()} has been
 	 *             called.
 	 * @return the object returned from the doRead() method.
 	 */
@@ -282,31 +310,29 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 		return this.writingResult.get();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final void write(final byte[] bytes) throws IOException {
 		this.wrappedPipedOS.write(bytes);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final void write(final byte[] bytes, final int offset,
 			final int length) throws IOException {
 		this.wrappedPipedOS.write(bytes, offset, length);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final void write(final int bytetowr) throws IOException {
 		this.wrappedPipedOS.write(bytetowr);
-	}
-
-	private String getCaller() {
-		final Exception exception = new Exception();
-		final StackTraceElement[] stes = exception.getStackTrace();
-		final StackTraceElement caller = stes[3];
-		final String result = getClass().getName().substring(
-				getClass().getPackage().getName().length() + 1)
-				+ "callBy:" + caller.toString();
-		OutputStreamToInputStream.LOG.debug("Open [" + result + "]");
-		return result;
 	}
 
 	/**

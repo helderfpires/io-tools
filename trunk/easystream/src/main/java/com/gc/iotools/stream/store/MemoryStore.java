@@ -28,6 +28,8 @@ package com.gc.iotools.stream.store;
  */
 
 /**
+ * TODO: more efficient memory usage.
+ * 
  * @author dvd.smnt
  * @since 1.2
  */

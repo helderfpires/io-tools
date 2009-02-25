@@ -43,12 +43,29 @@ import java.io.IOException;
  */
 public interface Store {
 	/**
-	 * Cleans up the Store. Forget all the data.
+	 * Cleans up the Store. Forget all the data previously stored.
 	 */
 	void cleanup();
 
+	/**
+	 * Retrieves data from the Store.
+	 * 
+	 * @param bytes
+	 * @param offset
+	 * @param length
+	 * @return
+	 * @throws IOException
+	 */
 	int get(byte[] bytes, int offset, int length) throws IOException;
 
+	/**
+	 * Record some data into the store for further retrieval.
+	 * 
+	 * @param bytes
+	 * @param offset
+	 * @param length
+	 * @throws IOException
+	 */
 	void put(byte[] bytes, int offset, int length) throws IOException;
 
 }
