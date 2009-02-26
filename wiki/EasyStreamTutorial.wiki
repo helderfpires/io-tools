@@ -4,7 +4,14 @@
 = Stream Utilities =
 
 Sometimes a library writes its results to an `OutputStream` and you need to read them back from an `InputStream`. The common answer are: copy to a memory buffer, copy to a file or use pipes. 
-[http://ostermiller.org/convert_java_outputstream_inputstream.html Here] you can find an interesting discussion. Use pipes is not as easy at is seems. Here is an interesting discussion on it. Classes in the com.gc.iotools.stream package should help.
+[http://ostermiller.org/convert_java_outputstream_inputstream.html Here] you can find an interesting discussion. Use pipes is not as easy at is seems (even if it is the solution offered by Sun). `InputStreamFromOutputStream` and `OutputStreamToInputStream` should accomplish the task.
+
+Other classes in this library are:
+ * `RandomAccessInputStream` allows to read the content of an `InputStream` multiple times or seek to a definite position.
+ * `ChunkInputStream` filter some parts of an `InputStream` basing on its content.
+ * `SizeReaderInputStream` and `SizeRecorderOutputStream`: count the number of bytes read or wrote to a given stream.
+ * `TeeInputStreamOutputStream` allows to copy the data read from a source `InputStream` to a supplied `OutputStream`.
+
 
 === !InputStreamFromOutputStream ===
 
@@ -78,30 +85,7 @@ String result = oStream2IStream.getResults();
 
 For further information see the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/os/OutputStreamToInputStream.html api javadoc].
 
-=== Why !ExecutionModel ? ===
 To convert an `OutputStream` into an `InputStream` you need a pipe. And to use a pipe you need Threads. [ExecutionModel Here] are easystreams options. 
-
-=== !TeeInputStreamOutputStream ===
-Copies the data from the underlying `InputStream` to the `OutputStream` passed in the constructor. The data copied are similar to the underlying `InputStream`.
-
-Sample usage:
-{{{
- InputStream source=... //some data to be readed.
- ByteArrayOutputStream destination1= new ByteArrayOutputStream();
- ByteArrayOutputStream destination2= new ByteArrayOutputStream();
-  
- TeeInputStreamOutputStream tee=new TeeInputStreamOutputStream(source,destination1);
- org.apache.commons.io.IOUtils.copy(tee,destination2);
- tee.close();
- //at this point both destination1 and destination2 contains the same bytes.
- byte[] bytes1=destination1.getBytes();
- byte[] bytes2=destination2.getBytes();
-}}}
-
-=== !ChunkInputStream ===
-This class is useful when you have an `InputStream` and you want to filter some parts of it basing on its content without reading it into memory.
-
-For further information read the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/ChunkInputStream.html api javadoc].
 
 === !RandomAccessInputStream ===
 Adds the following functionality to another input stream: 
@@ -125,5 +109,29 @@ How to read two times the content of a file:
 
 Method `mark()` and `reset()` are also supported.
 For further information read the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/RandomAccessInputStream.html api javadoc].
+
+=== !TeeInputStreamOutputStream ===
+Copies the data from the underlying `InputStream` to the `OutputStream` passed in the constructor. The data copied are similar to the underlying `InputStream`.
+
+Sample usage:
+{{{
+ InputStream source=... //some data to be readed.
+ ByteArrayOutputStream destination1= new ByteArrayOutputStream();
+ ByteArrayOutputStream destination2= new ByteArrayOutputStream();
+  
+ TeeInputStreamOutputStream tee=new TeeInputStreamOutputStream(source,destination1);
+ org.apache.commons.io.IOUtils.copy(tee,destination2);
+ tee.close();
+ //at this point both destination1 and destination2 contains the same bytes.
+ byte[] bytes1=destination1.getBytes();
+ byte[] bytes2=destination2.getBytes();
+}}}
+
+=== !ChunkInputStream ===
+This class is useful when you have an `InputStream` and you want to filter some parts of it basing on its content without reading it into memory.
+
+For further information read the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/ChunkInputStream.html api javadoc].
+
+
 
 Other few stream utilities are in this library. You can find a quick overview [OtherStreamUtilities here] 
