@@ -1,5 +1,4 @@
 #summary For beginners: a 5 minutes How To.
-#labels Featured
 
 = Stream Utilities =
 
