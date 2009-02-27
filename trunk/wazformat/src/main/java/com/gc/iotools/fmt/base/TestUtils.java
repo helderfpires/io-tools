@@ -1,5 +1,9 @@
 package com.gc.iotools.fmt.base;
 
+/*
+ * Copyright (c) 2008,2009 Davide Simonetti.
+ * This source code is released under the BSD Software License.
+ */
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,7 +17,6 @@ import java.util.Vector;
 
 import org.apache.commons.io.IOUtils;
 
-import com.gc.iotools.fmt.TestGuessInputStreamWithFiles;
 import com.gc.iotools.stream.is.SizeLimitInputStream;
 
 public final class TestUtils {
@@ -36,7 +39,7 @@ public final class TestUtils {
 
 	public static String[] listFilesExcludingExtension(final String[] forbidden)
 			throws IOException {
-		final URL fileURL = TestGuessInputStreamWithFiles.class
+		final URL fileURL = TestUtils.class
 				.getResource("/testFiles");
 		String filePath = URLDecoder.decode(fileURL.getPath(), "UTF-8");
 		final File dir = new File(filePath);
@@ -67,7 +70,7 @@ public final class TestUtils {
 	@Deprecated
 	public static String[] listFilesIncludingExtension(final String[] allowed)
 			throws IOException {
-		final URL fileURL = TestGuessInputStreamWithFiles.class
+		final URL fileURL = TestUtils.class
 				.getResource("/testFiles");
 		String filePath = URLDecoder.decode(fileURL.getPath(), "UTF-8");
 		final File dir = new File(filePath);
