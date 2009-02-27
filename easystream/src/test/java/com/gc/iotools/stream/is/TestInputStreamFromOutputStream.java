@@ -109,6 +109,7 @@ public class TestInputStreamFromOutputStream {
 		assertEquals("string read", "test", new String(b).substring(0, n));
 		isos.close();
 		assertEquals("Return value", "return", isos.getResult());
+		Thread.sleep(1000);
 		assertEquals("Active threads ", 0, es.getActiveCount());
 	}
 
@@ -138,7 +139,7 @@ public class TestInputStreamFromOutputStream {
 		}
 		isos.close();
 		assertEquals("Bytes read", 10 * 256, i);
-		Thread.sleep(100);
+		Thread.sleep(1000);
 		assertEquals("Active Threads", 0, es.getActiveCount());
 	}
 }

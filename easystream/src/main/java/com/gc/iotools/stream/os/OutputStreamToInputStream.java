@@ -125,6 +125,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 			return processResult;
 		}
 
+
 		private void emptyInputStream() {
 			boolean closed = false;
 			try {
@@ -186,15 +187,10 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	}
 
 	/**
-	 * Constructs a new <code>OutputStreamToInputStream</code>.
 	 * 
-	 * @see ExecutionModel
 	 * @param joinOnClose
-	 *            if <code>true</code> the internal thread will be joined when
-	 *            close is invoked.
 	 * @param executionModel
-	 * @exception IOException
-	 *                Exception thrown if pipe can't be created.
+	 * @throws IOException
 	 */
 	public OutputStreamToInputStream(final boolean joinOnClose,
 			final ExecutionModel executionModel) throws IOException {
@@ -202,7 +198,6 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	}
 
 	/**
-	 * Constructs a new <code>OutputStreamToInputStream</code>.
 	 * 
 	 * @param joinOnClose
 	 *            if <code>true</code> the internal thread will be joined when
@@ -226,7 +221,6 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 		this.joinOnClose = joinOnClose;
 		this.writingResult = executorService.submit(executingProcess);
 	}
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -266,7 +260,6 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 			}
 		}
 	}
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -309,7 +302,6 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 		}
 		return this.writingResult.get();
 	}
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -317,7 +309,6 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	public final void write(final byte[] bytes) throws IOException {
 		this.wrappedPipedOS.write(bytes);
 	}
-
 	/**
 	 * {@inheritDoc}
 	 */

@@ -1,10 +1,20 @@
 package com.gc.iotools.fmt.decoders;
 
+/*
+ * Copyright (c) 2008, 2009 Davide Simonetti.
+ * This source code is released under the BSD Software License.
+ */
 import java.io.InputStream;
 
 import com.gc.iotools.fmt.base.Decoder;
 import com.gc.iotools.fmt.base.FormatEnum;
 
+/**
+ * Decodes Base64 encoded streams.
+ * 
+ * @author dvd.smnt
+ * 
+ */
 public class Base64Decoder implements Decoder {
 
 	public InputStream decode(final InputStream istream) {

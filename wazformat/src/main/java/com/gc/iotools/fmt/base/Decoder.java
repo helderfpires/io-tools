@@ -1,5 +1,6 @@
 package com.gc.iotools.fmt.base;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -8,8 +9,7 @@ import java.io.InputStream;
  * @author dvd.smnt
  */
 public interface Decoder {
-	InputStream decode(InputStream inStream);
+	InputStream decode(InputStream inStream) throws IOException;
 
 	FormatEnum getFormat();
-
 }

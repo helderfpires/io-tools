@@ -39,7 +39,7 @@
 	</scm>
 	<dependencies>
 	    <dependency>
-            <groupId>net.sf.io-tools</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>easystream</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -66,7 +66,6 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -77,17 +76,17 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 			</plugin>
+			<plugin>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
 		</plugins>
 	</build>
 

@@ -169,11 +169,6 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 		this.markPosition = this.randomAccessIsPosition;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @return Always return true for this kind of stream.
-	 */
 	@Override
 	public boolean markSupported() {
 		return true;

@@ -1,5 +1,9 @@
 package com.gc.iotools.stream.base;
 
+/*
+ * Copyright (c) 2008,2009 Davide Simonetti.
+ * This source code is released under the BSD Software License.
+ */
 import java.io.IOException;
 import java.io.InputStream;
 

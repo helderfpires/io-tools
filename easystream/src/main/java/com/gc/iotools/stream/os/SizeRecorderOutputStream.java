@@ -31,8 +31,8 @@ import java.io.OutputStream;
 
 /**
  * <p>
- * This class records the bytes written to the OutputStream passed in the
- * constructor.
+ * This class counts the number of bytes written to the
+ * <code>OutputStream</code> passed in the constructor.
  * </p>
  * 
  * TODO: junits
@@ -47,12 +47,19 @@ public class SizeRecorderOutputStream extends OutputStream {
 	private long size = 0;
 
 	/**
-	 * @param innerOs
+	 * Creates a new <code>SizeRecorderOutputStream</code> with the given
+	 * destination stream.
+	 * 
+	 * @param destination
+	 *            Destination stream where data are written.
 	 */
-	public SizeRecorderOutputStream(final OutputStream innerOs) {
-		this.innerOs = innerOs;
+	public SizeRecorderOutputStream(final OutputStream destination) {
+		this.innerOs = destination;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void close() throws IOException {
 		if (!this.closeCalled) {
@@ -61,21 +68,35 @@ public class SizeRecorderOutputStream extends OutputStream {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void flush() throws IOException {
 		this.innerOs.flush();
 	}
 
+	/**
+	 * Returns the number of bytes written until now.
+	 * 
+	 * @return return the number of bytes written until now.
+	 */
 	public long getSize() {
 		return this.size;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void write(final byte[] b) throws IOException {
 		this.innerOs.write(b);
 		this.size += b.length;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void write(final byte[] b, final int off, final int len)
 			throws IOException {
@@ -83,6 +104,9 @@ public class SizeRecorderOutputStream extends OutputStream {
 		this.size += len;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void write(final int b) throws IOException {
 		this.innerOs.write(b);
