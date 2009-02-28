@@ -1,4 +1,5 @@
 #summary EasyStream for beginners: a 5 minutes How To.
+#labels Featured,Phase-Implementation
 
 = Stream Utilities =
 
