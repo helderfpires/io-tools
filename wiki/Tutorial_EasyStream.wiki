@@ -1,0 +1,136 @@
+#summary EasyStream for beginners: a 5 minutes How To.
+
+= Stream Utilities =
+
+Sometimes a library writes its results to an `OutputStream` and you need to read them back from an `InputStream`. The common answer are: copy to a memory buffer, copy to a file or use pipes. 
+[http://ostermiller.org/convert_java_outputstream_inputstream.html Here] you can find an interesting discussion. Use pipes is not as easy at is seems (even if it is the solution offered by Sun). `InputStreamFromOutputStream` and `OutputStreamToInputStream` should accomplish the task.
+
+Other classes in this library are:
+ * `RandomAccessInputStream` allows to read the content of an `InputStream` multiple times or seek to a definite position.
+ * `ChunkInputStream` filter some parts of an `InputStream` basing on its content.
+ * `SizeReaderInputStream` and `SizeRecorderOutputStream`: count the number of bytes read or wrote to a given stream.
+ * `TeeInputStreamOutputStream` allows to copy the data read from a source `InputStream` to a supplied `OutputStream`.
+
+
+=== !InputStreamFromOutputStream ===
+
+This abstract class must be extended and the metod `produce()` implemented.
+The data who is produced inside the function produce() is written to an `OutputStream` and can be readed back from from this class.
+This is the preferred way to convert data written from an `OutputStream` into an `InputStream`, because the behaviour of the code tends to be more clear.
+
+Sample usage:
+
+{{{
+final String dataId=//id of some data.
+final InputStreamFromOutputStream<String> isos = new InputStreamFromOutputStream<String>() {
+   @Override
+   public String produce(final OutputStream dataSink) throws Exception {
+      /*
+       * call your application function who produces the data here
+       * WARNING: we're in another thread here, so this method shouldn't 
+       * write any class field or make assumptions on the state of the class.
+       */
+      return produceMydata(dataId,dataSink)
+   }
+ };
+ try {
+  //now you can read from the InputStream the data that was written to the 
+  //dataSink OutputStream
+  byte[] readed=IOUtils.toByteArray(isos);
+  //Use data here
+ } catch (final IOException e) {
+  //Handle exception here
+ } finally {
+  isos.close();
+ }
+  //You can get the result of produceMyData after the stream has been closed.
+  String resultOfProduction = isos.getResult();
+}
+}}}
+
+For further information read the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/InputStreamFromOutputStream.html api javadoc].
+
+=== !OutputStreamToInputStream ===
+Another class that you can use if you need to write to an !OutputStream and read the data written from an !InputStream is `OutputStreamToInputStream` . It works opposite way than the previous one and allow some result to be returned after the processing of the !InputStream.
+
+Sample usage:
+{{{
+final OutputStreamToInputStream<String> oStream2IStream = new OutputStreamToInputStream<String>() {
+    @Override
+    protected String doRead(final InputStream istream) throws Exception {
+        /*
+         * read from InputStream into a string. Data will be written to the outer class
+         * later (oStream2IStream.write). 
+         */
+        final String result = IOUtils.toString(istream);
+              return result + " was processed.";
+        }
+    };
+
+try {   
+     /*
+     * some data is written to the OutputStream, will be passed to the method
+     * doRead(InputStream i) above and after close() is called the results 
+     * will be available through the getResults() method.
+     */
+     oStream2IStream.write("test".getBytes());
+} finally {
+     // don't miss the close (or a thread would not terminate correctly).
+     oStream2IStream.close();
+}
+String result = oStream2IStream.getResults();
+//result now contains the string "test was processed."
+}}}
+
+For further information see the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/os/OutputStreamToInputStream.html api javadoc].
+
+To convert an `OutputStream` into an `InputStream` you need a pipe. And to use a pipe you need Threads. [ExecutionModel Here] are easystreams options. 
+
+=== !RandomAccessInputStream ===
+Adds the following functionality to another input stream: 
+ * the ability to be read multiple times
+ * `seek()` to a random position.
+ * Support the `mark` and `reset` methods.
+Caching of data is done in a [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/store/Store.html Store], so every application can choose where to store its temporary data. Default implementation cache first 64K in memory and then on disk.
+
+How to read two times the content of a file:
+{{{
+ InputStream source=... //some data to be readed multiple times.
+ final RandomAccessInputStream ris = new RandomAccessInputStream(source);
+ final byte[] b = new byte[5];
+ ris.read(b);
+ //seek back to beginning of file
+ ris.seek(0);
+ final byte[] b1 = new byte[5];
+ ris.read(b1);
+ //arrays b and b1 are equals.
+}}}
+
+Method `mark()` and `reset()` are also supported.
+For further information read the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/RandomAccessInputStream.html api javadoc].
+
+=== !TeeInputStreamOutputStream ===
+Copies the data from the underlying `InputStream` to the `OutputStream` passed in the constructor. The data copied are similar to the underlying `InputStream`.
+
+Sample usage:
+{{{
+ InputStream source=... //some data to be readed.
+ ByteArrayOutputStream destination1= new ByteArrayOutputStream();
+ ByteArrayOutputStream destination2= new ByteArrayOutputStream();
+  
+ TeeInputStreamOutputStream tee=new TeeInputStreamOutputStream(source,destination1);
+ org.apache.commons.io.IOUtils.copy(tee,destination2);
+ tee.close();
+ //at this point both destination1 and destination2 contains the same bytes.
+ byte[] bytes1=destination1.getBytes();
+ byte[] bytes2=destination2.getBytes();
+}}}
+
+=== !ChunkInputStream ===
+This class is useful when you have an `InputStream` and you want to filter some parts of it basing on its content without reading it into memory.
+
+For further information read the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/ChunkInputStream.html api javadoc].
+
+
+
+Other few stream utilities are in this library. You can find a quick overview [OtherStreamUtilities here] 
