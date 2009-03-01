@@ -85,11 +85,11 @@
 				<version>[1.5.6,)</version>
 			</dependency>
 			<dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>[1.5.6,)</version>
-                <scope>provided</scope>
-            </dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-simple</artifactId>
+				<version>[1.5.6,)</version>
+				<scope>provided</scope>
+			</dependency>
 			<dependency>
 				<groupId>commons-collections</groupId>
 				<artifactId>commons-collections</artifactId>
@@ -104,10 +104,16 @@
 			</dependency>
 			<dependency>
 				<groupId>bouncycastle</groupId>
-				<artifactId>bcprov-jdk14</artifactId>
+				<artifactId>bcprov-jdk15</artifactId>
 				<version>140</version>
 				<type>jar</type>
 			</dependency>
+            <dependency>
+                <groupId>bouncycastle</groupId>
+                <artifactId>bcmail-jdk15</artifactId>
+                <version>140</version>
+                <type>jar</type>
+            </dependency>
 			<dependency>
 				<groupId>stax</groupId>
 				<artifactId>stax</artifactId>
@@ -179,8 +185,10 @@
 						<encoding>US-ASCII</encoding>
 						<links>
 							<link>http://java.sun.com/javase/6/docs/api/</link>
-							<link>http://commons.apache.org/lang/apidocs/</link>
-							<link>http://commons.apache.org/logging/commons-logging-1.1.1/apidocs/</link>
+							<link>http://commons.apache.org/io/api-release/</link>
+							<link>http://jakarta.apache.org/commons/lang/apidocs/</link>
+							<link>http://www.slf4j.org/api/</link>
+							<link>http://commons.apache.org/collections/api-release/</link>
 						</links>
 					</configuration>
 					<executions>
@@ -219,7 +227,7 @@
 				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
-					<generateReleasePoms>true</generateReleasePoms>
+					<generateReleasePoms>false</generateReleasePoms>
 					<!-- install required for assembly plugin -->
 					<preparationGoals>clean install</preparationGoals>
 				</configuration>
@@ -246,7 +254,7 @@
 				<!-- to publish the website -->
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-ftp</artifactId>
-				<version>1.0-beta-4</version>
+				<version>1.0-beta-5</version>
 			</extension>
 			<!--
 				<extension> to publish on sourceforge
@@ -279,8 +287,10 @@
 							<encoding>US-ASCII</encoding>
 							<links>
 								<link>http://java.sun.com/javase/6/docs/api/</link>
+								<link>http://commons.apache.org/io/api-release/</link>
 								<link>http://jakarta.apache.org/commons/lang/apidocs/</link>
-								<link>http://commons.apache.org/logging/commons-logging-1.1.1/apidocs/</link>
+								<link>http://www.slf4j.org/api/</link>
+								<link>http://commons.apache.org/collections/api-release/</link>
 							</links>
 						</configuration>
 					</reportSet>

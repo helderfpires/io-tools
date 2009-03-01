@@ -35,14 +35,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import com.gc.iotools.fmt.base.Decoder;
 import com.gc.iotools.fmt.base.Detector;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
-import com.gc.iotools.fmt.base.StreamDetector;
 import com.gc.iotools.fmt.decoders.Base64Decoder;
+import com.gc.iotools.fmt.decoders.GzipDecoder;
+import com.gc.iotools.fmt.decoders.Pkcs7Decoder;
 import com.gc.iotools.fmt.file.droid.DroidDetectorImpl;
 import com.gc.iotools.fmt.stream.StreamDetectorImpl;
 
@@ -57,8 +57,6 @@ import com.gc.iotools.fmt.stream.StreamDetectorImpl;
  * <li>Either register it statically in GuessFormatInputStream with the method
  * addDetector or pass an instance in the constructor.</li>
  * </ul>
- * 
- * TODO: read formats from a property file.
  * 
  */
 public abstract class GuessInputStream extends InputStream {
@@ -167,12 +165,15 @@ public abstract class GuessInputStream extends InputStream {
 	// private static final Loggerger LOGGER = Loggerger
 	// .getLoggerger(GuessFormatInputStream.class);
 	// Should become a collection to support multiple detectors per format
-	private final Set<StreamDetector> definiteLength = new HashSet<StreamDetector>();
+	// private final Set<StreamDetector> definiteLength = new
+	// HashSet<StreamDetector>();
 
 	private final Collection<FormatEnum> enabledFormats;
 
-	{
+	static {
 		DEFAULT_DECODERS.put(FormatEnum.BASE64, new Base64Decoder());
+		DEFAULT_DECODERS.put(FormatEnum.GZ, new GzipDecoder());
+		DEFAULT_DECODERS.put(FormatEnum.PKCS7, new Pkcs7Decoder());
 	}
 
 	protected GuessInputStream(final FormatEnum[] enabledFormats) {

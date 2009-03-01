@@ -53,8 +53,12 @@
 		</dependency>
 		<dependency>
 			<groupId>bouncycastle</groupId>
-			<artifactId>bcprov-jdk14</artifactId>
+			<artifactId>bcprov-jdk15</artifactId>
 		</dependency>
+		<dependency>
+            <groupId>bouncycastle</groupId>
+            <artifactId>bcmail-jdk15</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>stax</groupId>
 			<artifactId>stax</artifactId>

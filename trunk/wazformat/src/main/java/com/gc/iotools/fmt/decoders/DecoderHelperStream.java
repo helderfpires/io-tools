@@ -7,8 +7,15 @@ package com.gc.iotools.fmt.decoders;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Helps in mark and reset of decoded streams.
+ * 
+ * @since 1.2
+ * @author dvd.smnt
+ * @see Decoder
+ */
 public class DecoderHelperStream extends InputStream {
-	
+
 	@Override
 	public void mark(int readlimit) {
 		final int markLimit = (int) (readlimit * ratio) + offset + 1;

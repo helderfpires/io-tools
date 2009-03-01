@@ -3,7 +3,6 @@ package com.gc.iotools.fmt.file.droid;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -105,7 +104,7 @@ public class DroidDetectorImpl implements FileDetector {
 			final File theFile) {
 		final IdentificationFile idFile = new IdentificationFile(theFile
 				.getAbsolutePath());
-		final ByteReader testFile = new FileByteReader(idFile, false);
+		final ByteReader testFile = new FileByteReader(idFile, true);
 		final FFSignatureFile fsigfile = CONF_MAP.get(this.configFile);
 		fsigfile.runFileIdentification(testFile);
 		final int n = testFile.getNumHits();
@@ -171,6 +170,7 @@ public class DroidDetectorImpl implements FileDetector {
 	private XMLReader getXMLReader(final SAXModelBuilder mb) throws Exception {
 		final SAXParserFactory factory = SAXParserFactory.newInstance();
 		factory.setNamespaceAware(true);
+		// factory.setValidating(true);
 		final SAXParser saxParser = factory.newSAXParser();
 		final XMLReader parser = saxParser.getXMLReader();
 		// URL url = DroidDetectorImpl.class
@@ -206,12 +206,9 @@ public class DroidDetectorImpl implements FileDetector {
 		final SAXModelBuilder mb = new SAXModelBuilder();
 		try {
 			final XMLReader parser = getXMLReader(mb);
-
 			final InputStream signatureFileStream = signatureFileURL
 					.openStream();
-			final Reader in = new java.io.InputStreamReader(
-					signatureFileStream, "UTF-8");
-			parser.parse(new InputSource(in));
+			parser.parse(new InputSource(signatureFileStream));
 		} catch (final Exception e) {
 			throw new IllegalStateException(
 					"Error reading configuration file " + "["

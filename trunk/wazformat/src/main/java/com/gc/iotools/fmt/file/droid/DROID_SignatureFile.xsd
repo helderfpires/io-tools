@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:sf="http://www.nationalarchives.gov.uk/pronom/SignatureFile" targetNamespace="http://www.nationalarchives.gov.uk/pronom/SignatureFile" elementFormDefault="qualified">
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:sf="http://www.nationalarchives.gov.uk/pronom/SignatureFile" 
+    targetNamespace="http://www.nationalarchives.gov.uk/pronom/SignatureFile" 
+    elementFormDefault="qualified">
 	<xsd:annotation>
 		<xsd:documentation xml:lang="en">
            The PRONOM File Format Signature Specification Schema

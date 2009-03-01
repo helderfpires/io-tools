@@ -9,7 +9,6 @@ import java.util.List;
 import org.apache.commons.lang.enums.Enum;
 import org.apache.commons.lang.enums.ValuedEnum;
 
-
 /**
  * Enum of detected formats. Some format is "simple", some other is just a way
  * of encoding another kind of content.
@@ -102,12 +101,12 @@ import org.apache.commons.lang.enums.ValuedEnum;
  * <td>2.2, 2.1, 2.0</td>
  * </tr>
  * <tr>
- * <td>EXTENSIBLE_HYPERTEXT_MARKUP_LANGUAGE</td>
+ * <td>XHTML</td>
  * <td>Extensible Hypertext Markup Language</td>
  * <td>1.0, 1.1</td>
  * </tr>
  * <tr>
- * <td>EXTENSIBLE_MARKUP_LANGUAGE</td>
+ * <td>XML</td>
  * <td>Extensible Markup Language</td>
  * <td>1.0</td>
  * </tr>
@@ -1445,27 +1444,24 @@ public class FormatEnum extends ValuedEnum {
 			EXCHANGEABLE_IMAGE_FILE_FORMAT_UNCOMPRESSED_INT);
 
 	/**
-	 * Constant integer for enum : EXTENSIBLE_HYPERTEXT_MARKUP_LANGUAGE .
+	 * Constant integer for enum : XHTML .
 	 */
-	public static final int EXTENSIBLE_HYPERTEXT_MARKUP_LANGUAGE_INT = 644;
+	public static final int XHTML_INT = 644;
 	/**
-	 * Enum : EXTENSIBLE_HYPERTEXT_MARKUP_LANGUAGE : this enum describes format
-	 * Extensible Hypertext Markup Language. Supported versions :1.0, 1.1
+	 * Enum : XHTML : this enum describes format Extensible Hypertext Markup
+	 * Language. Supported versions :1.0, 1.1
 	 */
-	public static final FormatEnum EXTENSIBLE_HYPERTEXT_MARKUP_LANGUAGE = new FormatEnum(
-			"EXTENSIBLE_HYPERTEXT_MARKUP_LANGUAGE",
-			EXTENSIBLE_HYPERTEXT_MARKUP_LANGUAGE_INT);
+	public static final FormatEnum XHTML = new FormatEnum("XHTML", XHTML_INT);
 
 	/**
-	 * Constant integer for enum : EXTENSIBLE_MARKUP_LANGUAGE .
+	 * Constant integer for enum : XML .
 	 */
-	public static final int EXTENSIBLE_MARKUP_LANGUAGE_INT = 638;
+	public static final int XML_INT = 638;
 	/**
-	 * Enum : EXTENSIBLE_MARKUP_LANGUAGE : this enum describes format Extensible
-	 * Markup Language. Supported versions :1.0
+	 * Enum : XML : this enum describes format Extensible Markup Language.
+	 * Supported versions :1.0
 	 */
-	public static final FormatEnum EXTENSIBLE_MARKUP_LANGUAGE = new FormatEnum(
-			"EXTENSIBLE_MARKUP_LANGUAGE", EXTENSIBLE_MARKUP_LANGUAGE_INT);
+	public static final FormatEnum XML = new FormatEnum("XML", XML_INT);
 
 	/**
 	 * Constant integer for enum : FFT .
@@ -4344,8 +4340,6 @@ public class FormatEnum extends ValuedEnum {
 	public static final int UNKNOWN_INT = 900;
 	public static final FormatEnum UNKNOWN = new FormatEnum("UNKNOWN",
 			UNKNOWN_INT);
-	public static final int XML_INT = 1000;
-	public static final FormatEnum XML = new FormatEnum("XML", XML_INT);
 
 	public static FormatEnum getEnum(final Class clazz, final String name) {
 		return (FormatEnum) Enum.getEnum(clazz, name);
