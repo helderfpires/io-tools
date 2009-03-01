@@ -151,9 +151,6 @@ public class FFSignatureFile extends SimpleElement {
 			removeLowerPriorityHits(targetFile);
 		}
 
-		// carry out file extension checking
-		checkExtension(targetFile);
-
 		// if there are still no hits then classify as unidentified
 		if (targetFile.getNumHits() == 0) {
 			targetFile.setNoIdent();
@@ -181,74 +178,6 @@ public class FFSignatureFile extends SimpleElement {
 		this.intSigs = col3;
 	}
 
-	/**
-	 * Determines the file extension If the file has got some positive hits,
-	 * then check these against this extension If the file has not got any
-	 * positive hits, then look for tentative hits based on the extension only.
-	 * 
-	 * @param targetFile
-	 *            The binary file to be identified
-	 */
-	private void checkExtension(final ByteReader targetFile) {
-
-		// work out if file has an extension
-		boolean hasExtension = true;
-		final int dotPos = targetFile.getFileName().lastIndexOf(".");
-		if (dotPos < 0) {
-			hasExtension = false;
-		} else if (dotPos == targetFile.getFileName().length() - 1) {
-			hasExtension = false;
-		} else if (targetFile.getFileName().lastIndexOf("/") > dotPos) {
-			hasExtension = false;
-		} else if (targetFile.getFileName().lastIndexOf("\\") > dotPos) {
-			hasExtension = false;
-		}
-
-		//
-		if (hasExtension) {
-			final String fileExtension = targetFile.getFileName().substring(
-					dotPos + 1);
-
-			if (targetFile.getNumHits() > 0) {
-
-				// for each file format which is a hit, check that it expects
-				// the given extension - if not give a warning
-				for (int iHit = 0; iHit < targetFile.getNumHits(); iHit++) {
-					if (!(targetFile.getHit(iHit).getFileFormat()
-							.hasMatchingExtension(fileExtension))) {
-						targetFile.getHit(iHit).setIdentificationWarning(
-								MessageDisplay.FILEEXTENSIONWARNING);
-					}
-				}// loop through hits
-
-			} else {
-				// no positive hits have been found, so search for tenative hits
-				// loop through all file formats with no internal signature
-				for (int iFormat = 0; iFormat < getNumFileFormats(); iFormat++) {
-					if (getFileFormat(iFormat).getNumInternalSignatures() == 0) {
-						if (getFileFormat(iFormat).hasMatchingExtension(
-								fileExtension)) {
-							// add this as a tentative hit
-							final FileFormatHit fileHit = new FileFormatHit(
-									getFileFormat(iFormat),
-									DroidConstants.HIT_TYPE_TENTATIVE, false,
-									"");
-							targetFile.addHit(fileHit);
-							targetFile.setTentativeIdent();
-						}
-					}
-				}// loop through file formats
-			}
-		}// end of if(hasExtension)
-		else {
-			// if the file does not have an extension then add warning to all
-			// its hits
-			for (int iHit = 0; iHit < targetFile.getNumHits(); iHit++) {
-				targetFile.getHit(iHit).setIdentificationWarning(
-						MessageDisplay.FILEEXTENSIONWARNING);
-			}
-		}
-	}
 
 	/**
 	 * Remove any hits for which there is a higher priority hit
