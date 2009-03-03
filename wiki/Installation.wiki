@@ -47,6 +47,7 @@ While to use commons logging you must add the following dependency to your pom.x
   </dependency>
 }}} 
 
+For further information go to the [http://www.slf4j.org/ slf4j] web site.
 === Release Candidates===
 Release candidates are deployed on `dev.java.net` repository. You have to add the following lines to your pom.xml to download them:
 
