@@ -22,7 +22,7 @@ public class Base64Decoder implements Decoder {
 	public InputStream decode(final InputStream istream) {
 		InputStream decoded = new com.gc.iotools.stream.utils.Base64.InputStream(
 				istream);
-		return new DecoderHelperStream(istream, decoded, 4 / 3f, 4);
+		return decoded;
 	}
 
 	/**
@@ -30,6 +30,14 @@ public class Base64Decoder implements Decoder {
 	 */
 	public FormatEnum getFormat() {
 		return FormatEnum.BASE64;
+	}
+
+	public int getOffset() {
+		return 4;
+	}
+
+	public float getRatio() {
+		return 4 / 3f;
 	}
 
 }

@@ -75,7 +75,7 @@ public class PKCS7Detector implements DefiniteLengthModule {
 	}
 
 	public int getDetectLength() {
-		return 90;
+		return 4096;
 	}
 
 	public FormatId getDetectedFormat() {

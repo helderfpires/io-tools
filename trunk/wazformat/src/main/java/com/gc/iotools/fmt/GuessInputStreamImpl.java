@@ -42,6 +42,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.gc.iotools.fmt.base.Decoder;
 import com.gc.iotools.fmt.base.Detector;
@@ -49,19 +51,25 @@ import com.gc.iotools.fmt.base.FileDetector;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
 import com.gc.iotools.fmt.base.StreamDetector;
+import com.gc.iotools.fmt.file.droid.DroidDetectorImpl;
 
 final class GuessInputStreamImpl extends GuessInputStream {
 
 	private static FormatId detectFormatStream(final InputStream stream,
-			final StreamDetector[] detectors, final FormatEnum[] enabledFormats)
-			throws IOException {
+			final StreamDetector[] detectors,
+			final FormatEnum[] enabledFormats) throws IOException {
 		FormatId detected = new FormatId(FormatEnum.UNKNOWN, null);
+
 		if (detectors != null) {
 			for (int i = 0; (i < detectors.length)
 					&& FormatEnum.UNKNOWN.equals(detected.format); i++) {
 				final StreamDetector detector = detectors[i];
 				stream.mark(detector.getDetectLength(enabledFormats));
-				detected = detector.detect(enabledFormats, stream);
+				try {
+					detected = detector.detect(enabledFormats, stream);
+				} catch (Exception e) {
+
+				}
 				stream.reset();
 			}
 		}
@@ -76,6 +84,9 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		}
 		return formatsMap;
 	}
+
+	private static final Logger LOG = LoggerFactory
+			.getLogger(DroidDetectorImpl.class);
 
 	private final InputStream bis;
 
@@ -99,8 +110,8 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		InputStream currentStream = bufStream;
 		final Collection<File> createdFiles = new ArrayList<File>();
 		do {
-			curFormat = detectFormatStream(currentStream, this.streamDetectors,
-					enabledFormats);
+			curFormat = detectFormatStream(currentStream,
+					this.streamDetectors, enabledFormats);
 			if (FormatEnum.UNKNOWN.equals(curFormat.format)) {
 				final Set<FileDetector> enableDetectors = getEnabledFileDetectors(
 						enabledFormats, this.streamDetectors,
@@ -129,7 +140,8 @@ final class GuessInputStreamImpl extends GuessInputStream {
 			}
 			if (decMap.containsKey(curFormat.format)) {
 				final Decoder decoder = decMap.get(curFormat.format);
-				currentStream = decoder.decode(currentStream);
+				currentStream = new DecoderHelperStream(currentStream,
+						decoder);
 			}
 			formats.add(curFormat);
 		} while (decMap.containsKey(curFormat.format));
@@ -230,7 +242,8 @@ final class GuessInputStreamImpl extends GuessInputStream {
 			final Set<FormatEnum> undetectedFormats = getUndetectedFormats(
 					enabledFormats, definiteLength);
 			for (final FileDetector fileDetector : fileDetectors) {
-				final FormatEnum[] formats = fileDetector.getDetectedFormats();
+				final FormatEnum[] formats = fileDetector
+						.getDetectedFormats();
 				boolean found = false;
 				if (formats != null) {
 					for (int i = 0; (i < formats.length) && !found; i++) {

@@ -32,9 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 import com.gc.iotools.fmt.base.Decoder;
 import com.gc.iotools.fmt.base.Detector;
@@ -60,14 +58,13 @@ import com.gc.iotools.fmt.stream.StreamDetectorImpl;
  * 
  */
 public abstract class GuessInputStream extends InputStream {
-	public static final Map<FormatEnum, Decoder> DEFAULT_DECODERS = Collections
-			.synchronizedMap(new HashMap<FormatEnum, Decoder>());
+	public static final Collection<Decoder> DEFAULT_DECODERS = new HashSet();
 
 	public static void addDefaultDecoder(final Decoder decoder) {
 		if (decoder == null) {
 			throw new IllegalArgumentException("decoder is null");
 		}
-		DEFAULT_DECODERS.put(decoder.getFormat(), decoder);
+		DEFAULT_DECODERS.add(decoder);
 	}
 
 	public static GuessInputStream getInstance(final InputStream istream)
@@ -92,7 +89,7 @@ public abstract class GuessInputStream extends InputStream {
 			detectors.add(stream);
 		}
 		return getInstance(istream, null, detectors.toArray(new Detector[0]),
-				DEFAULT_DECODERS.values().toArray(new Decoder[0]));
+				DEFAULT_DECODERS.toArray(new Decoder[0]));
 	}
 
 	/**
@@ -113,8 +110,8 @@ public abstract class GuessInputStream extends InputStream {
 		Detector stream1 = new DroidDetectorImpl();
 		detectors.add(stream1);
 		return getInstance(source, enabledFormats, detectors
-				.toArray(new Detector[0]), DEFAULT_DECODERS.values().toArray(
-				new Decoder[0]));
+				.toArray(new Detector[0]), DEFAULT_DECODERS
+				.toArray(new Decoder[0]));
 	}
 
 	// public static void addDetector(final Detector detector) {
@@ -141,23 +138,26 @@ public abstract class GuessInputStream extends InputStream {
 	// return GuessInputStream.DETECTORS;
 	// }
 
-	public static GuessInputStream getInstance(final InputStream istream,
+	public static GuessInputStream getInstance(final InputStream stream,
 			final FormatEnum[] enabledFormats, final Detector[] detectors,
 			final Decoder[] decoders) throws IOException {
+		if (stream == null) {
+			throw new IllegalArgumentException("Parameter stream==null");
+		}
 		GuessInputStream result;
-		if (istream instanceof GuessInputStream) {
-			final GuessInputStream gis = (GuessInputStream) istream;
+		if (stream instanceof GuessInputStream) {
+			final GuessInputStream gis = (GuessInputStream) stream;
 			if (gis.canDetectAll(enabledFormats)) {
 				// TODO: if formats are same return the same inputStream, don't
 				// wrap.
 				result = new GuessInputStreamWrapper(gis, enabledFormats);
 			} else {
 				result = new GuessInputStreamImpl(detectors, decoders,
-						enabledFormats, istream);
+						enabledFormats, stream);
 			}
 		} else {
 			result = new GuessInputStreamImpl(detectors, decoders,
-					enabledFormats, istream);
+					enabledFormats, stream);
 		}
 		return result;
 	}
@@ -171,9 +171,9 @@ public abstract class GuessInputStream extends InputStream {
 	private final Collection<FormatEnum> enabledFormats;
 
 	static {
-		DEFAULT_DECODERS.put(FormatEnum.BASE64, new Base64Decoder());
-		DEFAULT_DECODERS.put(FormatEnum.GZ, new GzipDecoder());
-		DEFAULT_DECODERS.put(FormatEnum.PKCS7, new Pkcs7Decoder());
+		DEFAULT_DECODERS.add(new Base64Decoder());
+		DEFAULT_DECODERS.add(new GzipDecoder());
+		DEFAULT_DECODERS.add(new Pkcs7Decoder());
 	}
 
 	protected GuessInputStream(final FormatEnum[] enabledFormats) {
@@ -181,15 +181,11 @@ public abstract class GuessInputStream extends InputStream {
 				.asList(enabledFormats));
 	}
 
-	public void addDefaultDecoders(final Decoder[] decoders) {
+	public static void addDefaultDecoders(final Decoder[] decoders) {
 		if (decoders == null) {
 			throw new IllegalArgumentException("decoders array is null");
 		}
-		for (final Decoder decoder : decoders) {
-			if (decoder != null) {
-				DEFAULT_DECODERS.put(decoder.getFormat(), decoder);
-			}
-		}
+		DEFAULT_DECODERS.addAll(Arrays.asList(decoders));
 	}
 
 	public final boolean canDetect(final FormatEnum formatEnum) {

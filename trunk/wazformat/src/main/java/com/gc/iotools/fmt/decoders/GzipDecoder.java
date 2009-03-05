@@ -26,7 +26,7 @@ public class GzipDecoder implements Decoder {
 	 */
 	public InputStream decode(final InputStream istream) throws IOException {
 		InputStream decoded = new GZIPInputStream(istream);
-		return new DecoderHelperStream(istream, decoded, 1, START_SIZE);
+		return decoded;
 	}
 
 	/**
@@ -34,6 +34,14 @@ public class GzipDecoder implements Decoder {
 	 */
 	public FormatEnum getFormat() {
 		return FormatEnum.GZ;
+	}
+
+	public int getOffset() {
+		return START_SIZE;
+	}
+
+	public float getRatio() {
+		return 1.1f;
 	}
 
 }

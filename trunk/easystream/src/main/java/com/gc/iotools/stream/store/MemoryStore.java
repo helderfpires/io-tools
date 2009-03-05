@@ -36,6 +36,10 @@ package com.gc.iotools.stream.store;
 public class MemoryStore implements SeekableStore {
 	private long position = 0;
 
+	public long getPosition() {
+		return position;
+	}
+
 	private byte[] buffer = new byte[0];
 
 	public void cleanup() {
@@ -52,6 +56,8 @@ public class MemoryStore implements SeekableStore {
 					effectiveLength);
 			result = effectiveLength;
 			this.position += effectiveLength;
+		} else if (effectiveLength == 0) {
+			result = 0;
 		} else {
 			result = -1;
 		}

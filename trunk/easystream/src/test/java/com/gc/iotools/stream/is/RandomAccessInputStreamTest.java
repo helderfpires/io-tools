@@ -26,8 +26,9 @@ package com.gc.iotools.stream.is;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
@@ -49,6 +50,23 @@ public class RandomAccessInputStreamTest {
 		ris.seek(0);
 		final byte[] test2 = IOUtils.toByteArray(ris);
 		assertArrayEquals("simple read", reference, test2);
+	}
+
+	@Test
+	public void testRead() throws IOException {
+		byte[] reference = new byte[] { 10, 11, 127, 0, -127, -1, -45 };
+
+		final RandomAccessInputStream ris = new RandomAccessInputStream(
+				new ByteArrayInputStream(reference));
+		byte[] read = new byte[reference.length];
+		for (int i = 0; i < read.length; i++) {
+			read[i] = (byte) ris.read();
+		}
+		assertArrayEquals("simple read", reference, read);
+		final int pos = reference.length - 1;
+		ris.seek(pos);
+		assertEquals("last byte", reference[pos], (byte) ris.read());
+		assertEquals("eof", -1, ris.read());
 	}
 
 	@Test
@@ -75,10 +93,11 @@ public class RandomAccessInputStreamTest {
 
 	@Test
 	public void testSeek() throws IOException {
-		final BigDocumentIstream bis = new BigDocumentIstream(131072);
+		final BigDocumentIstream bis = new BigDocumentIstream(4096);
 		final byte[] reference = IOUtils.toByteArray(bis);
 		bis.resetToBeginning();
-		final RandomAccessInputStream ris = new RandomAccessInputStream(bis);
+		final RandomAccessInputStream ris = new RandomAccessInputStream(bis,
+				4096);
 		ris.seek(50);
 		final byte[] b = new byte[5];
 		ris.read(b);
@@ -87,6 +106,30 @@ public class RandomAccessInputStreamTest {
 		ris.seek(0);
 		final byte[] test2 = IOUtils.toByteArray(ris);
 		assertArrayEquals("skip and reset read", reference, test2);
+		for (int i = 0; i < reference.length; i++) {
+			byte r1 = reference[i];
+			ris.seek(i);
+			final int read = ris.read();
+			assertEquals("byte at pos [" + i + "]", r1, (byte) read);
+		}
+		assertEquals("eof", -1, ris.read());
+	}
+
+	@Test
+	public void testSeekEOF() throws IOException {
+		final BigDocumentIstream bis = new BigDocumentIstream(4080);
+		final byte[] reference = IOUtils.toByteArray(bis);
+		bis.resetToBeginning();
+		final RandomAccessInputStream ris = new RandomAccessInputStream(bis);
+		// final byte[] reference1 = IOUtils.toByteArray(ris);
+		ris.seek(5);
+		// assertArrayEquals("letti", reference, reference1);
+		final int pos = reference.length - 1;
+		ris.skip(pos + 1);
+		ris.seek(5);
+		ris.seek(pos);
+		assertEquals("last byte", reference[pos], (byte) ris
+				.read());
 	}
 
 	@Test

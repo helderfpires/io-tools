@@ -21,10 +21,17 @@ public class TestDroidDetector {
 	private static final Map<FormatEnum, String> enabledFormats = new HashMap<FormatEnum, String>();
 
 	static {
-		// enabledFormats.put(FormatEnum.M7M, ".m7m");
-		//enabledFormats.put(FormatEnum.PDF_A, "pdf");
-		//enabledFormats.put(FormatEnum.PKCS7, "p7m");
-		//enabledFormats.put(FormatEnum.XML, "xml");
+		// enabledFormats.put(FormatEnum.M7M, "m7m");
+		// enabledFormats.put(FormatEnum.PDF, "pdf");
+		// enabledFormats.put(FormatEnum.PKCS7, "p7m");
+		// enabledFormats.put(FormatEnum.XML, "xml");
+		enabledFormats.put(FormatEnum.BMP, "bmp");
+		enabledFormats.put(FormatEnum.GIF, "gif");
+		enabledFormats.put(FormatEnum.EPSF, "eps");
+		enabledFormats.put(FormatEnum.JPEG, "jpg");
+		enabledFormats.put(FormatEnum.PCX, "pcx");
+		enabledFormats.put(FormatEnum.PNG, "png");
+		enabledFormats.put(FormatEnum.RTF, "rtf");
 		enabledFormats.put(FormatEnum.ZIP, "zip");
 	}
 
@@ -46,11 +53,13 @@ public class TestDroidDetector {
 	// }
 	// tmpFile.delete();
 	// }
-	@org.junit.Test
-	public void testRTF() throws IOException{
-		checkFormat(FormatEnum.RTF, "rtf");
-	}
 
+	
+	@org.junit.Test
+	public void testPDF() throws IOException {
+		checkFormat(FormatEnum.PDF, "pdf");
+	}
+	
 	private void checkFormat(FormatEnum expected, String extension) throws IOException{
 		checkFormat(new String[]{extension}, expected);
 	}

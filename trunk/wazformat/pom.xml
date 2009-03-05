@@ -38,11 +38,11 @@
 		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk/wazformat</developerConnection>
 	</scm>
 	<dependencies>
-	    <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>easystream</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>easystream</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -56,9 +56,9 @@
 			<artifactId>bcprov-jdk15</artifactId>
 		</dependency>
 		<dependency>
-            <groupId>bouncycastle</groupId>
-            <artifactId>bcmail-jdk15</artifactId>
-        </dependency>
+			<groupId>bouncycastle</groupId>
+			<artifactId>bcmail-jdk15</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>stax</groupId>
 			<artifactId>stax</artifactId>
@@ -70,6 +70,10 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.mime-util</groupId>
+			<artifactId>mime-util</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -89,8 +93,8 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 			</plugin>
 			<plugin>
-                <artifactId>maven-source-plugin</artifactId>
-            </plugin>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
 		</plugins>
 	</build>
 
