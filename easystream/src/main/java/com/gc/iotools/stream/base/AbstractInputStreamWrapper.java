@@ -30,6 +30,10 @@ public abstract class AbstractInputStreamWrapper extends InputStream {
 	protected boolean closeCalled;
 
 	protected AbstractInputStreamWrapper(final InputStream source) {
+		if (source == null) {
+			throw new IllegalArgumentException(
+					"InputStream source can't be null.");
+		}
 		this.source = source;
 	}
 
@@ -41,14 +45,14 @@ public abstract class AbstractInputStreamWrapper extends InputStream {
 		}
 	}
 
-	public abstract int innerRead(byte[] b, int off, int len)
+	protected abstract int innerRead(byte[] b, int off, int len)
 			throws IOException;
 
 	@Override
 	public int read() throws IOException {
 		final byte[] buf = new byte[1];
 		final int n = this.read(buf);
-		final int result = (n > 0 ? buf[0] : n);
+		final int result = (n > 0 ? buf[0] & 0xff : n);
 		return result;
 	}
 

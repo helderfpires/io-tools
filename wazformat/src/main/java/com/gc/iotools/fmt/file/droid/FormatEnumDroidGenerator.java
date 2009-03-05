@@ -53,14 +53,14 @@ public class FormatEnumDroidGenerator {
 			final Node node = formatsList.item(i);
 			String[] extensions = getExtensions(node);
 			getNode(node, "MimeType");
-			getNode(node, "InternalSignatureID");
+			String internalId = getNode(node, "InternalSignatureID");
 			final String id = getAttribute(node, "ID");
 			final String description = getAttribute(node, "Name").trim();
 			final String version = getAttribute(node, "Version");
 			if (extensions.length == 0) {
 				extensions = new String[] { "unknown" };
 			}
-			// if (StringUtils.isNotBlank(internalId)) {
+			if (StringUtils.isNotBlank(internalId)) {
 			final DataHolder dh = new DataHolder(extensions, description,
 					Integer.parseInt(id), version);
 			if (StringUtils.isNotBlank(dh.version)) {
@@ -68,7 +68,7 @@ public class FormatEnumDroidGenerator {
 			}
 			mappa.put(description, dh);
 			idMap.put(description, id);
-			// }
+			}
 		}
 		final Collection<String> conflictingExtensions = getConflictingExtensions(mappa);
 		final Map<String, String> enumDescrMap = getDescrEnumMap(mappa);
@@ -78,8 +78,8 @@ public class FormatEnumDroidGenerator {
 		final StringWriter sb = getFormatEnumStr(enumDescrMap, versionMap,
 				mappa);
 		System.out.println(sb.toString());
-		 final StringWriter sb2 = getAllocationMap(enumDescrMap, idMap);
-		System.out.println(sb2.toString());
+		// final StringWriter sb2 = getAllocationMap(enumDescrMap, idMap);
+		// System.out.println(sb2.toString());
 
 		// StringWriter sb1 = getMimeTypes(mappa, conflictingExtensions,
 		// mmtypeMap);
@@ -222,7 +222,7 @@ public class FormatEnumDroidGenerator {
 					: nomeUC);
 			pw.println("* <tr>");
 			String versions = getVersions(versionMap, description);
-			pw.print("* <td>" + nome + "</td> <td>" + description
+			pw.println("* <td>" + nome + "</td> <td>" + description
 					+ "</td> <td>" + versions + "</td>");
 			pw.println("* </tr>");
 		}

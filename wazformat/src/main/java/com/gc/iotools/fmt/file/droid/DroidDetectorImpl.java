@@ -1,6 +1,12 @@
 package com.gc.iotools.fmt.file.droid;
 
+/*
+ * Copyright (c) 2008, 2009 Davide Simonetti.
+ * This source code is released under the BSD Software License.
+ */
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -24,6 +30,7 @@ import uk.gov.nationalarchives.droid.base.FileFormatHit;
 import uk.gov.nationalarchives.droid.binFileReader.ByteReader;
 import uk.gov.nationalarchives.droid.binFileReader.FileByteReader;
 import uk.gov.nationalarchives.droid.binFileReader.IdentificationFile;
+import uk.gov.nationalarchives.droid.binFileReader.RandomAccessByteReader;
 import uk.gov.nationalarchives.droid.signatureFile.FFSignatureFile;
 import uk.gov.nationalarchives.droid.signatureFile.FileFormat;
 import uk.gov.nationalarchives.droid.xmlReader.SAXModelBuilder;
@@ -104,7 +111,16 @@ public class DroidDetectorImpl implements FileDetector {
 			final File theFile) {
 		final IdentificationFile idFile = new IdentificationFile(theFile
 				.getAbsolutePath());
-		final ByteReader testFile = new FileByteReader(idFile, true);
+		FileInputStream stream;
+		try {
+			stream = new FileInputStream(theFile);
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException("", e);
+		}
+		FileByteReader fbr = new FileByteReader(new IdentificationFile(
+				theFile.getAbsolutePath()), true);
+		final ByteReader testFile = new RandomAccessByteReader(idFile,
+				stream, fbr);
 		final FFSignatureFile fsigfile = CONF_MAP.get(this.configFile);
 		fsigfile.runFileIdentification(testFile);
 		final int n = testFile.getNumHits();
@@ -117,6 +133,13 @@ public class DroidDetectorImpl implements FileDetector {
 			final uk.gov.nationalarchives.droid.signatureFile.FileFormat fileFormat = ffhit
 					.getFileFormat();
 			FormatId tmpFid = getFormatEnum(fileFormat);
+			if (FormatEnum.UNLISTED.equals(tmpFid.format)) {
+				LOG.warn("Format number[" + fileFormat.getID()
+						+ "] not found in configured mapping. format ["
+						+ fileFormat.getName() + "] was returned as ["
+						+ FormatEnum.UNLISTED + "] version["
+						+ fileFormat.getName() + "]");
+			}
 			if (enabledFormatCollection.contains(tmpFid.format)) {
 				fenumId = tmpFid;
 			}
@@ -155,12 +178,6 @@ public class DroidDetectorImpl implements FileDetector {
 		FormatId result;
 		if (fenum == null) {
 			result = new FormatId(FormatEnum.UNLISTED, id.getName());
-			LOG
-					.warn("Format number[" + id.getID()
-							+ "] not found in configured mapping. format ["
-							+ id.getText() + "] was returned as ["
-							+ FormatEnum.UNLISTED + "] version["
-							+ id.getName() + "]");
 		} else {
 			result = new FormatId(fenum, id.getVersion());
 		}

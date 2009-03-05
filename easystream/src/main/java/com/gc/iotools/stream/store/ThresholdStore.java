@@ -49,6 +49,19 @@ public class ThresholdStore implements SeekableStore {
 	private RandomAccessFile fileAccess;
 	private long size = 0;
 	private long position = 0;
+
+	public int getTreshold() {
+		return treshold;
+	}
+
+	public long getSize() {
+		return size;
+	}
+
+	public void setPosition(long position) {
+		this.position = position;
+	}
+
 	private final MemoryStore ms = new MemoryStore();
 
 	public ThresholdStore(final int treshold) {
@@ -93,6 +106,9 @@ public class ThresholdStore implements SeekableStore {
 			throws IOException {
 		int result;
 		if (this.size < this.treshold) {
+			if(this.position == this.size-1){
+				System.out.println("ss");
+			}
 			result = this.ms.get(bytes, offset, length);
 		} else {
 			if (this.position != this.fileAccess.getFilePointer()) {
@@ -100,12 +116,15 @@ public class ThresholdStore implements SeekableStore {
 			}
 			result = this.fileAccess.read(bytes, offset, length);
 		}
-		this.position += (result > 0 ? result : 0);
+		this.position += Math.max(result, 0);
 		return result;
 	}
 
 	public void put(final byte[] bytes, final int offset, final int length)
 			throws IOException {
+		if (length <= 0) {
+			throw new IllegalArgumentException("lenght = [" + length + "]");
+		}
 		if (this.size + length < this.treshold) {
 			this.ms.put(bytes, offset, length);
 		} else {
@@ -116,8 +135,9 @@ public class ThresholdStore implements SeekableStore {
 							".tmp");
 				}
 				this.fileAccess = new RandomAccessFile(this.fileStorage, "rw");
-				int len;
 				final byte[] buffer = new byte[BUF_SIZE];
+				this.ms.seek(0);
+				int len;
 				while ((len = this.ms.get(buffer, 0, buffer.length)) > 0) {
 					this.fileAccess.write(buffer, 0, len);
 				}
@@ -133,21 +153,31 @@ public class ThresholdStore implements SeekableStore {
 		this.size += length;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @throws IOException
+	 *             is thrown if some (disk) error happens or a seek over the
+	 *             buffer length is requested.
+	 */
 	public void seek(final long position) throws IOException {
-		this.position = position;
-		if (position <= this.size) {
-			if (this.size < this.treshold) {
-				this.ms.seek(position);
-			} else {
-				final long fp = this.fileAccess.getFilePointer();
-				if (fp != position) {
-					this.fileAccess.seek(position);
+		// if already in place do nothing.
+		if (this.position != position) {
+			this.position = position;
+			if (position <= this.size) {
+				if (this.size < this.treshold) {
+					this.ms.seek(position);
+				} else {
+					final long fp = this.fileAccess.getFilePointer();
+					if (fp != position) {
+						this.fileAccess.seek(position);
+					}
 				}
+			} else {
+				// seek outside the buffer
+				throw new IOException("Seek at posiotion [" + position
+						+ "]outside buffer size[" + this.size + "]");
 			}
-		} else {
-			// seek outside the buffer
-			throw new IOException("Seek at posiotion [" + position
-					+ "]outside buffer size[" + this.size + "]");
 		}
 	}
 

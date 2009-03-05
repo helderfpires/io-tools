@@ -6,13 +6,21 @@
 	<artifactId>easystream</artifactId>
 	<version>1.1.7-SNAPSHOT</version>
 	<packaging>jar</packaging>
+	<description>
+Small set of Java tools for dealing with streams (InputStreams and OutputStreams). 
+The aim is to ease the use of pipes when they're required. 
+Main features are: 
+ * "Convert" an OutputStream to an InputStream.
+ * Count the number of bytes read or wrote to a given stream.
+ * While reading the data from an InputStream copy it to a supplied OutputStream. 
+ * Read the content of an InputStream multiple times or seek to a definite position  
+</description>
 	<parent>
 		<groupId>net.sf.jsignature.io-tools</groupId>
 		<artifactId>io-tools</artifactId>
 		<version>1.1.7-SNAPSHOT</version>
 	</parent>
 	<name>EasyStream</name>
-	<description>Stream utilities</description>
 	<url>http://io-tools.googlecode.com</url>
 	<inceptionYear>2008</inceptionYear>
 	<scm>

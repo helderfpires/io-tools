@@ -1,11 +1,11 @@
 package com.gc.iotools.fmt.base;
-
-import java.io.File;
-
 /*
  * Copyright (c) 2008, 2009 Davide Simonetti.
  * This source code is released under the BSD Software License.
  */
+import java.io.File;
+
+
 /**
  * Describes a Format Identification Library that relies on files.
  * 

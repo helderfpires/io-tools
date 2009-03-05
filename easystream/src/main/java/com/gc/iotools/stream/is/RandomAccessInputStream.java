@@ -75,19 +75,51 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	protected long markLimit = 0;
 	protected final SeekableStore store;
 
+	/**
+	 * 
+	 * @param source
+	 *            The underlying input stream.
+	 */
 	public RandomAccessInputStream(final InputStream source) {
 		this(source, DEFAULT_TRHESHOLD);
 	}
 
+	/**
+	 * <p>
+	 * Creates a <code>RandomAccessInputStream</code> with the specified
+	 * treshold, and saves its argument, the input stream <code>source</code>,
+	 * for later use.
+	 * </p>
+	 * <p>
+	 * When data read under threshold size <code>treshold</code> is kept into
+	 * memory. Over this size it is placed on disk.
+	 * </p>
+	 * 
+	 * @see ThresholdStore
+	 * @param source
+	 *            The underlying input stream.
+	 * @param threshold
+	 *            Maximum number of bytes to keep into memory.
+	 */
 	public RandomAccessInputStream(final InputStream source,
 			final int threshold) {
 		super(source);
 		this.store = new ThresholdStore(threshold);
 	}
 
+	/**
+	 * 
+	 * 
+	 * @param source
+	 *            The underlying input stream.
+	 * @param store
+	 */
 	public RandomAccessInputStream(final InputStream source,
 			final SeekableStore store) {
 		super(source);
+		if (store == null) {
+			throw new IllegalArgumentException("store can't be null.");
+		}
 		this.store = store;
 	}
 
@@ -98,8 +130,17 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 				Integer.MAX_VALUE);
 	}
 
+	/**
+	 * Return the underlying store where the cache of data is kept.
+	 * 
+	 * @return The underlying store that caches data.
+	 */
+	public Store getStore() {
+		return this.store;
+	}
+
 	@Override
-	public int innerRead(final byte[] b, final int off, final int len)
+	protected int innerRead(final byte[] b, final int off, final int len)
 			throws IOException {
 		int n;
 		if (this.sourcePosition == this.randomAccessIsPosition) {
@@ -131,6 +172,7 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 					this.randomAccessIsPosition - this.sourcePosition);
 			n = this.source.read(b, off, efflen);
 			this.sourcePosition += Math.max(n, 0);
+			throw new IllegalStateException("");
 		}
 		return n;
 	}
@@ -169,6 +211,13 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 		this.markPosition = this.randomAccessIsPosition;
 	}
 
+	/**
+	 * Overrides the <code>markSupported()</code> method of the
+	 * <code>InputStream</code> class.
+	 * 
+	 * @see InputStream#markSupported();
+	 * @return Always returns <code>true</code> for this kind of stream.
+	 */
 	@Override
 	public boolean markSupported() {
 		return true;
@@ -206,6 +255,10 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	 * {@inheritDoc}.
 	 */
 	public void seek(final long position) throws IOException {
+		if (position < 0) {
+			throw new IllegalArgumentException("Seek to negative position ["
+					+ position + "]");
+		}
 		final long len = position - this.randomAccessIsPosition;
 		if (len > 0) {
 			final long n = skip(len);
@@ -214,7 +267,8 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 						+ "] but the stream is only ["
 						+ (n + this.randomAccessIsPosition) + "] bytes long.");
 			}
-		} else {
+		} else if (len < 0) {
+			// if len==0 already at the right place. Do Nothing.
 			this.randomAccessIsPosition = position;
 			this.store.seek(position);
 		}

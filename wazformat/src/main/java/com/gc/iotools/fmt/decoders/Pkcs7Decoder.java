@@ -37,8 +37,7 @@ public class Pkcs7Decoder implements Decoder {
 			throw e1;
 		}
 		CMSTypedStream ts = sdp.getSignedContent();
-		return new DecoderHelperStream(istream, ts.getContentStream(), 1,
-				START_SIZE);
+		return ts.getContentStream();
 	}
 
 	/**
@@ -46,6 +45,14 @@ public class Pkcs7Decoder implements Decoder {
 	 */
 	public FormatEnum getFormat() {
 		return FormatEnum.PKCS7;
+	}
+
+	public int getOffset() {
+		return START_SIZE;
+	}
+
+	public float getRatio() {
+		return 1;
 	}
 
 }
