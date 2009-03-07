@@ -69,7 +69,7 @@ public class ThresholdStorageTest {
 		tss.cleanup();
 		final byte[] read = new byte[20];
 		int n = tss.get(ref1, 0, read.length);
-		assertEquals("read", -1, n);
+		assertEquals("read " + tss, -1, n);
 		assertEquals("temporary files after cleanup", 0, getTmpFileNum());
 		// still works after cleanup
 		tss.put(ref1, 0, ref1.length);
