@@ -121,31 +121,39 @@ public class RandomAccessInputStreamTest {
 		final byte[] reference = IOUtils.toByteArray(bis);
 		bis.resetToBeginning();
 		final RandomAccessInputStream ris = new RandomAccessInputStream(bis);
-		// final byte[] reference1 = IOUtils.toByteArray(ris);
-		ris.seek(5);
-		// assertArrayEquals("letti", reference, reference1);
 		final int pos = reference.length - 1;
-		ris.skip(pos + 1);
-		ris.seek(5);
+
 		ris.seek(pos);
-		assertEquals("last byte", reference[pos], (byte) ris
-				.read());
+		assertEquals("last byte", reference[pos], (byte) ris.read());
+		assertEquals("EOF", -1, ris.read());
+		assertEquals("EOF", -1, ris.read());
+
+		ris.seek(pos + 1);
+		assertEquals("EOF", -1, ris.read());
+		try {
+			ris.seek(pos + 2);
+			fail("Exception must be thrown");
+		} catch (IOException e) {
+
+		}
 	}
 
 	@Test
 	public void testSkipAndReset() throws IOException {
-		final BigDocumentIstream bis = new BigDocumentIstream(131072);
+		final BigDocumentIstream bis = new BigDocumentIstream(10000);
 		final byte[] reference = IOUtils.toByteArray(bis);
 		bis.resetToBeginning();
 		final RandomAccessInputStream ris = new RandomAccessInputStream(bis);
 		final byte[] b = new byte[5];
 		ris.read(b);
-		ris.skip(32768);
+		ris.mark(-1);
+		ris.skip(9000);
 		ris.read(b);
 		assertArrayEquals("read correct position", ArrayUtils.subarray(
-				reference, 32768 + 5, 32768 + 10), b);
-		ris.seek(0);
+				reference, 9000 + 5, 9000 + 10), b);
+		ris.reset();
 		final byte[] test2 = IOUtils.toByteArray(ris);
-		assertArrayEquals("skip and reset read", reference, test2);
+		assertArrayEquals("skip and reset read", ArrayUtils.subarray(
+				reference, 5, reference.length), test2);
 	}
 }

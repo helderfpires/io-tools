@@ -73,7 +73,8 @@ public abstract class AbstractInputStreamWrapper extends InputStream {
 		int readLen = 0;
 		final byte[] buf = new byte[SKIP_SIZE];
 		while ((curPos < n) && (readLen >= 0)) {
-			readLen = this.read(buf, 0, (int) Math.min(buf.length, n));
+			readLen = this.read(buf, 0, (int) Math
+					.min(buf.length, n - curPos));
 			if (readLen > 0) {
 				curPos += readLen;
 			}

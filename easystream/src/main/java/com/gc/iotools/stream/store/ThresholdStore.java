@@ -106,9 +106,6 @@ public class ThresholdStore implements SeekableStore {
 			throws IOException {
 		int result;
 		if (this.size < this.treshold) {
-			if(this.position == this.size-1){
-				System.out.println("ss");
-			}
 			result = this.ms.get(bytes, offset, length);
 		} else {
 			if (this.position != this.fileAccess.getFilePointer()) {
@@ -189,4 +186,26 @@ public class ThresholdStore implements SeekableStore {
 		cleanup();
 	}
 
+	/**
+	 * Provides a String representation of the state of the Store for debugging
+	 * purposes.
+	 */
+	@Override
+	public String toString() {
+		String str = this.getClass().getSimpleName() + "[pos=" + position
+				+ ",size=" + size;
+		if (this.fileStorage != null) {
+			str += ",file=" + this.fileStorage;
+		} else {
+			str += ",ms=" + this.ms;
+		}
+		if (this.fileAccess != null) {
+			try {
+				str += ",fp=" + this.fileAccess.getFilePointer();
+			} catch (IOException e) {
+				// do nothing... here for debugging.
+			}
+		}
+		return str + "]";
+	}
 }
