@@ -1,21 +1,29 @@
 package uk.gov.nationalarchives.droid.binFileReader;
 
 import java.io.IOException;
-import java.io.InputStream;
 
-import com.gc.iotools.stream.is.RandomAccessInputStream;
+import com.gc.iotools.fmt.base.ResettableInputStream;
 
+/**
+ * 
+ * TODO a 2K buffer at beginning and end of the file will improve performances.
+ * 
+ * @author dvd.smt
+ * 
+ */
 public final class RandomAccessByteReader extends AbstractByteReader {
 
-	private final RandomAccessInputStream ras;
-	private long len = -1;
+	private final ResettableInputStream ras;
+	private long position = 0;
+	private final long len;
 	private long fileMarker = 0;
-	private final FileByteReader fbr;
+
 	public RandomAccessByteReader(final IdentificationFile theIDFile,
-			final InputStream stream, FileByteReader fbr) {
+			final ResettableInputStream stream) throws IOException {
 		super(theIDFile);
-		this.ras = new RandomAccessInputStream(stream);
-		this.fbr = fbr;
+		this.ras = stream;
+		this.len = this.ras.skip(Long.MAX_VALUE);
+		this.ras.resetToBeginning();
 	}
 
 	public byte[] getbuffer() {
@@ -23,38 +31,20 @@ public final class RandomAccessByteReader extends AbstractByteReader {
 	}
 
 	public byte getByte(final long fileIndex) {
-		boolean exc = false;
-		byte expR = 0;
-		try {
-			expR = fbr.getByte(fileIndex);
-		} catch (Exception e) {
-			exc = true;
-		}
-		if (fileIndex > getNumBytes()) {
+		if (fileIndex > len) {
 			throw new ArrayIndexOutOfBoundsException("Read position["
 					+ fileIndex + "] is above EOF");
 		}
 		byte result;
 		try {
-			if (this.len - 1 == fileIndex) {
-				System.out.println("stop here");
-			}
-			this.ras.seek(fileIndex);
+			seek(fileIndex);
 			final int res = this.ras.read();
 			if (res < 0) {
-				if (!exc) {
-					System.out.println("Exception1 [" + fileIndex
-							+ "] result[" + expR + "] read[" + res
-							+ "] fsize [" + this.len + "]");
-				}
 				throw new ArrayIndexOutOfBoundsException("Read position["
 						+ fileIndex + "] is above EOF");
 			} else {
 				result = (byte) res;
-				if (result != expR) {
-					System.out.println("idx [" + fileIndex + "]fbr [" + expR
-							+ "] lett[" + result + "]");
-				}
+				position++;
 			}
 		} catch (final IOException e) {
 			throw new IllegalStateException("Read position[" + fileIndex
@@ -64,31 +54,28 @@ public final class RandomAccessByteReader extends AbstractByteReader {
 		return result;
 	}
 
+	private void seek(final long fileIndex) throws IOException {
+		if (fileIndex > position) {
+			this.ras.skip(fileIndex - position);
+		} else if (fileIndex < position) {
+			this.ras.resetToBeginning();
+			this.ras.skip(fileIndex);
+		}
+	}
+
 	public long getFileMarker() {
-		fbr.getFileMarker();
 		return this.fileMarker;
 	}
 
 	public long getNumBytes() {
-		if (this.len <= 0) {
-			try {
-				this.ras.seek(0);
-				this.len = this.ras.skip(Long.MAX_VALUE);
-			} catch (final IOException e) {
-				throw new IllegalStateException(
-						"Problem reading number of bytes", e);
-			}
-		}
-		if (this.len != fbr.getNumBytes()) {
-			System.out.println("Different len [" + len + "] fbr["
-					+ fbr.getNumBytes() + "]");
-		}
 		return this.len;
 	}
 
 	public void setFileMarker(final long markerPosition) {
 		this.fileMarker = markerPosition;
-		fbr.setFileMarker(markerPosition);
 	}
 
+	public void close() throws IOException {
+		this.ras.close();
+	}
 }

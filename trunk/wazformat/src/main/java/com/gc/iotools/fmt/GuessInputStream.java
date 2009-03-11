@@ -41,8 +41,8 @@ import com.gc.iotools.fmt.base.FormatId;
 import com.gc.iotools.fmt.decoders.Base64Decoder;
 import com.gc.iotools.fmt.decoders.GzipDecoder;
 import com.gc.iotools.fmt.decoders.Pkcs7Decoder;
-import com.gc.iotools.fmt.file.droid.DroidDetectorImpl;
-import com.gc.iotools.fmt.stream.StreamDetectorImpl;
+import com.gc.iotools.fmt.detect.droid.DroidDetectorImpl;
+import com.gc.iotools.fmt.detect.wzf.StreamDetectorImpl;
 
 /**
  * InputStream that wraps the original InputStream and guess the format.
@@ -153,11 +153,11 @@ public abstract class GuessInputStream extends InputStream {
 				result = new GuessInputStreamWrapper(gis, enabledFormats);
 			} else {
 				result = new GuessInputStreamImpl(detectors, decoders,
-						enabledFormats, stream);
+						enabledFormats, stream, false);
 			}
 		} else {
 			result = new GuessInputStreamImpl(detectors, decoders,
-					enabledFormats, stream);
+					enabledFormats, stream, false);
 		}
 		return result;
 	}

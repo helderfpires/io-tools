@@ -116,7 +116,7 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 * the input stream <code>source</code> and the output stream
 	 * <code>destination</code> for later use.
 	 * 
-	 * @since 1.2
+	 * @since 1.2.0
 	 * @param source
 	 *            The underlying <code>InputStream</code>
 	 * @param destination
@@ -214,7 +214,7 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 *            position becomes invalid.
 	 * @see #reset()
 	 * @see java.io.InputStream#mark(int)
-	 * @since 1.2
+	 * @since 1.2.0
 	 */
 	@Override
 	public void mark(final int readLimit) {
@@ -263,7 +263,7 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 * @see java.io.InputStream#reset()
 	 * @exception IOException
 	 *                If the source stream has an exception in calling reset().
-	 * @since 1.2
+	 * @since 1.2.0
 	 */
 	@Override
 	public synchronized void reset() throws IOException {

@@ -1,4 +1,4 @@
-package com.gc.iotools.fmt.file.droid;
+package com.gc.iotools.fmt.detect.droid;
 
 import java.io.InputStream;
 import java.io.PrintWriter;

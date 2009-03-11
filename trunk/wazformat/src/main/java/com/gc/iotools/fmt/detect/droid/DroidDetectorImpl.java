@@ -1,12 +1,9 @@
-package com.gc.iotools.fmt.file.droid;
+package com.gc.iotools.fmt.detect.droid;
 
 /*
  * Copyright (c) 2008, 2009 Davide Simonetti.
  * This source code is released under the BSD Software License.
  */
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -28,16 +25,16 @@ import org.xml.sax.XMLReader;
 
 import uk.gov.nationalarchives.droid.base.FileFormatHit;
 import uk.gov.nationalarchives.droid.binFileReader.ByteReader;
-import uk.gov.nationalarchives.droid.binFileReader.FileByteReader;
 import uk.gov.nationalarchives.droid.binFileReader.IdentificationFile;
 import uk.gov.nationalarchives.droid.binFileReader.RandomAccessByteReader;
 import uk.gov.nationalarchives.droid.signatureFile.FFSignatureFile;
 import uk.gov.nationalarchives.droid.signatureFile.FileFormat;
 import uk.gov.nationalarchives.droid.xmlReader.SAXModelBuilder;
 
-import com.gc.iotools.fmt.base.FileDetector;
+import com.gc.iotools.fmt.base.Detector;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
+import com.gc.iotools.fmt.base.ResettableInputStream;
 
 /**
  * Implementation of a FileDetector that relies on droid classes.
@@ -45,7 +42,7 @@ import com.gc.iotools.fmt.base.FormatId;
  * @author dvd.smnt
  * 
  */
-public class DroidDetectorImpl implements FileDetector {
+public class DroidDetectorImpl implements Detector {
 	/**
 	 * Namespace for the xml file format signatures file.
 	 */
@@ -108,19 +105,10 @@ public class DroidDetectorImpl implements FileDetector {
 	 * {@inheritDoc}
 	 */
 	public FormatId detect(final FormatEnum[] enabledFormats,
-			final File theFile) {
-		final IdentificationFile idFile = new IdentificationFile(theFile
-				.getAbsolutePath());
-		FileInputStream stream;
-		try {
-			stream = new FileInputStream(theFile);
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException("", e);
-		}
-		FileByteReader fbr = new FileByteReader(new IdentificationFile(
-				theFile.getAbsolutePath()), true);
+			final ResettableInputStream stream) throws IOException {
+		final IdentificationFile idFile = new IdentificationFile("-");
 		final ByteReader testFile = new RandomAccessByteReader(idFile,
-				stream, fbr);
+				stream);
 		final FFSignatureFile fsigfile = CONF_MAP.get(this.configFile);
 		fsigfile.runFileIdentification(testFile);
 		final int n = testFile.getNumHits();

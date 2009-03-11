@@ -14,7 +14,7 @@ import com.gc.iotools.fmt.base.FormatEnum;
 /**
  * Extract data from gzip encoded stream.
  * 
- * @since 1.2
+ * @since 1.2.0
  * @author dvd.smnt
  * @see Decoder
  */

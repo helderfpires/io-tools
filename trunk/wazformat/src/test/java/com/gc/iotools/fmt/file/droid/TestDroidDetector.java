@@ -1,7 +1,6 @@
 package com.gc.iotools.fmt.file.droid;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,10 +11,12 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
+import com.gc.iotools.fmt.base.Detector;
 import com.gc.iotools.fmt.base.FileDetector;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
 import com.gc.iotools.fmt.base.TestUtils;
+import com.gc.iotools.fmt.detect.droid.DroidDetectorImpl;
 
 public class TestDroidDetector {
 	private static final Map<FormatEnum, String> enabledFormats = new HashMap<FormatEnum, String>();
@@ -26,7 +27,7 @@ public class TestDroidDetector {
 		// enabledFormats.put(FormatEnum.PKCS7, "p7m");
 		// enabledFormats.put(FormatEnum.XML, "xml");
 		enabledFormats.put(FormatEnum.BMP, "bmp");
-		enabledFormats.put(FormatEnum.GIF, "gif");
+		// enabledFormats.put(FormatEnum.GIF, "gif");
 		enabledFormats.put(FormatEnum.EPSF, "eps");
 		enabledFormats.put(FormatEnum.JPEG, "jpg");
 		enabledFormats.put(FormatEnum.PCX, "pcx");
@@ -59,6 +60,11 @@ public class TestDroidDetector {
 	public void testPDF() throws IOException {
 		checkFormat(FormatEnum.PDF, "pdf");
 	}
+
+	@org.junit.Test
+	public void testGIF() throws IOException {
+		checkFormat(FormatEnum.GIF, "gif");
+	}
 	
 	private void checkFormat(FormatEnum expected, String extension) throws IOException{
 		checkFormat(new String[]{extension}, expected);
@@ -87,7 +93,7 @@ public class TestDroidDetector {
 				.listFilesExcludingExtension( extensions);
 		for (String fname : badFiles) {
 			File file = new File(fname);
-			FileDetector stDetect = new DroidDetectorImpl();
+			Detector stDetect = new DroidDetectorImpl();
 			FormatEnum[] enabledFormats = new FormatEnum[] { expected };
 			FormatId formats = stDetect.detect(enabledFormats, file);
 			assertEquals("Formato file [" + fname + "]", FormatEnum.UNKNOWN,

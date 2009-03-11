@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.gc.iotools.fmt.base.Decoder;
+import com.gc.iotools.fmt.base.ResettableInputStream;
 
 /**
  * Helps in mark and reset of decoded streams.
@@ -18,15 +19,17 @@ import com.gc.iotools.fmt.base.Decoder;
  * @author dvd.smnt
  * @see Decoder
  */
-class DecoderHelperStream extends InputStream {
 
-	private final InputStream baseStream;
+public class ResettableStreamWrapper extends ResettableInputStream {
+
+	private final ResettableInputStream baseStream;
 
 	private InputStream decodedStream;
 
 	private final Decoder decoder;
 
-	public DecoderHelperStream(final InputStream originalStream,
+	public ResettableStreamWrapper(
+			final ResettableInputStream originalStream,
 			final Decoder decoder) {
 		this.baseStream = originalStream;
 		// this.decodedStream = decodedStream;
@@ -53,6 +56,12 @@ class DecoderHelperStream extends InputStream {
 	}
 
 	@Override
+	public long skip(long size) throws IOException {
+		checkInitialized();
+		return this.decodedStream.skip(size);
+	}
+
+	@Override
 	public int read(final byte[] b) throws IOException {
 		checkInitialized();
 		return this.decodedStream.read(b);
@@ -73,6 +82,12 @@ class DecoderHelperStream extends InputStream {
 
 	private void checkInitialized() throws IOException {
 		this.decodedStream = decoder.decode(baseStream);
+	}
+
+	@Override
+	public void resetToBeginning() throws IOException {
+		this.decodedStream = null;
+		this.baseStream.resetToBeginning();
 	}
 
 }

@@ -125,7 +125,6 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 			return processResult;
 		}
 
-
 		private void emptyInputStream() {
 			boolean closed = false;
 			try {
@@ -163,8 +162,39 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 		}
 	}
 
+	/**
+	 * Extends PipedInputStream to allow set the default buffer size.
+	 * 
+	 */
+	private class MyPipedInputStream extends PipedInputStream {
+
+		MyPipedInputStream(final int bufferSize) {
+			super.buffer = new byte[bufferSize];
+		}
+	}
+
+	private static final int DEFAULT_PIPE_SIZE = 1024;
+
+	/**
+	 * The default pipe buffer size for the newly created pipes.
+	 */
+	private static int defaultPipeSize = DEFAULT_PIPE_SIZE;
+
 	private static final Logger LOG = LoggerFactory
 			.getLogger(OutputStreamToInputStream.class);
+
+	/**
+	 * Set the size for the pipe circular buffer. This setting has effect for
+	 * the newly created <code>OutputStreamToInputStream</code>. Default is 1024
+	 * bytes.
+	 * 
+	 * @since 1.2.0
+	 * @param defaultPipeSize
+	 *            The default pipe buffer size in bytes.
+	 */
+	public static void setDefaultBufferSize(final int defaultPipeSize) {
+		OutputStreamToInputStream.defaultPipeSize = defaultPipeSize;
+	}
 
 	private boolean closeCalled = false;
 	private final boolean joinOnClose;
@@ -178,6 +208,10 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * This means that a new thread is created for every instance of
 	 * <code>OutputStreamToInputStream</code>.
 	 * </p>
+	 * <p>
+	 * The {@link #close()} method is called this class wait for the internal
+	 * thread to terminate.
+	 * </p>
 	 * 
 	 * @throws IOException
 	 *             Exception thrown if pipe can't be created.
@@ -188,9 +222,13 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 
 	/**
 	 * 
+	 * @see ExecutionModel
 	 * @param joinOnClose
+	 *            if <code>true</code> the internal thread will be joined when
+	 *            close is invoked.
 	 * @param executionModel
 	 * @throws IOException
+	 *             Exception thrown if pipe can't be created.
 	 */
 	public OutputStreamToInputStream(final boolean joinOnClose,
 			final ExecutionModel executionModel) throws IOException {
@@ -214,13 +252,14 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 					"executor service can't be null");
 		}
 		this.wrappedPipedOS = new PipedOutputStream();
-		final PipedInputStream pipedIS = new PipedInputStream(
-				this.wrappedPipedOS);
-
+		final PipedInputStream pipedIS = new MyPipedInputStream(
+				defaultPipeSize);
+		pipedIS.connect(this.wrappedPipedOS);
 		final DataConsumer executingProcess = new DataConsumer(pipedIS);
 		this.joinOnClose = joinOnClose;
 		this.writingResult = executorService.submit(executingProcess);
 	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -260,6 +299,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 			}
 		}
 	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -302,6 +342,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 		}
 		return this.writingResult.get();
 	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -309,6 +350,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	public final void write(final byte[] bytes) throws IOException {
 		this.wrappedPipedOS.write(bytes);
 	}
+
 	/**
 	 * {@inheritDoc}
 	 */

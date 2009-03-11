@@ -1,5 +1,7 @@
 package com.gc.iotools.fmt.stream.custom;
 
+import com.gc.iotools.fmt.detect.wzf.custom.XmlModule;
+
 import junit.framework.TestCase;
 
 public class TestXmlModule extends TestCase {

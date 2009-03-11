@@ -18,7 +18,7 @@ import com.gc.iotools.fmt.base.FormatEnum;
  * Extract original document from a PKCS#7 signed document.
  * 
  * @author dvd.smnt
- * @since 1.2
+ * @since 1.2.0
  * @see Decoder
  */
 public class Pkcs7Decoder implements Decoder {

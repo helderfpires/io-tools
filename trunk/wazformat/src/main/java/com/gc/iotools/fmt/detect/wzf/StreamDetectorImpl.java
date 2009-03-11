@@ -1,4 +1,4 @@
-package com.gc.iotools.fmt.stream;
+package com.gc.iotools.fmt.detect.wzf;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,13 +8,15 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import com.gc.iotools.fmt.base.Detector;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
-import com.gc.iotools.fmt.base.StreamDetector;
+import com.gc.iotools.fmt.base.ResettableInputStream;
 
-public final class StreamDetectorImpl implements StreamDetector {
+public final class StreamDetectorImpl implements Detector {
 
-	private static byte[] readBytesAndReset(final InputStream input,
+	private static byte[] readBytesAndReset(
+			final InputStream input,
 			final int size) throws IOException {
 		final int size1 = size - 1;
 		final byte[] buffer = new byte[size1];
@@ -71,7 +73,7 @@ public final class StreamDetectorImpl implements StreamDetector {
 	}
 
 	public FormatId detect(final FormatEnum[] enabledFormats,
-			final InputStream stream) throws IOException {
+			final ResettableInputStream stream) throws IOException {
 		DefiniteLengthModule[] modules = getModulesForFormats(enabledFormats);
 		int len = getDetectLength(enabledFormats);
 		byte[] bytes = readBytesAndReset(stream, len);

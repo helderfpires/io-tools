@@ -13,7 +13,7 @@ import java.io.IOException;
  * remember the data who was read.
  * 
  * @author dvd.smnt
- * @since 1.2
+ * @since 1.2.0
  * @see com.gc.iotools.stream.is.RandomAccessInputStream
  */
 public interface Store {

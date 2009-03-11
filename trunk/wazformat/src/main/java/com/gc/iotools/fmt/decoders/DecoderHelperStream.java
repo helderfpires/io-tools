@@ -10,7 +10,7 @@ import java.io.InputStream;
 /**
  * Helps in mark and reset of decoded streams.
  * 
- * @since 1.2
+ * @since 1.2.0
  * @author dvd.smnt
  * @see Decoder
  */

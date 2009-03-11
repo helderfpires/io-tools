@@ -19,7 +19,7 @@ import java.io.IOException;
  * </p>
  * 
  * @author dvd.smnt
- * @since 1.2
+ * @since 1.2.0
  * @see Store
  */
 public interface SeekableStore extends Store {
