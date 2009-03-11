@@ -20,7 +20,7 @@ import java.io.InputStream;
  * </p>
  * 
  * @author dvd.smnt
- * @since 1.2
+ * @since 1.2.0
  */
 public abstract class AbstractInputStreamWrapper extends InputStream {
 
@@ -69,6 +69,10 @@ public abstract class AbstractInputStreamWrapper extends InputStream {
 
 	@Override
 	public long skip(final long n) throws IOException {
+		if (n < 0) {
+			throw new IllegalArgumentException(
+					"Skip was called with a negative skip size[" + n + "]");
+		}
 		long curPos = 0;
 		int readLen = 0;
 		final byte[] buf = new byte[SKIP_SIZE];

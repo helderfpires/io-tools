@@ -1,19 +1,70 @@
 package com.gc.iotools.stream.os;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.NullOutputStream;
 
 import com.gc.iotools.stream.base.ExecutionModel;
+import com.gc.iotools.stream.is.BigDocumentIstream;
 
-public class TestOutputStream {
+public class TestOutputStreamToInputStream {
+
+	/**
+	 * Benchmarks
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) throws Exception {
+		copy(1024, 1024);
+		System.out.println("-----------");
+		copy(1024 * 1024, 1024);
+		copy(1024 * 1024 * 1024, 1024);
+		copy(1024 * 1024, 32768);
+		copy(1024 * 1024 * 1024, 32768);
+	}
+
+	private static void copy(long fileLength, final int bufSize)
+			throws Exception {
+		long startTime = System.currentTimeMillis();
+		OutputStreamToInputStream.setDefaultBufferSize(bufSize);
+		final OutputStreamToInputStream<Void> osisA = new OutputStreamToInputStream<Void>(
+				true, ExecutionModel.THREAD_PER_INSTANCE) {
+			@Override
+			protected Void doRead(InputStream istream) throws Exception {
+				copyLarge(istream, new NullOutputStream(), bufSize);
+				return null;
+			}
+		};
+
+		copyLarge(new BigDocumentIstream(fileLength), osisA, bufSize);
+		osisA.close();
+
+		System.out.println("bufSize:" + bufSize + " bytes: " + fileLength
+				+ " time:" + (System.currentTimeMillis() - startTime));
+	}
+
+	private static long copyLarge(InputStream input, OutputStream output,
+			int bsize) throws IOException {
+		byte[] buffer = new byte[bsize * 2];
+		long count = 0;
+		int n = 0;
+		while (-1 != (n = input.read(buffer))) {
+			output.write(buffer, 0, n);
+			count += n;
+		}
+		return count;
+	}
 
 	@org.junit.Test
 	public void testLong() throws Exception {

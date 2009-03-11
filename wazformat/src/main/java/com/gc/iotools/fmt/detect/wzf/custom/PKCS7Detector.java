@@ -1,4 +1,4 @@
-package com.gc.iotools.fmt.stream.custom;
+package com.gc.iotools.fmt.detect.wzf.custom;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
-import com.gc.iotools.fmt.stream.DefiniteLengthModule;
+import com.gc.iotools.fmt.detect.wzf.DefiniteLengthModule;
 
 /*
  * Copyright (c) 2008, Davide Simonetti

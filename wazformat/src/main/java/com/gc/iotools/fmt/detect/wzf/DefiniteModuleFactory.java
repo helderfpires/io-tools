@@ -1,4 +1,4 @@
-package com.gc.iotools.fmt.stream;
+package com.gc.iotools.fmt.detect.wzf;
 /*
  * Copyright (c) 2008, Davide Simonetti.  All rights reserved.
  * 

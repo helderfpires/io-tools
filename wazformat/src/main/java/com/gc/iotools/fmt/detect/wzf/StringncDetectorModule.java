@@ -1,37 +1,28 @@
-package com.gc.iotools.fmt.stream;
+package com.gc.iotools.fmt.detect.wzf;
 
 /*
  * Copyright (c) 2008, 2009 Davide Simonetti.
  * This source code is released under the BSD Software License.
  */
-import java.util.Arrays;
-
 import com.gc.iotools.fmt.base.FormatId;
-import com.gc.iotools.stream.utils.ArrayTools;
 
-public class StringDetectorModule implements DefiniteLengthModule {
-	@Override
-	public String toString() {
-		return "StringModule [" + detectedFormat + "] len[" + detectLength
-				+ "] str [" + new String(byteSequence) + "]";
-	}
-
-
-	private byte[] byteSequence = null;
+public class StringncDetectorModule implements DefiniteLengthModule {
+	private String byteSequence = null;
 	private int detectLength = -1;
 	private FormatId detectedFormat;
 
 	public boolean detect(final byte[] readedBytes) {
 		boolean result;
-		if (this.detectLength == this.byteSequence.length) {
-			result = Arrays.equals(readedBytes, this.byteSequence);
+		String readString = new String(readedBytes);
+		String ucaseStr = readString.toUpperCase();
+		if (this.detectLength == this.byteSequence.length()) {
+			result = byteSequence.equals(ucaseStr);
 		} else {
-			result = ArrayTools.indexOf(readedBytes, this.byteSequence) >= 0;
+			result = ucaseStr.contains(byteSequence);
 		}
 		return result;
 	}
 
-	
 	public FormatId getDetectedFormat() {
 		if (this.detectedFormat == null) {
 			throw new IllegalStateException(
@@ -40,7 +31,6 @@ public class StringDetectorModule implements DefiniteLengthModule {
 		return this.detectedFormat;
 	}
 
-	
 	public int getDetectLength() {
 		if (this.byteSequence == null) {
 			throw new IllegalStateException(
@@ -49,20 +39,22 @@ public class StringDetectorModule implements DefiniteLengthModule {
 		return this.detectLength;
 	}
 
-
 	public void init(final FormatId fenum, final String param) {
 		final int sepPos = param.indexOf(':');
-		this.byteSequence = param.substring(sepPos + 1).getBytes();
+		this.byteSequence = param.substring(sepPos + 1).toUpperCase();
 		if (sepPos > 0) {
 			final String detectLString = param.substring(0, sepPos);
 			this.detectLength = Integer.parseInt(detectLString);
 		}
 		if (this.detectLength <= 0) {
-			this.detectLength = this.byteSequence.length;
+			this.detectLength = this.byteSequence.length();
 		}
 
 		this.detectedFormat = fenum;
 	}
-
-	
+	@Override
+	public String toString() {
+		return "StringNCModule [" + detectedFormat + "] len[" + detectLength
+				+ "] strIgnoreCase [" + byteSequence + "]";
+	}
 }

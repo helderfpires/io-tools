@@ -6,6 +6,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import com.gc.iotools.fmt.base.TestUtils;
+import com.gc.iotools.fmt.detect.wzf.custom.PKCS7Detector;
 
 public class TestPkcs7Module extends TestCase {
 	@org.junit.Test

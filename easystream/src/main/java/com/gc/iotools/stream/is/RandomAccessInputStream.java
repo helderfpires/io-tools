@@ -59,7 +59,7 @@ import com.gc.iotools.stream.store.ThresholdStore;
  * 
  * @author dvd.smnt
  * @see com.gc.iotools.stream.store.Store
- * @since 1.2
+ * @since 1.2.0
  */
 public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	private static final int DEFAULT_TRHESHOLD = 32768 * 2;

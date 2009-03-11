@@ -1,4 +1,4 @@
-package com.gc.iotools.fmt.stream.custom;
+package com.gc.iotools.fmt.detect.wzf.custom;
 
 /*
  * Copyright (c) 2008, Davide Simonetti.  All rights reserved.
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 import com.bea.xml.stream.MXParserFactory;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
-import com.gc.iotools.fmt.stream.DefiniteLengthModule;
+import com.gc.iotools.fmt.detect.wzf.DefiniteLengthModule;
 
 /**
  * Detect a file in XML

@@ -16,6 +16,7 @@ import org.apache.commons.io.FileUtils;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
 import com.gc.iotools.fmt.base.TestUtils;
+import com.gc.iotools.fmt.detect.wzf.StreamDetectorImpl;
 import com.gc.iotools.fmt.file.droid.TestDroidDetector;
 import com.gc.iotools.stream.is.SizeReaderInputStream;
 
@@ -23,7 +24,7 @@ public class TestStreamDetector {
 	private static final Map<FormatEnum, String> enabledFormats = new HashMap<FormatEnum, String>();
 
 	static {
-		enabledFormats.put(FormatEnum.PEM, "pem");
+		// enabledFormats.put(FormatEnum.PEM, "pem");
 		enabledFormats.put(FormatEnum.M7M, "m7m");
 		enabledFormats.put(FormatEnum.PDF, "pdf");
 		enabledFormats.put(FormatEnum.PKCS7, "p7m");
@@ -37,10 +38,11 @@ public class TestStreamDetector {
 		for (FormatEnum formatEnum : enabledFormats.keySet()) {
 			URL url = TestDroidDetector.class.getResource("/testFiles");
 			final String path = url.getPath();
+			final String ext = enabledFormats.get(formatEnum);
 			@SuppressWarnings("unchecked")
 			Iterator<File> fiter = FileUtils.iterateFiles(new File(path),
-					new String[] { enabledFormats.get(formatEnum) }, false);
-			assertTrue("at least one file", fiter.hasNext());
+					new String[] { ext }, false);
+			assertTrue("at least one file [" + ext + "]", fiter.hasNext());
 			while (fiter.hasNext()) {
 				File file = fiter.next();
 				InputStream istream = new FileInputStream(file);
@@ -59,8 +61,7 @@ public class TestStreamDetector {
 						declared >= used);
 			}
 			String[] badFiles = TestUtils
-					.listFilesExcludingExtension(new String[] { enabledFormats
-							.get(formatEnum) });
+					.listFilesExcludingExtension(new String[] { ext });
 			for (String fname : badFiles) {
 				InputStream istream = new FileInputStream(fname);
 				SizeReaderInputStream srIs = new SizeReaderInputStream(istream);

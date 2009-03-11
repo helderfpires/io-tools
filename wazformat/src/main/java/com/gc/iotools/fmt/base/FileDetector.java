@@ -9,7 +9,7 @@ import java.io.File;
 /**
  * Describes a Format Identification Library that relies on files.
  * 
- * @since 1.2
+ * @since 1.2.0
  */
 public interface FileDetector extends Detector {
 	/**

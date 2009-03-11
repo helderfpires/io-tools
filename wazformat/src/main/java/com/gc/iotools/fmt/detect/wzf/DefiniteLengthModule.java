@@ -1,4 +1,4 @@
-package com.gc.iotools.fmt.stream;
+package com.gc.iotools.fmt.detect.wzf;
 /*
  * Copyright (c) 2008, Davide Simonetti.  All rights reserved.
  * 
@@ -25,15 +25,15 @@ package com.gc.iotools.fmt.stream;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+import com.gc.iotools.fmt.base.FormatId;
 
-enum DetectMode {
-	/**
-	 * A custom class is made for detection
-	 */
-	CLASS,
-	/**
-	 * 
-	 */
-	STRING, STRINGNC, REGEXP
+public interface DefiniteLengthModule {
 
+	boolean detect(final byte[] readedBytes);
+
+	FormatId getDetectedFormat();
+
+	int getDetectLength();
+
+	void init(FormatId fenum, String param);
 }

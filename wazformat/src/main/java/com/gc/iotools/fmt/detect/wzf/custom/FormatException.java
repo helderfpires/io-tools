@@ -1,4 +1,4 @@
-package com.gc.iotools.fmt.stream.custom;
+package com.gc.iotools.fmt.detect.wzf.custom;
 
 class FormatException extends Exception {
 

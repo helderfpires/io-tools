@@ -1,4 +1,4 @@
-package com.gc.iotools.fmt.stream;
+package com.gc.iotools.fmt.detect.wzf;
 /*
  * Copyright (c) 2008, Davide Simonetti.  All rights reserved.
  * 
@@ -25,15 +25,37 @@ package com.gc.iotools.fmt.stream;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+import java.util.regex.Pattern;
+
 import com.gc.iotools.fmt.base.FormatId;
 
-public interface DefiniteLengthModule {
+class RegexpDetectorModule implements DefiniteLengthModule {
+	private FormatId detectedFormat = null;
+	private Pattern pattern = null;
+	private int detectLength = 1;
+	
+	public boolean detect(final byte[] readedBytes) {
+		String readed = new String(readedBytes);
+		return this.pattern.matcher(readed).matches();
+	}
 
-	boolean detect(final byte[] readedBytes);
 
-	FormatId getDetectedFormat();
+	public FormatId getDetectedFormat() {
+		return detectedFormat;
+	}
 
-	int getDetectLength();
 
-	void init(FormatId fenum, String param);
+	public int getDetectLength() {
+		return this.detectLength;
+	}
+
+	public void init(final FormatId fenum, final String param) {
+		final int sepPos = param.indexOf(':');
+		String patternStr = param.substring(sepPos + 1);
+		this.pattern = Pattern.compile(patternStr);
+		this.detectedFormat = fenum;
+		final String detectLString = param.substring(0, sepPos);
+		this.detectLength = Integer.parseInt(detectLString);
+	}
+
 }

@@ -50,7 +50,7 @@ import com.gc.iotools.stream.store.Store;
  * indefinite length of bytes has been read. Check {@link #mark() } for details.
  * </p>
  * 
- * @since 1.2
+ * @since 1.2.0
  */
 public class StorageBufInputStream extends AbstractInputStreamWrapper {
 	private long sourcePosition = 0;

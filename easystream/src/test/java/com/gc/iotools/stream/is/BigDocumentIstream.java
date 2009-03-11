@@ -7,7 +7,7 @@ import java.io.InputStream;
  * @since 1.0.9
  * @version $Revision: 1 $
  */
-class BigDocumentIstream extends InputStream {
+public class BigDocumentIstream extends InputStream {
 	private static final int MODULO = 256;
 	private long lenght = 0;
 	private long postion = 0;

@@ -33,7 +33,7 @@
 		<repository>
 			<id>java.net-maven2-repository</id>
 			<uniqueVersion>false</uniqueVersion>
-			<url>java-net:/maven2-repository/trunk/www/repository/</url>
+			<url>java-net:/maven2-repository/trunk/repository/</url>
 		</repository>
 		<!--
 			repository> <id>jtools-repo</id>
@@ -58,8 +58,8 @@
 	</distributionManagement>
 	<modules>
 		<module>easystream</module>
-		<module>wazformat</module>
-		<module>io-tools-project</module>
+		<!-- module>wazformat</module>
+		<module>io-tools-project</module -->
 	</modules>
 	<dependencies>
 		<dependency>
@@ -316,9 +316,6 @@
 			</plugin>
 		</plugins>
 	</reporting>
-	<prerequisites>
-	   <maven>2.0.10</maven>
-	</prerequisites>
 	<repositories>
 		<repository>
 			<id>maven2-repository.dev.java.net</id>

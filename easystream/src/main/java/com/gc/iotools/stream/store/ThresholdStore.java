@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author dvd.smnt
- * @since 1.2
+ * @since 1.2.0
  */
 public class ThresholdStore implements SeekableStore {
 	private static final Logger LOG = LoggerFactory
