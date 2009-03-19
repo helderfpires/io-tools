@@ -29,8 +29,7 @@ public class ResettableStreamWrapper extends ResettableInputStream {
 	private final Decoder decoder;
 
 	public ResettableStreamWrapper(
-			final ResettableInputStream originalStream,
-			final Decoder decoder) {
+			final ResettableInputStream originalStream, final Decoder decoder) {
 		this.baseStream = originalStream;
 		// this.decodedStream = decodedStream;
 		this.decoder = decoder;
@@ -39,8 +38,7 @@ public class ResettableStreamWrapper extends ResettableInputStream {
 	@Override
 	public void mark(final int readlimit) {
 		final int markLimit = (int) (readlimit * this.decoder.getRatio())
-				+ this.decoder.getOffset()
-				+ 1;
+				+ this.decoder.getOffset() + 1;
 		this.baseStream.mark(markLimit);
 	}
 
@@ -53,12 +51,6 @@ public class ResettableStreamWrapper extends ResettableInputStream {
 	public int read() throws IOException {
 		checkInitialized();
 		return this.decodedStream.read();
-	}
-
-	@Override
-	public long skip(long size) throws IOException {
-		checkInitialized();
-		return this.decodedStream.skip(size);
 	}
 
 	@Override
@@ -80,14 +72,20 @@ public class ResettableStreamWrapper extends ResettableInputStream {
 		this.decodedStream = null;
 	}
 
-	private void checkInitialized() throws IOException {
-		this.decodedStream = decoder.decode(baseStream);
-	}
-
 	@Override
 	public void resetToBeginning() throws IOException {
 		this.decodedStream = null;
 		this.baseStream.resetToBeginning();
+	}
+
+	@Override
+	public long skip(long size) throws IOException {
+		checkInitialized();
+		return this.decodedStream.skip(size);
+	}
+
+	private void checkInitialized() throws IOException {
+		this.decodedStream = decoder.decode(baseStream);
 	}
 
 }

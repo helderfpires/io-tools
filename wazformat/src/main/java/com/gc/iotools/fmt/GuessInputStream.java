@@ -38,11 +38,13 @@ import com.gc.iotools.fmt.base.Decoder;
 import com.gc.iotools.fmt.base.Detector;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
+import com.gc.iotools.fmt.base.ResettableInputStream;
 import com.gc.iotools.fmt.decoders.Base64Decoder;
 import com.gc.iotools.fmt.decoders.GzipDecoder;
 import com.gc.iotools.fmt.decoders.Pkcs7Decoder;
 import com.gc.iotools.fmt.detect.droid.DroidDetectorImpl;
 import com.gc.iotools.fmt.detect.wzf.StreamDetectorImpl;
+import com.gc.iotools.stream.is.RandomAccessInputStream;
 
 /**
  * InputStream that wraps the original InputStream and guess the format.
@@ -57,8 +59,14 @@ import com.gc.iotools.fmt.detect.wzf.StreamDetectorImpl;
  * </ul>
  * 
  */
-public abstract class GuessInputStream extends InputStream {
+public class GuessInputStream extends InputStream {
 	public static final Collection<Decoder> DEFAULT_DECODERS = new HashSet();
+
+	static {
+		DEFAULT_DECODERS.add(new Base64Decoder());
+		DEFAULT_DECODERS.add(new GzipDecoder());
+		DEFAULT_DECODERS.add(new Pkcs7Decoder());
+	}
 
 	public static void addDefaultDecoder(final Decoder decoder) {
 		if (decoder == null) {
@@ -67,9 +75,16 @@ public abstract class GuessInputStream extends InputStream {
 		DEFAULT_DECODERS.add(decoder);
 	}
 
+	public static void addDefaultDecoders(final Decoder[] decoders) {
+		if (decoders == null) {
+			throw new IllegalArgumentException("decoders array is null");
+		}
+		DEFAULT_DECODERS.addAll(Arrays.asList(decoders));
+	}
+
 	public static GuessInputStream getInstance(final InputStream istream)
 			throws IOException {
-		return getInstance(istream, FormatEnum.values());
+		return getInstance(istream, FormatEnum.values(),false);
 	}
 
 	public static GuessInputStream getInstance(final InputStream istream,
@@ -89,9 +104,19 @@ public abstract class GuessInputStream extends InputStream {
 			detectors.add(stream);
 		}
 		return getInstance(istream, null, detectors.toArray(new Detector[0]),
-				DEFAULT_DECODERS.toArray(new Decoder[0]));
+				DEFAULT_DECODERS.toArray(new Decoder[0]),false);
 	}
 
+	// private static final Loggerger LOGGER = Loggerger
+	// .getLoggerger(GuessFormatInputStream.class);
+	// Should become a collection to support multiple detectors per format
+	// private final Set<StreamDetector> definiteLength = new
+	// HashSet<StreamDetector>();
+
+	public static GuessInputStream getInstance(final InputStream source,
+			final FormatEnum[] enabledFormats) throws IOException {
+		return getInstance(source, enabledFormats, false);
+	}
 	/**
 	 * This method creates an instance of the GuessInputStream. It checks if the
 	 * InputStream is already an instance of GuessInputStream and do
@@ -102,90 +127,61 @@ public abstract class GuessInputStream extends InputStream {
 	 * @return Instance of the newly created GuessInputStream
 	 */
 	public static GuessInputStream getInstance(final InputStream source,
-			final FormatEnum[] enabledFormats) throws IOException {
+			final FormatEnum[] enabledFormats, boolean recursive) throws IOException {
 
-		Collection<Detector> detectors = new HashSet<Detector>();
-		Detector stream = new StreamDetectorImpl();
-		detectors.add(stream);
-		Detector stream1 = new DroidDetectorImpl();
-		detectors.add(stream1);
+		Collection<Detector> detectors = new ArrayList<Detector>();
+		detectors.add(new StreamDetectorImpl());
+		detectors.add(new DroidDetectorImpl());
 		return getInstance(source, enabledFormats, detectors
 				.toArray(new Detector[0]), DEFAULT_DECODERS
-				.toArray(new Decoder[0]));
+				.toArray(new Decoder[0]),recursive);
 	}
-
-	// public static void addDetector(final Detector detector) {
-	// if (detector == null) {
-	// throw new IllegalArgumentException("detector is null");
-	// }
-	// GuessInputStream.DETECTORS.put(detector.getDetectedFormat(), detector);
-	// }
-	//
-	// public static void addDetectors(final Detector[] detectors) {
-	// if (detectors == null) {
-	// throw new IllegalArgumentException("detectors are null");
-	// }
-	// for (int i = 0; i < detectors.length; i++) {
-	// final Detector detector = detectors[i];
-	// if (detector != null) {
-	// GuessInputStream.DETECTORS.put(detector.getDetectedFormat(),
-	// detector);
-	// }
-	// }
-	// }
-	//
-	// public static Map getDetectorsMap() {
-	// return GuessInputStream.DETECTORS;
-	// }
 
 	public static GuessInputStream getInstance(final InputStream stream,
 			final FormatEnum[] enabledFormats, final Detector[] detectors,
-			final Decoder[] decoders) throws IOException {
+			final Decoder[] decoders, boolean recursive) throws IOException {
 		if (stream == null) {
 			throw new IllegalArgumentException("Parameter stream==null");
 		}
 		GuessInputStream result;
+		ResettableStreamRASAdapter ris;
 		if (stream instanceof GuessInputStream) {
 			final GuessInputStream gis = (GuessInputStream) stream;
-			if (gis.canDetectAll(enabledFormats)) {
-				// TODO: if formats are same return the same inputStream, don't
-				// wrap.
-				result = new GuessInputStreamWrapper(gis, enabledFormats);
-			} else {
-				result = new GuessInputStreamImpl(detectors, decoders,
-						enabledFormats, stream, false);
-			}
+			ris = gis.baseStream;
 		} else {
-			result = new GuessInputStreamImpl(detectors, decoders,
-					enabledFormats, stream, false);
+			ris = new ResettableStreamRASAdapter(new RandomAccessInputStream(
+					stream));
 		}
+		ris.enable(true);
+		DetectionStrategy ds = new DetectionStrategy(detectors, decoders,
+				enabledFormats, ris, false);
+		result = new GuessInputStream(enabledFormats, ds.getFormats(), ris,
+				ds.getStream());
+		ris.enable(false);
 		return result;
 	}
 
-	// private static final Loggerger LOGGER = Loggerger
-	// .getLoggerger(GuessFormatInputStream.class);
-	// Should become a collection to support multiple detectors per format
-	// private final Set<StreamDetector> definiteLength = new
-	// HashSet<StreamDetector>();
+	private final ResettableStreamRASAdapter baseStream;
+
+	private final ResettableInputStream decodedStream;
+
+	private final FormatId[] detectedFormats;
 
 	private final Collection<FormatEnum> enabledFormats;
 
-	static {
-		DEFAULT_DECODERS.add(new Base64Decoder());
-		DEFAULT_DECODERS.add(new GzipDecoder());
-		DEFAULT_DECODERS.add(new Pkcs7Decoder());
-	}
-
-	protected GuessInputStream(final FormatEnum[] enabledFormats) {
+	protected GuessInputStream(final FormatEnum[] enabledFormats,
+			FormatId[] detected, ResettableStreamRASAdapter baseStream,
+			ResettableInputStream decodedStream) {
 		this.enabledFormats = Collections.unmodifiableCollection(Arrays
 				.asList(enabledFormats));
+		this.baseStream = baseStream;
+		this.decodedStream = decodedStream;
+		this.detectedFormats = detected;
 	}
 
-	public static void addDefaultDecoders(final Decoder[] decoders) {
-		if (decoders == null) {
-			throw new IllegalArgumentException("decoders array is null");
-		}
-		DEFAULT_DECODERS.addAll(Arrays.asList(decoders));
+	@Override
+	public int available() throws IOException {
+		return decodedStream.available();
 	}
 
 	public final boolean canDetect(final FormatEnum formatEnum) {
@@ -208,16 +204,25 @@ public abstract class GuessInputStream extends InputStream {
 		return result;
 	}
 
+	@Override
+	public void close() throws IOException {
+		decodedStream.close();
+	}
+
+	public FormatId[] getDetectedFormatsId() {
+		return detectedFormats;
+	}
+
 	public final FormatEnum getFormat() {
 		return getFormatId().format;
 	}
 
 	public final FormatId getFormatId() {
-		return identify()[0];
+		return getDetectedFormatsId()[0];
 	}
 
 	public final FormatEnum[] getFormats() {
-		FormatId[] formats = identify();
+		FormatId[] formats = getDetectedFormatsId();
 		Collection<FormatEnum> result = new ArrayList<FormatEnum>();
 		for (FormatId formatId : formats) {
 			result.add(formatId.format);
@@ -225,5 +230,29 @@ public abstract class GuessInputStream extends InputStream {
 		return result.toArray(new FormatEnum[0]);
 	}
 
-	public abstract FormatId[] identify();
+	@Override
+	public boolean markSupported() {
+		return false;
+	}
+
+	@Override
+	public int read() throws IOException {
+		return decodedStream.read();
+	}
+
+	@Override
+	public int read(byte[] b) throws IOException {
+		return decodedStream.read(b);
+	}
+
+	@Override
+	public int read(byte[] b, int off, int len) throws IOException {
+		return decodedStream.read(b, off, len);
+	}
+
+	@Override
+	public long skip(long n) throws IOException {
+		return decodedStream.skip(n);
+	}
+
 }

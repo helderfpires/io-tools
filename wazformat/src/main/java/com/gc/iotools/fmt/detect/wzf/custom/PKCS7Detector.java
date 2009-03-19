@@ -45,15 +45,12 @@ import com.gc.iotools.fmt.detect.wzf.DefiniteLengthModule;
  * @author dvd.smnt
  */
 public class PKCS7Detector implements DefiniteLengthModule {
-	
-	public void init(FormatId fenum, String param) {
 
-	}
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(PKCS7Detector.class);
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(PKCS7Detector.class);
 
 	public PKCS7Detector() {
-		
+
 	}
 
 	public boolean detect(final byte[] readedBytes) {
@@ -74,11 +71,15 @@ public class PKCS7Detector implements DefiniteLengthModule {
 		return result;
 	}
 
+	public FormatId getDetectedFormat() {
+		return new FormatId(FormatEnum.PKCS7, null);
+	}
+
 	public int getDetectLength() {
 		return 4096;
 	}
 
-	public FormatId getDetectedFormat() {
-		return new FormatId(FormatEnum.PKCS7, null);
+	public void init(final FormatId fenum, final String param) {
+
 	}
 }

@@ -1,22 +1,21 @@
 package com.gc.iotools.fmt;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import com.gc.iotools.fmt.base.ResettableInputStream;
 import com.gc.iotools.stream.is.RandomAccessInputStream;
+import com.gc.iotools.stream.store.OnOffStore;
 import com.gc.iotools.stream.store.Store;
+import com.gc.iotools.stream.store.ThresholdStore;
 
-final class ResettableStreamRASAdapter extends ResettableInputStream {
+public class ResettableStreamRASAdapter extends ResettableInputStream {
 	private final RandomAccessInputStream ras;
-	
-	public ResettableStreamRASAdapter(RandomAccessInputStream ras) {
-		super();
-		this.ras = ras;
-	}
 
-	@Override
-	public void resetToBeginning() throws IOException {
-		ras.seek(0);
+	public ResettableStreamRASAdapter(InputStream source) {
+		ThresholdStore ts=new ThresholdStore(128*1024);
+		OnOffStore os=new OnOffStore(ts);
+		this.ras = new RandomAccessInputStream(source,os);
 	}
 
 	@Override
@@ -49,13 +48,13 @@ final class ResettableStreamRASAdapter extends ResettableInputStream {
 	}
 
 	@Override
-	public final int read(byte[] b, int off, int len) throws IOException {
-		return this.ras.read(b, off, len);
+	public int read(byte[] b) throws IOException {
+		return this.ras.read(b);
 	}
 
 	@Override
-	public int read(byte[] b) throws IOException {
-		return this.ras.read(b);
+	public final int read(byte[] b, int off, int len) throws IOException {
+		return this.ras.read(b, off, len);
 	}
 
 	@Override
@@ -64,10 +63,17 @@ final class ResettableStreamRASAdapter extends ResettableInputStream {
 	}
 
 	@Override
+	public void resetToBeginning() throws IOException {
+		ras.seek(0);
+	}
+
+	@Override
 	public long skip(long n) throws IOException {
 		return this.ras.skip(n);
 	}
 
-
-
+	public void enable(boolean enable){
+		OnOffStore store = (OnOffStore)this.ras.getStore();
+		store.enable(enable);
+	}
 }

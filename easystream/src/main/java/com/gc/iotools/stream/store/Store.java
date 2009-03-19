@@ -5,7 +5,6 @@ package com.gc.iotools.stream.store;
  * This source code is released under the BSD Software License.
  */
 
-
 import java.io.IOException;
 
 /**

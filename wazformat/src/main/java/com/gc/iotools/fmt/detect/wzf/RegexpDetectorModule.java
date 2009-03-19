@@ -1,4 +1,5 @@
 package com.gc.iotools.fmt.detect.wzf;
+
 /*
  * Copyright (c) 2008, Davide Simonetti.  All rights reserved.
  * 
@@ -33,17 +34,15 @@ class RegexpDetectorModule implements DefiniteLengthModule {
 	private FormatId detectedFormat = null;
 	private Pattern pattern = null;
 	private int detectLength = 1;
-	
+
 	public boolean detect(final byte[] readedBytes) {
-		String readed = new String(readedBytes);
+		final String readed = new String(readedBytes);
 		return this.pattern.matcher(readed).matches();
 	}
 
-
 	public FormatId getDetectedFormat() {
-		return detectedFormat;
+		return this.detectedFormat;
 	}
-
 
 	public int getDetectLength() {
 		return this.detectLength;
@@ -51,7 +50,7 @@ class RegexpDetectorModule implements DefiniteLengthModule {
 
 	public void init(final FormatId fenum, final String param) {
 		final int sepPos = param.indexOf(':');
-		String patternStr = param.substring(sepPos + 1);
+		final String patternStr = param.substring(sepPos + 1);
 		this.pattern = Pattern.compile(patternStr);
 		this.detectedFormat = fenum;
 		final String detectLString = param.substring(0, sepPos);

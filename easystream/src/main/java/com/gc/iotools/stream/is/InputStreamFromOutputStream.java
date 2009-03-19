@@ -1,30 +1,8 @@
 package com.gc.iotools.stream.is;
 
 /*
- * Copyright (c) 2008, Davide Simonetti
- * All rights reserved.
- * Redistribution and use in source and binary forms, 
- * with or without modification, are permitted provided that the following 
- * conditions are met:
- *  * Redistributions of source code must retain the above copyright notice, 
- *    this list of conditions and the following disclaimer.
- *  * Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
- *    and/or other materials provided with the distribution.
- *  * Neither the name of Davide Simonetti nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without 
- *    specific prior written permission.
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. 
- * IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY 
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * Copyright (c) 2008,2009 Davide Simonetti.
+ * This source code is released under the BSD Software License.
  */
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,8 +30,8 @@ import com.gc.iotools.stream.base.ExecutorServiceFactory;
  * </p>
  * <p>
  * To use this class you must subclass it and implement the abstract method
- * {@link #produce(OutputStream))}. The data who is produced inside this
- * function can be written to the <code>OutputStream</code> passed as a
+ * {@linkplain #produce(OutputStream)}. The data who is produced inside this
+ * function can be written to the sink <code>OutputStream</code> passed as a
  * parameter. Later it can be read back from from the
  * <code>InputStreamFromOutputStream</code> class (whose ancestor is
  * <code>java.io.InputStream</code> ).
@@ -86,12 +64,14 @@ import com.gc.iotools.stream.base.ExecutorServiceFactory;
  * </pre>
  * <p>
  * This class encapsulates a pipe and a <code>Thread</code>, hiding the
- * complexity of using them.
+ * complexity of using them. It is possible to select different strategies for
+ * allocating the internal thread or even specify the
+ * {@linkplain ExecutorService} for thread execution.
  * </p>
  * 
  * @param <T>
  *            Optional result returned by the function
- *            {@linkplain #produce(OutputStream))} after the data has been
+ *            {@linkplain #produce(OutputStream)} after the data has been
  *            written. It can be obtained calling the {@linkplain #getResult()}
  * 
  * @see ExecutionModel
@@ -225,17 +205,33 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	/**
 	 * <p>
 	 * It creates a <code>InputStreamFromOutputStream</code> and let the user
-	 * set the {@link ExecutionModel} he likes.
+	 * choose the thread allocation strategy he likes.
+	 * </p>
+	 * <p>
+	 * This class executes the produce method in a thread created internally.
 	 * </p>
 	 * 
-	 * @param executionModel
-	 *            The preferred ExecutionModel.
 	 * @see ExecutionModel
+	 * @param executionModel
+	 *            Defines how the internal thread is allocated.
+	 * 
 	 */
 	public InputStreamFromOutputStream(final ExecutionModel executionModel) {
 		this(ExecutorServiceFactory.getExecutor(executionModel));
 	}
 
+	/**
+	 * <p>
+	 * It creates a <code>InputStreamFromOutputStream</code> and let the user
+	 * specify the ExecutorService that will execute the
+	 * {@linkplain #produce(OutputStream)} method.
+	 * </p>
+	 * 
+	 * @see ExecutorService
+	 * @param executor
+	 *            Defines the ExecutorService that will allocate the the
+	 *            internal thread.
+	 */
 	public InputStreamFromOutputStream(final ExecutorService executor) {
 		final String callerId = getCaller();
 		PipedOutputStream pipedOS = null;
@@ -265,13 +261,14 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 
 	/**
 	 * <p>
-	 * Returns the object that was
+	 * Returns the object that was previously returned by the
+	 * {@linkplain #produce(OutputStream)} method. It performs all the
+	 * synchronization operations needed to read the result and waits for the
+	 * internal thread to terminate.
 	 * </p>
 	 * <p>
 	 * This method must be called after the method {@linkplain #close()},
-	 * otherwise an IllegalStateException is thrown. It waits for the method
-	 * {@link #produce(OutputStream)} to terminate and returns the result
-	 * produced here.
+	 * otherwise an IllegalStateException is thrown.
 	 * </p>
 	 * 
 	 * @since 1.2.0
@@ -280,6 +277,8 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * @throws Exception
 	 *             If the {@linkplain #produce(OutputStream)} method threw an
 	 *             Exception this method will throw again the same exception.
+	 * @throws IllegalStateException
+	 *             If the {@linkplain #close()} method hasn't been called yet.
 	 */
 	public T getResult() throws Exception {
 		if (!this.closeCalled) {
@@ -377,14 +376,13 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * @return The implementing class can use this to return a result of data
 	 *         production. The result will be available through the method
 	 *         {@linkplain getResult()}.
-	 * @param dataSink
-	 *            the implementing class should write data to this stream.
+	 * @param sink
+	 *            the implementing class should write its data to this stream.
 	 * @throws Exception
 	 *             the exception eventually thrown by the implementing class is
 	 *             returned by the {@linkplain #read()} methods.
 	 * @see #getResult()
 	 */
-	protected abstract T produce(final OutputStream dataSink)
-			throws Exception;
+	protected abstract T produce(final OutputStream sink) throws Exception;
 
 }

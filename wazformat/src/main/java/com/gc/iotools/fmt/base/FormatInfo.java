@@ -20,6 +20,10 @@ public final class FormatInfo {
 		this.description = description;
 	}
 
+	public String getDescription() {
+		return this.description;
+	}
+
 	public FormatEnum getFormat() {
 		return this.formatId.format;
 	}
@@ -34,10 +38,6 @@ public final class FormatInfo {
 
 	public String getVersion() {
 		return this.formatId.version;
-	}
-
-	public String getDescription() {
-		return description;
 	}
 
 }

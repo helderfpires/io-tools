@@ -10,14 +10,8 @@ import com.gc.iotools.fmt.base.FormatId;
 import com.gc.iotools.stream.utils.ArrayTools;
 
 public class StringDetectorModule implements DefiniteLengthModule {
-	@Override
-	public String toString() {
-		return "StringModule [" + detectedFormat + "] len[" + detectLength
-				+ "] str [" + new String(byteSequence) + "]";
-	}
-
-
 	private byte[] byteSequence = null;
+
 	private int detectLength = -1;
 	private FormatId detectedFormat;
 
@@ -31,7 +25,6 @@ public class StringDetectorModule implements DefiniteLengthModule {
 		return result;
 	}
 
-	
 	public FormatId getDetectedFormat() {
 		if (this.detectedFormat == null) {
 			throw new IllegalStateException(
@@ -40,7 +33,6 @@ public class StringDetectorModule implements DefiniteLengthModule {
 		return this.detectedFormat;
 	}
 
-	
 	public int getDetectLength() {
 		if (this.byteSequence == null) {
 			throw new IllegalStateException(
@@ -48,7 +40,6 @@ public class StringDetectorModule implements DefiniteLengthModule {
 		}
 		return this.detectLength;
 	}
-
 
 	public void init(final FormatId fenum, final String param) {
 		final int sepPos = param.indexOf(':');
@@ -64,5 +55,11 @@ public class StringDetectorModule implements DefiniteLengthModule {
 		this.detectedFormat = fenum;
 	}
 
-	
+	@Override
+	public String toString() {
+		return "StringModule [" + this.detectedFormat + "] len["
+				+ this.detectLength + "] str ["
+				+ new String(this.byteSequence) + "]";
+	}
+
 }

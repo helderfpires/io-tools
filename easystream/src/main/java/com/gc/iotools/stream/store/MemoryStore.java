@@ -12,13 +12,9 @@ package com.gc.iotools.stream.store;
  * @since 1.2.0
  */
 public class MemoryStore implements SeekableStore {
-	private long position = 0;
-
-	public long getPosition() {
-		return position;
-	}
-
 	private byte[] buffer = new byte[0];
+
+	private long position = 0;
 
 	public void cleanup() {
 		this.buffer = new byte[0];
@@ -44,6 +40,10 @@ public class MemoryStore implements SeekableStore {
 		return result;
 	}
 
+	public long getPosition() {
+		return this.position;
+	}
+
 	public void put(final byte[] bytes, final int offset, final int length) {
 		final byte[] tmpBuffer = new byte[length + this.buffer.length];
 		System.arraycopy(this.buffer, 0, tmpBuffer, 0, this.buffer.length);
@@ -56,13 +56,14 @@ public class MemoryStore implements SeekableStore {
 	public void seek(final long position) {
 		this.position = position;
 	}
+
 	/**
 	 * Provides a String representation of the state of the Store for debugging
 	 * purposes.
 	 */
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "[pos=" + position
-				+ ",size=" + buffer.length + "]";
+		return this.getClass().getSimpleName() + "[pos=" + this.position
+				+ ",size=" + this.buffer.length + "]";
 	}
 }

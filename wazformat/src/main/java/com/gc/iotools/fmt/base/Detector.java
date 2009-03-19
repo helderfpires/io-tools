@@ -9,8 +9,8 @@ import java.io.IOException;
 
 public interface Detector {
 
-	FormatEnum[] getDetectedFormats();
-
 	FormatId detect(FormatEnum[] enabledFormats, ResettableInputStream stream)
 			throws IOException;
+
+	FormatEnum[] getDetectedFormats();
 }

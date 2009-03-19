@@ -1,4 +1,4 @@
-package com.gc.iotools.fmt.file.droid;
+package com.gc.iotools.fmt.detect.droid;
 
 import static org.junit.Assert.*;
 
@@ -12,11 +12,10 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 
 import com.gc.iotools.fmt.base.Detector;
-import com.gc.iotools.fmt.base.FileDetector;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
+import com.gc.iotools.fmt.base.ResettableFileInputStream;
 import com.gc.iotools.fmt.base.TestUtils;
-import com.gc.iotools.fmt.detect.droid.DroidDetectorImpl;
 
 public class TestDroidDetector {
 	private static final Map<FormatEnum, String> enabledFormats = new HashMap<FormatEnum, String>();
@@ -82,10 +81,11 @@ public class TestDroidDetector {
 			File file = fiter.next();
 			assertTrue("File to be checked ["+file+"] exists",file.exists());
 			assertTrue("File to be checked ["+file+"] can be read",file.canRead());
-			FileDetector stDetect = new DroidDetectorImpl();
+			Detector stDetect = new DroidDetectorImpl();
 			final FormatEnum[] detectedFormats = stDetect
 					.getDetectedFormats();
-			FormatId formats = stDetect.detect(detectedFormats, file);
+			FormatId formats = stDetect.detect(detectedFormats,
+					new ResettableFileInputStream(file));
 			assertEquals("Formato file [" + file.getName() + "]", expected,
 					formats.format);
 		}
@@ -95,7 +95,8 @@ public class TestDroidDetector {
 			File file = new File(fname);
 			Detector stDetect = new DroidDetectorImpl();
 			FormatEnum[] enabledFormats = new FormatEnum[] { expected };
-			FormatId formats = stDetect.detect(enabledFormats, file);
+			FormatId formats = stDetect.detect(enabledFormats,
+					new ResettableFileInputStream(file));
 			assertEquals("Formato file [" + fname + "]", FormatEnum.UNKNOWN,
 					formats.format);
 		}

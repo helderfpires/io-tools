@@ -60,6 +60,7 @@
 package uk.gov.nationalarchives.droid.signatureFile;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import uk.gov.nationalarchives.droid.base.DroidConstants;
@@ -78,15 +79,27 @@ public class FFSignatureFile extends SimpleElement {
 
 	private String version = "";
 	private String dateCreated = "";
-	private FileFormatCollection FFcollection;
+	private FileFormatCollection fFcollection;
 	private InternalSignatureCollection intSigs;
+
+	public FFSignatureFile() {
+
+	}
+
+	public FFSignatureFile(Collection<FileFormat> fcollection,
+			Collection<InternalSignature> intSigs) {
+		fFcollection = new FileFormatCollection();
+		fFcollection.formats.addAll(fcollection);
+		this.intSigs = new InternalSignatureCollection();
+		this.intSigs.intSigs.addAll(intSigs);
+	}
 
 	public String getDateCreated() {
 		return this.dateCreated;
 	}
 
 	public FileFormat getFileFormat(final int theIndex) {
-		return (FileFormat) this.FFcollection.getFileFormats().get(theIndex);
+		return (FileFormat) this.fFcollection.getFileFormats().get(theIndex);
 	}
 
 	public InternalSignature getInternalSignature(final int theIndex) {
@@ -94,7 +107,7 @@ public class FFSignatureFile extends SimpleElement {
 	}
 
 	public int getNumFileFormats() {
-		return this.FFcollection.getFileFormats().size();
+		return this.fFcollection.getFileFormats().size();
 	}
 
 	/* getters */
@@ -170,14 +183,13 @@ public class FFSignatureFile extends SimpleElement {
 
 	/* setters */
 	public void setFileFormatCollection(final FileFormatCollection coll) {
-		this.FFcollection = coll;
+		this.fFcollection = coll;
 	}
 
 	public void setInternalSignatureCollection(
 			final InternalSignatureCollection col3) {
 		this.intSigs = col3;
 	}
-
 
 	/**
 	 * Remove any hits for which there is a higher priority hit

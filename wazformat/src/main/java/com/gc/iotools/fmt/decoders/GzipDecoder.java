@@ -25,7 +25,7 @@ public class GzipDecoder implements Decoder {
 	 * {@inheritDoc}
 	 */
 	public InputStream decode(final InputStream istream) throws IOException {
-		InputStream decoded = new GZIPInputStream(istream);
+		final InputStream decoded = new GZIPInputStream(istream);
 		return decoded;
 	}
 
