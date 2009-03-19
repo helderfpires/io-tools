@@ -17,8 +17,7 @@ class FormatException extends Exception {
 		// TODO Auto-generated constructor stub
 	}
 
-	protected FormatException(final String message,
-			final Throwable cause) {
+	protected FormatException(final String message, final Throwable cause) {
 		super(message, cause);
 		// TODO Auto-generated constructor stub
 	}

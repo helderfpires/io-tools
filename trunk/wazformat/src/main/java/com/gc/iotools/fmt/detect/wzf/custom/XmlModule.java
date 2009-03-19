@@ -51,8 +51,6 @@ import com.gc.iotools.fmt.detect.wzf.DefiniteLengthModule;
  * @since Nov 8, 2008
  */
 public final class XmlModule implements DefiniteLengthModule {
-	private static final Logger LOGGER = LoggerFactory.getLogger(XmlModule.class);
-
 	private final class MyReporter implements XMLReporter {
 
 		MyReporter() {
@@ -67,8 +65,10 @@ public final class XmlModule implements DefiniteLengthModule {
 
 	}
 
-	private static final int XML_GUESS_SIZE = 8192;
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(XmlModule.class);
 
+	private static final int XML_GUESS_SIZE = 8192;
 
 	public XmlModule() {
 
@@ -106,6 +106,19 @@ public final class XmlModule implements DefiniteLengthModule {
 		return xmlDetected;
 	}
 
+	public FormatId getDetectedFormat() {
+		return new FormatId(FormatEnum.XML, null);
+	}
+
+	public int getDetectLength() {
+		return XmlModule.XML_GUESS_SIZE;
+	}
+
+	public void init(final FormatId fenum, final String param) {
+		// TODO Auto-generated method stub
+
+	}
+
 	private boolean evaluateException(final long currentElem) {
 		boolean tenum = false;
 		if (currentElem != -1) {
@@ -117,19 +130,6 @@ public final class XmlModule implements DefiniteLengthModule {
 					+ XmlModule.XML_GUESS_SIZE + "] bytes");
 		}
 		return tenum;
-	}
-
-	public int getDetectLength() {
-		return XmlModule.XML_GUESS_SIZE;
-	}
-
-	public FormatId getDetectedFormat() {
-		return new FormatId(FormatEnum.XML, null);
-	}
-
-	public void init(FormatId fenum, String param) {
-		// TODO Auto-generated method stub
-
 	}
 
 }

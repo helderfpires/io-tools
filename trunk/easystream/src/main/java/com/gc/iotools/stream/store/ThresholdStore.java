@@ -1,30 +1,8 @@
 package com.gc.iotools.stream.store;
 
 /*
- * Copyright (c) 2008, 2009 Davide Simonetti
- * All rights reserved.
- * Redistribution and use in source and binary forms, 
- * with or without modification, are permitted provided that the following 
- * conditions are met:
- *  * Redistributions of source code must retain the above copyright notice, 
- *    this list of conditions and the following disclaimer.
- *  * Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
- *    and/or other materials provided with the distribution.
- *  * Neither the name of Davide Simonetti nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without 
- *    specific prior written permission.
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. 
- * IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY 
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * Copyright (c) 2008,2009 Davide Simonetti.
+ * This source code is released under the BSD Software License.
  */
 
 import java.io.File;
@@ -39,36 +17,24 @@ import org.slf4j.LoggerFactory;
  * @since 1.2.0
  */
 public class ThresholdStore implements SeekableStore {
+	private static final int BUF_SIZE = 8192;
+
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ThresholdStore.class);
 
-	private static final int BUF_SIZE = 8192;
+	private RandomAccessFile fileAccess;
+	private File fileStorage;
+	private final MemoryStore ms = new MemoryStore();
+	private long position = 0;
+	private long size = 0;
 
 	private final int treshold;
-	private File fileStorage;
-	private RandomAccessFile fileAccess;
-	private long size = 0;
-	private long position = 0;
-
-	public int getTreshold() {
-		return treshold;
-	}
-
-	public long getSize() {
-		return size;
-	}
-
-	public void setPosition(long position) {
-		this.position = position;
-	}
-
-	private final MemoryStore ms = new MemoryStore();
 
 	public ThresholdStore(final int treshold) {
 		this.treshold = treshold;
 	}
 
-	public ThresholdStore(final int treshold, File file) {
+	public ThresholdStore(final int treshold, final File file) {
 		this.treshold = treshold;
 		this.fileStorage = file;
 	}
@@ -81,7 +47,7 @@ public class ThresholdStore implements SeekableStore {
 			try {
 				this.fileAccess.close();
 			} catch (final IOException e) {
-				LOG.warn("Exception in closing the temporary "
+				ThresholdStore.LOG.warn("Exception in closing the temporary "
 						+ "stream associated to file ["
 						+ this.fileStorage.getName() + "] it "
 						+ "is possible to continue but some"
@@ -89,11 +55,12 @@ public class ThresholdStore implements SeekableStore {
 			}
 			this.fileAccess = null;
 		}
-		if (this.fileStorage != null && this.fileStorage.exists()) {
+		if ((this.fileStorage != null) && this.fileStorage.exists()) {
 			final boolean deleted = this.fileStorage.delete();
 			if (!deleted) {
 				this.fileStorage.deleteOnExit();
-				LOG.warn("Temporary file [" + this.fileStorage.getName()
+				ThresholdStore.LOG.warn("Temporary file ["
+						+ this.fileStorage.getName()
 						+ "] was not deleted. It "
 						+ "is possible to continue but some"
 						+ " resources are not released.");
@@ -117,6 +84,14 @@ public class ThresholdStore implements SeekableStore {
 		return result;
 	}
 
+	public long getSize() {
+		return this.size;
+	}
+
+	public int getTreshold() {
+		return this.treshold;
+	}
+
 	public void put(final byte[] bytes, final int offset, final int length)
 			throws IOException {
 		if (length <= 0) {
@@ -132,7 +107,7 @@ public class ThresholdStore implements SeekableStore {
 							".tmp");
 				}
 				this.fileAccess = new RandomAccessFile(this.fileStorage, "rw");
-				final byte[] buffer = new byte[BUF_SIZE];
+				final byte[] buffer = new byte[ThresholdStore.BUF_SIZE];
 				this.ms.seek(0);
 				int len;
 				while ((len = this.ms.get(buffer, 0, buffer.length)) > 0) {
@@ -178,12 +153,8 @@ public class ThresholdStore implements SeekableStore {
 		}
 	}
 
-	/**
-	 * Clean up the temporary files eventually open.
-	 */
-	@Override
-	protected void finalize() throws Throwable {
-		cleanup();
+	public void setPosition(final long position) {
+		this.position = position;
 	}
 
 	/**
@@ -192,8 +163,8 @@ public class ThresholdStore implements SeekableStore {
 	 */
 	@Override
 	public String toString() {
-		String str = this.getClass().getSimpleName() + "[pos=" + position
-				+ ",size=" + size;
+		String str = this.getClass().getSimpleName() + "[pos="
+				+ this.position + ",size=" + this.size;
 		if (this.fileStorage != null) {
 			str += ",file=" + this.fileStorage;
 		} else {
@@ -202,10 +173,18 @@ public class ThresholdStore implements SeekableStore {
 		if (this.fileAccess != null) {
 			try {
 				str += ",fp=" + this.fileAccess.getFilePointer();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				// do nothing... here for debugging.
 			}
 		}
 		return str + "]";
+	}
+
+	/**
+	 * Clean up the temporary files eventually open.
+	 */
+	@Override
+	protected void finalize() throws Throwable {
+		cleanup();
 	}
 }

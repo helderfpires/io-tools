@@ -1,4 +1,4 @@
-package com.gc.iotools.fmt.stream;
+package com.gc.iotools.fmt.base;
 
 import java.io.InputStream;
 

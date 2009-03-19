@@ -15,8 +15,7 @@ import com.gc.iotools.fmt.base.ResettableInputStream;
 
 public final class StreamDetectorImpl implements Detector {
 
-	private static byte[] readBytesAndReset(
-			final InputStream input,
+	private static byte[] readBytesAndReset(final InputStream input,
 			final int size) throws IOException {
 		final int size1 = size - 1;
 		final byte[] buffer = new byte[size1];
@@ -36,7 +35,45 @@ public final class StreamDetectorImpl implements Detector {
 		return result;
 	}
 
-	private FormatId detectFormat(byte[] bytes,
+	private final DefiniteLengthModule[] configuredModules;
+
+	public StreamDetectorImpl() {
+		this("deflen.properties", FormatEnum.class);
+	}
+
+	public StreamDetectorImpl(final String confFile, final Class<?> enumclass) {
+		final DefiniteModuleFactory dfmf = new DefiniteModuleFactory(
+				confFile, enumclass);
+		this.configuredModules = dfmf.getConfiguredModules();
+	}
+
+	public FormatId detect(final FormatEnum[] enabledFormats,
+			final ResettableInputStream stream) throws IOException {
+		final DefiniteLengthModule[] modules = getModulesForFormats(enabledFormats);
+		final int len = getDetectLength(enabledFormats);
+		final byte[] bytes = readBytesAndReset(stream, len);
+		return detectFormat(bytes, modules);
+	}
+
+	public FormatEnum[] getDetectedFormats() {
+		final Collection<FormatEnum> formats = new HashSet<FormatEnum>();
+		for (final DefiniteLengthModule module : this.configuredModules) {
+			final FormatId detectedFormat = module.getDetectedFormat();
+			formats.add(detectedFormat.format);
+		}
+		return formats.toArray(new FormatEnum[formats.size()]);
+	}
+
+	public int getDetectLength(final FormatEnum[] enabledFormats) {
+		final DefiniteLengthModule[] modules = getModulesForFormats(enabledFormats);
+		int detectLen = -1;
+		for (final DefiniteLengthModule module : modules) {
+			detectLen = Math.max(detectLen, module.getDetectLength());
+		}
+		return detectLen;
+	}
+
+	private FormatId detectFormat(final byte[] bytes,
 			final DefiniteLengthModule[] modules) {
 		FormatId detected = new FormatId(FormatEnum.UNKNOWN, null);
 		if (bytes.length > 0) {
@@ -53,56 +90,19 @@ public final class StreamDetectorImpl implements Detector {
 				final int bytesToCopy = Math.min(detectLenght, bytes.length);
 				final byte[] splittedBytes = new byte[bytesToCopy];
 				System.arraycopy(bytes, 0, splittedBytes, 0, bytesToCopy);
-				boolean success = module.detect(splittedBytes);
+				final boolean success = module.detect(splittedBytes);
 				detected = (success ? module.getDetectedFormat() : detected);
 			}
 		}
 		return detected;
 	}
 
-	private final DefiniteLengthModule[] configuredModules;
-
-	public StreamDetectorImpl() {
-		this("deflen.properties", FormatEnum.class);
-	}
-
-	public StreamDetectorImpl(final String confFile, final Class<?> enumclass) {
-		final DefiniteModuleFactory dfmf = new DefiniteModuleFactory(confFile,
-				enumclass);
-		this.configuredModules = dfmf.getConfiguredModules();
-	}
-
-	public FormatId detect(final FormatEnum[] enabledFormats,
-			final ResettableInputStream stream) throws IOException {
-		DefiniteLengthModule[] modules = getModulesForFormats(enabledFormats);
-		int len = getDetectLength(enabledFormats);
-		byte[] bytes = readBytesAndReset(stream, len);
-		return detectFormat(bytes, modules);
-	}
-
-	public FormatEnum[] getDetectedFormats() {
-		Collection<FormatEnum> formats = new HashSet<FormatEnum>();
-		for (DefiniteLengthModule module : this.configuredModules) {
-			final FormatId detectedFormat = module.getDetectedFormat();
-			formats.add(detectedFormat.format);
-		}
-		return formats.toArray(new FormatEnum[formats.size()]);
-	}
-
-	public int getDetectLength(final FormatEnum[] enabledFormats) {
-		DefiniteLengthModule[] modules = getModulesForFormats(enabledFormats);
-		int detectLen = -1;
-		for (DefiniteLengthModule module : modules) {
-			detectLen = Math.max(detectLen, module.getDetectLength());
-		}
-		return detectLen;
-	}
-
 	private DefiniteLengthModule[] getModulesForFormats(
-			FormatEnum[] requestedFormats) {
-		Collection<DefiniteLengthModule> modules = new ArrayList<DefiniteLengthModule>();
-		List<FormatEnum> reqFormatList = Arrays.asList(requestedFormats);
-		for (DefiniteLengthModule module : this.configuredModules) {
+			final FormatEnum[] requestedFormats) {
+		final Collection<DefiniteLengthModule> modules = new ArrayList<DefiniteLengthModule>();
+		final List<FormatEnum> reqFormatList = Arrays
+				.asList(requestedFormats);
+		for (final DefiniteLengthModule module : this.configuredModules) {
 			if (reqFormatList.contains(module.getDetectedFormat().format)) {
 				modules.add(module);
 			}

@@ -1,11 +1,9 @@
-package com.gc.iotools.fmt.stream;
+package com.gc.iotools.fmt.detect.wzf;
 
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,12 +11,12 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
+import com.gc.iotools.fmt.base.Detector;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
+import com.gc.iotools.fmt.base.ResettableFileInputStream;
 import com.gc.iotools.fmt.base.TestUtils;
-import com.gc.iotools.fmt.detect.wzf.StreamDetectorImpl;
-import com.gc.iotools.fmt.file.droid.TestDroidDetector;
-import com.gc.iotools.stream.is.SizeReaderInputStream;
+import com.gc.iotools.fmt.detect.droid.TestDroidDetector;
 
 public class TestStreamDetector {
 	private static final Map<FormatEnum, String> enabledFormats = new HashMap<FormatEnum, String>();
@@ -45,37 +43,28 @@ public class TestStreamDetector {
 			assertTrue("at least one file [" + ext + "]", fiter.hasNext());
 			while (fiter.hasNext()) {
 				File file = fiter.next();
-				InputStream istream = new FileInputStream(file);
-				SizeReaderInputStream srIs = new SizeReaderInputStream(istream);
-				StreamDetectorImpl stDetect = new StreamDetectorImpl();
+				Detector stDetect = new StreamDetectorImpl();
 				final FormatEnum[] detectedFormats = stDetect
 						.getDetectedFormats();
-				int declared = stDetect.getDetectLength(detectedFormats);
-				FormatId formats = stDetect.detect(detectedFormats, srIs);
+				
+				FormatId formats = stDetect.detect(detectedFormats,
+						new ResettableFileInputStream(file));
 				assertEquals("Formato file [" + file.getName() + "]",
 						formatEnum,
 						formats.format);
-				final long used = srIs.getSize();
-				assertTrue("La dimensione letta[" + used
-						+ "] non eccede quella prevista[" + declared + "]",
-						declared >= used);
+
 			}
 			String[] badFiles = TestUtils
 					.listFilesExcludingExtension(new String[] { ext });
 			for (String fname : badFiles) {
-				InputStream istream = new FileInputStream(fname);
-				SizeReaderInputStream srIs = new SizeReaderInputStream(istream);
 				StreamDetectorImpl stDetect = new StreamDetectorImpl();
 				FormatEnum[] enabledFormats = new FormatEnum[] { formatEnum };
 				int declared = stDetect.getDetectLength(enabledFormats);
-				FormatId formats = stDetect.detect(enabledFormats, srIs);
+				FormatId formats = stDetect.detect(enabledFormats,
+						new ResettableFileInputStream(new File(fname)));
 				assertEquals("Formato file [" + fname + "]",
 						FormatEnum.UNKNOWN,
 						formats.format);
-				final long used = srIs.getSize();
-				assertTrue("La dimensione letta[" + used
-						+ "] non eccede quella prevista[" + declared + "]",
-						declared >= used);
 			}
 		}
 	}

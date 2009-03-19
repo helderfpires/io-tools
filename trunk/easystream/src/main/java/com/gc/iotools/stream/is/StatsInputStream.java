@@ -10,32 +10,38 @@ import java.io.InputStream;
 
 /**
  * <p>
- * Counts the bytes of the <code>InputStream</code> passed in the constructor.
- * It can be used to determine the size of a document passed as a stream. This
- * is possible only after the stream has been fully processed (by other parts of
- * the application).
+ * Gather some statistics of the <code>InputStream</code> passed in the
+ * constructor.
  * </p>
- * <b>Since version 1.2.1 this class is deprecated. Use StatsInputStream
- * instead</b>
+ * <p>
+ * It can be used to read:
+ * <ul>
+ * <li>The size of the internal stream.</li>
+ * <li>The time spent reading the bytes.</li>
+ * <li>The bandwidth of the underlying stream.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Full statistics are available after the stream has been fully processed (by
+ * other parts of the application), or after invoking the method
+ * {@linkplain #close()} while partial statistics are available on the fly.
+ * </p>
  * <p>
  * Usage:
  * </p>
  * 
  * <pre>
- * SizeReaderInputStream srIstream = new SizeReaderInputStream(originalStream);
+ * StatsInputStream srIstream = new StatsInputStream(originalStream);
  * //performs all the application operation on stream
  * performTasksOnStream(srIstream);
  * srIstream.close();
  * long size = srIstream.getSize();
  * </pre>
  * 
- * @deprecated
- * @see StatsInputStream
  * @author dvd.smnt
- * @since 1.0.6
+ * @since 1.2.1
  */
-@Deprecated
-public class SizeReaderInputStream extends InputStream {
+public class StatsInputStream extends InputStream {
 
 	private static final int BUF_SIZE = 32768;
 
@@ -45,9 +51,20 @@ public class SizeReaderInputStream extends InputStream {
 	private final InputStream innerStream;
 	private long markPosition = 0;
 	private long size = 0;
+	private long time = 0;
 
-	public SizeReaderInputStream(final InputStream istream) {
-		this(istream, true);
+	/**
+	 * <p>
+	 * Constructs an <code>SizeReaderInputStream</code>. When
+	 * {@linkplain #close()} is called all the data will be read from the source
+	 * InputStream and a full statistic will be available.
+	 * </p>
+	 * 
+	 * @param source
+	 *            Stream whose statistics must be calculated.
+	 */
+	public StatsInputStream(final InputStream source) {
+		this(source, true);
 	}
 
 	/**
@@ -61,7 +78,7 @@ public class SizeReaderInputStream extends InputStream {
 	 *            completely and the effective size of the inner stream is
 	 *            calculated.
 	 */
-	public SizeReaderInputStream(final InputStream istream,
+	public StatsInputStream(final InputStream istream,
 			final boolean fullReadOnClose) {
 		if (istream == null) {
 			throw new IllegalArgumentException("InputStream can't be null");
@@ -70,6 +87,9 @@ public class SizeReaderInputStream extends InputStream {
 		this.fullReadOnClose = fullReadOnClose;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int available() throws IOException {
 		return this.innerStream.available();
@@ -87,6 +107,7 @@ public class SizeReaderInputStream extends InputStream {
 	@Override
 	public void close() throws IOException {
 		if (!this.closeCalled) {
+			final long start = System.currentTimeMillis();
 			// avoid multiple calls to close();
 			this.closeCalled = true;
 			try {
@@ -98,13 +119,15 @@ public class SizeReaderInputStream extends InputStream {
 				}
 			} finally {
 				this.innerStream.close();
+				this.time += System.currentTimeMillis() - start;
 			}
+
 		}
 	}
 
 	/**
 	 * Returns the bytes read until now or total length of the stream if the
-	 * <code>{@link close}</code> method has been called or EOF was reached.
+	 * <code>{@link #close()}</code> method has been called or EOF was reached.
 	 * 
 	 * @return bytes read until now or the total length of the stream if close()
 	 *         was called.
@@ -113,59 +136,114 @@ public class SizeReaderInputStream extends InputStream {
 		return this.size;
 	}
 
+	/**
+	 * <p>
+	 * Returns the time in milliseconds spent until now waiting for the internal
+	 * stream to respond.
+	 * </p>
+	 * 
+	 * @return milliseconds spent in waiting.
+	 */
+	public long getTime() {
+		return this.time;
+	}
+
+	/**
+	 * Returns the reading bit rate in KB per second.
+	 * 
+	 * @return The kb/sec bandwidth of the stream.
+	 */
+	public float getRate() {
+		return (this.size / 1024F) / (this.time / 1000F);
+	}
+
 	public boolean isFullReadOnClose() {
 		return this.fullReadOnClose;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void mark(final int readlimit) {
+		final long start = System.currentTimeMillis();
 		this.innerStream.mark(readlimit);
 		this.markPosition = this.size;
+		this.time += System.currentTimeMillis() - start;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean markSupported() {
 		return this.innerStream.markSupported();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int read() throws IOException {
+		final long start = System.currentTimeMillis();
 		final int readed = this.innerStream.read();
 		if (readed >= 0) {
 			this.size++;
 		}
+		this.time += System.currentTimeMillis() - start;
 		return readed;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int read(final byte[] b) throws IOException {
+		final long start = System.currentTimeMillis();
 		final int readed = this.innerStream.read(b);
 		if (readed >= 0) {
 			this.size += readed;
 		}
+		this.time += System.currentTimeMillis() - start;
 		return readed;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int read(final byte[] b, final int off, final int len)
 			throws IOException {
+		final long start = System.currentTimeMillis();
 		final int readed = this.innerStream.read(b, off, len);
 		if (readed >= 0) {
 			this.size += readed;
 		}
+		this.time += System.currentTimeMillis() - start;
 		return readed;
 	}
 
-	@Override
-	public void reset() throws IOException {
-		this.innerStream.reset();
-		this.size = this.markPosition;
-	}
+	/**
+	 * {@inheritDoc}
+	 */
 
 	@Override
+	public void reset() throws IOException {
+		final long start = System.currentTimeMillis();
+		this.innerStream.reset();
+		this.size = this.markPosition;
+		this.time += System.currentTimeMillis() - start;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public long skip(final long n) throws IOException {
+		final long start = System.currentTimeMillis();
 		final long skipSize = this.innerStream.skip(n);
 		this.size += skipSize;
+		this.time += System.currentTimeMillis() - start;
 		return skipSize;
 	}
 

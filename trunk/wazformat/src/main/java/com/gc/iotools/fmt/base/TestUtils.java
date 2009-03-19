@@ -21,26 +21,25 @@ import com.gc.iotools.stream.is.SizeLimitInputStream;
 
 public final class TestUtils {
 
-	public static Map<String, byte[]> getBytesForFiles(final String[] included,
-			int nbytes, boolean includes) throws IOException {
+	public static Map<String, byte[]> getBytesForFiles(
+			final String[] included, final int nbytes, final boolean includes)
+			throws IOException {
 		final String[] goodFiles = (includes ? TestUtils
 				.listFilesIncludingExtension(included) : TestUtils
 				.listFilesExcludingExtension(included));
-		Map<String, byte[]> result = new HashMap<String, byte[]>();
-		for (int i = 0; i < goodFiles.length; i++) {
-			final String fileName = goodFiles[i];
+		final Map<String, byte[]> result = new HashMap<String, byte[]>();
+		for (final String fileName : goodFiles) {
 			final InputStream is = new FileInputStream(fileName);
-			byte[] bytes = IOUtils.toByteArray(new SizeLimitInputStream(is,
-					nbytes));
+			final byte[] bytes = IOUtils
+					.toByteArray(new SizeLimitInputStream(is, nbytes));
 			result.put(fileName, bytes);
 		}
 		return result;
 	}
 
-	public static String[] listFilesExcludingExtension(final String[] forbidden)
-			throws IOException {
-		final URL fileURL = TestUtils.class
-				.getResource("/testFiles");
+	public static String[] listFilesExcludingExtension(
+			final String[] forbidden) throws IOException {
+		final URL fileURL = TestUtils.class.getResource("/testFiles");
 		String filePath = URLDecoder.decode(fileURL.getPath(), "UTF-8");
 		final File dir = new File(filePath);
 		final String[] files = dir.list();
@@ -70,8 +69,7 @@ public final class TestUtils {
 	@Deprecated
 	public static String[] listFilesIncludingExtension(final String[] allowed)
 			throws IOException {
-		final URL fileURL = TestUtils.class
-				.getResource("/testFiles");
+		final URL fileURL = TestUtils.class.getResource("/testFiles");
 		String filePath = URLDecoder.decode(fileURL.getPath(), "UTF-8");
 		final File dir = new File(filePath);
 		final String[] files = dir.list();

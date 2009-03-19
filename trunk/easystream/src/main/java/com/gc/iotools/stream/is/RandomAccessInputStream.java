@@ -1,30 +1,8 @@
 package com.gc.iotools.stream.is;
 
 /*
- * Copyright (c) 2008,2009 Davide Simonetti
- * All rights reserved.
- * Redistribution and use in source and binary forms, 
- * with or without modification, are permitted provided that the following 
- * conditions are met:
- *  * Redistributions of source code must retain the above copyright notice, 
- *    this list of conditions and the following disclaimer.
- *  * Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
- *    and/or other materials provided with the distribution.
- *  * Neither the name of Davide Simonetti nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without 
- *    specific prior written permission.
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. 
- * IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY 
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * Copyright (c) 2008,2009 Davide Simonetti.
+ * This source code is released under the BSD Software License.
  */
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,11 +36,15 @@ import com.gc.iotools.stream.store.ThresholdStore;
  * </p>
  * 
  * @author dvd.smnt
- * @see com.gc.iotools.stream.store.Store
+ * @see Store
  * @since 1.2.0
  */
 public class RandomAccessInputStream extends AbstractInputStreamWrapper {
-	private static final int DEFAULT_TRHESHOLD = 32768 * 2;
+	/**
+	 * Default size for passing from memory allocation to disk allocation for
+	 * the buffer.
+	 */
+	public static final int DEFAULT_DISK_TRHESHOLD = 32768 * 2;
 	/**
 	 * Position of reading in the source stream.
 	 */
@@ -73,7 +55,10 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	protected long randomAccessIsPosition = 0;
 	protected long markPosition = 0;
 	protected long markLimit = 0;
-	protected final SeekableStore store;
+	/**
+	 * Store where data is kept.
+	 */
+	private Store store;
 
 	/**
 	 * 
@@ -81,7 +66,7 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	 *            The underlying input stream.
 	 */
 	public RandomAccessInputStream(final InputStream source) {
-		this(source, DEFAULT_TRHESHOLD);
+		this(source, DEFAULT_DISK_TRHESHOLD);
 	}
 
 	/**
@@ -123,6 +108,9 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 		this.store = store;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int available() throws IOException {
 		return (int) Math.min(this.sourcePosition
@@ -206,7 +194,7 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 		if ((this.markLimit < 0)
 				|| (this.randomAccessIsPosition - this.markPosition <= this.markLimit)) {
 			this.randomAccessIsPosition = this.markPosition;
-			this.store.seek(this.markPosition);
+			((SeekableStore) this.store).seek(this.markPosition);
 		} else {
 			throw new IOException("Reset to an invalid mark.");
 		}
@@ -221,6 +209,11 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 			throw new IllegalArgumentException("Seek to negative position ["
 					+ position + "]");
 		}
+		if (!(store instanceof SeekableStore)) {
+			throw new IllegalStateException("Seek was called but the store["
+					+ store + "] is not an instance of ["
+					+ SeekableStore.class + "]");
+		}
 		final long len = position - this.randomAccessIsPosition;
 		if (len > 0) {
 			final long n = skip(len);
@@ -232,7 +225,7 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 		} else if (len < 0) {
 			// if len==0 already at the right place. Do Nothing.
 			this.randomAccessIsPosition = position;
-			this.store.seek(position);
+			((SeekableStore) this.store).seek(position);
 		}
 	}
 
@@ -293,6 +286,10 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 					+ this.sourcePosition + "]");
 		}
 		return n;
+	}
+
+	public void setStore(Store store) {
+		this.store = store;
 	}
 
 }

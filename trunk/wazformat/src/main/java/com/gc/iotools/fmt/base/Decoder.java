@@ -16,7 +16,7 @@ public interface Decoder {
 	InputStream decode(InputStream inStream) throws IOException;
 
 	FormatEnum getFormat();
-	
+
 	int getOffset();
 
 	float getRatio();

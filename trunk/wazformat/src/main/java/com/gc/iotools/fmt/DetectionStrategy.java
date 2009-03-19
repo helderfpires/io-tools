@@ -28,6 +28,7 @@ package com.gc.iotools.fmt;
  */
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +43,7 @@ import com.gc.iotools.fmt.base.FormatId;
 import com.gc.iotools.fmt.base.ResettableInputStream;
 import com.gc.iotools.fmt.detect.droid.DroidDetectorImpl;
 
-final class GuessInputStreamImpl extends GuessInputStream {
+final class DetectionStrategy {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DroidDetectorImpl.class);
@@ -51,15 +52,21 @@ final class GuessInputStreamImpl extends GuessInputStream {
 			final ResettableInputStream stream, final Detector[] detectors,
 			final FormatEnum[] enabledFormats) throws IOException {
 		FormatId detected = new FormatId(FormatEnum.UNKNOWN, null);
-
+		Collection<FormatEnum> toDetect = new ArrayList<FormatEnum>(Arrays
+				.asList(enabledFormats));
 		if (detectors != null) {
 			for (int i = 0; (i < detectors.length)
-					&& FormatEnum.UNKNOWN.equals(detected.format); i++) {
+					&& FormatEnum.UNKNOWN.equals(detected.format)
+					&& toDetect.size() > 0; i++) {
 				final Detector detector = detectors[i];
 				try {
-					detected = detector.detect(enabledFormats, stream);
+					detected = detector.detect(toDetect
+							.toArray(new FormatEnum[0]), stream);
+					toDetect.removeAll(Arrays.asList(detector
+							.getDetectedFormats()));
 				} catch (final Exception e) {
-
+					LOG.warn("deterctor [" + detector + "] threw exception",
+							e);
 				}
 				stream.resetToBeginning();
 			}
@@ -77,23 +84,23 @@ final class GuessInputStreamImpl extends GuessInputStream {
 	}
 
 	private final ResettableInputStream bis;
-	private final Detector[] streamDetectors;
+	private final Detector[] detectors;
 
 	private final FormatId formats[];
 
-	public GuessInputStreamImpl(final Detector[] detectors,
+	public DetectionStrategy(final Detector[] detectors,
 			final Decoder[] decoders, final FormatEnum[] enabledFormats,
 			final ResettableInputStream istream, final boolean decode)
 			throws IOException {
-		super(enabledFormats);
-		this.streamDetectors = detectors;
+
+		this.detectors = detectors;
 		final Collection<FormatId> formats = new ArrayList<FormatId>();
 		final Map<FormatEnum, Decoder> decMap = getDecodersMap(decoders);
 		FormatId curFormat;
 		ResettableInputStream currentStream = istream;
 		do {
-			curFormat = detectFormatStream(currentStream,
-					this.streamDetectors, enabledFormats);
+			curFormat = detectFormatStream(currentStream, this.detectors,
+					enabledFormats);
 			if (!FormatEnum.UNKNOWN.equals(curFormat.format)
 					&& decMap.containsKey(curFormat.format)) {
 				final Decoder decoder = decMap.get(curFormat.format);
@@ -106,25 +113,12 @@ final class GuessInputStreamImpl extends GuessInputStream {
 		this.formats = formats.toArray(new FormatId[formats.size()]);
 	}
 
-	@Override
-	public int available() throws IOException {
-		return this.bis.available();
+	public FormatId[] getFormats() {
+		return formats;
 	}
 
-	@Override
-	public void close() throws IOException {
-		cleanup();
-		this.bis.close();
-
-	}
-
-	@Override
-	public final FormatId[] identify() {
-		return this.formats;
-	}
-
-	private void cleanup() {
-
+	public ResettableInputStream getStream() {
+		return bis;
 	}
 
 }

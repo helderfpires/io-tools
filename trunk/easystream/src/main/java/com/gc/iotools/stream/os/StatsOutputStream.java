@@ -9,22 +9,32 @@ import java.io.OutputStream;
 
 /**
  * <p>
- * This class counts the number of bytes written to the
- * <code>OutputStream</code> passed in the constructor.
+ * Gather some statistics on the <code>OutputStream</code> passed in the
+ * constructor.
  * </p>
- * 
- * TODO: junits
- * @deprecated
- * @see StatsOutputStream
+ * <p>
+ * It can be used to read:
+ * <ul>
+ * <li>The size of the data written to the underlying stream.</li>
+ * <li>The time spent writing the bytes.</li>
+ * <li>The bandwidth of the underlying stream.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Full statistics are available after the stream has been fully processed (by
+ * other parts of the application), or after invoking the method
+ * {@linkplain #close()} while partial statistics are available on the fly.
+ * </p>
+ *  
  * @author dvd.smnt
- * @since 1.0.6
+ * @since 1.2.1
  */
-public class SizeRecorderOutputStream extends OutputStream {
+public class StatsOutputStream extends OutputStream {
 
 	private boolean closeCalled;
 	private final OutputStream innerOs;
 	private long size = 0;
-
+	private long time = 0;
 	/**
 	 * Creates a new <code>SizeRecorderOutputStream</code> with the given
 	 * destination stream.
@@ -32,7 +42,7 @@ public class SizeRecorderOutputStream extends OutputStream {
 	 * @param destination
 	 *            Destination stream where data are written.
 	 */
-	public SizeRecorderOutputStream(final OutputStream destination) {
+	public StatsOutputStream(final OutputStream destination) {
 		this.innerOs = destination;
 	}
 
@@ -43,7 +53,9 @@ public class SizeRecorderOutputStream extends OutputStream {
 	public void close() throws IOException {
 		if (!this.closeCalled) {
 			this.closeCalled = true;
+			final long start = System.currentTimeMillis();
 			this.innerOs.close();
+			this.time += System.currentTimeMillis() - start;
 		}
 	}
 
@@ -52,7 +64,9 @@ public class SizeRecorderOutputStream extends OutputStream {
 	 */
 	@Override
 	public void flush() throws IOException {
+		final long start = System.currentTimeMillis();
 		this.innerOs.flush();
+		this.time += System.currentTimeMillis() - start;
 	}
 
 	/**
@@ -64,12 +78,18 @@ public class SizeRecorderOutputStream extends OutputStream {
 		return this.size;
 	}
 
+	public long getTime() {
+		return time;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void write(final byte[] b) throws IOException {
+		final long start = System.currentTimeMillis();
 		this.innerOs.write(b);
+		this.time += System.currentTimeMillis() - start;
 		this.size += b.length;
 	}
 
@@ -79,7 +99,9 @@ public class SizeRecorderOutputStream extends OutputStream {
 	@Override
 	public void write(final byte[] b, final int off, final int len)
 			throws IOException {
+		final long start = System.currentTimeMillis();
 		this.innerOs.write(b, off, len);
+		this.time += System.currentTimeMillis() - start;
 		this.size += len;
 	}
 
@@ -88,7 +110,9 @@ public class SizeRecorderOutputStream extends OutputStream {
 	 */
 	@Override
 	public void write(final int b) throws IOException {
+		final long start = System.currentTimeMillis();
 		this.innerOs.write(b);
+		this.time += System.currentTimeMillis() - start;
 		this.size++;
 	}
 

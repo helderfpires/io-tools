@@ -71,7 +71,7 @@ public class SAXModelBuilder extends DefaultHandler {
 	@Override
 	public void characters(final char[] ch, final int start, final int len) {
 		if (!this.stack.empty()) { // Ignore character data if we don't have an
-									// element to put it in.
+			// element to put it in.
 			final String text = new String(ch, start, len);
 			((SimpleElement) (this.stack.peek())).setText(text);
 		}

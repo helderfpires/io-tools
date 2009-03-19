@@ -58,7 +58,8 @@ public final class MessageDisplay {
 	public static String TENTATIVEIDENTIFICATIONSTATUS = "Tentatively identified";
 	public static String UNIDENTIFIEDSTATUS = "Unable to identify";
 
-	private static final Logger LOG = LoggerFactory.getLogger(MessageDisplay.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(MessageDisplay.class);
 
 	/**
 	 * Displays a fatal error and then exits

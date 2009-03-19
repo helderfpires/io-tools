@@ -31,12 +31,13 @@ public class Pkcs7Decoder implements Decoder {
 		CMSSignedDataParser sdp;
 		try {
 			sdp = new CMSSignedDataParser(istream);
-		} catch (CMSException e) {
-			IOException e1 = new IOException("Error parsing PKCS7 content");
+		} catch (final CMSException e) {
+			final IOException e1 = new IOException(
+					"Error parsing PKCS7 content");
 			e1.initCause(e);
 			throw e1;
 		}
-		CMSTypedStream ts = sdp.getSignedContent();
+		final CMSTypedStream ts = sdp.getSignedContent();
 		return ts.getContentStream();
 	}
 

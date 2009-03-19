@@ -29,6 +29,7 @@ import uk.gov.nationalarchives.droid.binFileReader.IdentificationFile;
 import uk.gov.nationalarchives.droid.binFileReader.RandomAccessByteReader;
 import uk.gov.nationalarchives.droid.signatureFile.FFSignatureFile;
 import uk.gov.nationalarchives.droid.signatureFile.FileFormat;
+import uk.gov.nationalarchives.droid.signatureFile.InternalSignature;
 import uk.gov.nationalarchives.droid.xmlReader.SAXModelBuilder;
 
 import com.gc.iotools.fmt.base.Detector;
@@ -107,20 +108,21 @@ public class DroidDetectorImpl implements Detector {
 	public FormatId detect(final FormatEnum[] enabledFormats,
 			final ResettableInputStream stream) throws IOException {
 		final IdentificationFile idFile = new IdentificationFile("-");
-		final ByteReader testFile = new RandomAccessByteReader(idFile,
-				stream);
+		final ByteReader testFile = new RandomAccessByteReader(idFile, stream);
 		final FFSignatureFile fsigfile = CONF_MAP.get(this.configFile);
-		fsigfile.runFileIdentification(testFile);
+		FFSignatureFile reduced = reduceDetectedSequences(fsigfile,
+				enabledFormats);
+		reduced.runFileIdentification(testFile);
 		final int n = testFile.getNumHits();
 		FormatId fenumId = new FormatId(FormatEnum.UNKNOWN, null);
-		Collection<FormatEnum> enabledFormatCollection = Arrays
+		final Collection<FormatEnum> enabledFormatCollection = Arrays
 				.asList(enabledFormats);
 		for (int i = 0; (i < n)
 				&& (FormatEnum.UNKNOWN.equals(fenumId.format)); i++) {
 			final FileFormatHit ffhit = testFile.getHit(i);
 			final uk.gov.nationalarchives.droid.signatureFile.FileFormat fileFormat = ffhit
 					.getFileFormat();
-			FormatId tmpFid = getFormatEnum(fileFormat);
+			final FormatId tmpFid = getFormatEnum(fileFormat);
 			if (FormatEnum.UNLISTED.equals(tmpFid.format)) {
 				LOG.warn("Format number[" + fileFormat.getID()
 						+ "] not found in configured mapping. format ["
@@ -135,16 +137,51 @@ public class DroidDetectorImpl implements Detector {
 		return fenumId;
 	}
 
+	private FFSignatureFile reduceDetectedSequences(FFSignatureFile fsig,
+			FormatEnum[] enabled) {
+		Collection<FileFormat> fformats = new ArrayList<FileFormat>();
+		Collection<InternalSignature> intSigs = new ArrayList<InternalSignature>();
+		Collection<FormatEnum> enabledColl = new ArrayList<FormatEnum>(Arrays
+				.asList(enabled));
+		Map<Integer, InternalSignature> internalSignatureMap = new HashMap<Integer, InternalSignature>();
+
+		for (int i = 0; i < fsig.getNumInternalSignatures(); i++) {
+			InternalSignature intSignature = fsig.getInternalSignature(i);
+			internalSignatureMap.put(intSignature.getID(), intSignature);
+		}
+		int n = fsig.getNumFileFormats();
+		for (int i = 0; i < n; i++) {
+			FileFormat ff = fsig.getFileFormat(i);
+			final FormatId formatEnum = getFormatEnum(ff);
+			if (ff.getNumInternalSignatures() > 0
+					&& enabledColl.contains(formatEnum.format)) {
+				fformats.add(ff);
+				for (int j = 0; j < ff.getNumInternalSignatures(); j++) {
+					int intSigId = ff.getInternalSignatureID(j);
+					InternalSignature intSig = internalSignatureMap
+							.get(intSigId);
+					if (intSig != null) {
+						intSigs.add(intSig);
+					} else {
+						LOG.warn("Internal signature id[" + intSig
+								+ "] not found.");
+					}
+				}
+			}
+		}
+		return new FFSignatureFile(fformats, intSigs);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public FormatEnum[] getDetectedFormats() {
 		final FFSignatureFile fsigfile = CONF_MAP.get(this.configFile);
-		Collection<FormatEnum> result = new ArrayList<FormatEnum>();
+		final Collection<FormatEnum> result = new ArrayList<FormatEnum>();
 		for (int i = 0; i < fsigfile.getNumFileFormats(); i++) {
-			FileFormat fformat = fsigfile.getFileFormat(i);
-			FormatId fid = getFormatEnum(fformat);
-			FormatEnum fenum = fid.format;
+			final FileFormat fformat = fsigfile.getFileFormat(i);
+			final FormatId fid = getFormatEnum(fformat);
+			final FormatEnum fenum = fid.format;
 			if (!FormatEnum.UNLISTED.equals(fenum)
 					&& !FormatEnum.UNKNOWN.equals(fenum)) {
 				result.add(fenum);

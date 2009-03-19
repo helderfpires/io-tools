@@ -16,9 +16,27 @@ import java.io.InputStream;
  */
 public class DecoderHelperStream extends InputStream {
 
+	private final InputStream baseStream;
+
+	private final InputStream decodedStream;
+
+	private final float ratio;
+
+	private final int offset;
+
+	public DecoderHelperStream(final InputStream originalStream,
+			final InputStream decodedStream, final float ratio,
+			final int offset) {
+		this.baseStream = originalStream;
+		this.decodedStream = decodedStream;
+		this.ratio = ratio;
+		this.offset = offset;
+	}
+
 	@Override
-	public void mark(int readlimit) {
-		final int markLimit = (int) (readlimit * ratio) + offset + 1;
+	public void mark(final int readlimit) {
+		final int markLimit = (int) (readlimit * this.ratio) + this.offset
+				+ 1;
 		this.baseStream.mark(markLimit);
 	}
 
@@ -28,36 +46,24 @@ public class DecoderHelperStream extends InputStream {
 	}
 
 	@Override
-	public void reset() throws IOException {
-		this.baseStream.reset();
-	}
-
-	@Override
 	public int read() throws IOException {
 		return this.decodedStream.read();
 	}
 
 	@Override
-	public int read(byte[] b, int off, int len) throws IOException {
+	public int read(final byte[] b) throws IOException {
+		return this.decodedStream.read(b);
+	}
+
+	@Override
+	public int read(final byte[] b, final int off, final int len)
+			throws IOException {
 		return this.decodedStream.read(b, off, len);
 	}
 
 	@Override
-	public int read(byte[] b) throws IOException {
-		return this.decodedStream.read(b);
-	}
-
-	private final InputStream baseStream;
-	private final InputStream decodedStream;
-	private final float ratio;
-	private final int offset;
-
-	public DecoderHelperStream(InputStream originalStream,
-			InputStream decodedStream, float ratio, int offset) {
-		this.baseStream = originalStream;
-		this.decodedStream = decodedStream;
-		this.ratio = ratio;
-		this.offset = offset;
+	public void reset() throws IOException {
+		this.baseStream.reset();
 	}
 
 }

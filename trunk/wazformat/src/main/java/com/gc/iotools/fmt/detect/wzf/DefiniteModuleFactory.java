@@ -1,4 +1,5 @@
 package com.gc.iotools.fmt.detect.wzf;
+
 /*
  * Copyright (c) 2008, Davide Simonetti.  All rights reserved.
  * 
@@ -63,7 +64,8 @@ public class DefiniteModuleFactory {
 		int lineNumber = 0;
 		try {
 			while ((curLine = lnread.readLine()) != null) {
-				if (!curLine.startsWith("#") && StringUtils.isNotBlank(curLine)
+				if (!curLine.startsWith("#")
+						&& StringUtils.isNotBlank(curLine)
 						&& curLine.contains("=")) {
 					lineNumber = lnread.getLineNumber();
 					final DefiniteLengthModule dm = getInstance(curLine,
@@ -73,12 +75,29 @@ public class DefiniteModuleFactory {
 					}
 				}
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new IllegalStateException(
 					"Problem reading configuration file[" + confFile
 							+ "] line[" + lineNumber + "]", e);
 		}
 		this.modules = modulesColl.toArray(new DefiniteLengthModule[0]);
+	}
+
+	private FormatId getFormatId(final String enumName) {
+		String version;
+		FormatEnum fenum;
+		if (enumName.contains(":")) {
+			final String[] parts = enumName.split(":");
+			fenum = FormatEnum.getEnum(this.enumClazz, parts[0]);
+			version = parts[1];
+		} else {
+			fenum = FormatEnum.getEnum(this.enumClazz, enumName);
+			version = null;
+		}
+		final FormatId result = (fenum == null ? new FormatId(
+				FormatEnum.UNLISTED, enumName) : new FormatId(fenum, version));
+
+		return result;
 	}
 
 	private DefiniteLengthModule getInstance(final String curLine,
@@ -87,9 +106,9 @@ public class DefiniteModuleFactory {
 		final FormatId fenum = getFormatId(enumName);
 		final String paramLine = curLine.substring(enumName.length() + 1,
 				curLine.length());
-		String method = paramLine.substring(0, paramLine.indexOf(':'));
-		final DetectMode selectedMode = DetectMode
-				.valueOf(method.toUpperCase());
+		final String method = paramLine.substring(0, paramLine.indexOf(':'));
+		final DetectMode selectedMode = DetectMode.valueOf(method
+				.toUpperCase());
 		final String params = curLine.substring(enumName.length()
 				+ method.length() + 2);
 		DefiniteLengthModule result;
@@ -114,23 +133,6 @@ public class DefiniteModuleFactory {
 		return result;
 	}
 
-	private FormatId getFormatId(final String enumName) {
-		String version;
-		FormatEnum fenum;
-		if (enumName.contains(":")) {
-			String[] parts = enumName.split(":");
-			fenum = FormatEnum.getEnum(this.enumClazz, parts[0]);
-			version = parts[1];			
-		} else {
-			fenum = FormatEnum.getEnum(this.enumClazz, enumName);
-			version = null;
-		}
-		FormatId result = (fenum == null ? new FormatId(FormatEnum.UNLISTED,
-				enumName) : new FormatId(fenum, version));
-
-		return result;
-	}
-
 	private DefiniteLengthModule instantiateClass(final int lineNo,
 			final String params) {
 		DefiniteLengthModule result;
@@ -138,7 +140,7 @@ public class DefiniteModuleFactory {
 		try {
 			final Class<?> module = Class.forName(params);
 			result = (DefiniteLengthModule) module.newInstance();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IllegalStateException("Problem instantiating class ["
 					+ params + "] line[" + lineNo + "]", e);
 		}

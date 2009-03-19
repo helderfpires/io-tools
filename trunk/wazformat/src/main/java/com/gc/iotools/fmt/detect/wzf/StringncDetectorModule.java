@@ -13,12 +13,12 @@ public class StringncDetectorModule implements DefiniteLengthModule {
 
 	public boolean detect(final byte[] readedBytes) {
 		boolean result;
-		String readString = new String(readedBytes);
-		String ucaseStr = readString.toUpperCase();
+		final String readString = new String(readedBytes);
+		final String ucaseStr = readString.toUpperCase();
 		if (this.detectLength == this.byteSequence.length()) {
-			result = byteSequence.equals(ucaseStr);
+			result = this.byteSequence.equals(ucaseStr);
 		} else {
-			result = ucaseStr.contains(byteSequence);
+			result = ucaseStr.contains(this.byteSequence);
 		}
 		return result;
 	}
@@ -52,9 +52,11 @@ public class StringncDetectorModule implements DefiniteLengthModule {
 
 		this.detectedFormat = fenum;
 	}
+
 	@Override
 	public String toString() {
-		return "StringNCModule [" + detectedFormat + "] len[" + detectLength
-				+ "] strIgnoreCase [" + byteSequence + "]";
+		return "StringNCModule [" + this.detectedFormat + "] len["
+				+ this.detectLength + "] strIgnoreCase [" + this.byteSequence
+				+ "]";
 	}
 }

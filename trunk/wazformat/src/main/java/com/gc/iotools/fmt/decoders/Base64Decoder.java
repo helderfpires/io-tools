@@ -20,7 +20,7 @@ public class Base64Decoder implements Decoder {
 	 * {@inheritDoc}
 	 */
 	public InputStream decode(final InputStream istream) {
-		InputStream decoded = new com.gc.iotools.stream.utils.Base64.InputStream(
+		final InputStream decoded = new com.gc.iotools.stream.utils.Base64.InputStream(
 				istream);
 		return decoded;
 	}
