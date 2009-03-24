@@ -1,0 +1,96 @@
+#summary Formats identified by wazformat.
+
+<h2>StreamDetectorImpl</h2>
+<p>A fast implementation of the interface Detector. It only reads the beginning (few Kilobytes) of a stream and try to determine the format.</p>
+<p>It can be configured specifying a configuration file. An example can be found in: io-tools/wazformat/src/main/java/com/gc/iotools/fmt/detect/wzf/deflen.properties.</p>
+<p>The formats that it can detect are in the table below:</p>
+<table>
+<thead>
+<tr><td>Enum name</td><td>Description</td><td>Supported versions</td></tr>
+</thead> <tbody>
+<tr><td>BASE64</td><td>Base 64 Encoded Data</td><td></td></tr>
+<tr><td>GIF</td><td>Graphics Interchange Format Image</td><td>87a, 89a</td></tr>
+<tr><td>M7M</td><td>Infocamere PKCS 7 digital signature document + timestamp.</td><td></td></tr>
+<tr><td>PKCS7</td><td>PKCS 7 Digital Signature</td><td></td></tr>
+<tr><td>PDF</td><td>Adobe PDF (Portable Document Format)</td><td>1.6,1.5,1.4 - Generic </td></tr>
+<tr><td>PEM</td>PEM (Privacy Enhanced Mail) Signed File<td></td></tr>
+<tr><td>RTF</td><td>Rich Text Format</td><td></td></tr>
+<tr><td>XML</td><td>Extensible Markup Language</td><td></td></tr>
+<tr><td>ZIP</td><td>Pkzip Archive</td><td></td></tr>
+</tbody>
+</table>
+
+<h2>DroidDetectorImpl</h2>
+<p>These formats are supported by DroidDetectorImpl. This detector is based on Droid format detection library (mantained by UK National Archives).</p>
+<p>Implementation isn't fast and requires a full read of the stream before the identification can begin. 
+The number of supported format is great, but low performances might be an issue with large files.</p>
+
+<table>
+<thead>
+<tr><td>Enum name</td><td>Description</td><td>Supported versions</td></tr>
+</thead> <tbody>
+<tr><td>ADVANCED_SYSTEMS_FORMAT</td><td>Advanced Systems Format</td><td></td></tr>
+<tr><td>AVI</td><td>Audio/Video Interleaved Format</td><td></td></tr>
+<tr><td>DWG</td><td>AutoCAD Drawing</td><td>1.0, 1.2, 1.3, 1.4, 2.0, 2.1, 2.2, 2.5, 2.6, R9, R10, R11/12, R13, R14, 2000-2002, 2004-2005</td></tr>
+<tr><td>BINARY_INTERCHANGE_FILE_FORMAT_BIFF_WORKBOOK</td><td>Binary Interchange File Format (BIFF) Workbook</td><td>4W, 5, 7, 8, 8X</td></tr>
+<tr><td>BINARY_INTERCHANGE_FILE_FORMAT_BIFF_WORKSHEET</td><td>Binary Interchange File Format (BIFF) Worksheet</td><td>2, 3, 4S</td></tr>
+<tr><td>BROADCAST_WAVE</td><td>Broadcast WAVE</td><td>1, 0</td></tr>
+<tr><td>DROID_FILE_COLLECTION_FILE_FORMAT</td><td>DROID File Collection File Format</td><td>1.0</td></tr>
+<tr><td>DROID_SIGNATURE_FILE_FORMAT</td><td>DROID Signature File Format</td><td>1.0</td></tr>
+<tr><td>DXB</td><td>Drawing Interchange Binary Format</td><td>1.0</td></tr>
+<tr><td>DRAWING_INTERCHANGE_FILE_FORMAT_ASCII</td><td>Drawing Interchange File Format (ASCII)</td><td>1.0, 1.2, 1.3, 1.4, 2.0, 2.1, 2.2, 2.5, 2.6, R9, R10, R11/12, R13, R14, 2000-2002, 2004-2005, Generic</td></tr>
+<tr><td>DRAWING_INTERCHANGE_FILE_FORMAT_BINARY</td><td>Drawing Interchange File Format (Binary)</td><td>R10, R11/12, R13, R14, 2000-2002, 2004-2005</td></tr>
+<tr><td>EPSF</td><td>Encapsulated PostScript File Format</td><td>1.2, 3.0, 2.0</td></tr>
+<tr><td>EXCHANGEABLE_IMAGE_FILE_FORMAT_AUDIO</td><td>Exchangeable Image File Format (Audio)</td><td>2.1, 2.2, 2.0</td></tr>
+<tr><td>EXCHANGEABLE_IMAGE_FILE_FORMAT_COMPRESSED</td><td>Exchangeable Image File Format (Compressed)</td><td>2.1, 2.2, 2.0</td></tr>
+<tr><td>EXCHANGEABLE_IMAGE_FILE_FORMAT_UNCOMPRESSED</td><td>Exchangeable Image File Format (Uncompressed)</td><td>2.2, 2.1, 2.0</td></tr>
+<tr><td>XHTML</td><td>Extensible Hypertext Markup Language</td><td>1.0, 1.1</td></tr>
+<tr><td>XML</td><td>Extensible Markup Language</td><td>1.0</td></tr>
+<tr><td>FITS</td><td>Flexible Image Transport System</td><td></td></tr>
+<tr><td>GZ</td><td>GZIP Format</td><td></td></tr>
+<tr><td>GIF</td><td>Graphics Interchange Format</td><td>1987a, 1989a</td></tr>
+<tr><td>HTML</td><td>Hypertext Markup Language</td><td>2.0, 3.2, 4.0, 4.01</td></tr>
+<tr><td>JPEG</td><td>JPEG File Interchange Format</td><td>1.00, 1.01, 1.02</td></tr>
+<tr><td>JAR</td><td>Java Archive Format</td><td></td></tr>
+<tr><td>MPEG_1_VIDEO_FORMAT</td><td>MPEG-1 Video Format</td><td></td></tr>
+<tr><td>MPEG_2_VIDEO_FORMAT</td><td>MPEG-2 Video Format</td><td></td></tr>
+<tr><td>MS_DOS_EXECUTABLE</td><td>MS-DOS Executable</td><td></td></tr>
+<tr><td>FLV</td><td>Macromedia FLV</td><td>1</td></tr>
+<tr><td>SWF</td><td>Macromedia Flash</td><td>1, 2, 3, 4, 5, 6, 7</td></tr>
+<tr><td>PPT</td><td>Microsoft Powerpoint Presentation</td><td>4.0, 95, 97-2002</td></tr>
+<tr><td>DOC</td><td>Microsoft Word for Windows Document</td><td>6.0/95, 97-2003, 1.0, 2.0</td></tr>
+<tr><td>OLE2_COMPOUND_DOCUMENT_FORMAT</td><td>OLE2 Compound Document Format</td><td></td></tr>
+<tr><td>ODB</td><td>OpenDocument Database Format</td><td>1.0</td></tr>
+<tr><td>ODG</td><td>OpenDocument Drawing Format</td><td>1.0</td></tr>
+<tr><td>OPENDOCUMENT_FORMAT</td><td>OpenDocument Format</td><td>1.0</td></tr>
+<tr><td>ODP</td><td>OpenDocument Presentation Format</td><td>1.0</td></tr>
+<tr><td>ODS</td><td>OpenDocument Spreadsheet Format</td><td>1.0</td></tr>
+<tr><td>ODT</td><td>OpenDocument Text Format</td><td>1.0</td></tr>
+<tr><td>SXC</td><td>OpenOffice Calc</td><td>1.0</td></tr>
+<tr><td>SXD</td><td>OpenOffice Draw</td><td>1.0</td></tr>
+<tr><td>SXI</td><td>OpenOffice Impress</td><td>1.0</td></tr>
+<tr><td>SXW</td><td>OpenOffice Writer</td><td>1.0</td></tr>
+<tr><td>PCX</td><td>PCX</td><td>0, 2, 3, 4, 5</td></tr>
+<tr><td>PDF</td><td>Adobe Portable Document Format (Actually broken)</td><td>1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6</td></tr>
+<tr><td>PNG</td><td>Portable Network Graphics</td><td>1.0, 1.1, 1.2</td></tr>
+<tr><td>POSTSCRIPT</td><td>PostScript</td><td>2.0, 2.1, 3.0</td></tr>
+<tr><td>POSTSCRIPT</td><td>Postscript</td><td>1.0</td></tr>
+<tr><td>QTM</td><td>Quicktime</td><td></td></tr>
+<tr><td>RAW_JPEG_STREAM</td><td>Raw JPEG Stream</td><td></td></tr>
+<tr><td>RTF</td><td>Rich Text Format</td><td>1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8</td></tr>
+<tr><td>SVG</td><td>Scalable Vector Graphics</td><td>1.0, 1.1</td></tr>
+<tr><td>STILL_PICTURE_INTERCHANGE_FILE_FORMAT</td><td>Still Picture Interchange File Format</td><td>1.0</td></tr>
+<tr><td>TAGGED_IMAGE_FILE_FORMAT</td><td>Tagged Image File Format</td><td>3, 4, 5, 6</td></tr>
+<tr><td>WRL</td><td>Virtual Reality Modeling Language</td><td>1.0, 97</td></tr>
+<tr><td>WAVEFORM_AUDIO</td><td>Waveform Audio</td><td></td></tr>
+<tr><td>BMP</td><td>Windows Bitmap</td><td>1.0, 2.0, 3.0, 3.0 NT, 4.0, 5.0</td></tr>
+<tr><td>WINDOWS_MEDIA_AUDIO</td><td>Windows Media Audio</td><td></td></tr>
+<tr><td>WINDOWS_MEDIA_VIDEO</td><td>Windows Media Video</td><td></td></tr>
+<tr><td>WINDOWS_NEW_EXECUTABLE</td><td>Windows New Executable</td><td></td></tr>
+<tr><td>WINDOWS_PORTABLE_EXECUTABLE</td><td>Windows Portable Executable</td><td></td></tr>
+<tr><td>WPG</td><td>WordPerfect Graphics Metafile</td><td>1.0</td></tr>
+<tr><td>WORDPERFECT_FOR_MS_DOS_DOCUMENT</td><td>WordPerfect for MS-DOS Document</td><td>5.0</td></tr>
+<tr><td>WORDPERFECT_FOR_MS_DOS_WINDOWS_DOCUMENT</td><td>WordPerfect for MS-DOS/Windows Document</td><td>5.1</td></tr>
+<tr><td>ZIP</td><td>ZIP Format</td><td></td></tr>
+</tbody>
+</table>
