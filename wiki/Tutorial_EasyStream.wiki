@@ -9,7 +9,7 @@ Sometimes a library writes its results to an `OutputStream` and you need to read
 Other classes in this library are:
  * `RandomAccessInputStream` allows to read the content of an `InputStream` multiple times or seek to a definite position.
  * `ChunkInputStream` filter some parts of an `InputStream` basing on its content.
- * `SizeReaderInputStream` and `SizeRecorderOutputStream`: count the number of bytes read or wrote to a given stream.
+ * `StatsInputStream` and `StatsOutputStream`: Collects some statistics (bytes read or wrote, bandwidth...) of a given stream.
  * `TeeInputStreamOutputStream` allows to copy the data read from a source `InputStream` to a supplied `OutputStream`.
 
 
@@ -110,6 +110,11 @@ How to read two times the content of a file:
 Method `mark()` and `reset()` are also supported.
 For further information read the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/RandomAccessInputStream.html api javadoc].
 
+=== !ChunkInputStream ===
+This class is useful when you have an `InputStream` and you want to filter some parts of it basing on its content without reading it into memory.
+
+For further information read the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/ChunkInputStream.html api javadoc].
+
 === !TeeInputStreamOutputStream ===
 Copies the data from the underlying `InputStream` to the `OutputStream` passed in the constructor. The data copied are similar to the underlying `InputStream`.
 
@@ -127,11 +132,22 @@ Sample usage:
  byte[] bytes2=destination2.getBytes();
 }}}
 
-=== !ChunkInputStream ===
-This class is useful when you have an `InputStream` and you want to filter some parts of it basing on its content without reading it into memory.
+== [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/StatsInputStream.html StatsInputStream] ==
+Gathers statistics of the !InputStream passed in the constructor. It can be used to determine the size or the time spent reading from the internal !InputStream.
+{{{
+StatsInputStream srIstream = new StatsInputStream(originalStream);
+//performs all the application operation on stream
+...
+srIstream.close();
+long size = srIstream.getSize();
+}}}
 
-For further information read the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/ChunkInputStream.html api javadoc].
-
-
-
-Other few stream utilities are in this library. You can find a quick overview [OtherStreamUtilities here] 
+== !StatsOutputStream ==
+Gathers statistics of the !OutputStream passed in the constructor. It can be used to determine the bytes writtensize of a document passed as a stream or the time spent reading from the internal !InputStream.
+{{{
+StatsOutputStream srStream = new StatsOutputStream(originalStream);
+//performs all the application operation on stream
+...
+srStream.close();
+long size = srStream.getSize();
+}}}
