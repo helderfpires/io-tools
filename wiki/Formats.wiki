@@ -1,7 +1,7 @@
 #summary Formats identified by wazformat.
 
 <h2>`StreamDetectorImpl`</h2>
-<p>A fast implementation of the interface [Detector http://jtools.heliohost.org/iotools/wazformat/apidocs/com/gc/iotools/fmt/base/Detector.html]. It only reads the beginning (few Kilobytes) of a stream and try to determine the format.</p>
+<p>A fast implementation of the interface [http://jtools.heliohost.org/iotools/wazformat/apidocs/com/gc/iotools/fmt/base/Detector.html Detector]. It only reads the beginning (few Kilobytes) of a stream and try to determine the format.</p>
 <p>It can be configured specifying a configuration file. An example can be found in: io-tools/wazformat/src/main/java/com/gc/iotools/fmt/detect/wzf/deflen.properties.</p>
 <p>The formats that it can detect are in the table below:</p>
 <table border="1">
