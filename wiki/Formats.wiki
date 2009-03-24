@@ -1,31 +1,31 @@
 #summary Formats identified by wazformat.
 
-<h2>StreamDetectorImpl</h2>
+<h2>`StreamDetectorImpl`</h2>
 <p>A fast implementation of the interface Detector. It only reads the beginning (few Kilobytes) of a stream and try to determine the format.</p>
 <p>It can be configured specifying a configuration file. An example can be found in: io-tools/wazformat/src/main/java/com/gc/iotools/fmt/detect/wzf/deflen.properties.</p>
 <p>The formats that it can detect are in the table below:</p>
-<table>
+<table border="1">
 <thead>
-<tr><td>Enum name</td><td>Description</td><td>Supported versions</td></tr>
+<tr><td><b>Enum name</b></td><td><b>Description</b></td><td><b>Supported versions</b></td></tr>
 </thead> <tbody>
 <tr><td>BASE64</td><td>Base 64 Encoded Data</td><td></td></tr>
 <tr><td>GIF</td><td>Graphics Interchange Format Image</td><td>87a, 89a</td></tr>
 <tr><td>M7M</td><td>Infocamere PKCS 7 digital signature document + timestamp.</td><td></td></tr>
 <tr><td>PKCS7</td><td>PKCS 7 Digital Signature</td><td></td></tr>
 <tr><td>PDF</td><td>Adobe PDF (Portable Document Format)</td><td>1.6,1.5,1.4 - Generic </td></tr>
-<tr><td>PEM</td>PEM (Privacy Enhanced Mail) Signed File<td></td></tr>
+<tr><td>PEM</td><td>PEM (Privacy Enhanced Mail) Signed File</td><td></td></tr>
 <tr><td>RTF</td><td>Rich Text Format</td><td></td></tr>
 <tr><td>XML</td><td>Extensible Markup Language</td><td></td></tr>
 <tr><td>ZIP</td><td>Pkzip Archive</td><td></td></tr>
 </tbody>
 </table>
 
-<h2>DroidDetectorImpl</h2>
-<p>These formats are supported by DroidDetectorImpl. This detector is based on Droid format detection library (mantained by UK National Archives).</p>
+<h2>`DroidDetectorImpl`</h2>
+<p>These formats are supported by `DroidDetectorImpl`. This detector is based on Droid format detection library (mantained by UK National Archives).</p>
 <p>Implementation isn't fast and requires a full read of the stream before the identification can begin. 
 The number of supported format is great, but low performances might be an issue with large files.</p>
 
-<table>
+<table border="1">
 <thead>
 <tr><td>Enum name</td><td>Description</td><td>Supported versions</td></tr>
 </thead> <tbody>
