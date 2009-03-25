@@ -7,7 +7,7 @@ import java.io.IOException;
  * This source code is released under the BSD Software License.
  */
 
-public interface Detector {
+public interface DetectionLibrary {
 
 	FormatId detect(FormatEnum[] enabledFormats, ResettableInputStream stream)
 			throws IOException;

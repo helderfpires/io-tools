@@ -5,7 +5,7 @@ package com.gc.iotools.fmt.base;
  * This source code is released under the BSD Software License.
  */
 
-public abstract class AbstractFormatDetector implements Detector {
+public abstract class AbstractFormatDetector implements DetectionLibrary {
 	private final int detectLenght;
 	private final FormatEnum detectedFormat;
 

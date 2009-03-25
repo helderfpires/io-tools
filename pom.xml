@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>pom</packaging>
 	<groupId>net.sf.jsignature.io-tools</groupId>
@@ -36,17 +37,20 @@
 		</repository>
 		<!--
 			repository> <id>jtools-repo</id>
-			<url>ftp://ftp.jtools.heliohost.org/</url> </repository -->
+			<url>ftp://ftp.jtools.heliohost.org/</url> </repository
+		-->
 		<!--
 			repository> <uniqueVersion>false</uniqueVersion>
 			<id>jsignature.sourceforge.repository</id> <name>JSignature
 			Repository</name>
 			<url>scp://shell.sourceforge.net/home/groups/j/js/jsignature/htdocs/maven2</url>
-			</repository -->
+			</repository
+		-->
 
 		<!--
 			site> <id>io-tools-web-x10</id> <name>jtools-site</name>
-			<url>ftp://ftp.jtools.x10hosting.com/</url> </site -->
+			<url>ftp://ftp.jtools.x10hosting.com/</url> </site
+		-->
 		<site>
 			<id>io-tools-web</id>
 			<url>ftp://ftp.jtools.heliohost.org/</url>
@@ -74,6 +78,14 @@
 				<artifactId>junit</artifactId>
 				<version>4.5</version>
 				<type>jar</type>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jmock</groupId>
+				<artifactId>jmock-junit4</artifactId>
+				<version>2.5.1</version>
+				<type>jar</type>
+				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
@@ -104,12 +116,12 @@
 				<version>140</version>
 				<type>jar</type>
 			</dependency>
-            <dependency>
-                <groupId>bouncycastle</groupId>
-                <artifactId>bcmail-jdk15</artifactId>
-                <version>140</version>
-                <type>jar</type>
-            </dependency>
+			<dependency>
+				<groupId>bouncycastle</groupId>
+				<artifactId>bcmail-jdk15</artifactId>
+				<version>140</version>
+				<type>jar</type>
+			</dependency>
 			<dependency>
 				<groupId>stax</groupId>
 				<artifactId>stax</artifactId>
@@ -123,11 +135,11 @@
 				<type>jar</type>
 			</dependency>
 			<dependency>
-                <groupId>net.sf.mime-util</groupId>
-                <artifactId>mime-util</artifactId>
-                <version>1.2</version>
-                <type>jar</type>
-            </dependency>
+				<groupId>net.sf.mime-util</groupId>
+				<artifactId>mime-util</artifactId>
+				<version>1.2</version>
+				<type>jar</type>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
@@ -138,12 +150,12 @@
 				<filtering>true</filtering>
 			</resource>
 			<resource>
-                <directory>src/main/java</directory>
-                <filtering>false</filtering>
-                <excludes>
-                    <exclude>**/*.java</exclude>
-                </excludes>
-            </resource>
+				<directory>src/main/java</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</resource>
 		</resources>
 		<testResources>
 			<testResource>
@@ -247,7 +259,8 @@
 				<phase>package</phase> <goals> <goal>attached</goal> </goals>
 				<configuration> <tarLongFileMode>gnu</tarLongFileMode> <descriptors>
 				<descriptor>assembly.xml</descriptor> </descriptors>
-				</configuration> </execution> </executions> </plugin -->
+				</configuration> </execution> </executions> </plugin
+			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>

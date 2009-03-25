@@ -132,6 +132,10 @@ public final class StreamUtils {
 		return n;
 	}
 
+	public static String getBandWidthString(long bytes,long milliseconds){
+		return "";
+	}
+	
 	/**
 	 * Utility class: shouldn't be instantiated.
 	 */
