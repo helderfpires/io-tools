@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.sf.jsignature.io-tools</groupId>
 	<artifactId>easystream</artifactId>
-	<version>1.2.1</version>
+	<version>1.2.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<description>
 Small set of Java tools for dealing with streams (InputStreams and OutputStreams). 
@@ -17,14 +17,14 @@ Main features are:
 	<parent>
 		<groupId>net.sf.jsignature.io-tools</groupId>
 		<artifactId>io-tools</artifactId>
-		<version>1.2.1</version>
+		<version>1.2.2-SNAPSHOT</version>
 	</parent>
 	<name>EasyStream</name>
 	<url>http://io-tools.googlecode.com</url>
 	<inceptionYear>2008</inceptionYear>
 	<scm>
-		<connection>scm:svn:http://io-tools.googlecode.com/svn/tags/io-tools-1.2.1/easystream</connection>
-		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/tags/io-tools-1.2.1/easystream</developerConnection>
+		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk/easystream</connection>
+		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk/easystream</developerConnection>
 	</scm>
 	<issueManagement>
 		<system>GoogleIssues</system>
