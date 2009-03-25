@@ -6,6 +6,7 @@ package com.gc.iotools.stream.os;
  */
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -25,7 +26,7 @@ import java.io.OutputStream;
  * other parts of the application), or after invoking the method
  * {@linkplain #close()} while partial statistics are available on the fly.
  * </p>
- *  
+ * 
  * @author dvd.smnt
  * @since 1.2.1
  */
@@ -35,6 +36,7 @@ public class StatsOutputStream extends OutputStream {
 	private final OutputStream innerOs;
 	private long size = 0;
 	private long time = 0;
+
 	/**
 	 * Creates a new <code>SizeRecorderOutputStream</code> with the given
 	 * destination stream.
@@ -78,8 +80,8 @@ public class StatsOutputStream extends OutputStream {
 		return this.size;
 	}
 
-	public long getTime() {
-		return time;
+	public long getTime(final TimeUnit tu) {
+		return tu.convert(this.time, TimeUnit.MILLISECONDS);
 	}
 
 	/**

@@ -32,7 +32,7 @@ import uk.gov.nationalarchives.droid.signatureFile.FileFormat;
 import uk.gov.nationalarchives.droid.signatureFile.InternalSignature;
 import uk.gov.nationalarchives.droid.xmlReader.SAXModelBuilder;
 
-import com.gc.iotools.fmt.base.Detector;
+import com.gc.iotools.fmt.base.DetectionLibrary;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
 import com.gc.iotools.fmt.base.ResettableInputStream;
@@ -43,7 +43,7 @@ import com.gc.iotools.fmt.base.ResettableInputStream;
  * @author dvd.smnt
  * 
  */
-public class DroidDetectorImpl implements Detector {
+public class DroidDetectorImpl implements DetectionLibrary {
 	/**
 	 * Namespace for the xml file format signatures file.
 	 */

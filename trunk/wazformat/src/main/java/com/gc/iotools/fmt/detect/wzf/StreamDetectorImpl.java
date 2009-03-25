@@ -1,5 +1,9 @@
 package com.gc.iotools.fmt.detect.wzf;
 
+/*
+ * Copyright (c) 2008, 2009 Davide Simonetti.
+ * This source code is released under the BSD Software License.
+ */
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -8,12 +12,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import com.gc.iotools.fmt.base.Detector;
+import com.gc.iotools.fmt.base.DetectionLibrary;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
 import com.gc.iotools.fmt.base.ResettableInputStream;
 
-public final class StreamDetectorImpl implements Detector {
+public final class StreamDetectorImpl implements DetectionLibrary {
 
 	private static byte[] readBytesAndReset(final InputStream input,
 			final int size) throws IOException {

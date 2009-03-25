@@ -11,7 +11,7 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
-import com.gc.iotools.fmt.base.Detector;
+import com.gc.iotools.fmt.base.DetectionLibrary;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
 import com.gc.iotools.fmt.base.ResettableFileInputStream;
@@ -43,7 +43,7 @@ public class TestStreamDetector {
 			assertTrue("at least one file [" + ext + "]", fiter.hasNext());
 			while (fiter.hasNext()) {
 				File file = fiter.next();
-				Detector stDetect = new StreamDetectorImpl();
+				DetectionLibrary stDetect = new StreamDetectorImpl();
 				final FormatEnum[] detectedFormats = stDetect
 						.getDetectedFormats();
 				

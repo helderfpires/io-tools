@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gc.iotools.fmt.base.Decoder;
-import com.gc.iotools.fmt.base.Detector;
+import com.gc.iotools.fmt.base.DetectionLibrary;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
 import com.gc.iotools.fmt.base.ResettableInputStream;
@@ -49,7 +49,7 @@ final class DetectionStrategy {
 			.getLogger(DroidDetectorImpl.class);
 
 	private static FormatId detectFormatStream(
-			final ResettableInputStream stream, final Detector[] detectors,
+			final ResettableInputStream stream, final DetectionLibrary[] detectors,
 			final FormatEnum[] enabledFormats) throws IOException {
 		FormatId detected = new FormatId(FormatEnum.UNKNOWN, null);
 		Collection<FormatEnum> toDetect = new ArrayList<FormatEnum>(Arrays
@@ -58,14 +58,16 @@ final class DetectionStrategy {
 			for (int i = 0; (i < detectors.length)
 					&& FormatEnum.UNKNOWN.equals(detected.format)
 					&& toDetect.size() > 0; i++) {
-				final Detector detector = detectors[i];
+				final DetectionLibrary detectionLibrary = detectors[i];
 				try {
-					detected = detector.detect(toDetect
+					if (isDetectorNeeded(detectionLibrary, toDetect)) {
+					detected = detectionLibrary.detect(toDetect
 							.toArray(new FormatEnum[0]), stream);
-					toDetect.removeAll(Arrays.asList(detector
+					toDetect.removeAll(Arrays.asList(detectionLibrary
 							.getDetectedFormats()));
+					}
 				} catch (final Exception e) {
-					LOG.warn("deterctor [" + detector + "] threw exception",
+					LOG.warn("deterctor [" + detectionLibrary + "] threw exception",
 							e);
 				}
 				stream.resetToBeginning();
@@ -74,32 +76,44 @@ final class DetectionStrategy {
 		return detected;
 	}
 
+	private static boolean isDetectorNeeded(DetectionLibrary detect,
+			Collection<FormatEnum> toDetect) {
+		FormatEnum[] formats = detect.getDetectedFormats();
+		boolean result = false;
+		for (int i = 0; (i < formats.length) && (!result); i++) {
+			result |= toDetect.contains(formats[i]);
+		}
+		return result;
+	}
 	private static Map<FormatEnum, Decoder> getDecodersMap(
 			final Decoder[] decoders) {
 		final Map<FormatEnum, Decoder> formatsMap = new HashMap<FormatEnum, Decoder>();
-		for (final Decoder decoder : decoders) {
-			formatsMap.put(decoder.getFormat(), decoder);
+		if (decoders != null) {
+			for (final Decoder decoder : decoders) {
+				formatsMap.put(decoder.getFormat(), decoder);
+			}
 		}
 		return formatsMap;
 	}
 
 	private final ResettableInputStream bis;
-	private final Detector[] detectors;
+	private final DetectionLibrary[] detectionLibraries;
 
 	private final FormatId formats[];
 
-	public DetectionStrategy(final Detector[] detectors,
+	public DetectionStrategy(final DetectionLibrary[] detectors,
 			final Decoder[] decoders, final FormatEnum[] enabledFormats,
-			final ResettableInputStream istream, final boolean decode)
+			final ResettableInputStream istream, int maxRecursion)
 			throws IOException {
 
-		this.detectors = detectors;
+		this.detectionLibraries = detectors;
 		final Collection<FormatId> formats = new ArrayList<FormatId>();
 		final Map<FormatEnum, Decoder> decMap = getDecodersMap(decoders);
 		FormatId curFormat;
 		ResettableInputStream currentStream = istream;
+		int recursionLevel = 0;
 		do {
-			curFormat = detectFormatStream(currentStream, this.detectors,
+			curFormat = detectFormatStream(currentStream, this.detectionLibraries,
 					enabledFormats);
 			if (!FormatEnum.UNKNOWN.equals(curFormat.format)
 					&& decMap.containsKey(curFormat.format)) {
@@ -108,8 +122,10 @@ final class DetectionStrategy {
 						decoder);
 			}
 			formats.add(curFormat);
-		} while (decMap.containsKey(curFormat.format));
-		this.bis = (decode ? currentStream : istream);
+			maxRecursion++;
+		} while (decMap.containsKey(curFormat.format)
+				&& (recursionLevel <= maxRecursion));
+		this.bis = currentStream;
 		this.formats = formats.toArray(new FormatId[formats.size()]);
 	}
 
