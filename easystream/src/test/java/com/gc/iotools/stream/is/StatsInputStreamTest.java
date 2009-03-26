@@ -1,6 +1,6 @@
 package com.gc.iotools.stream.is;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +14,7 @@ public class StatsInputStreamTest {
 	public void fullReadOnClose() throws IOException {
 		final InputStream istream = StatsInputStreamTest.class
 				.getResourceAsStream("/testFile.txt");
-		final SizeReaderInputStream ris = new SizeReaderInputStream(istream,
+		final StatsInputStream ris = new StatsInputStream(istream,
 				true);
 		ris.read(new byte[5]);
 		assertEquals("readed size", 5, ris.getSize());
@@ -26,7 +26,7 @@ public class StatsInputStreamTest {
 	public void markAndReset() throws Exception {
 		final InputStream istream = StatsInputStreamTest.class
 				.getResourceAsStream("/testFile.txt");
-		final SizeReaderInputStream ris = new SizeReaderInputStream(istream,
+		final StatsInputStream ris = new StatsInputStream(istream,
 				true);
 		ris.read(new byte[5]);
 		assertEquals("readed size", 5, ris.getSize());
@@ -43,7 +43,7 @@ public class StatsInputStreamTest {
 	public void noFullReadOnClose() throws IOException {
 		final InputStream istream = StatsInputStreamTest.class
 				.getResourceAsStream("/testFile.txt");
-		final SizeReaderInputStream ris = new SizeReaderInputStream(istream,
+		final StatsInputStream ris = new StatsInputStream(istream,
 				false);
 		ris.read(new byte[5]);
 		assertEquals("readed size", 5, ris.getSize());
@@ -55,7 +55,7 @@ public class StatsInputStreamTest {
 	public void simpleRead() throws Exception {
 		final InputStream istream = StatsInputStreamTest.class
 				.getResourceAsStream("/testFile.txt");
-		final SizeReaderInputStream ris = new SizeReaderInputStream(istream);
+		final StatsInputStream ris = new StatsInputStream(istream);
 		assertEquals("readed size", 0, ris.getSize());
 		IOUtils.copy(ris, new NullOutputStream());
 		assertEquals("in the end", 30, ris.getSize());
@@ -65,7 +65,7 @@ public class StatsInputStreamTest {
 	public void skip() throws Exception {
 		final InputStream istream = StatsInputStreamTest.class
 				.getResourceAsStream("/testFile.txt");
-		final SizeReaderInputStream ris = new SizeReaderInputStream(istream,
+		final StatsInputStream ris = new StatsInputStream(istream,
 				true);
 		ris.read(new byte[5]);
 		assertEquals("readed size", 5, ris.getSize());

@@ -79,13 +79,13 @@ public class ResettableStreamWrapper extends ResettableInputStream {
 	}
 
 	@Override
-	public long skip(long size) throws IOException {
+	public long skip(final long size) throws IOException {
 		checkInitialized();
 		return this.decodedStream.skip(size);
 	}
 
 	private void checkInitialized() throws IOException {
-		this.decodedStream = decoder.decode(baseStream);
+		this.decodedStream = this.decoder.decode(this.baseStream);
 	}
 
 }

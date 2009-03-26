@@ -28,6 +28,7 @@ package com.gc.iotools.stream.utils;
  */
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 
 /**
  * General utilities for handling streams.
@@ -36,6 +37,37 @@ import java.io.InputStream;
  * @since 1.0.9
  */
 public final class StreamUtils {
+	private static final int KB = 1024;
+
+	/**
+	 * Returns a string representing the transfer rate. The unit is chosen
+	 * automatically to keep the size of the string small.
+	 * 
+	 * @param bytes
+	 *            bytes transferred
+	 * @param milliseconds
+	 *            time in milliseconds
+	 * @return a string containing the bit rate in a convenient unit.
+	 * @since 1.2.2
+	 */
+	public static String getRateString(final long bytes,
+			final long milliseconds) {
+		final String[] units = new String[] { "Byte", "KB", "MB", "GB" };
+		final double bytesSec = (bytes * 1000D) / milliseconds;
+		// log1024(bytesSec)
+		final double idx = Math.log(bytesSec) / Math.log(KB);
+		final int intIdx = Math.max(0, Math.min((int) Math.floor(idx),
+				units.length - 1));
+		final double reducedRate = bytesSec / Math.pow(KB, intIdx);
+		final DecimalFormat df = new DecimalFormat();
+		final int ndigit = (int) Math.floor(Math.max(Math.log10(reducedRate),
+				0));
+		df.setMinimumFractionDigits(0);
+		df.setGroupingUsed(false);
+		df.setMaximumFractionDigits(Math.max(0, 2 - ndigit));
+		return df.format(reducedRate) + " " + units[intIdx] + "/sec";
+	}
+
 	/**
 	 * <p>
 	 * Read a specified amount of bytes from the <i>source</i> InputStream and
@@ -132,10 +164,6 @@ public final class StreamUtils {
 		return n;
 	}
 
-	public static String getBandWidthString(long bytes,long milliseconds){
-		return "";
-	}
-	
 	/**
 	 * Utility class: shouldn't be instantiated.
 	 */

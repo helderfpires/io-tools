@@ -1,9 +1,6 @@
 package com.gc.iotools.fmt;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -111,12 +108,12 @@ public class TestGuessInputStream extends JUnit4Mockery {
 				new ByteArrayInputStream(reference), Base64.ENCODE);
 		final GuessInputStream gis = GuessInputStream.getInstance(istream,
 				new FormatEnum[] { FormatEnum.BASE64 });
-		gis.setDecode(true);
+		gis.decode(true);
 		assertEquals("Format detected", FormatEnum.BASE64, gis.getFormat());
 		assertArrayEquals("Bytes read are same", reference, IOUtils
 				.toByteArray(gis));
 		try {
-			gis.setDecode(false);
+			gis.decode(false);
 			fail("Illegal State exception must be thrown here");
 		} catch (IllegalStateException e) {
 
@@ -162,7 +159,7 @@ public class TestGuessInputStream extends JUnit4Mockery {
 				.getBytes());
 		GuessInputStream gis = GuessInputStream.getInstance(bais,
 				new FormatEnum[] { FormatEnum.AVI, FormatEnum.BASE64 },
-				new DetectionLibrary[] { detect1, detect2 }, null, 0);
+				new DetectionLibrary[] { detect1, detect2 }, null);
 		assertEquals("Format ", FormatEnum.UNKNOWN, gis.getFormat());
 	}
 
@@ -184,7 +181,7 @@ public class TestGuessInputStream extends JUnit4Mockery {
 				.getBytes());
 		GuessInputStream gis = GuessInputStream.getInstance(bais,
 				new FormatEnum[] { FormatEnum.BASE64 },
-				new DetectionLibrary[] { detect1 }, null, 0);
+				new DetectionLibrary[] { detect1 }, null);
 		assertEquals("Format ", FormatEnum.UNKNOWN, gis.getFormat());
 	}
 }
