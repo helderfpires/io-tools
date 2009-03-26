@@ -4,13 +4,13 @@
 = Stream Utilities =
 
 Sometimes a library writes its results to an `OutputStream` and you need to read them back from an `InputStream`. The common answer are: copy to a memory buffer, copy to a file or use pipes. 
-[http://ostermiller.org/convert_java_outputstream_inputstream.html Here] you can find an interesting discussion. Use pipes is not as easy at is seems (even if it is the solution offered by Sun). `InputStreamFromOutputStream` and `OutputStreamToInputStream` should accomplish the task.
+[http://ostermiller.org/convert_java_outputstream_inputstream.html Here] you can find an interesting discussion. Use pipes is not as easy at is seems (even if it is the standard solution offered by Sun). `InputStreamFromOutputStream` and `OutputStreamToInputStream` should ease the task.
 
 Other classes in this library are:
  * `RandomAccessInputStream` allows to read the content of an `InputStream` multiple times or seek to a definite position.
  * `ChunkInputStream` filter some parts of an `InputStream` basing on its content.
  * `StatsInputStream` and `StatsOutputStream`: Collects some statistics (bytes read or wrote, bandwidth...) of a given stream.
- * `TeeInputStreamOutputStream` allows to copy the data read from a source `InputStream` to a supplied `OutputStream`.
+ * `TeeInputStreamOutputStream` allows to "tee" the data read from a source `InputStream` to a supplied `OutputStream`.
 
 
 === !InputStreamFromOutputStream ===
@@ -116,7 +116,7 @@ This class is useful when you have an `InputStream` and you want to filter some 
 For further information read the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/ChunkInputStream.html api javadoc].
 
 === !TeeInputStreamOutputStream ===
-Copies the data from the underlying `InputStream` to the `OutputStream` passed in the constructor. The data copied are similar to the underlying `InputStream`.
+While data is being read from the source `InputStream` (passed in the constructor) it is also copied to the `OutputStream` passed in the constructor. The data copied are similar to the underlying `InputStream`.
 
 Sample usage:
 {{{
