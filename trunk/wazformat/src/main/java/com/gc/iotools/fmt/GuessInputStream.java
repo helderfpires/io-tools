@@ -38,7 +38,6 @@ import com.gc.iotools.fmt.base.Decoder;
 import com.gc.iotools.fmt.base.DetectionLibrary;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
-import com.gc.iotools.fmt.base.ResettableInputStream;
 import com.gc.iotools.fmt.decoders.Base64Decoder;
 import com.gc.iotools.fmt.decoders.GzipDecoder;
 import com.gc.iotools.fmt.decoders.Pkcs7Decoder;
@@ -89,22 +88,25 @@ public class GuessInputStream extends InputStream {
 
 	public static GuessInputStream getInstance(final InputStream istream,
 			final Class clazz, final String droidSignatureFile,
-			String streamConfigFile) throws IOException {
-		if (droidSignatureFile == null && streamConfigFile == null) {
+			final String streamConfigFile) throws IOException {
+		if ((droidSignatureFile == null) && (streamConfigFile == null)) {
 			throw new IllegalArgumentException(
 					"both configuration files are null.");
 		}
-		Collection<DetectionLibrary> detectionLibraries = new HashSet<DetectionLibrary>();
+		final Collection<DetectionLibrary> detectionLibraries = new HashSet<DetectionLibrary>();
 		if (streamConfigFile != null) {
-			DetectionLibrary stream = new StreamDetectorImpl(streamConfigFile, clazz);
+			final DetectionLibrary stream = new StreamDetectorImpl(
+					streamConfigFile, clazz);
 			detectionLibraries.add(stream);
 		}
 		if (droidSignatureFile != null) {
-			DetectionLibrary stream = new DroidDetectorImpl();
+			final DetectionLibrary stream = new DroidDetectorImpl(clazz,
+					droidSignatureFile, null);
 			detectionLibraries.add(stream);
 		}
-		return getInstance(istream, null, detectionLibraries.toArray(new DetectionLibrary[0]),
-				DEFAULT_DECODERS.toArray(new Decoder[0]), 0);
+		return getInstance(istream, null, detectionLibraries
+				.toArray(new DetectionLibrary[0]), DEFAULT_DECODERS
+				.toArray(new Decoder[0]));
 	}
 
 	// private static final Loggerger LOGGER = Loggerger
@@ -114,34 +116,13 @@ public class GuessInputStream extends InputStream {
 	// HashSet<StreamDetector>();
 
 	public static GuessInputStream getInstance(final InputStream source,
-			final FormatEnum[] enabledFormats) throws IOException {
-		return getInstance(source, enabledFormats, 0);
-	}
-
-	/**
-	 * This method creates an instance of the GuessInputStream. It checks if the
-	 * InputStream is already an instance of GuessInputStream and do
-	 * optimizations if possible.
-	 * 
-	 * @param source
-	 *            Source stream to be wrapped.
-	 * @return Instance of the newly created GuessInputStream
-	 */
-	public static GuessInputStream getInstance(final InputStream source,
-			final FormatEnum[] enabledFormats, int recursionLevel)
-			throws IOException {
-
-		Collection<DetectionLibrary> detectionLibraries = new ArrayList<DetectionLibrary>();
-		detectionLibraries.add(new StreamDetectorImpl());
-		detectionLibraries.add(new DroidDetectorImpl());
-		return getInstance(source, enabledFormats, detectionLibraries
-				.toArray(new DetectionLibrary[0]), DEFAULT_DECODERS
-				.toArray(new Decoder[0]), recursionLevel);
+			final FormatEnum[] enabledFormats) {
+		return getInstance(source, enabledFormats);
 	}
 
 	public static GuessInputStream getInstance(final InputStream stream,
-			final FormatEnum[] enabledFormats, final DetectionLibrary[] detectors,
-			final Decoder[] decoders, int recursionLevel) throws IOException {
+			final FormatEnum[] enabledFormats,
+			final DetectionLibrary[] detectors, final Decoder[] decoders) {
 		if (stream == null) {
 			throw new IllegalArgumentException("Parameter stream==null");
 		}
@@ -154,20 +135,36 @@ public class GuessInputStream extends InputStream {
 			ris = new ResettableStreamRASAdapter(new RandomAccessInputStream(
 					stream));
 		}
-		ris.enable(true);
-		DetectionStrategy ds = new DetectionStrategy(detectors, decoders,
-				enabledFormats, ris, recursionLevel);
-		result = new GuessInputStream(enabledFormats, ds.getFormats(), ris,
-				ds.getStream());
-		ris.enable(false);
+		final DetectionStrategy ds = new DetectionStrategy(detectors,
+				decoders, enabledFormats, ris);
+		result = new GuessInputStream(enabledFormats, ris, ds);
 		return result;
+	}
+
+	/**
+	 * This method creates an instance of the GuessInputStream. It checks if the
+	 * InputStream is already an instance of GuessInputStream and do
+	 * optimizations if possible.
+	 * 
+	 * @param source
+	 *            Source stream to be wrapped.
+	 * @return Instance of the newly created GuessInputStream
+	 */
+	public static GuessInputStream getInstance(final InputStream source,
+			final FormatEnum[] enabledFormats, final int recursionLevel)
+			throws IOException {
+
+		final Collection<DetectionLibrary> detectionLibraries = new ArrayList<DetectionLibrary>();
+		detectionLibraries.add(new StreamDetectorImpl());
+		detectionLibraries.add(new DroidDetectorImpl());
+		return getInstance(source, enabledFormats, detectionLibraries
+				.toArray(new DetectionLibrary[0]), DEFAULT_DECODERS
+				.toArray(new Decoder[0]));
 	}
 
 	private final ResettableStreamRASAdapter baseStream;
 
-	private final ResettableInputStream decodedStream;
-
-	private final FormatId[] detectedFormats;
+	private final DetectionStrategy detectionStrategy;
 
 	private final Collection<FormatEnum> enabledFormats;
 
@@ -176,26 +173,12 @@ public class GuessInputStream extends InputStream {
 	private boolean decode = false;
 
 	protected GuessInputStream(final FormatEnum[] enabledFormats,
-			FormatId[] detected, ResettableStreamRASAdapter baseStream,
-			ResettableInputStream decodedStream) {
+			final ResettableStreamRASAdapter baseStream,
+			final DetectionStrategy decodedStream) {
 		this.enabledFormats = Collections.unmodifiableCollection(Arrays
 				.asList(enabledFormats));
 		this.baseStream = baseStream;
-		this.decodedStream = decodedStream;
-		this.detectedFormats = detected;
-	}
-
-	public void setDecode(boolean decode) {
-		if (status.equals(InputStreamStatusEnum.READING_DATA)
-				&& (decode != this.decode)) {
-			throw new IllegalStateException("Some byte has been "
-					+ " read already from the underlying stream. "
-					+ "It is not possible "
-					+ "to change the decoding behaviour now. "
-					+ "Decoding behaviour set [" + this.decode
-					+ "] decoding wanted[" + decode + "]");
-		}
-		this.decode = decode;
+		this.detectionStrategy = decodedStream;
 	}
 
 	@Override
@@ -216,8 +199,8 @@ public class GuessInputStream extends InputStream {
 					"Parameter formatEnums is null");
 		}
 		boolean result = true;
-		for (int i = 0; i < formatEnums.length && result; i++) {
-			FormatEnum formatEnum = formatEnums[i];
+		for (int i = 0; (i < formatEnums.length) && result; i++) {
+			final FormatEnum formatEnum = formatEnums[i];
 			result &= this.enabledFormats.contains(formatEnum);
 		}
 		return result;
@@ -225,26 +208,35 @@ public class GuessInputStream extends InputStream {
 
 	@Override
 	public void close() throws IOException {
-		status = InputStreamStatusEnum.READING_DATA;
+		this.status = InputStreamStatusEnum.READING_DATA;
 		getStream().close();
 	}
 
-	public FormatId[] getDetectedFormatsId() {
-		return detectedFormats;
+	public FormatId[] getDetectedFormatsId() throws IOException {
+		return this.detectionStrategy.getFormats();
 	}
 
-	public final FormatEnum getFormat() {
+	public final FormatEnum getFormat() throws IOException {
 		return getFormatId().format;
 	}
 
-	public final FormatId getFormatId() {
+	public final FormatId getFormatId() throws IOException {
 		return getDetectedFormatsId()[0];
 	}
 
-	public final FormatEnum[] getFormats() {
-		FormatId[] formats = getDetectedFormatsId();
-		Collection<FormatEnum> result = new ArrayList<FormatEnum>();
-		for (FormatId formatId : formats) {
+	public final void setRecursion(int level) {
+		if (InputStreamStatusEnum.READING_DATA.equals(this.status)) {
+			throw new IllegalStateException(
+					"The number of recursion can "
+							+ "be set only before any read() operation has been called.");
+		}
+		this.detectionStrategy.setMaxRecursion(level);
+	}
+
+	public final FormatEnum[] getFormats() throws IOException {
+		final FormatId[] formats = getDetectedFormatsId();
+		final Collection<FormatEnum> result = new ArrayList<FormatEnum>();
+		for (final FormatId formatId : formats) {
 			result.add(formatId.format);
 		}
 		return result.toArray(new FormatEnum[0]);
@@ -257,29 +249,44 @@ public class GuessInputStream extends InputStream {
 
 	@Override
 	public int read() throws IOException {
-		status = InputStreamStatusEnum.READING_DATA;
+		this.status = InputStreamStatusEnum.READING_DATA;
 		return getStream().read();
 	}
 
 	@Override
-	public int read(byte[] b) throws IOException {
-		status = InputStreamStatusEnum.READING_DATA;
+	public int read(final byte[] b) throws IOException {
+		this.status = InputStreamStatusEnum.READING_DATA;
 		return getStream().read(b);
 	}
 
 	@Override
-	public int read(byte[] b, int off, int len) throws IOException {
-		status = InputStreamStatusEnum.READING_DATA;
+	public int read(final byte[] b, final int off, final int len)
+			throws IOException {
+		this.status = InputStreamStatusEnum.READING_DATA;
 		return getStream().read(b, off, len);
 	}
 
+	public void decode(final boolean decode) {
+		if (this.status.equals(InputStreamStatusEnum.READING_DATA)
+				&& (decode != this.decode)) {
+			throw new IllegalStateException("Some byte has been "
+					+ " read already from the underlying stream. "
+					+ "It is not possible "
+					+ "to change the decoding behaviour now. "
+					+ "Decoding behaviour set [" + this.decode
+					+ "] decoding wanted[" + decode + "]");
+		}
+		this.decode = decode;
+	}
+
 	@Override
-	public long skip(long n) throws IOException {
-		status = InputStreamStatusEnum.READING_DATA;
+	public long skip(final long n) throws IOException {
+		this.status = InputStreamStatusEnum.READING_DATA;
 		return getStream().skip(n);
 	}
 
-	private InputStream getStream() {
-		return (decode ? decodedStream : baseStream);
+	private InputStream getStream() throws IOException {
+		return (this.decode ? this.detectionStrategy.getStream()
+				: this.baseStream);
 	}
 }

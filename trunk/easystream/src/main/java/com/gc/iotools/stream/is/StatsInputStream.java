@@ -7,6 +7,9 @@ package com.gc.iotools.stream.is;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
+
+import com.gc.iotools.stream.utils.StreamUtils;
 
 /**
  * <p>
@@ -18,7 +21,8 @@ import java.io.InputStream;
  * <ul>
  * <li>The size of the internal stream.</li>
  * <li>The time spent reading the bytes.</li>
- * <li>The bandwidth of the underlying stream.</li>
+ * <li>The raw bandwidth of the underlying stream, calculated excluding the time
+ * spent by the external process to elaborate the data.</li>
  * </ul>
  * </p>
  * <p>
@@ -56,15 +60,15 @@ public class StatsInputStream extends InputStream {
 	/**
 	 * <p>
 	 * Constructs an <code>SizeReaderInputStream</code>. When
-	 * {@linkplain #close()} is called all the data will be read from the source
-	 * InputStream and a full statistic will be available.
+	 * {@linkplain #close()} is called the underlying stream will be closed. No
+	 * further read will be done.
 	 * </p>
 	 * 
 	 * @param source
 	 *            Stream whose statistics must be calculated.
 	 */
 	public StatsInputStream(final InputStream source) {
-		this(source, true);
+		this(source, false);
 	}
 
 	/**
@@ -138,25 +142,43 @@ public class StatsInputStream extends InputStream {
 
 	/**
 	 * <p>
-	 * Returns the time in milliseconds spent until now waiting for the internal
-	 * stream to respond.
+	 * Returns the time spent until now waiting for the internal stream to
+	 * respond.
 	 * </p>
 	 * 
-	 * @return milliseconds spent in waiting.
+	 * @param tu
+	 *            Unit to measure the time.
+	 * @return time spent in waiting.
 	 */
-	public long getTime() {
-		return this.time;
+	public long getTime(final TimeUnit tu) {
+		return tu.convert(this.time, TimeUnit.MILLISECONDS);
 	}
-
+	
 	/**
 	 * Returns the reading bit rate in KB per second.
 	 * 
-	 * @return The kb/sec bandwidth of the stream.
+	 * @return The KB/Sec bitRate of the stream.
 	 */
-	public float getRate() {
+	public float getBitRate() {
 		return (this.size / 1024F) / (this.time / 1000F);
 	}
 
+	/**
+	 * Returns the reading bit rate formatted with a convenient unit.
+	 * 
+	 * @return The bitRate of the stream.
+	 */
+	public String getBitRateString() {
+		return StreamUtils.getRateString(this.size, this.time);
+	}
+
+	/**
+	 * Returns the behavior of the close method. If true when close is invoked a
+	 * full read of the stream will be performed.
+	 * 
+	 * @return Whether a full read will be performed on the invocation of
+	 *         {@linkplain #close()} method.
+	 */
 	public boolean isFullReadOnClose() {
 		return this.fullReadOnClose;
 	}

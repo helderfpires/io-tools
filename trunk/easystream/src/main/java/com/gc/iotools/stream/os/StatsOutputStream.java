@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.concurrent.TimeUnit;
 
+import com.gc.iotools.stream.utils.StreamUtils;
+
 /**
  * <p>
  * Gather some statistics on the <code>OutputStream</code> passed in the
@@ -80,6 +82,26 @@ public class StatsOutputStream extends OutputStream {
 		return this.size;
 	}
 
+	/**
+	 * Returns the writing bit rate formatted with a convenient unit.
+	 * 
+	 * @return The bitRate of the stream.
+	 * @since 1.2.2
+	 */
+	public String getBitRateString() {
+		return StreamUtils.getRateString(this.size, this.time);
+	}
+
+	/**
+	 * <p>
+	 * Returns the time spent until now waiting for the internal stream to write
+	 * the data.
+	 * </p>
+	 * 
+	 * @param tu
+	 *            Unit to measure the time.
+	 * @return time spent in waiting.
+	 */
 	public long getTime(final TimeUnit tu) {
 		return tu.convert(this.time, TimeUnit.MILLISECONDS);
 	}
