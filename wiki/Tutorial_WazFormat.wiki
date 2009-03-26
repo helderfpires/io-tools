@@ -1,0 +1,48 @@
+#summary Format identification how to: a 5 minutes tutorial.
+#labels Featured,Phase-Implementation
+= Introduction =
+Classes in package `com.gc.iotools.fmt` try to ease the detection of some widely used file formats. The main focus are documents (optionally with digital signature) and images.
+
+These classes can tell you which is the format of the stream "on the fly", without you have to copy it to the disk for reading it twice. They can also perform some transformation always in a transparent way.
+
+Detection is based on a lightweight internal detector and on the [http://droid.sourceforge.net/ droid] (a [http://www.nationalarchives.gov.uk/PRONOM/Default.aspx National Archives] project) library. There are plans to integrate also [http://sourceforge.net/projects/mime-util mime-util].
+
+= Usage =
+== Simple detection ==
+Detection of formats is easy. Here is a sample code to find what's the content of the ~InputStream istream enabling all the possible formats :
+{{{
+InputStream istream = ... //inputStream that comes from your application
+//detects all the available formats
+GuessInputStream gis = GuessInputStream.getInstance(istream, null);
+//here is the result: FormatEnum.UNKNOWN if no format is recognized 
+FormatEnum detectedFormat = gis.getFormat();
+//now you can't use `istream` anymore, you must use only `gis`
+}}}
+
+== Specific format ==
+If you want to detect a specific format (for instance XML):
+{{{
+InputStream istream = ... //inputStream that comes from your application
+//detects only xml
+GuessInputStream gis = GuessInputStream.getInstance(istream, new FormatEnum[] { FormatEnum.XML });
+//here is the result: FormatEnum.XML if istream is XML FormatEnum.UNKNOWN otherwise 
+FormatEnum detectedFormat = gis.getFormat();
+//now you can't use `istream` anymore, you must use only `gis`
+}}}
+
+== Detection and decoding ==
+!WazFormat allows to take decision based on the content of a stream without knowing it. 
+A common problem is: if the stream is base64 encoded decode it, otherwise use it unchanged. Solution is straightforward.
+
+{{{
+InputStream istream = ... //inputStream that comes from your application
+GuessInputStream gis = GuessInputStream.getInstance(istream, new FormatEnum[] { FormatEnum.BASE64 });
+gis.setDecode(true);
+
+//if the file was base64 now you can read the decoded from gis, or if the file was not base64 you can read the original.
+byte[] decoded=IOUtils.toByteArray(gis);
+}}}
+
+_ IOUtils is a class of apache commons-io. _
+= Detected formats table =
+See [Formats Formats]. For an updated list see !FormatEnum [http://jtools.heliohost.org/iotools/wazformat/apidocs/com/gc/iotools/fmt/base/FormatEnum.html api]
