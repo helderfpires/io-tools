@@ -133,17 +133,22 @@ Sample usage:
 }}}
 
 == [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/StatsInputStream.html StatsInputStream] ==
-Gathers statistics of the !InputStream passed in the constructor. It can be used to determine the size or the time spent reading from the internal !InputStream.
+Gathers statistics of the !InputStream passed in the constructor. It can be used to: 
+ * determine the size of the read data 
+ * the time spent reading from the internal !InputStream.
+ * the bit rate of the internal stream.
+
 {{{
 StatsInputStream srIstream = new StatsInputStream(originalStream);
 //performs all the application operation on stream
 ...
 srIstream.close();
 long size = srIstream.getSize();
+String bitRate = srIstream.getBitRateString();
 }}}
 
-== !StatsOutputStream ==
-Gathers statistics of the !OutputStream passed in the constructor. It can be used to determine the bytes writtensize of a document passed as a stream or the time spent reading from the internal !InputStream.
+== [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/os/StatsOutputStream.html StatsOutputStream] ==
+Gathers statistics of the !OutputStream passed in the constructor. It can be used to determine the number of bytes written or the time spent writing to the !OutputStream.
 {{{
 StatsOutputStream srStream = new StatsOutputStream(originalStream);
 //performs all the application operation on stream
