@@ -3,15 +3,13 @@
 
 = Stream Utilities =
 
-Sometimes a library writes its results to an `OutputStream` and you need to read them back from an `InputStream`. The common answer are: copy to a memory buffer, copy to a file or use pipes. 
-[http://ostermiller.org/convert_java_outputstream_inputstream.html Here] you can find an interesting discussion. Use pipes is not as easy at is seems (even if it is the standard solution offered by Sun). `InputStreamFromOutputStream` and `OutputStreamToInputStream` should ease the task.
+== Convert `OutputStream` to an `InputStream` ==
+Sometimes a library you're using writes its results to an `OutputStream` and you need to read them back from an `InputStream` for a further elaboration (you have to convert the `OutputStream` into an `InputStream`). The possibilities are: 
+ * copy the data to a memory buffer (`ByteArrayInputStream` or a circular buffer).
+ * copy to a temporary file and read it back.
+ * use pipes. 
 
-Other classes in this library are:
- * `RandomAccessInputStream` allows to read the content of an `InputStream` multiple times or seek to a definite position.
- * `ChunkInputStream` filter some parts of an `InputStream` basing on its content.
- * `StatsInputStream` and `StatsOutputStream`: Collects some statistics (bytes read or wrote, bandwidth...) of a given stream.
- * `TeeInputStreamOutputStream` allows to "tee" the data read from a source `InputStream` to a supplied `OutputStream`.
-
+[http://ostermiller.org/convert_java_outputstream_inputstream.html Here] you can find an interesting discussion. I think that pipes are the best approach for memory usage and speed and also the standard solution offered by Sun, on the other hand their use is not easy. `InputStreamFromOutputStream` and `OutputStreamToInputStream` should ease the task.
 
 === !InputStreamFromOutputStream ===
 
@@ -85,7 +83,16 @@ String result = oStream2IStream.getResults();
 
 For further information see the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/os/OutputStreamToInputStream.html api javadoc].
 
-To convert an `OutputStream` into an `InputStream` you need a pipe. And to use a pipe you need Threads. [ExecutionModel Here] are easystreams options. 
+This class internally use a pipe. The two ends must be on two different `Threads`. [ExecutionModel Here] are easystreams options. 
+
+
+== Stream utilities ==
+
+Other classes in this library are:
+ * `RandomAccessInputStream` allows to read the content of an `InputStream` multiple times or seek to a definite position.
+ * `ChunkInputStream` filter some parts of an `InputStream` basing on its content.
+ * `StatsInputStream` and `StatsOutputStream`: Collects some statistics (bytes read or wrote, bandwidth...) of a given stream.
+ * `TeeInputStreamOutputStream` allows to "tee" the data read from a source `InputStream` to a supplied `OutputStream`.
 
 === !RandomAccessInputStream ===
 Adds the following functionality to another input stream: 
