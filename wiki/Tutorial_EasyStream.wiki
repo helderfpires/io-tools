@@ -9,7 +9,9 @@ Sometimes a library you're using writes its results to an `OutputStream` and you
  * copy to a temporary file and read it back.
  * use pipes. 
 
-[http://ostermiller.org/convert_java_outputstream_inputstream.html Here] you can find an interesting discussion. I think that pipes are the best approach for memory usage and speed and also the standard solution offered by Sun, on the other hand their use is not easy. `InputStreamFromOutputStream` and `OutputStreamToInputStream` should ease the task.
+[http://ostermiller.org/convert_java_outputstream_inputstream.html Here] you can find an interesting discussion. I think that pipes are the best approach both for memory usage and speed and also the standard solution offered by Sun, on the other hand their use is not easy. `InputStreamFromOutputStream` and `OutputStreamToInputStream` should ease the task.
+
+These classes internally use pipes. The two ends (`PipedInputStream` and `PipedOutputStream`) must be in two different `Threads`. Easystream offer some [ExecutionModel option] for instantiating the new Trheads.   
 
 === !InputStreamFromOutputStream ===
 
@@ -82,8 +84,6 @@ String result = oStream2IStream.getResults();
 }}}
 
 For further information see the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/os/OutputStreamToInputStream.html api javadoc].
-
-This class internally use a pipe. The two ends must be on two different `Threads`. [ExecutionModel Here] are easystreams options. 
 
 
 == Stream utilities ==
