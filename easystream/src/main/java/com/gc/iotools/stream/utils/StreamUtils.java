@@ -115,7 +115,7 @@ public final class StreamUtils {
 	 * end of the stream has been reached.
 	 * </p>
 	 * 
-	 * @see InputStream.read(byte[] buf,int off, int len)
+	 * @see InputStream#read(byte[] buf,int off, int len)
 	 * 
 	 * @param source
 	 *            Stream from which the data is read.

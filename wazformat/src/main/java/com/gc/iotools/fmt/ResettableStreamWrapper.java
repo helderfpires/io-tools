@@ -36,13 +36,6 @@ public class ResettableStreamWrapper extends ResettableInputStream {
 	}
 
 	@Override
-	public void mark(final int readlimit) {
-		final int markLimit = (int) (readlimit * this.decoder.getRatio())
-				+ this.decoder.getOffset() + 1;
-		this.baseStream.mark(markLimit);
-	}
-
-	@Override
 	public boolean markSupported() {
 		return this.baseStream.markSupported();
 	}
@@ -67,12 +60,6 @@ public class ResettableStreamWrapper extends ResettableInputStream {
 	}
 
 	@Override
-	public void reset() throws IOException {
-		this.baseStream.reset();
-		this.decodedStream = null;
-	}
-
-	@Override
 	public void resetToBeginning() throws IOException {
 		this.decodedStream = null;
 		this.baseStream.resetToBeginning();
@@ -85,7 +72,13 @@ public class ResettableStreamWrapper extends ResettableInputStream {
 	}
 
 	private void checkInitialized() throws IOException {
-		this.decodedStream = this.decoder.decode(this.baseStream);
+		if (this.decodedStream == null)
+			this.decodedStream = this.decoder.decode(this.baseStream);
+	}
+
+	@Override
+	public void close() throws IOException {
+		this.baseStream.close();
 	}
 
 }

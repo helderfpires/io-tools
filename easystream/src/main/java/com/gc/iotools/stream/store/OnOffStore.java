@@ -35,7 +35,12 @@ public class OnOffStore implements SeekableStore {
 
 	public int get(final byte[] bytes, final int offset, final int length)
 			throws IOException {
-		return this.store.get(bytes, offset, length);
+
+		int num = this.store.get(bytes, offset, length);
+		if (!this.enabled && num == 0) {
+			cleanup();
+		}
+		return num;
 	}
 
 	public void put(final byte[] bytes, final int offset, final int length)

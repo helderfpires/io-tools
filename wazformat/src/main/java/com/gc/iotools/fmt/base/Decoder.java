@@ -17,7 +17,4 @@ public interface Decoder {
 
 	FormatEnum getFormat();
 
-	int getOffset();
-
-	float getRatio();
 }

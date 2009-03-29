@@ -239,7 +239,7 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 * source InputStream (the one passed in the constructor).
 	 * </p>
 	 * 
-	 * @see #mark()
+	 * @see #mark(int)
 	 * @see java.io.InputStream#reset()
 	 * @exception IOException
 	 *                If the source stream has an exception in calling reset().

@@ -1,6 +1,6 @@
 package com.gc.iotools.fmt;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,7 +17,7 @@ import com.gc.iotools.fmt.base.TestUtils;
 import com.gc.iotools.fmt.detect.droid.TestDroidDetector;
 
 public class TestGuessInputStreamWithFiles {
-	
+
 	private static void checkDetector(final FormatEnum expectedFormat,
 			final String[] extensions) throws Exception {
 		URL url = TestDroidDetector.class.getResource("/testFiles");
@@ -50,30 +50,35 @@ public class TestGuessInputStreamWithFiles {
 					+ "]", !expectedFormat.equals(gis.getFormat()));
 		}
 	}
+
 	@org.junit.Test
 	public void testBase64Detector() throws Exception {
 		checkDetector(FormatEnum.BASE64, new String[] { "b64" });
 	}
+
 	@org.junit.Test
 	public void testGifDetectorModule() throws Exception {
 		checkDetector(FormatEnum.GIF, new String[] { "gif" });
 	}
+
 	@org.junit.Test
 	public void testM7MDetectorModule() throws Exception {
 		checkDetector(FormatEnum.M7M, new String[] { "m7m" });
 	}
+
 	@org.junit.Test
 	public void testPdfDetector() throws Exception {
 		checkDetector(FormatEnum.PDF, new String[] { "pdf" });
 	}
+
 	@org.junit.Test
 	public void testPKCS7DetectorModule() throws Exception {
 		String fileName = "/testFiles/head.zip.p7m";
 		InputStream istream = TestDroidDetector.class
 				.getResourceAsStream(fileName);
 		GuessInputStream gis = GuessInputStream.getInstance(istream);
-		assertEquals("file format [" + fileName + "]", FormatEnum.PKCS7,
-				gis.getFormat());
+		assertEquals("file format [" + fileName + "]", FormatEnum.PKCS7, gis
+				.getFormat());
 		fileName = "/testFiles/ietf.p7m";
 		istream = TestDroidDetector.class.getResourceAsStream(fileName);
 		gis = GuessInputStream.getInstance(istream);
@@ -81,18 +86,22 @@ public class TestGuessInputStreamWithFiles {
 				.getFormat());
 
 	}
+
 	@org.junit.Test
 	public void testRTFDetectorModule() throws Exception {
 		checkDetector(FormatEnum.RTF, new String[] { "rtf" });
 	}
+
 	@org.junit.Test
 	public void testXmlDetector() throws Exception {
 		checkDetector(FormatEnum.XML, new String[] { "xml" });
 	}
+
 	@org.junit.Test
 	public void testZipDetectorModule() throws Exception {
 		checkDetector(FormatEnum.ZIP, new String[] { "zip" });
 	}
+
 	@org.junit.Test
 	public void testZeroLengthFile() throws Exception {
 		final InputStream is = TestDroidDetector.class

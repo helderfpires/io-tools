@@ -31,8 +31,8 @@ import com.gc.iotools.stream.store.ThresholdStore;
  * <p>
  * It also adds the functionality of marking an <code>InputStream</code> without
  * specifying a mark length, thus allowing a <code>reset</code> after an
- * indefinite length of bytes has been read. Check the {@link #mark()} javadoc
- * for details.
+ * indefinite length of bytes has been read. Check the {@link #mark(int))}
+ * javadoc for details.
  * </p>
  * 
  * @author dvd.smnt
@@ -209,9 +209,9 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 			throw new IllegalArgumentException("Seek to negative position ["
 					+ position + "]");
 		}
-		if (!(store instanceof SeekableStore)) {
+		if (!(this.store instanceof SeekableStore)) {
 			throw new IllegalStateException("Seek was called but the store["
-					+ store + "] is not an instance of ["
+					+ this.store + "] is not an instance of ["
 					+ SeekableStore.class + "]");
 		}
 		final long len = position - this.randomAccessIsPosition;
@@ -227,6 +227,10 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 			this.randomAccessIsPosition = position;
 			((SeekableStore) this.store).seek(position);
 		}
+	}
+
+	public void setStore(final Store store) {
+		this.store = store;
 	}
 
 	/**
@@ -286,10 +290,6 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 					+ this.sourcePosition + "]");
 		}
 		return n;
-	}
-
-	public void setStore(Store store) {
-		this.store = store;
 	}
 
 }

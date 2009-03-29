@@ -21,6 +21,19 @@ public interface Store {
 	 */
 	void cleanup();
 
+	/**
+	 * gets <code>length</code> bytes from the store.
+	 * 
+	 * @param bytes
+	 *            array where to put the data in.
+	 * @param offset
+	 *            offset in the array to start put the data.
+	 * @param length
+	 *            length of the bytes got from the store.
+	 * @return number of bytes effectively put in the array or -1 if the Store
+	 *         was empty.
+	 * @throws IOException
+	 */
 	int get(byte[] bytes, int offset, int length) throws IOException;
 
 	void put(byte[] bytes, int offset, int length) throws IOException;

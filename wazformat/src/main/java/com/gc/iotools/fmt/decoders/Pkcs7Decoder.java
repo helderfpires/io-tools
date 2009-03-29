@@ -48,12 +48,5 @@ public class Pkcs7Decoder implements Decoder {
 		return FormatEnum.PKCS7;
 	}
 
-	public int getOffset() {
-		return START_SIZE;
-	}
-
-	public float getRatio() {
-		return 1;
-	}
 
 }
