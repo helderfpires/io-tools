@@ -37,12 +37,13 @@ import java.io.InputStream;
 @Deprecated
 public class SizeReaderInputStream extends StatsInputStream {
 
-	public SizeReaderInputStream(InputStream istream, boolean fullReadOnClose) {
-		super(istream, fullReadOnClose);
+	public SizeReaderInputStream(final InputStream source) {
+		super(source);
 	}
 
-	public SizeReaderInputStream(InputStream source) {
-		super(source);
+	public SizeReaderInputStream(final InputStream istream,
+			final boolean fullReadOnClose) {
+		super(istream, fullReadOnClose);
 	}
 
 }

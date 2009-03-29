@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Store that puts data in memory until threshold size is reach. At that point
+ * data is written to the disk.
  * @author dvd.smnt
  * @since 1.2.0
  */
@@ -55,9 +57,11 @@ public class ThresholdStore implements SeekableStore {
 			}
 			this.fileAccess = null;
 		}
-		if ((this.fileStorage != null) && this.fileStorage.exists()) {
+		if (this.fileStorage != null) {
 			final boolean deleted = this.fileStorage.delete();
-			if (!deleted) {
+			if (deleted) {
+				this.fileStorage = null;
+			} else {
 				this.fileStorage.deleteOnExit();
 				ThresholdStore.LOG.warn("Temporary file ["
 						+ this.fileStorage.getName()
@@ -65,7 +69,6 @@ public class ThresholdStore implements SeekableStore {
 						+ "is possible to continue but some"
 						+ " resources are not released.");
 			}
-			this.fileStorage = null;
 		}
 	}
 

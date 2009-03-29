@@ -36,12 +36,5 @@ public class GzipDecoder implements Decoder {
 		return FormatEnum.GZ;
 	}
 
-	public int getOffset() {
-		return START_SIZE;
-	}
-
-	public float getRatio() {
-		return 1.1f;
-	}
 
 }

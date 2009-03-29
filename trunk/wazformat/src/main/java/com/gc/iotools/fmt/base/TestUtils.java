@@ -61,7 +61,7 @@ public final class TestUtils {
 
 	/**
 	 * @deprecated
-	 * @see FileUtils.iterate();
+	 * @see FileUtils#iterate();
 	 * @param allowed
 	 * @return
 	 * @throws IOException

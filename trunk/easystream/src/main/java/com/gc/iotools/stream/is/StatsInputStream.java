@@ -130,6 +130,24 @@ public class StatsInputStream extends InputStream {
 	}
 
 	/**
+	 * Returns the reading bit rate in KB per second.
+	 * 
+	 * @return The KB/Sec bitRate of the stream.
+	 */
+	public float getBitRate() {
+		return (this.size / 1024F) / (this.time / 1000F);
+	}
+
+	/**
+	 * Returns the reading bit rate formatted with a convenient unit.
+	 * 
+	 * @return The bitRate of the stream.
+	 */
+	public String getBitRateString() {
+		return StreamUtils.getRateString(this.size, this.time);
+	}
+
+	/**
 	 * Returns the bytes read until now or total length of the stream if the
 	 * <code>{@link #close()}</code> method has been called or EOF was reached.
 	 * 
@@ -152,24 +170,6 @@ public class StatsInputStream extends InputStream {
 	 */
 	public long getTime(final TimeUnit tu) {
 		return tu.convert(this.time, TimeUnit.MILLISECONDS);
-	}
-	
-	/**
-	 * Returns the reading bit rate in KB per second.
-	 * 
-	 * @return The KB/Sec bitRate of the stream.
-	 */
-	public float getBitRate() {
-		return (this.size / 1024F) / (this.time / 1000F);
-	}
-
-	/**
-	 * Returns the reading bit rate formatted with a convenient unit.
-	 * 
-	 * @return The bitRate of the stream.
-	 */
-	public String getBitRateString() {
-		return StreamUtils.getRateString(this.size, this.time);
 	}
 
 	/**
@@ -248,7 +248,6 @@ public class StatsInputStream extends InputStream {
 	/**
 	 * {@inheritDoc}
 	 */
-
 	@Override
 	public void reset() throws IOException {
 		final long start = System.currentTimeMillis();

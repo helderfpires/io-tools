@@ -97,6 +97,7 @@ public final class ExecutorServiceFactory {
 
 	/**
 	 * Sets the default ExecutorService returned when this class is invoked with
+	 * {@link ExecutionModel#STATIC_THREAD_POOL}.
 	 * 
 	 * @param executor
 	 *            ExecutorService for the STATIC_THREAD_POOL model.

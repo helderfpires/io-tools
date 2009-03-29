@@ -107,7 +107,13 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 			boolean closed = false;
 			try {
 				while ((this.inputstream.read()) >= 0) {
-					// empty block
+					;
+					/*
+					 * empty block left on purpose. The internal stream must be
+					 * made empty to avoid locks on the other side. TODO: check
+					 * if closing the stream is enough. Maybe it's simply not
+					 * necessary.
+					 */
 				}
 			} catch (final IOException e) {
 				if ((e.getMessage() != null)
@@ -151,7 +157,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 		}
 	}
 
-	private static final int DEFAULT_PIPE_SIZE = 1024;
+	private static final int DEFAULT_PIPE_SIZE = 4096;
 
 	/**
 	 * The default pipe buffer size for the newly created pipes.
@@ -163,7 +169,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 
 	/**
 	 * Set the size for the pipe circular buffer. This setting has effect for
-	 * the newly created <code>OutputStreamToInputStream</code>. Default is 1024
+	 * the newly created <code>OutputStreamToInputStream</code>. Default is 4096
 	 * bytes.
 	 * 
 	 * @since 1.2.0
@@ -187,8 +193,8 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * <code>OutputStreamToInputStream</code>.
 	 * </p>
 	 * <p>
-	 * The {@link #close()} method is called this class wait for the internal
-	 * thread to terminate.
+	 * When the {@linkplain #close()} method is called this class wait for the
+	 * internal thread to terminate.
 	 * </p>
 	 * 
 	 * @throws IOException
@@ -199,6 +205,16 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	}
 
 	/**
+	 * <p>
+	 * Creates a new <code>OutputStreamToInputStream</code>. It let the user
+	 * specify the thread instantiation strategy and what will happen upon the
+	 * invocation of <code>close()</code> method.
+	 * </p>
+	 * <p>
+	 * If <code>joinOnClose</code> is <code>true</code> when the
+	 * <code>close()</code> method is invoked this class will wait for the
+	 * internal thread to terminate.
+	 * </p>
 	 * 
 	 * @see ExecutionModel
 	 * @param joinOnClose
@@ -267,6 +283,18 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 		}
 	}
 
+	/**
+	 * 
+	 * @param timeout
+	 *            maximum time to wait for the internal thread to finish.
+	 * @param tu
+	 *            Time unit for the timeout.
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 * @throws TimeoutException
+	 *             threw if timeout expires.
+	 */
 	public final void close(final long timeout, final TimeUnit tu)
 			throws IOException, InterruptedException, ExecutionException,
 			TimeoutException {
@@ -305,9 +333,9 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * @exception InterruptedException
 	 *                Thrown when the thread is interrupted.
 	 * @exception ExecutionException
-	 *                Thrown if the method {@linkplain #doRead()} threw an
-	 *                Exception. The <code>getCause()</code> returns the
-	 *                original Exception.
+	 *                Thrown if the method {@linkplain #doRead(InputStream)}
+	 *                threw an Exception. The <code>getCause()</code> returns
+	 *                the original Exception.
 	 * @throws IllegalStateException
 	 *             When it is called before the method {@link #close()} has been
 	 *             called.

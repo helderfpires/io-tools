@@ -79,8 +79,6 @@ import com.gc.iotools.stream.base.ExecutorServiceFactory;
  * @since 1.0
  */
 public abstract class InputStreamFromOutputStream<T> extends InputStream {
-	private static final int DEFAULT_PIPE_SIZE = 1024;
-
 	/**
 	 * This inner class run in another thread and calls the
 	 * {@link #produce(OutputStream)} method.
@@ -153,16 +151,28 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 		}
 	}
 
+	/**
+	 * Collection for debugging purpose containing names of threads (name is
+	 * calculated from the instantiation line. See <code>getCaller()</code>.
+	 */
 	private static final List<String> ACTIVE_THREAD_NAMES = Collections
 			.synchronizedList(new ArrayList<String>());
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(InputStreamFromOutputStream.DataProducer.class);
+	private static final int DEFAULT_PIPE_SIZE = 4096;
+
 	/**
 	 * The default pipe buffer size for the newly created pipes.
 	 */
 	private static int defaultPipeSize = DEFAULT_PIPE_SIZE;
+	private static final Logger LOG = LoggerFactory
+			.getLogger(InputStreamFromOutputStream.DataProducer.class);
 
+	/**
+	 * This method can be used for debugging purposes to get a list of the
+	 * currently active threads.
+	 * 
+	 * @return Array containing names of the threads currently active.
+	 */
 	public static final String[] getActiveThreadNames() {
 		final String[] result;
 		synchronized (InputStreamFromOutputStream.ACTIVE_THREAD_NAMES) {
@@ -174,7 +184,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 
 	/**
 	 * Set the size for the pipe circular buffer for the newly created
-	 * <code>InputStreamFromOutputStream</code>. Default is 1024 bytes.
+	 * <code>InputStreamFromOutputStream</code>. Default is 4096 bytes.
 	 * 
 	 * @since 1.2.0
 	 * @param defaultPipeSize
@@ -185,8 +195,8 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	}
 
 	private boolean closeCalled = false;
-
 	private final Future<T> futureResult;
+	private final boolean joinOnClose;
 
 	private final PipedInputStream pipedIS;
 
@@ -196,10 +206,66 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * THREAD_PER_INSTANCE thread strategy.
 	 * </p>
 	 * 
-	 * @see ExecutionModel.THREAD_PER_INSTANCE
+	 * @see ExecutionModel#THREAD_PER_INSTANCE
 	 */
 	public InputStreamFromOutputStream() {
 		this(ExecutionModel.THREAD_PER_INSTANCE);
+	}
+
+	/**
+	 * <p>
+	 * It creates a <code>InputStreamFromOutputStream</code> and let the user
+	 * choose the thread allocation strategy he likes.
+	 * </p>
+	 * <p>
+	 * This class executes the produce method in a thread created internally.
+	 * </p>
+	 * 
+	 * @since 1.2.2
+	 * @see ExecutionModel
+	 * @param executionModel
+	 *            Defines how the internal thread is allocated.
+	 * @param joinOnClose
+	 *            If <code>true</code> the {@linkplain #close()} method will
+	 *            also wait for the internal thread to finish.
+	 */
+	public InputStreamFromOutputStream(final boolean joinOnClose,
+			final ExecutionModel executionModel) {
+		this(joinOnClose, ExecutorServiceFactory.getExecutor(executionModel));
+	}
+
+	/**
+	 * <p>
+	 * It creates a <code>InputStreamFromOutputStream</code> and let the user
+	 * specify the ExecutorService that will execute the
+	 * {@linkplain #produce(OutputStream)} method.
+	 * </p>
+	 * 
+	 * @since 1.2.2
+	 * @see ExecutorService
+	 * @param executor
+	 *            Defines the ExecutorService that will allocate the the
+	 *            internal thread.
+	 * @param joinOnClose
+	 *            If <code>true</code> the {@linkplain #close()} method will
+	 *            also wait for the internal thread to finish.
+	 */
+	public InputStreamFromOutputStream(final boolean joinOnClose,
+			final ExecutorService executor) {
+		final String callerId = getCaller();
+		this.joinOnClose = joinOnClose;
+		PipedOutputStream pipedOS = null;
+		try {
+			this.pipedIS = new MyPipedInputStream(defaultPipeSize);
+			pipedOS = new PipedOutputStream(this.pipedIS);
+		} catch (final IOException e) {
+			throw new RuntimeException("Error during pipe creaton", e);
+		}
+		final Callable<T> executingCallable = new DataProducer(callerId,
+				pipedOS);
+		this.futureResult = executor.submit(executingCallable);
+		InputStreamFromOutputStream.LOG.debug("thread invoked by[" + callerId
+				+ "] queued for start.");
 	}
 
 	/**
@@ -217,7 +283,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * 
 	 */
 	public InputStreamFromOutputStream(final ExecutionModel executionModel) {
-		this(ExecutorServiceFactory.getExecutor(executionModel));
+		this(false, executionModel);
 	}
 
 	/**
@@ -233,19 +299,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 *            internal thread.
 	 */
 	public InputStreamFromOutputStream(final ExecutorService executor) {
-		final String callerId = getCaller();
-		PipedOutputStream pipedOS = null;
-		try {
-			this.pipedIS = new MyPipedInputStream(defaultPipeSize);
-			pipedOS = new PipedOutputStream(this.pipedIS);
-		} catch (final IOException e) {
-			throw new RuntimeException("Error during pipe creaton", e);
-		}
-		final Callable<T> executingCallable = new DataProducer(callerId,
-				pipedOS);
-		this.futureResult = executor.submit(executingCallable);
-		InputStreamFromOutputStream.LOG.debug("thread invoked by[" + callerId
-				+ "] queued for start.");
+		this(false, executor);
 	}
 
 	/**
@@ -256,6 +310,16 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 		if (!this.closeCalled) {
 			this.closeCalled = true;
 			this.pipedIS.close();
+			if (this.joinOnClose) {
+				try {
+					getResult();
+				} catch (final Exception e) {
+					final IOException e1 = new IOException(
+							"The internal stream threw exception");
+					e1.initCause(e);
+					throw e1;
+				}
+			}
 		}
 	}
 
@@ -375,7 +439,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * 
 	 * @return The implementing class can use this to return a result of data
 	 *         production. The result will be available through the method
-	 *         {@linkplain getResult()}.
+	 *         {@linkplain #getResult()}.
 	 * @param sink
 	 *            the implementing class should write its data to this stream.
 	 * @throws Exception

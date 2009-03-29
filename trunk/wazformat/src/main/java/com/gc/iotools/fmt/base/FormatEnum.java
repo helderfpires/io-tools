@@ -55,6 +55,13 @@ import org.apache.commons.lang.enums.ValuedEnum;
  * <td>1, 0</td>
  * </tr>
  * <tr>
+ * <td>BZIP2</td>
+ * <td>This enum describes the
+ * {@link <a href="http://en.wikipedia.org/wiki/Bzip2">BZIP2</a>}compressed file
+ * format.</td>
+ * <td></td>
+ * </tr>
+ * <tr>
  * <td>DROID_FILE_COLLECTION_FILE_FORMAT</td>
  * <td>DROID File Collection File Format</td>
  * <td>1.0</td>
@@ -421,6 +428,17 @@ public class FormatEnum extends ValuedEnum {
 	 */
 	public static final FormatEnum BROADCAST_WAVE = new FormatEnum(
 			"BROADCAST_WAVE", BROADCAST_WAVE_INT);
+
+	/**
+	 * Constant integer for enum : BZIP2 .
+	 */
+	public static final int BZIP2_INT = 102;
+	/**
+	 * Enum : BZIP2 : this enum describes the
+	 * {@link <a href="http://en.wikipedia.org/wiki/Bzip2">BZIP2</a>} compressed
+	 * file format.
+	 */
+	public static final FormatEnum BZIP2 = new FormatEnum("BZIP2", BZIP2_INT);
 
 	/**
 	 * Constant integer for enum : DOC .

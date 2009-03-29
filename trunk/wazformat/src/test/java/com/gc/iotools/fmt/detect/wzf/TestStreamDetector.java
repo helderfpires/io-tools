@@ -22,9 +22,9 @@ public class TestStreamDetector {
 	private static final Map<FormatEnum, String> enabledFormats = new HashMap<FormatEnum, String>();
 
 	static {
-		// enabledFormats.put(FormatEnum.PEM, "pem");
 		enabledFormats.put(FormatEnum.M7M, "m7m");
 		enabledFormats.put(FormatEnum.PDF, "pdf");
+		enabledFormats.put(FormatEnum.BZIP2, "bz2");
 		enabledFormats.put(FormatEnum.PKCS7, "p7m");
 		enabledFormats.put(FormatEnum.RTF, "rtf");
 		enabledFormats.put(FormatEnum.XML, "xml");
@@ -59,7 +59,7 @@ public class TestStreamDetector {
 			for (String fname : badFiles) {
 				StreamDetectorImpl stDetect = new StreamDetectorImpl();
 				FormatEnum[] enabledFormats = new FormatEnum[] { formatEnum };
-				int declared = stDetect.getDetectLength(enabledFormats);
+				// int declared = stDetect.getDetectLength(enabledFormats);
 				FormatId formats = stDetect.detect(enabledFormats,
 						new ResettableFileInputStream(new File(fname)));
 				assertEquals("Formato file [" + fname + "]",

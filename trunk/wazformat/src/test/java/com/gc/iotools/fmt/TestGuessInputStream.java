@@ -29,12 +29,13 @@ public class TestGuessInputStream extends JUnit4Mockery {
 				.getResourceAsStream("/testFiles/test_pdf.pdf.b64");
 		final GuessInputStream gis = GuessInputStream.getInstance(istream2,
 				new FormatEnum[] { FormatEnum.BASE64, FormatEnum.PDF });
+		gis.setIdentificationDepth(3);
 		assertEquals("Format detected", FormatEnum.BASE64, gis.getFormat());
 		assertTrue("Bytes read are same", Arrays.equals(reference, IOUtils
 				.toByteArray(gis)));
 		assertEquals("Detected formats", 2, gis.getFormats().length);
-		assertEquals("Format [0]", FormatEnum.BASE64, gis.getFormats()[0]);
-		assertEquals("Format [1]", FormatEnum.PDF, gis.getFormats()[1]);
+		assertArrayEquals("Formats", new FormatEnum[] { FormatEnum.BASE64,
+				FormatEnum.PDF }, gis.getFormats());
 	}
 
 	@org.junit.Test
@@ -121,8 +122,30 @@ public class TestGuessInputStream extends JUnit4Mockery {
 	}
 
 	@org.junit.Test
-	public void testMaxRecursion() {
-
+	public void testMaxRecursion() throws Exception {
+		final byte[] reference = "<xml>this is xml</xml>".getBytes();
+		final InputStream istream = new Base64.InputStream(
+				new Base64.InputStream(new ByteArrayInputStream(reference),
+						Base64.ENCODE), Base64.ENCODE);
+		GuessInputStream gis = GuessInputStream.getInstance(istream,
+				new FormatEnum[] { FormatEnum.BASE64, FormatEnum.XML });
+		gis.setIdentificationDepth(1);
+		gis.decode(true);
+		assertArrayEquals("Recursion level 1",
+				new FormatEnum[] { FormatEnum.BASE64 }, gis.getFormats());
+		gis.setIdentificationDepth(2);
+		assertArrayEquals("Recursion level 2", new FormatEnum[] {
+				FormatEnum.BASE64, FormatEnum.BASE64 }, gis.getFormats());
+		gis.setIdentificationDepth(3);
+		assertArrayEquals("Recursion level 3", new FormatEnum[] {
+				FormatEnum.BASE64, FormatEnum.BASE64, FormatEnum.XML }, gis
+				.getFormats());
+		gis.setIdentificationDepth(4);
+		assertArrayEquals("Recursion level 4", new FormatEnum[] {
+				FormatEnum.BASE64, FormatEnum.BASE64, FormatEnum.XML }, gis
+				.getFormats());
+		byte[] bytes = IOUtils.toByteArray(gis);
+		assertArrayEquals("Content ", reference, bytes);
 	}
 
 	@org.junit.Test
@@ -132,8 +155,10 @@ public class TestGuessInputStream extends JUnit4Mockery {
 
 	@org.junit.Test
 	public void testSequenceReduction() throws IOException {
-		final DetectionLibrary detect1 = mock(DetectionLibrary.class, "detect1");
-		final DetectionLibrary detect2 = mock(DetectionLibrary.class, "detect2");
+		final DetectionLibrary detect1 = mock(DetectionLibrary.class,
+				"detect1");
+		final DetectionLibrary detect2 = mock(DetectionLibrary.class,
+				"detect2");
 		checking(new Expectations() {
 			{
 				// first detector can detect two formats
@@ -143,7 +168,7 @@ public class TestGuessInputStream extends JUnit4Mockery {
 				allowing(detect1).detect(with(any(FormatEnum[].class)),
 						with(any(ResettableInputStream.class)));
 				will(returnValue(new FormatId(FormatEnum.UNKNOWN, null)));
-				
+
 				/*
 				 * second detector detects a format already detected by the
 				 * first one

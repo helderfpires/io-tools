@@ -1,5 +1,10 @@
 package com.gc.iotools.fmt;
 
+/*
+ * Copyright (c) 2008, 2009 Davide Simonetti.
+ * This source code is released under the BSD Software License.
+ */
+
 enum InputStreamStatusEnum {
-	NOT_INITIALIZED, INITIALIZED, READING_DATA
+	NOT_INITIALIZED, READING_DATA
 }

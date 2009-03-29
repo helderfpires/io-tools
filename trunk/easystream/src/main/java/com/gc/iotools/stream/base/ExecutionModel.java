@@ -13,8 +13,8 @@ package com.gc.iotools.stream.base;
  * 
  * @author dvd.smnt
  * @since 1.0
- * @see #com.gc.iotools.stream.is.InputStreamFromOutputStream(ExecutionModel em)
- * @see #com.gc.iotools.stream.os.OutputStreamToInputStream(ExecutionModel em)
+ * @see #com.gc.iotools.stream.is.InputStreamFromOutputStream(ExecutionModel)
+ * @see #com.gc.iotools.stream.os.OutputStreamToInputStream(ExecutionModel)
  */
 
 public enum ExecutionModel {
