@@ -85,8 +85,36 @@ String result = oStream2IStream.getResults();
 
 For further information see the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/os/OutputStreamToInputStream.html api javadoc].
 
+== Statistics gathering ==
 
-== Stream utilities ==
+Two main classes in this section: `StatsInputStream` and `StatsOutputStream`
+
+=== [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/StatsInputStream.html StatsInputStream] ===
+Gathers statistics of the !InputStream passed in the constructor. It can be used to: 
+ * determine the size of the read data 
+ * the time spent reading from the internal !InputStream.
+ * the bit rate of the internal stream.
+
+{{{
+StatsInputStream srIstream = new StatsInputStream(originalStream);
+//performs all the application operation on stream
+...
+srIstream.close();
+long size = srIstream.getSize();
+String bitRate = srIstream.getBitRateString();
+}}}
+
+=== [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/os/StatsOutputStream.html StatsOutputStream] ===
+Gathers statistics of the !OutputStream passed in the constructor. It can be used to determine the number of bytes written or the time spent writing to the !OutputStream.
+{{{
+StatsOutputStream srStream = new StatsOutputStream(originalStream);
+//performs all the application operation on stream
+...
+srStream.close();
+long size = srStream.getSize();
+}}}
+
+== Other Stream utilities ==
 
 Other classes in this library are:
  * `RandomAccessInputStream` allows to read the content of an `InputStream` multiple times or seek to a definite position.
@@ -137,29 +165,4 @@ Sample usage:
  //at this point both destination1 and destination2 contains the same bytes.
  byte[] bytes1=destination1.getBytes();
  byte[] bytes2=destination2.getBytes();
-}}}
-
-== [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/StatsInputStream.html StatsInputStream] ==
-Gathers statistics of the !InputStream passed in the constructor. It can be used to: 
- * determine the size of the read data 
- * the time spent reading from the internal !InputStream.
- * the bit rate of the internal stream.
-
-{{{
-StatsInputStream srIstream = new StatsInputStream(originalStream);
-//performs all the application operation on stream
-...
-srIstream.close();
-long size = srIstream.getSize();
-String bitRate = srIstream.getBitRateString();
-}}}
-
-== [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/os/StatsOutputStream.html StatsOutputStream] ==
-Gathers statistics of the !OutputStream passed in the constructor. It can be used to determine the number of bytes written or the time spent writing to the !OutputStream.
-{{{
-StatsOutputStream srStream = new StatsOutputStream(originalStream);
-//performs all the application operation on stream
-...
-srStream.close();
-long size = srStream.getSize();
 }}}
