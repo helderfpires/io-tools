@@ -1,6 +1,8 @@
 package com.gc.iotools.stream.os;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +37,7 @@ public class TestOutputStreamToInputStream {
 	private static void copy(long fileLength, final int bufSize)
 			throws Exception {
 		long startTime = System.currentTimeMillis();
-		OutputStreamToInputStream.setDefaultBufferSize(bufSize);
+		OutputStreamToInputStream.setDefaultPipeSize(bufSize);
 		final OutputStreamToInputStream<Void> osisA = new OutputStreamToInputStream<Void>(
 				true, ExecutionModel.THREAD_PER_INSTANCE) {
 			@Override
@@ -84,10 +86,10 @@ public class TestOutputStreamToInputStream {
 		try {
 			osisA.close(500, TimeUnit.MILLISECONDS);
 			fail("Must be a timeoutException");
-		} catch (final TimeoutException e) {
-			assertEquals("Active Threads", 1, es.getActiveCount());
+		} catch (final IOException e) {
+			assertEquals("Wrapped exception", TimeoutException.class, e
+					.getCause().getClass());
 		}
-		Thread.sleep(600);
 		assertEquals("Active Threads", 0, es.getActiveCount());
 	}
 
@@ -100,13 +102,14 @@ public class TestOutputStreamToInputStream {
 			@Override
 			protected Object doRead(final InputStream istream)
 					throws Exception {
+				Thread.sleep(500);
 				throw new IllegalStateException("testException");
 			}
 		};
-		osisA.write("test test test".getBytes());
-
+		byte[] test = new byte[32768];
+		osisA.write(test);
 		try {
-			osisA.close();
+			osisA.write(test);
 			fail("Exception must be thrown");
 		} catch (final IOException e) {
 			assertTrue("Real exception has been wrapped",
@@ -114,6 +117,27 @@ public class TestOutputStreamToInputStream {
 		}
 		Thread.sleep(600);
 		assertEquals("Thread count", 0, es.getActiveCount());
+	}
+
+	@org.junit.Test
+	public void testIncompleteRead() throws Exception {
+		final OutputStreamToInputStream<String> oStream2IStream = new OutputStreamToInputStream<String>(
+				true, ExecutionModel.SINGLE_THREAD) {
+			@Override
+			protected String doRead(final InputStream istream) {
+				return "end";
+			}
+		};
+
+		final byte[] test = new byte[32768];
+		try {
+			oStream2IStream.write(test);
+		} finally {
+			// don't miss the close (or a thread would not terminate correctly).
+			oStream2IStream.close();
+		}
+		assertEquals("Results are returned", "end", oStream2IStream
+				.getResults());
 	}
 
 	@org.junit.Test

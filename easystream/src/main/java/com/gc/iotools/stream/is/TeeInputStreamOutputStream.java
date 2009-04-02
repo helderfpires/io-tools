@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.gc.iotools.stream.base.AbstractInputStreamWrapper;
+import com.gc.iotools.stream.base.EasyStreamConstants;
 
 /**
  * <p>
@@ -47,10 +48,7 @@ import com.gc.iotools.stream.base.AbstractInputStreamWrapper;
  * @since 1.0.6
  */
 public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
-	/**
-	 * Buffer size used in skip() operations.
-	 */
-	private static final int BUF_SIZE = 8192;
+;
 
 	private long markPosition = 0;
 
@@ -148,8 +146,8 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 
 		IOException e1 = null;
 		try {
-			final byte[] buffer = new byte[BUF_SIZE];
-			while (innerRead(buffer, 0, BUF_SIZE) > 0) {
+			final byte[] buffer = new byte[EasyStreamConstants.SKIP_BUFFER_SIZE];
+			while (innerRead(buffer, 0, buffer.length) > 0) {
 				// empty block: just throw bytes away
 			}
 		} catch (final IOException e) {

@@ -16,9 +16,11 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.commons.io.input.CloseShieldInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gc.iotools.stream.base.EasyStreamConstants;
 import com.gc.iotools.stream.base.ExecutionModel;
 import com.gc.iotools.stream.base.ExecutorServiceFactory;
 
@@ -93,55 +95,45 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 			this.inputstream = istream;
 		}
 
-		public T call() throws Exception {
+		public synchronized T call() throws Exception {
 			T processResult;
 			try {
-				processResult = doRead(this.inputstream);
+				// avoid the internal class close the stream.
+				final CloseShieldInputStream istream = new CloseShieldInputStream(
+						this.inputstream);
+				processResult = doRead(istream);
+			} catch (final Exception e) {
+				OutputStreamToInputStream.this.abort = true;
+				throw e;
 			} finally {
 				emptyInputStream();
+				this.inputstream.close();
 			}
 			return processResult;
 		}
 
 		private void emptyInputStream() {
-			boolean closed = false;
 			try {
-				while ((this.inputstream.read()) >= 0) {
+				final byte[] buffer = new byte[EasyStreamConstants.SKIP_BUFFER_SIZE];
+				while (this.inputstream.read(buffer) >= 0) {
 					;
-					/*
-					 * empty block left on purpose. The internal stream must be
-					 * made empty to avoid locks on the other side. TODO: check
-					 * if closing the stream is enough. Maybe it's simply not
-					 * necessary.
-					 */
+					// empty block: just throw bytes away
 				}
 			} catch (final IOException e) {
 				if ((e.getMessage() != null)
 						&& (e.getMessage().indexOf("closed") > 0)) {
 					OutputStreamToInputStream.LOG
 							.debug("Stream already closed");
-					closed = true;
+
 				} else {
 					OutputStreamToInputStream.LOG.error(
 							"IOException while empty InputStream a "
 									+ "thread can be locked", e);
 				}
-			} catch (final Throwable t) {
+			} catch (final Throwable e) {
 				OutputStreamToInputStream.LOG.error(
-						"Error while empty InputStream a "
-								+ "thread can be locked", t);
-			}
-			tryCloseIs(closed);
-		}
-
-		private void tryCloseIs(final boolean closed) {
-			if (!closed) {
-				try {
-					this.inputstream.close();
-				} catch (final Throwable e) {
-					OutputStreamToInputStream.LOG.error(
-							"Error closing Inputstream", e);
-				}
+						"IOException while empty InputStream a "
+								+ "thread can be locked", e);
 			}
 		}
 	}
@@ -150,39 +142,64 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * Extends PipedInputStream to allow set the default buffer size.
 	 * 
 	 */
-	private class MyPipedInputStream extends PipedInputStream {
+	private final class MyPipedInputStream extends PipedInputStream {
 
 		MyPipedInputStream(final int bufferSize) {
 			super.buffer = new byte[bufferSize];
 		}
 	}
 
-	private static final int DEFAULT_PIPE_SIZE = 4096;
+	// Default timeout in milliseconds.
+	private static final int DEFAULT_TIMEOUT = 15 * 60 * 1000;
 
 	/**
 	 * The default pipe buffer size for the newly created pipes.
 	 */
-	private static int defaultPipeSize = DEFAULT_PIPE_SIZE;
+	private static int defaultPipeSize = EasyStreamConstants.DEFAULT_PIPE_SIZE;
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(OutputStreamToInputStream.class);
+
+	/**
+	 * <p>
+	 * Set the size for the pipe circular buffer. This setting has effect for
+	 * the newly created <code>OutputStreamToInputStream</code>. Default is 4096
+	 * bytes.
+	 * </p>
+	 * 
+	 * <p>
+	 * Will be removed in the 1.3 release.
+	 * </p>
+	 * 
+	 * @since 1.2.0
+	 * @param defaultPipeSize
+	 *            The default pipe buffer size in bytes.
+	 * @deprecated
+	 * @see #setDefaultPipeSize(int)
+	 */
+	@Deprecated
+	public static void setDefaultBufferSize(final int defaultPipeSize) {
+		OutputStreamToInputStream.defaultPipeSize = defaultPipeSize;
+	}
 
 	/**
 	 * Set the size for the pipe circular buffer. This setting has effect for
 	 * the newly created <code>OutputStreamToInputStream</code>. Default is 4096
 	 * bytes.
 	 * 
-	 * @since 1.2.0
+	 * @since 1.2.3
 	 * @param defaultPipeSize
 	 *            The default pipe buffer size in bytes.
 	 */
-	public static void setDefaultBufferSize(final int defaultPipeSize) {
+
+	public static void setDefaultPipeSize(final int defaultPipeSize) {
 		OutputStreamToInputStream.defaultPipeSize = defaultPipeSize;
 	}
 
 	private boolean closeCalled = false;
+	private boolean abort = false;
 	private final boolean joinOnClose;
-	private final PipedOutputStream wrappedPipedOS;
+	private final PipedOutputStream pipedOs;
 	private final Future<T> writingResult;
 
 	/**
@@ -246,10 +263,10 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 			throw new IllegalArgumentException(
 					"executor service can't be null");
 		}
-		this.wrappedPipedOS = new PipedOutputStream();
+		this.pipedOs = new PipedOutputStream();
 		final PipedInputStream pipedIS = new MyPipedInputStream(
 				defaultPipeSize);
-		pipedIS.connect(this.wrappedPipedOS);
+		pipedIS.connect(this.pipedOs);
 		final DataConsumer executingProcess = new DataConsumer(pipedIS);
 		this.joinOnClose = joinOnClose;
 		this.writingResult = executorService.submit(executingProcess);
@@ -260,51 +277,25 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 */
 	@Override
 	public final void close() throws IOException {
-		if (!this.closeCalled) {
-			this.closeCalled = true;
-			this.wrappedPipedOS.close();
-			if (this.joinOnClose) {
-				// waiting for thread to finish..
-				try {
-					this.writingResult.get();
-				} catch (final ExecutionException e) {
-					final IOException e1 = new IOException(
-							"Problem producing data");
-					e1.initCause(e.getCause());
-					throw e1;
-
-				} catch (final InterruptedException e) {
-					final IOException e1 = new IOException(
-							"Waiting of the thread has been interrupted");
-					e1.initCause(e);
-					throw e1;
-				}
-			}
-		}
+		internalClose(this.joinOnClose, TimeUnit.MILLISECONDS,
+				DEFAULT_TIMEOUT);
 	}
 
 	/**
+	 * When this method is called the internal thread is always waited for
+	 * completion.
 	 * 
 	 * @param timeout
 	 *            maximum time to wait for the internal thread to finish.
 	 * @param tu
 	 *            Time unit for the timeout.
 	 * @throws IOException
-	 * @throws InterruptedException
-	 * @throws ExecutionException
-	 * @throws TimeoutException
-	 *             threw if timeout expires.
+	 *             Threw if some problem (timeout or internal exception) occurs.
+	 *             see the <code>getCause()</code> method for the explanation.
 	 */
 	public final void close(final long timeout, final TimeUnit tu)
-			throws IOException, InterruptedException, ExecutionException,
-			TimeoutException {
-		if (!this.closeCalled) {
-			this.closeCalled = true;
-			this.wrappedPipedOS.close();
-			if (this.joinOnClose) {
-				this.writingResult.get(timeout, tu);
-			}
-		}
+			throws IOException {
+		internalClose(true, tu, timeout);
 	}
 
 	/**
@@ -312,7 +303,12 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 */
 	@Override
 	public final void flush() throws IOException {
-		this.wrappedPipedOS.flush();
+		if (this.abort) {
+			// internal thread is already aborting. wait for short time.
+			internalClose(true, TimeUnit.SECONDS, 1);
+		} else {
+			this.pipedOs.flush();
+		}
 	}
 
 	/**
@@ -355,7 +351,12 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 */
 	@Override
 	public final void write(final byte[] bytes) throws IOException {
-		this.wrappedPipedOS.write(bytes);
+		if (this.abort) {
+			// internal thread is already aborting. wait for short time.
+			internalClose(true, TimeUnit.SECONDS, 1);
+		} else {
+			this.pipedOs.write(bytes);
+		}
 	}
 
 	/**
@@ -364,7 +365,12 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	@Override
 	public final void write(final byte[] bytes, final int offset,
 			final int length) throws IOException {
-		this.wrappedPipedOS.write(bytes, offset, length);
+		if (this.abort) {
+			// internal thread is already aborting. wait for short time.
+			internalClose(true, TimeUnit.SECONDS, 1);
+		} else {
+			this.pipedOs.write(bytes, offset, length);
+		}
 	}
 
 	/**
@@ -372,7 +378,47 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 */
 	@Override
 	public final void write(final int bytetowr) throws IOException {
-		this.wrappedPipedOS.write(bytetowr);
+		if (this.abort) {
+			// internal thread is already aborting. wait for short time.
+			internalClose(true, TimeUnit.SECONDS, 1);
+		} else {
+			this.pipedOs.write(bytetowr);
+		}
+	}
+
+	private void internalClose(final boolean join, final TimeUnit timeUnit,
+			final long timeout) throws IOException {
+		if (!this.closeCalled) {
+			this.closeCalled = true;
+			this.pipedOs.close();
+			if (join) {
+				// waiting for thread to finish..
+				try {
+					this.writingResult.get(timeout, timeUnit);
+				} catch (final ExecutionException e) {
+					final IOException e1 = new IOException(
+							"The doRead() threw exception. Use "
+									+ "getCause() for details.");
+					e1.initCause(e.getCause());
+					throw e1;
+				} catch (final InterruptedException e) {
+					final IOException e1 = new IOException(
+							"Waiting of the thread has been interrupted");
+					e1.initCause(e);
+					throw e1;
+				} catch (final TimeoutException e) {
+					if (!this.writingResult.isDone()) {
+						this.writingResult.cancel(true);
+					}
+					final IOException e1 = new IOException(
+							"Waiting for the internal "
+									+ "thread to finish took more than ["
+									+ timeout + "] " + timeUnit);
+					e1.initCause(e);
+					throw e1;
+				}
+			}
+		}
 	}
 
 	/**

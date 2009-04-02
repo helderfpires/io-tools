@@ -10,6 +10,7 @@ import java.io.InputStream;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.gc.iotools.stream.base.EasyStreamConstants;
 import com.gc.iotools.stream.utils.ArrayTools;
 import com.gc.iotools.stream.utils.StreamUtils;
 
@@ -80,8 +81,6 @@ import com.gc.iotools.stream.utils.StreamUtils;
  * @since 1.0.8
  */
 public final class ChunkInputStream extends InputStream {
-
-	private static final int SKIP_BUFFER_SIZE = 2048;
 
 	private final boolean automaticFetch;
 
@@ -334,13 +333,14 @@ public final class ChunkInputStream extends InputStream {
 		} else {
 			int n;
 			found = false;
-			final byte[] buffer = new byte[ChunkInputStream.SKIP_BUFFER_SIZE
+			final byte[] buffer = new byte[EasyStreamConstants.SKIP_BUFFER_SIZE
 					+ this.start.length];
 			do {
-				this.wrappedIs.mark(ChunkInputStream.SKIP_BUFFER_SIZE
+				this.wrappedIs.mark(EasyStreamConstants.SKIP_BUFFER_SIZE
 						+ this.start.length);
 				n = StreamUtils.tryReadFully(this.wrappedIs, buffer, 0,
-						SKIP_BUFFER_SIZE + this.start.length);
+						EasyStreamConstants.SKIP_BUFFER_SIZE
+								+ this.start.length);
 				if (n > 0) {
 					final int pos = ArrayTools.indexOf(ArrayUtils.subarray(
 							buffer, 0, n), this.start);

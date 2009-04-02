@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
+import com.gc.iotools.stream.base.EasyStreamConstants;
 import com.gc.iotools.stream.utils.StreamUtils;
 
 /**
@@ -46,8 +47,6 @@ import com.gc.iotools.stream.utils.StreamUtils;
  * @since 1.2.1
  */
 public class StatsInputStream extends InputStream {
-
-	private static final int BUF_SIZE = 32768;
 
 	private boolean closeCalled = false;
 
@@ -116,7 +115,7 @@ public class StatsInputStream extends InputStream {
 			this.closeCalled = true;
 			try {
 				if (this.fullReadOnClose) {
-					final byte[] buffer = new byte[BUF_SIZE];
+					final byte[] buffer = new byte[EasyStreamConstants.SKIP_BUFFER_SIZE];
 					while (this.read(buffer) >= 0) {
 						// Do nothing, just throw away the bytes and count them.
 					}
