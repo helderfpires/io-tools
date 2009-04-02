@@ -20,6 +20,7 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gc.iotools.stream.base.EasyStreamConstants;
 import com.gc.iotools.stream.base.ExecutionModel;
 import com.gc.iotools.stream.base.ExecutorServiceFactory;
 
@@ -158,12 +159,10 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	private static final List<String> ACTIVE_THREAD_NAMES = Collections
 			.synchronizedList(new ArrayList<String>());
 
-	private static final int DEFAULT_PIPE_SIZE = 4096;
-
 	/**
 	 * The default pipe buffer size for the newly created pipes.
 	 */
-	private static int defaultPipeSize = DEFAULT_PIPE_SIZE;
+	private static int defaultPipeSize = EasyStreamConstants.DEFAULT_PIPE_SIZE;
 	private static final Logger LOG = LoggerFactory
 			.getLogger(InputStreamFromOutputStream.DataProducer.class);
 

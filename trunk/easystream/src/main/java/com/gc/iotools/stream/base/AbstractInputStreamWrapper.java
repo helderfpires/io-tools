@@ -24,7 +24,6 @@ import java.io.InputStream;
  */
 public abstract class AbstractInputStreamWrapper extends InputStream {
 
-	private static final int SKIP_SIZE = 8192;
 	protected final InputStream source;
 
 	protected boolean closeCalled;
@@ -75,7 +74,7 @@ public abstract class AbstractInputStreamWrapper extends InputStream {
 		}
 		long curPos = 0;
 		int readLen = 0;
-		final byte[] buf = new byte[SKIP_SIZE];
+		final byte[] buf = new byte[EasyStreamConstants.SKIP_BUFFER_SIZE];
 		while ((curPos < n) && (readLen >= 0)) {
 			readLen = this.read(buf, 0, (int) Math
 					.min(buf.length, n - curPos));
