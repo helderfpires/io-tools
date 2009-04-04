@@ -5,13 +5,11 @@
 
 == Convert `OutputStream` to an `InputStream` ==
 Sometimes a library you're using writes its results to an `OutputStream` and you need to read them back from an `InputStream` for a further elaboration (you have to convert the `OutputStream` into an `InputStream`). The possibilities are: 
- * copy the data to a memory buffer (`ByteArrayInputStream` or a circular buffer).
- * copy to a temporary file and read it back.
- * use pipes. 
+ * copy the data to a memory buffer (`ByteArrayOutputStream` or a circular buffer) and read it again. This is the best approach if you're sure your data fits into memory.
+ * copy your data to a temporary file and read it back.
+ * use pipes: this is the best approach both for memory usage and speed (you can take full advantage of the multi-core processors) and also the standard solution offered by Sun, on the other hand their use is not easy. `InputStreamFromOutputStream` and `OutputStreamToInputStream` should ease the task.
 
-[http://ostermiller.org/convert_java_outputstream_inputstream.html Here] you can find an interesting discussion. I think that pipes are the best approach both for memory usage and speed and also the standard solution offered by Sun, on the other hand their use is not easy. `InputStreamFromOutputStream` and `OutputStreamToInputStream` should ease the task.
-
-These classes internally use pipes. The two ends (`PipedInputStream` and `PipedOutputStream`) must be in two different `Threads`. Easystream offer some [ExecutionModel option] for instantiating the new Trheads.   
+These classes internally use pipes. The two ends (`PipedInputStream` and `PipedOutputStream`) must be in two different `Threads`. Easystream offer some [ExecutionModel option] for instantiating the new Threads. 
 
 === !InputStreamFromOutputStream ===
 
@@ -29,7 +27,7 @@ final InputStreamFromOutputStream<String> isos = new InputStreamFromOutputStream
       /*
        * call your application function who produces the data here
        * WARNING: we're in another thread here, so this method shouldn't 
-       * write any class field or make assumptions on the state of the class.
+       * write any class field or make assumptions on the state of the class. 
        */
       return produceMydata(dataId,dataSink)
    }
@@ -49,6 +47,8 @@ final InputStreamFromOutputStream<String> isos = new InputStreamFromOutputStream
 }
 }}}
 
+This class propagates the `Exception` from the internal `doRead()` to the external `OutputStream`.
+
 For further information read the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/InputStreamFromOutputStream.html api javadoc].
 
 === !OutputStreamToInputStream ===
@@ -60,8 +60,10 @@ final OutputStreamToInputStream<String> oStream2IStream = new OutputStreamToInpu
     @Override
     protected String doRead(final InputStream istream) throws Exception {
         /*
-         * read from InputStream into a string. Data will be written to the outer class
-         * later (oStream2IStream.write). 
+         * read the data from the InputStream. All the operations that need to read 
+         * from an InputStream should be placed in this method. The data you read here
+         * is the one supplied in "oStream2IStream.write()". 
+         * Any exception eventually threw here is propagated to the enclosing OutputStream
          */
         final String result = IOUtils.toString(istream);
               return result + " was processed.";
