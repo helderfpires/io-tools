@@ -47,8 +47,6 @@ final InputStreamFromOutputStream<String> isos = new InputStreamFromOutputStream
 }
 }}}
 
-This class propagates the `Exception` from the internal `doRead()` to the external `OutputStream`.
-
 For further information read the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/InputStreamFromOutputStream.html api javadoc].
 
 === !OutputStreamToInputStream ===
@@ -84,6 +82,8 @@ try {
 String result = oStream2IStream.getResults();
 //result now contains the string "test was processed."
 }}}
+
+This class propagates the `Exception` from the internal `doRead()` to the external `OutputStream`, and closing the `oStream2IStream` `OutputStream` will cause an EOF on the `InputStream` passed as `doRead()` parameter. 
 
 For further information see the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/os/OutputStreamToInputStream.html api javadoc].
 
