@@ -2,7 +2,7 @@ package com.gc.iotools.stream.os;
 
 /*
  * Copyright (c) 2008,2009 Davide Simonetti.
- * This source code is released under the BSD Software License.
+ * This source code is released under the BSD License.
  */
 import java.io.IOException;
 import java.io.OutputStream;
@@ -83,7 +83,11 @@ public class StatsOutputStream extends OutputStream {
 	}
 
 	/**
-	 * Returns the writing bit rate formatted with a convenient unit.
+	 * <p>
+	 * Returns a string representation of the writing bit rate formatted with a
+	 * convenient unit. The unit will change trying to keep not more than 3
+	 * digits.
+	 * </p>
 	 * 
 	 * @return The bitRate of the stream.
 	 * @since 1.2.2
@@ -94,8 +98,7 @@ public class StatsOutputStream extends OutputStream {
 
 	/**
 	 * <p>
-	 * Returns the time spent until now waiting for the internal stream to write
-	 * the data.
+	 * Returns the time spent waiting for the internal stream to write the data.
 	 * </p>
 	 * 
 	 * @param tu

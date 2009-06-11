@@ -2,7 +2,7 @@ package com.gc.iotools.stream.os;
 
 /*
  * Copyright (c) 2008,2009 Davide Simonetti.
- * This source code is released under the BSD Software License.
+ * This source code is released under the BSD License.
  */
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,21 +26,35 @@ import com.gc.iotools.stream.base.ExecutorServiceFactory;
 
 /**
  * <p>
- * This class is an <code>OutputStream</code> that, when extended, allows to
- * read the data written to it from the <code>InputStream</code> inside the
+ * This class allow to read from an <code>InputStream</code> the data who has
+ * been written to an <code>OutputStream</code> (performs an
+ * <code>OutputStream</code> -> <code>InputStream</code> conversion).
+ * </p>
+ * <p>
+ * More detailiy it is an <code>OutputStream</code> that, when extended, allows
+ * to read the data written to it from the <code>InputStream</code> inside the
  * method {@linkplain #doRead()}.
  * </p>
  * <p>
  * To use this class you must extend it and implement the method
- * {@linkplain #doRead()}. Inside this method place the logic that needs to read
- * the data from the <code>InputStream</code>. Then the data can be written to
- * this class that implements <code>OutputStream</code>.
+ * {@linkplain #doRead(InputStream)}. Inside this method place the logic that
+ * needs to read the data from the <code>InputStream</code>. Then the data can
+ * be written to this class that implements <code>OutputStream</code>. When
+ * {@linkplain #close()} method is called on the outer <code>OutputStream</code>
+ * an EOF is generated in the <code>InputStream</code> passed in the
+ * {@linkplain #doRead(InputStream)}.
  * </p>
  * <p>
- * The {@linkplain #doRead()} call executes in another thread, so there is no
- * warranty on when it will start and when it will end. Special care must be
- * taken in passing variables to it: all the arguments must be final and inside
- * {@linkplain #doRead()} you shouldn't change the variables of the outer class.
+ * The {@linkplain #doRead(InputStream)} call executes in another thread, so
+ * there is no warranty on when it will start and when it will end. Special care
+ * must be taken in passing variables to it: all the arguments must be final and
+ * inside {@linkplain #doRead(InputStream)} you shouldn't change the variables
+ * of the outer class.
+ * </p>
+ * <p>
+ * Any Exception threw inside the {@linkplain #doRead(InputStream)} method is
+ * propagated to the outer <code>OutputStream</code> on the next
+ * <code>write</code> operation.
  * </p>
  * <p>
  * The method {@link #getResults()} suspend the outer thread and wait for the
@@ -55,8 +69,10 @@ import com.gc.iotools.stream.base.ExecutorServiceFactory;
  * OutputStreamToInputStream&lt;String&gt; oStream2IStream = 
  * new OutputStreamToInputStream&lt;String&gt;() {
  * 	protected String doRead(final InputStream istream) throws Exception {
- * 		// read from InputStream into a string. Data will be written to the 
- * 		// outer class later (oStream2IStream.write). 
+ * 		// Users of this class should place all the code that need to read data
+ *      // from the InputStream in this method. Data available through the 
+ *      // InputStream passed as a parameter is the data that is written to the 
+ * 		// OutputStream oStream2IStream through its write method.  
  * 		final String result = IOUtils.toString(istream);
  * 		return result + &quot; was processed.&quot;;
  * 	}
@@ -168,7 +184,8 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * </p>
 	 * 
 	 * <p>
-	 * Will be removed in the 1.3 release.
+	 * Will be removed in the 1.3 release. Use {@link #setDefaultPipeSize(int)}
+	 * instead.
 	 * </p>
 	 * 
 	 * @since 1.2.0
@@ -422,17 +439,28 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	}
 
 	/**
+	 * <p>
 	 * This method has to be implemented to use this class. It allows to
 	 * retrieve the data written to the outer <code>OutputStream</code> from the
 	 * <code>InputStream</code> passed as a parameter.
+	 * </p>
+	 * <p>
+	 * Any exception eventually threw inside this method will be propagated to
+	 * the external <code>OutputStream</code>. When the next {@linkplain
+	 * write(byte[])} operation is called an <code>IOException</code> will be
+	 * thrown and the original exception can be accessed calling the getCause()
+	 * method on the IOException. It will also be available by calling the
+	 * method {@link #getResults()}.
+	 * </p>
 	 * 
 	 * @param istream
 	 *            The InputStream where the data can be retrieved.
 	 * @return Optionally returns a result of the elaboration.
 	 * @throws Exception
 	 *             If an <code>Exception</code> occurs during the elaboration it
-	 *             can be thrown. Will be returned in the method
-	 *             {@link #getResults()}.
+	 *             can be thrown. It will be propagated to the external
+	 *             <code>OutputStream</code> and will be available calling the
+	 *             method {@link #getResults()}.
 	 */
 	protected abstract T doRead(InputStream istream) throws Exception;
 

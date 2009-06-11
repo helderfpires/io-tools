@@ -2,7 +2,7 @@ package com.gc.iotools.stream.os;
 
 /*
  * Copyright (c) 2008,2009 Davide Simonetti.
- * This source code is released under the BSD Software License.
+ * This source code is released under the BSD License.
  */
 import java.io.OutputStream;
 
