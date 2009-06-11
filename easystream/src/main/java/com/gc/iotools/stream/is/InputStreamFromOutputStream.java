@@ -1,8 +1,8 @@
-package com.gc.iotools.stream.is;
+	package com.gc.iotools.stream.is;
 
 /*
  * Copyright (c) 2008,2009 Davide Simonetti.
- * This source code is released under the BSD Software License.
+ * This source code is released under the BSD License.
  */
 import java.io.IOException;
 import java.io.InputStream;
@@ -184,12 +184,26 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	/**
 	 * Set the size for the pipe circular buffer for the newly created
 	 * <code>InputStreamFromOutputStream</code>. Default is 4096 bytes.
+	 * will be removed in 1.3.0. Use setDefaultPipeSize instead. 
+	 * @deprecated 
 	 * 
 	 * @since 1.2.0
 	 * @param defaultPipeSize
 	 *            the default pipe buffer size in bytes.
 	 */
 	public static void setDefaultBufferSize(final int defaultPipeSize) {
+		InputStreamFromOutputStream.defaultPipeSize = defaultPipeSize;
+	}
+
+	/**
+	 * Set the size for the pipe circular buffer for the newly created
+	 * <code>InputStreamFromOutputStream</code>. Default is 4096 bytes.
+	 *  
+	 * @since 1.2.2
+	 * @param defaultPipeSize
+	 *            the default pipe buffer size in bytes.
+	 */
+	public static void setDefaultPipeSize(final int defaultPipeSize) {
 		InputStreamFromOutputStream.defaultPipeSize = defaultPipeSize;
 	}
 
