@@ -21,16 +21,15 @@ public final class StreamDetectorImpl implements DetectionLibrary {
 
 	private static byte[] readBytesAndReset(final InputStream input,
 			final int size) throws IOException {
-		final int size1 = size - 1;
-		final byte[] buffer = new byte[size1];
+		final byte[] buffer = new byte[size];
 		int pos = 0;
 		int n = 0;
-		while ((pos < (size1))
-				&& (-1 != (n = input.read(buffer, pos, (size1 - pos))))) {
+		while ((pos < (size))
+				&& (-1 != (n = input.read(buffer, pos, (size - pos))))) {
 			pos += n;
 		}
 		byte[] result;
-		if (pos == size1) {
+		if (pos == size) {
 			result = buffer;
 		} else {
 			result = new byte[pos];
