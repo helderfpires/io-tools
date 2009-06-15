@@ -1,6 +1,7 @@
 package com.gc.iotools.stream.is;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -26,6 +27,26 @@ public class TestInputStreamOutputStreamTee {
 		teeStream.close();
 		final byte[] result = bos.toByteArray();
 		assertArrayEquals("Arrays equal", reference, result);
+	}
+
+	@org.junit.Test
+	public void testMultipleStreams() throws Exception {
+		final BigDocumentIstream bis = new BigDocumentIstream(131072);
+		final byte[] reference = IOUtils.toByteArray(bis);
+		bis.resetToBeginning();
+		final ByteArrayOutputStream bos[] = { new ByteArrayOutputStream(),
+				new ByteArrayOutputStream(), new ByteArrayOutputStream() };
+		final  TeeInputStreamOutputStream teeStream = new TeeInputStreamOutputStream(bis, true, bos);
+		teeStream.close();
+		for (ByteArrayOutputStream byteArrayOutputStream : bos) {
+			final byte[] result = byteArrayOutputStream.toByteArray();
+			assertArrayEquals("Arrays equal", reference, result);			
+		}
+		long[] wtime=teeStream.getWriteTime();
+		assertEquals("array length",3,wtime.length);
+		for (long l : wtime) {
+			assertTrue("Time ["+l+"] >0",l>0);
+		}
 	}
 
 	@org.junit.Test

@@ -14,7 +14,7 @@ import com.gc.iotools.stream.base.EasyStreamConstants;
 /**
  * <p>
  * Copies the data from the underlying <code>InputStream</code> to the
- * <code>OutputStream</code> passed in the constructor. The data copied are
+ * <code>OutputStream(s)</code> passed in the constructor. The data copied are
  * similar to the underlying <code>InputStream</code>.
  * </p>
  * <p>
@@ -24,7 +24,13 @@ import com.gc.iotools.stream.base.EasyStreamConstants;
  * {@code TeeInputStream} in Apache commons-io.
  * </p>
  * <p>
- * Bytes skipped are copied to the <code>OutputStream</code>.
+ * Bytes skipped are in any case copied to the <code>OutputStream</code>. Mark
+ * and reset of the outer <code>InputStream</code> doesn't affect the data
+ * copied to the <code>OutputStream</code>.
+ * </p>
+ * <p>
+ * It is also possible to copy the data to multiple <code>OutputStreams</code>
+ * at once.
  * </p>
  * <p>
  * Sample usage:
@@ -48,7 +54,8 @@ import com.gc.iotools.stream.base.EasyStreamConstants;
  * @since 1.0.6
  */
 public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
-;
+
+	private final long[] writeTime;
 
 	private long markPosition = 0;
 
@@ -58,7 +65,7 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	/**
 	 * The destination <code>OutputStream</code> where data is written.
 	 */
-	protected final OutputStream destination;
+	protected final OutputStream[] destinations;
 	/**
 	 * If <code>true</code> <code>source</code> and <code>destination</code>
 	 * streams are closed when {@link #close()} is invoked.
@@ -109,8 +116,51 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 */
 	public TeeInputStreamOutputStream(final InputStream source,
 			final OutputStream destination, final boolean closeStreams) {
+		this(source, closeStreams, new OutputStream[] { destination });
+	}
+
+	/**
+	 * <p>
+	 * Creates a <code>TeeInputStreamOutputStream</code> and saves its argument,
+	 * the input stream <code>source</code> and the output stream
+	 * <code>destination</code> for later use.
+	 * </p>
+	 * <p>
+	 * This constructor allow to specify multiple <code>OutputStream</code> to
+	 * which the data will be copied.
+	 * </p>
+	 * 
+	 * @since 1.2.3
+	 * @param source
+	 *            The underlying <code>InputStream</code>
+	 * @param closeStreams
+	 *            if <code>true</code> the <code>destination</code> will be
+	 *            closed when the {@link #close()} method is invoked. If
+	 *            <code>false</code> the close method on the underlying streams
+	 *            will not be called (it must be invoked externally).
+	 * @param destinations
+	 *            Data read from <code>source</code> are also written to this
+	 *            <code>OutputStream</code>.
+	 */
+	public TeeInputStreamOutputStream(final InputStream source,
+			final boolean closeStreams, final OutputStream... destinations) {
 		super(source);
-		this.destination = destination;
+		if (destinations == null) {
+			throw new IllegalArgumentException(
+					"Destinations OutputStream can't be null");
+		}
+		if (destinations.length == 0) {
+			throw new IllegalArgumentException(
+					"At least one destination OutputStream must be specified");
+		}
+		for (OutputStream destination : destinations) {
+			if (destination == null) {
+				throw new IllegalArgumentException(
+						"One of the outputstreams in the array is null");
+			}
+		}
+		this.writeTime = new long[destinations.length];
+		this.destinations = destinations;
 		this.closeStreams = closeStreams;
 	}
 
@@ -157,7 +207,11 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 		}
 		if (this.closeStreams) {
 			this.source.close();
-			this.destination.close();
+			for (int i = 0; i < destinations.length; i++) {
+				long start = System.currentTimeMillis();
+				destinations[i].close();
+				getWriteTime()[i] += System.currentTimeMillis() - start;
+			}
 		}
 		if (e1 != null) {
 			throw e1;
@@ -172,7 +226,11 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 			if (this.sourcePosition + result > this.destinationPosition) {
 				final int newLen = (int) (this.sourcePosition + result - this.destinationPosition);
 				final int newOff = off + (result - newLen);
-				this.destination.write(b, newOff, newLen);
+				for (int i = 0; i < destinations.length; i++) {
+					long start = System.currentTimeMillis();
+					destinations[i].write(b, newOff, newLen);
+					getWriteTime()[i] += System.currentTimeMillis() - start;
+				}
 				this.destinationPosition += newLen;
 			}
 			this.sourcePosition += result;
@@ -217,7 +275,11 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 		if (result >= 0) {
 			this.sourcePosition++;
 			if (this.sourcePosition > this.destinationPosition) {
-				this.destination.write(result);
+				for (int i = 0; i < destinations.length; i++) {
+					long start = System.currentTimeMillis();
+					destinations[i].write(result);
+					getWriteTime()[i] += System.currentTimeMillis() - start;
+				}
 				this.destinationPosition++;
 			}
 		}
@@ -230,11 +292,12 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 * method was last called on this input stream.
 	 * </p>
 	 * <p>
-	 * After <code>reset</code> method is called the data is not copied anymore
-	 * to the destination OutputStream until the position where
-	 * <code>reset</code> was issued is reached again. This ensures the data
-	 * copied to the destination OutputStream reflects the data contained in the
-	 * source InputStream (the one passed in the constructor).
+	 * After <code>reset()</code> method is called the data is not copied
+	 * anymore to the destination <code>OutputStream</code> until the position
+	 * where <code>reset</code> was issued is reached again. This ensures the
+	 * data copied to the destination <code>OutputStream</code> reflects the
+	 * data contained in the source InputStream (the one passed in the
+	 * constructor).
 	 * </p>
 	 * 
 	 * @see #mark(int)
@@ -247,6 +310,22 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	public synchronized void reset() throws IOException {
 		this.source.reset();
 		this.sourcePosition = this.markPosition;
+	}
+
+	/**
+	 * <p>
+	 * Return the time spent writing on the destination
+	 * <code>OutputStream(s)</code> in milliseconds.
+	 * </p>
+	 * <p>
+	 * The returned array has one element for each <code>OutputStream</code>
+	 * passed in the constructor.
+	 * </p>
+	 * 
+	 * @return time spent writing on the destination <code>OutputStreams</code>.
+	 */
+	public long[] getWriteTime() {
+		return writeTime;
 	}
 
 }
