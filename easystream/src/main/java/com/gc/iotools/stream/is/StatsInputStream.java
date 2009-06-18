@@ -159,6 +159,17 @@ public class StatsInputStream extends InputStream {
 
 	/**
 	 * <p>
+	 * Returns the time (in milliseconds) spent until now waiting for the
+	 * </p>
+	 * 
+	 * @return time spent in waiting in milliseconds.
+	 */
+	public long getTime() {
+		return this.time;
+	}
+
+	/**
+	 * <p>
 	 * Returns the time spent until now waiting for the internal stream to
 	 * respond.
 	 * </p>
