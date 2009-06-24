@@ -1,7 +1,6 @@
 package com.gc.iotools.stream.is;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,7 +29,7 @@ public class TestInputStreamFromOutputStream {
 			IOUtils.toByteArray(isos);
 			fail("Exception must be thrown");
 		} catch (final IOException e) {
-			// Thread.sleep(1000);
+			Thread.sleep(600);
 			assertEquals("Active Trheads", 0, es.getActiveCount());
 		}
 

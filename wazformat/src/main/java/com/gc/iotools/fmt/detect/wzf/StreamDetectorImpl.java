@@ -50,6 +50,10 @@ public final class StreamDetectorImpl implements DetectionLibrary {
 		this.configuredModules = dfmf.getConfiguredModules();
 	}
 
+	public StreamDetectorImpl(DefiniteLengthModule[] configuredModules) {
+		this.configuredModules = configuredModules;
+	}
+
 	public FormatId detect(final FormatEnum[] enabledFormats,
 			final ResettableInputStream stream) throws IOException {
 		final DefiniteLengthModule[] modules = getModulesForFormats(enabledFormats);

@@ -95,8 +95,10 @@ public class DroidDetectorImpl implements DetectionLibrary {
 		}
 		this.mapping = new Properties();
 		try {
-			this.mapping.load(DroidDetectorImpl.class
-					.getResourceAsStream(mappingFileStr));
+			final InputStream mappingIs = DroidDetectorImpl.class
+					.getResourceAsStream(mappingFileStr);
+			this.mapping.load(mappingIs);
+			mappingIs.close();
 		} catch (final IOException e) {
 			throw new IllegalArgumentException("can't load resource["
 					+ mappingFileStr + "]", e);
@@ -252,6 +254,7 @@ public class DroidDetectorImpl implements DetectionLibrary {
 			final InputStream signatureFileStream = signatureFileURL
 					.openStream();
 			parser.parse(new InputSource(signatureFileStream));
+			signatureFileStream.close();
 		} catch (final Exception e) {
 			throw new IllegalStateException(
 					"Error reading configuration file " + "["

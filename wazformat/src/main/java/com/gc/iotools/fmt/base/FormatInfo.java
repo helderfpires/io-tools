@@ -9,15 +9,18 @@ public final class FormatInfo {
 
 	private final FormatId formatId;
 
-	private final String mimeType;
+	private final String[] mimeType;
+
+	private final String[] extensions;
 
 	private final String description;
 
-	public FormatInfo(final FormatId formatId, final String mimeType,
-			final String description) {
+	public FormatInfo(final FormatId formatId, final String[] mimeType,
+			final String[] extensions, final String description) {
 		this.formatId = formatId;
 		this.mimeType = mimeType;
 		this.description = description;
+		this.extensions = extensions;
 	}
 
 	public String getDescription() {
@@ -32,7 +35,7 @@ public final class FormatInfo {
 		return this.formatId;
 	}
 
-	public String getMimeType() {
+	public String[] getMimeType() {
 		return this.mimeType;
 	}
 

@@ -22,10 +22,10 @@ Main features are:
 	<name>EasyStream</name>
 	<url>http://io-tools.googlecode.com</url>
 	<inceptionYear>2008</inceptionYear>
-	<scm>
+	<!-- scm>
 		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk/easystream</connection>
 		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk/easystream</developerConnection>
-	</scm>
+	</scm -->
 	<issueManagement>
 		<system>GoogleIssues</system>
 		<url>http://code.google.com/p/io-tools/issues/list</url>
