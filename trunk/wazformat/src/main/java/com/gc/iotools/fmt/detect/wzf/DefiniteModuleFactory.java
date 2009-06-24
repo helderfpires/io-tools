@@ -75,6 +75,7 @@ public class DefiniteModuleFactory {
 					}
 				}
 			}
+			istream.close();
 		} catch (final IOException e) {
 			throw new IllegalStateException(
 					"Problem reading configuration file[" + confFile

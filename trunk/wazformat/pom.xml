@@ -31,10 +31,10 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-	<scm>
+	<!-- scm>
 		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk/wazformat</connection>
 		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk/wazformat</developerConnection>
-	</scm>
+	</scm -->
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -73,10 +73,10 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>
-		<dependency>
+		<!-- dependency>
 			<groupId>net.sf.mime-util</groupId>
 			<artifactId>mime-util</artifactId>
-		</dependency>
+		</dependency -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

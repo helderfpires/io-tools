@@ -308,12 +308,12 @@ import org.apache.commons.lang.enums.ValuedEnum;
  * <td>1.0, 2.0, 3.0, 3.0 NT, 4.0, 5.0</td>
  * </tr>
  * <tr>
- * <td>WINDOWS_MEDIA_AUDIO</td>
+ * <td>WMA</td>
  * <td>Windows Media Audio</td>
  * <td></td>
  * </tr>
  * <tr>
- * <td>WINDOWS_MEDIA_VIDEO</td>
+ * <td>WMV</td>
  * <td>Windows Media Video</td>
  * <td></td>
  * </tr>
@@ -659,24 +659,22 @@ public class FormatEnum extends ValuedEnum {
 	/**
 	 * Constant integer for enum : MPEG_1_VIDEO_FORMAT .
 	 */
-	public static final int MPEG_1_VIDEO_FORMAT_INT = 659;
+	public static final int MPEG_1_INT = 659;
 	/**
-	 * Enum : MPEG_1_VIDEO_FORMAT : this enum describes format MPEG-1 Video
-	 * Format.
+	 * Enum : MPEG_1 : this enum describes format MPEG-1 Video Format.
 	 */
-	public static final FormatEnum MPEG_1_VIDEO_FORMAT = new FormatEnum(
-			"MPEG_1_VIDEO_FORMAT", MPEG_1_VIDEO_FORMAT_INT);
+	public static final FormatEnum MPEG_1 = new FormatEnum("MPEG_1",
+			MPEG_1_INT);
 
 	/**
-	 * Constant integer for enum : MPEG_2_VIDEO_FORMAT .
+	 * Constant integer for enum : MPEG_2 .
 	 */
-	public static final int MPEG_2_VIDEO_FORMAT_INT = 660;
+	public static final int MPEG_2_INT = 660;
 	/**
-	 * Enum : MPEG_2_VIDEO_FORMAT : this enum describes format MPEG-2 Video
-	 * Format.
+	 * Enum : MPEG_2 : this enum describes format MPEG-2 Video Format.
 	 */
-	public static final FormatEnum MPEG_2_VIDEO_FORMAT = new FormatEnum(
-			"MPEG_2_VIDEO_FORMAT", MPEG_2_VIDEO_FORMAT_INT);
+	public static final FormatEnum MPEG_2 = new FormatEnum("MPEG_2T",
+			MPEG_2_INT);
 
 	/**
 	 * Constant integer for enum : MS_DOS_EXECUTABLE .
@@ -916,13 +914,12 @@ public class FormatEnum extends ValuedEnum {
 	/**
 	 * Constant integer for enum : TAGGED_IMAGE_FILE_FORMAT .
 	 */
-	public static final int TAGGED_IMAGE_FILE_FORMAT_INT = 612;
+	public static final int TIFF_INT = 612;
 	/**
-	 * Enum : TAGGED_IMAGE_FILE_FORMAT : this enum describes format Tagged Image
-	 * File Format. Supported versions :3, 4, 5, 6
+	 * Enum : TIFF : this enum describes format Tagged Image File Format.
+	 * Supported versions :3, 4, 5, 6
 	 */
-	public static final FormatEnum TAGGED_IMAGE_FILE_FORMAT = new FormatEnum(
-			"TAGGED_IMAGE_FILE_FORMAT", TAGGED_IMAGE_FILE_FORMAT_INT);
+	public static final FormatEnum TIFF = new FormatEnum("TIFF", TIFF_INT);
 
 	/**
 	 * Constant integer for enum : WAVEFORM_AUDIO .
@@ -935,26 +932,22 @@ public class FormatEnum extends ValuedEnum {
 			"WAVEFORM_AUDIO", WAVEFORM_AUDIO_INT);
 
 	/**
-	 * Constant integer for enum : WINDOWS_MEDIA_AUDIO .
+	 * Constant integer for enum : WMA .
 	 */
-	public static final int WINDOWS_MEDIA_AUDIO_INT = 692;
+	public static final int WMA_INT = 692;
 	/**
-	 * Enum : WINDOWS_MEDIA_AUDIO : this enum describes format Windows Media
-	 * Audio.
+	 * Enum : WMA : this enum describes format Windows Media Audio.
 	 */
-	public static final FormatEnum WINDOWS_MEDIA_AUDIO = new FormatEnum(
-			"WINDOWS_MEDIA_AUDIO", WINDOWS_MEDIA_AUDIO_INT);
+	public static final FormatEnum WMA = new FormatEnum("WMA", WMA_INT);
 
 	/**
-	 * Constant integer for enum : WINDOWS_MEDIA_VIDEO .
+	 * Constant integer for enum : WMV .
 	 */
-	public static final int WINDOWS_MEDIA_VIDEO_INT = 693;
+	public static final int WMV_INT = 693;
 	/**
-	 * Enum : WINDOWS_MEDIA_VIDEO : this enum describes format Windows Media
-	 * Video.
+	 * Enum : WMV : this enum describes format Windows Media Video.
 	 */
-	public static final FormatEnum WINDOWS_MEDIA_VIDEO = new FormatEnum(
-			"WINDOWS_MEDIA_VIDEO", WINDOWS_MEDIA_VIDEO_INT);
+	public static final FormatEnum WMV = new FormatEnum("WMV", WMV_INT);
 
 	/**
 	 * Constant integer for enum : WINDOWS_NEW_EXECUTABLE .

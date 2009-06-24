@@ -46,12 +46,11 @@ public class TestStreamDetector {
 				DetectionLibrary stDetect = new StreamDetectorImpl();
 				final FormatEnum[] detectedFormats = stDetect
 						.getDetectedFormats();
-				
+
 				FormatId formats = stDetect.detect(detectedFormats,
 						new ResettableFileInputStream(file));
 				assertEquals("Formato file [" + file.getName() + "]",
-						formatEnum,
-						formats.format);
+						formatEnum, formats.format);
 
 			}
 			String[] badFiles = TestUtils
@@ -63,8 +62,7 @@ public class TestStreamDetector {
 				FormatId formats = stDetect.detect(enabledFormats,
 						new ResettableFileInputStream(new File(fname)));
 				assertEquals("Formato file [" + fname + "]",
-						FormatEnum.UNKNOWN,
-						formats.format);
+						FormatEnum.UNKNOWN, formats.format);
 			}
 		}
 	}

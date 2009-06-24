@@ -1,8 +1,6 @@
 package com.gc.iotools.stream.os;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -90,6 +88,7 @@ public class TestOutputStreamToInputStream {
 			assertEquals("Wrapped exception", TimeoutException.class, e
 					.getCause().getClass());
 		}
+		Thread.sleep(600);
 		assertEquals("Active Threads", 0, es.getActiveCount());
 	}
 

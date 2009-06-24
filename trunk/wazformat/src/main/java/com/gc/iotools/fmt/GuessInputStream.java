@@ -354,12 +354,15 @@ public class GuessInputStream extends InputStream {
 	 * It can be set multiple times if no read() is invoked between the
 	 * invocations.
 	 * </p>
+	 * <p>
+	 * Default is <i>no recursion</i>
+	 * </p>
 	 * 
 	 * @param level
 	 *            Integer >= 1 indicating the number of recursive identification
 	 *            steps.
 	 */
-	public final void setIdentificationDepth(final int level) {
+	public void setIdentificationDepth(final int level) {
 		if (InputStreamStatusEnum.READING_DATA.equals(this.status)) {
 			throw new IllegalStateException("The number of recursion can "
 					+ "be set only before any read() "
