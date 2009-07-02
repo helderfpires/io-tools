@@ -69,7 +69,11 @@ public final class ExecutorServiceFactory {
 
 	}
 
-	private static ExecutorService executor = new ThreadPoolExecutor(10, 20,
+	/*
+	 * Default should be 0 otherwise there are problems stopping application
+	 * servers.
+	 */
+	private static ExecutorService executor = new ThreadPoolExecutor(0, 20,
 			5, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(500));
 
 	private static final ExecutorService SINGLE_EXECUTOR = Executors
@@ -96,8 +100,14 @@ public final class ExecutorServiceFactory {
 	}
 
 	/**
+	 * <p>
 	 * Sets the default ExecutorService returned when this class is invoked with
 	 * {@link ExecutionModel#STATIC_THREAD_POOL}.
+	 * </p>
+	 * <p>
+	 * It can also be used to initialize the class (for instance for use into a
+	 * web application).
+	 * </p>
 	 * 
 	 * @param executor
 	 *            ExecutorService for the STATIC_THREAD_POOL model.
@@ -112,5 +122,31 @@ public final class ExecutorServiceFactory {
 	 */
 	private ExecutorServiceFactory() {
 
+	}
+
+	/**<p>
+	 * Call this method to initialize the <code>ExecutorService</code> that is used in
+	 * <code>STATIC_THREAD_POOL</code> execution mode.</p>
+	 * 
+	 * @see ExecutionModel#STATIC_THREAD_POOL
+	 * @see #setDefaultThreadPoolExecutor(ExecutorService)
+	 */
+	public static void init() {
+		setDefaultThreadPoolExecutor(new ThreadPoolExecutor(0, 20, 5,
+				TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(500)));
+	}
+
+	/**
+	 * <p>
+	 * Call this method to finalize the execution queue.
+	 * </p>
+	 * <p>
+	 * It is mandatory when you use this library in a container, otherwise the
+	 * container doesn't terminate gracefully (for instance you can call it in a
+	 * {@link ContextListener#shutdown()}).
+	 * </p>
+	 */
+	public static void shutDown() {
+		executor.shutdown();
 	}
 }
