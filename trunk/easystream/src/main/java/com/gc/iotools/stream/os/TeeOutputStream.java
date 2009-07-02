@@ -9,29 +9,17 @@ import java.io.OutputStream;
 
 /**
  * <p>
- * Copies the data from the underlying <code>InputStream</code> to the
- * <code>OutputStream(s)</code> passed in the constructor. The data copied are
- * similar to the underlying <code>InputStream</code>.
+ * Copies the data written to this class to the <code>OutputStream(s)</code>
+ * passed passed in the constructor, and gathers some statistics about the copy
+ * operation.
  * </p>
  * <p>
- * When the method <code>{@link #close()}</code> is invoked all the bytes
- * remaining in the underlying <code>InputStream</code> are copied to the
- * <code>OutputStream</code>. This behavior is different from this class and
- * {@code TeeInputStream} in Apache commons-io.
- * </p>
- * <p>
- * Bytes skipped are in any case copied to the <code>OutputStream</code>. Mark
- * and reset of the outer <code>InputStream</code> doesn't affect the data
- * copied to the <code>OutputStream</code>.
- * </p>
- * <p>
- * It is also possible to copy the data to multiple <code>OutputStreams</code>
- * at once.
+ * It is possible to copy the data to multiple <code>OutputStreams</code> at
+ * once.
  * </p>
  * <p>
  * Usage:
  * </p>
- * 
  * <pre>
  * 	 InputStream source=... //some data to be readed.
  *   ByteArrayOutputStream destination1= new ByteArrayOutputStream();
@@ -44,7 +32,6 @@ import java.io.OutputStream;
  *   //at this point both destination1 and destination2 contains the same bytes.
  * </pre>
  * 
- * @see org.apache.commons.io.input.TeeInputStream
  * @author dvd.smnt
  * @since 1.2.4
  */
@@ -76,7 +63,7 @@ public class TeeOutputStream extends OutputStream {
 	 * 
 	 * @since 1.2.4
 	 * @param destinations
-	 *            Data written to this<code>OutputStream</code> are copied to
+	 *            Data written to this <code>OutputStream</code> are copied to
 	 *            all the <code>destinations</code>.
 	 */
 	public TeeOutputStream(final OutputStream... destinations) {
@@ -98,6 +85,14 @@ public class TeeOutputStream extends OutputStream {
 		this.destinations = destinations;
 	}
 
+	/**
+	 * <p>
+	 * Closes all the destination <code>OutputStream(s)</code>. If it is invoked
+	 * multiple times it prevents multiple calls on the underlying streams.
+	 * </p>
+	 * 
+	 * @see OutputStream#close()
+	 */
 	@Override
 	public void close() throws IOException {
 		if (!this.closeCalled) {
@@ -154,6 +149,7 @@ public class TeeOutputStream extends OutputStream {
 			throw new NullPointerException("Array of bytes can't be null");
 		}
 		if (!this.closeCalled) {
+			this.size += b.length;
 			for (int i = 0; i < this.destinations.length; i++) {
 				final OutputStream stream = this.destinations[i];
 				final long start = System.currentTimeMillis();
@@ -170,6 +166,7 @@ public class TeeOutputStream extends OutputStream {
 			throw new NullPointerException("Array of bytes can't be null");
 		}
 		if (!this.closeCalled) {
+			this.size += len;
 			for (int i = 0; i < this.destinations.length; i++) {
 				final OutputStream stream = this.destinations[i];
 				final long start = System.currentTimeMillis();
@@ -182,11 +179,11 @@ public class TeeOutputStream extends OutputStream {
 	@Override
 	public void write(final int b) throws IOException {
 		if (!this.closeCalled) {
+			this.size++;
 			for (int i = 0; i < this.destinations.length; i++) {
 				final OutputStream stream = this.destinations[i];
 				final long start = System.currentTimeMillis();
 				stream.write(b);
-				this.size++;
 				this.writeTime[i] += System.currentTimeMillis() - start;
 			}
 		}
