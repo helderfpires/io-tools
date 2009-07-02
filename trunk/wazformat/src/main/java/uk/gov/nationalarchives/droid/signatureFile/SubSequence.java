@@ -236,7 +236,8 @@ public class SubSequence extends SimpleElement {
 	 */
 	public boolean isFoundAfterFileMarker(final ByteReader targetFile,
 			final boolean reverseOrder, final boolean bigEndian) {
-
+		boolean subSeqFound = false;
+		try {
 		final long fileSize = targetFile.getNumBytes() - 1;
 		final int searchDirection = reverseOrder ? -1 : 1;
 		// get the current file marker
@@ -256,8 +257,8 @@ public class SubSequence extends SimpleElement {
 		startPosInFile = startPosInFile
 				+ (searchDirection * getMinFragLength());
 		final int numSeqBytes = getNumBytes();
-		boolean subSeqFound = false;
-		boolean missMatchFound = false;
+
+			boolean missMatchFound;
 		final int byteLoopStart = reverseOrder ? numSeqBytes - 1 : 0;
 		final int byteLoopEnd = reverseOrder ? 0 : numSeqBytes - 1;
 
@@ -279,7 +280,8 @@ public class SubSequence extends SimpleElement {
 						+ byteLoopEnd);
 				if (this.byteSequence[byteLoopEnd] != lastByte) {
 					startPosInFile += (this.shiftFunction[128 + lastByte] - 1);
-					if ((startPosInFile < 0L) || (startPosInFile > fileSize)) {
+						if ((startPosInFile < 0L)
+								|| (startPosInFile > fileSize)) {
 						break;
 					}
 				} else {
@@ -362,6 +364,12 @@ public class SubSequence extends SimpleElement {
 			// This exception is allowed to be thrown to avoid repeatedly
 			// checking if the index is valid
 			// and to hence improve the performace of DROID
+		}
+		} catch (final IndexOutOfBoundsException e) {
+			// This is thrown if targetFile is a URLByteReader, the embedded
+			// HeapByteBuffer will check for each access
+			// and throw java.lang.IndexOutOfBoundsException if we are on or
+			// past the limit
 		}
 		return subSeqFound;
 	}
@@ -1157,8 +1165,8 @@ public class SubSequence extends SimpleElement {
 					fragIndex);
 			long tempFileMarker = startPosInFile;
 			for (int i = (searchDirection == 1) ? 0 : fragment
-					.getNumByteSeqSpecifiers() - 1; !missMatchFound
-					&& (0 <= i) && (i < fragment.getNumByteSeqSpecifiers()); i += searchDirection) {
+					.getNumByteSeqSpecifiers() - 1; !missMatchFound && (0 <= i)
+					&& (i < fragment.getNumByteSeqSpecifiers()); i += searchDirection) {
 				missMatchFound = !fragment.getByteSeqSpecifier(i)
 						.matchesByteSequence(targetFile, tempFileMarker,
 								searchDirection, bigEndian);

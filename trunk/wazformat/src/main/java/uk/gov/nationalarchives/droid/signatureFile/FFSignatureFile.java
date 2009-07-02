@@ -214,7 +214,7 @@ public class FFSignatureFile extends SimpleElement {
 					// file
 					// format
 					if (targetFile.getHit(k).getFileFormat().getID() == formatID) {
-						hitsToRemove.add(new Integer(k)); // use string
+						hitsToRemove.add(k); // use string
 						// representation as
 						// ArrayList won't
 						// take integers

@@ -137,7 +137,7 @@ public class ByteSequence extends SimpleElement {
 		// of the file
 		boolean isCompliant = true;
 		final boolean reverseOrder = (getReference()
-				.equalsIgnoreCase("EOFoffset")) ? true : false;
+				.equalsIgnoreCase("EOFoffset"));
 		final int ssLoopStart = reverseOrder ? getNumSubSequences() - 1 : 0;
 		final int ssLoopEnd = reverseOrder ? -1 : getNumSubSequences();
 		final int searchDirection = reverseOrder ? -1 : 1;

@@ -45,7 +45,7 @@ public class FileFormat extends SimpleElement {
 	String mimeType;
 
 	public String getExtension(final int theIndex) {
-		return this.extensions.get(theIndex).toString();
+		return this.extensions.get(theIndex);
 	}
 
 	public int getHasPriorityOver(final int theIndex) {

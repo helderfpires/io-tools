@@ -217,10 +217,10 @@ public class SAXModelBuilder extends DefaultHandler {
 				method = target.getClass().getMethod("set" + name,
 						new Class[] { String.class });
 			}
-			method.invoke(target, new Object[] { value });
+			method.invoke(target, value);
 		} catch (final NoSuchMethodException e) {
-			MessageDisplay.unknownElementWarning(name,
-					((SimpleElement) target).getElementName());
+			MessageDisplay.unknownElementWarning(name, ((SimpleElement) target)
+					.getElementName());
 		} catch (final Exception e) {
 			throw new SAXException(e);
 		}
