@@ -13,7 +13,8 @@
 	</scm>
 	<issueManagement>
 		<system>GoogleIssues</system>
-		<url>http://code.google.com/p/io-tools/issues/list</url>
+		<url>http://code.google.com/p/io-tools/issues/list
+		</url>
 	</issueManagement>
 	<developers>
 		<developer>
@@ -25,7 +26,8 @@
 	<licenses>
 		<license>
 			<name>The BSD Software License</name>
-			<url>http://www.opensource.org/licenses/bsd-license.php</url>
+			<url>http://www.opensource.org/licenses/bsd-license.php
+			</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
@@ -48,7 +50,8 @@
 		-->
 		<site>
 			<id>io-tools-web</id>
-			<url>ftp://ftp.jtools.heliohost.org/</url>
+			<url>ftp://ftp.jtools.heliohost.org/
+			</url>
 		</site>
 	</distributionManagement>
 	<modules>
@@ -135,12 +138,11 @@
 				<version>1.4</version>
 				<type>jar</type>
 			</dependency>
-			<!-- dependency>
-				<groupId>net.sf.mime-util</groupId>
-				<artifactId>mime-util</artifactId>
-				<version>1.2</version>
-				<type>jar</type>
-			</dependency -->
+			<!--
+				dependency> <groupId>net.sf.mime-util</groupId>
+				<artifactId>mime-util</artifactId> <version>1.2</version>
+				<type>jar</type> </dependency
+			-->
 		</dependencies>
 	</dependencyManagement>
 	<build>
@@ -194,7 +196,9 @@
 						<wtpversion>2.0</wtpversion>
 						<buildOutputDirectory>bin</buildOutputDirectory>
 						<classpathContainers>
-							<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5</classpathContainer>
+							<classpathContainer>
+								org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5
+							</classpathContainer>
 						</classpathContainers>
 						<downloadSources>true</downloadSources>
 					</configuration>
@@ -206,11 +210,15 @@
 						<charset>UTF-8</charset>
 						<encoding>US-ASCII</encoding>
 						<links>
-							<link>http://java.sun.com/javase/6/docs/api/</link>
-							<link>http://commons.apache.org/io/api-release/</link>
-							<link>http://jakarta.apache.org/commons/lang/apidocs/</link>
+							<link>http://java.sun.com/javase/6/docs/api/
+							</link>
+							<link>http://commons.apache.org/io/api-release/
+							</link>
+							<link>http://jakarta.apache.org/commons/lang/apidocs/
+							</link>
 							<link>http://www.slf4j.org/api/</link>
-							<link>http://commons.apache.org/collections/api-release/</link>
+							<link>http://commons.apache.org/collections/api-release/
+							</link>
 						</links>
 					</configuration>
 					<executions>
@@ -308,27 +316,34 @@
 							<charset>UTF-8</charset>
 							<encoding>US-ASCII</encoding>
 							<links>
-								<link>http://java.sun.com/javase/6/docs/api/</link>
-								<link>http://commons.apache.org/io/api-release/</link>
-								<link>http://jakarta.apache.org/commons/lang/apidocs/</link>
+								<link>http://java.sun.com/javase/6/docs/api/
+								</link>
+								<link>http://commons.apache.org/io/api-release/
+								</link>
+								<link>http://jakarta.apache.org/commons/lang/apidocs/
+								</link>
 								<link>http://www.slf4j.org/api/</link>
-								<link>http://commons.apache.org/collections/api-release/</link>
+								<link>http://commons.apache.org/collections/api-release/
+								</link>
 							</links>
 						</configuration>
 					</reportSet>
 				</reportSets>
 			</plugin>
 			<plugin>
-				<artifactId>maven-checkstyle-plugin</artifactId>
+				<artifactId>maven-checkstyle-plugin
+				</artifactId>
 				<configuration>
-					<configLocation>src/config/checks.xml</configLocation>
+					<configLocation>src/config/checks.xml
+					</configLocation>
 				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<artifactId>maven-project-info-reports-plugin
+				</artifactId>
 			</plugin>
 		</plugins>
 	</reporting>
@@ -339,16 +354,89 @@
 				<repository>
 					<id>java.net-maven2-repository</id>
 					<uniqueVersion>false</uniqueVersion>
-					<url>java-net:/maven2-repository/trunk/repository/</url>
+					<url>java-net:/maven2-repository/trunk/repository/
+					</url>
 				</repository>
 			</distributionManagement>
 			<repositories>
 				<repository>
-					<id>maven2-repository.dev.java.net</id>
+					<id>maven2-repository.dev.java.net
+					</id>
 					<name>Java.net Repository for Maven</name>
-					<url>http://download.java.net/maven/2/</url>
+					<url>http://download.java.net/maven/2/
+					</url>
+				</repository>
+				<repository>
+					<id>jboss.org</id>
+					<name>jboss.org</name>
+					<url>http://repository.jboss.com/maven2
+					</url>
 				</repository>
 			</repositories>
+			<pluginRepositories>
+                <pluginRepository>
+                    <id>jboss.org</id>
+                    <name>jboss.org</name>
+                    <url>http://repository.jboss.com/maven2
+                    </url>
+                </pluginRepository>
+			</pluginRepositories>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.jboss.maven.plugins</groupId>
+							<artifactId>maven-jboss-retro-plugin</artifactId>
+							<configuration>
+								<weaveClassifier>jdk14</weaveClassifier>
+								<weaverClass>org.jboss.weaver.retro.WeaverRetroJdk14</weaverClass>
+								<attachJar>true</attachJar>
+								<classifier>jdk14</classifier>
+							</configuration>
+							<executions>
+								<execution>
+									<id>weave-classes</id>
+									<!-- phase>package</phase -->
+									<inherited>true</inherited>
+									<goals>
+										<goal>weave</goal>
+									</goals>
+								</execution>
+							</executions>
+							<!--
+								execution> <id>check-weave</id> <goals> <goal>retro-check</goal>
+								</goals> <configuration>
+								<checkDirectory>classes-jdk14</checkDirectory>
+								<jvm>${java14_home}/bin/${javaExecutable}</jvm> </configuration>
+								</execution> </executions> <dependencies> <dependency>
+								<groupId>junit</groupId> <artifactId>junit</artifactId>
+								<version>3.8.1</version> </dependency> </dependencies
+							-->
+						</plugin>
+					</plugins>
+				</pluginManagement>
+				<plugins>
+					<plugin>
+						<groupId>org.jboss.maven.plugins</groupId>
+						<artifactId>maven-jboss-retro-plugin</artifactId>
+						<inherited>true</inherited>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>sourceforge</id>
+			<distributionManagement>
+				<repository>
+					<uniqueVersion>false</uniqueVersion>
+					<id>jsignature.sourceforge.repository
+					</id>
+					<name>JSignature Repository</name>
+					<url>
+						scp://shell.sourceforge.net/home/groups/j/js/jsignature/htdocs/maven2
+					</url>
+				</repository>
+			</distributionManagement>
 		</profile>
 	</profiles>
 </project>

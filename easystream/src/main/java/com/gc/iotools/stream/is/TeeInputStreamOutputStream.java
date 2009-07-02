@@ -41,8 +41,8 @@ import com.gc.iotools.stream.base.EasyStreamConstants;
  *   ByteArrayOutputStream destination1= new ByteArrayOutputStream();
  *   ByteArrayOutputStream destination2= new ByteArrayOutputStream();
  *   
- *   TeeInputStreamOutputStream tee=
- *                          new TeeInputStreamOutputStream(source,destination1);
+ *   TeeOutputStream tee=
+ *                          new TeeOutputStream(source,destination1);
  *   org.apache.commons.io.IOUtils.copy(tee,destination2);
  *   tee.close();
  *   //at this point both destination1 and destination2 contains the same bytes.
@@ -74,8 +74,8 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 
 	/**
 	 * <p>
-	 * Creates a <code>TeeInputStreamOutputStream</code> and saves its argument,
-	 * the input stream <code>source</code> and the <code>OutputStream</code>
+	 * Creates a <code>TeeOutputStream</code> and saves its argument, the input
+	 * stream <code>source</code> and the <code>OutputStream</code>
 	 * <code>destination</code> for later use.
 	 * </p>
 	 * <p>
@@ -97,9 +97,9 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	}
 
 	/**
-	 * Creates a <code>TeeInputStreamOutputStream</code> and saves its argument,
-	 * the input stream <code>source</code> and the output stream
-	 * <code>destination</code> for later use.
+	 * Creates a <code>TeeOutputStream</code> and saves its argument, the input
+	 * stream <code>source</code> and the output stream <code>destination</code>
+	 * for later use.
 	 * 
 	 * @since 1.2.0
 	 * @param source
@@ -107,7 +107,7 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 * @param destination
 	 *            Data read from <code>source</code> are also written to this
 	 *            <code>OutputStream</code>.
-	 * @param closeStreams
+	 * @param closeCalled
 	 *            if <code>true</code> the <code>destination</code> will be
 	 *            closed when the {@link #close()} method is invoked. If
 	 *            <code>false</code> the close method on the underlying streams
@@ -121,9 +121,9 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 
 	/**
 	 * <p>
-	 * Creates a <code>TeeInputStreamOutputStream</code> and saves its argument,
-	 * the input stream <code>source</code> and the output stream
-	 * <code>destination</code> for later use.
+	 * Creates a <code>TeeOutputStream</code> and saves its argument, the input
+	 * stream <code>source</code> and the output stream <code>destination</code>
+	 * for later use.
 	 * </p>
 	 * <p>
 	 * This constructor allow to specify multiple <code>OutputStream</code> to
@@ -133,7 +133,7 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 * @since 1.2.3
 	 * @param source
 	 *            The underlying <code>InputStream</code>
-	 * @param closeStreams
+	 * @param closeCalled
 	 *            if <code>true</code> the <code>destination</code> will be
 	 *            closed when the {@link #close()} method is invoked. If
 	 *            <code>false</code> the close method on the underlying streams
@@ -159,7 +159,7 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 						"One of the outputstreams in the array is null");
 			}
 		}
-		this.writeTime = new long[destinations.length];
+		this.writeTime = new long[destinations.length + 1];
 		this.destinations = destinations;
 		this.closeStreams = closeStreams;
 	}
@@ -182,9 +182,9 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 * <p>
 	 * The standard behavior is to close both the underlying
 	 * <code>InputStream</code> and <code>OutputStream</code>. When the class
-	 * was constructed with the parameter
-	 * {@link TeeInputStreamOutputStream#closeStreams closeStreams} set to false
-	 * the underlying streams must be closed externally.
+	 * was constructed with the parameter {@link TeeOutputStream#closeCalled
+	 * closeCalled} set to false the underlying streams must be closed
+	 * externally.
 	 * 
 	 * @throws IOException
 	 *             thrown when a IO problem occurs in reading or writing the
@@ -322,10 +322,28 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 * passed in the constructor.
 	 * </p>
 	 * 
+	 * @deprecated
 	 * @return time spent writing on the destination <code>OutputStreams</code>.
+	 * @see getStats
 	 */
+	@Deprecated
 	public long[] getWriteTime() {
 		return writeTime;
 	}
 
+	/**
+	 * <p>
+	 * Return an array of long representing the time spent reading from the
+	 * <code>InputStream</code> or writing on the destination
+	 * <code>OutputStream(s)</code>. Time unit is milliseconds.
+	 * </p>
+	 * <p>
+	 * The returned array has is has one element for each
+	 * <code>OutputStream</code> passed in the constructor.
+	 * </p>
+	 * 
+	 */
+	public long[] getTimeSpent() {
+		return writeTime;
+	}
 }
