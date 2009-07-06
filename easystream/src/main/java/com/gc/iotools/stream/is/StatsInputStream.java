@@ -147,8 +147,18 @@ public class StatsInputStream extends InputStream {
 	}
 
 	/**
-	 * Returns the bytes read until now or total length of the stream if the
+	 * <p>
+	 * Returns the number of bytes read until now from the internal
+	 * <code>InputStream</code> or total length of the stream if the
 	 * <code>{@link #close()}</code> method has been called or EOF was reached.
+	 * </p>
+	 * <p>
+	 * Calculation refers to the original size of the internal
+	 * <code>InputStream</code>. If {@linkplain #mark(int)} and
+	 * {@linkplain #reset()} are called, the extra data read after the
+	 * {@linkplain #reset()} is not taken in account, until the
+	 * <code>mark</code> position is reached again.
+	 * </p>
 	 * 
 	 * @return bytes read until now or the total length of the stream if close()
 	 *         was called.
@@ -159,7 +169,8 @@ public class StatsInputStream extends InputStream {
 
 	/**
 	 * <p>
-	 * Returns the time (in milliseconds) spent until now waiting for the
+	 * Returns the time (in milliseconds) spent until now waiting for reading
+	 * from the internal <code>InputStream</code>.
 	 * </p>
 	 * 
 	 * @return time spent in waiting in milliseconds.
