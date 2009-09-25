@@ -10,8 +10,9 @@ import java.io.OutputStream;
 /**
  * <p>
  * Copies the data that is written to this class to the
- * <code>OutputStream(s)</code> passed in the constructor. It also collect some
- * statistics on the operations done.
+ * <code>OutputStream(s)</code> passed in the constructor. It also collect
+ * statistics on the operations done (time spent writing to the internal
+ * streams, amount of data written).
  * </p>
  * <p>
  * Usage:
@@ -22,14 +23,12 @@ import java.io.OutputStream;
  *   ByteArrayOutputStream destination1= new ByteArrayOutputStream();
  *   ByteArrayOutputStream destination2= new ByteArrayOutputStream();
  *   
- *   TeeOutputStream tee=
- *                          new TeeOutputStream(destination1,destination2);
+ *   TeeOutputStream tee =  new TeeOutputStream(destination1,destination2);
  *   org.apache.commons.io.IOUtils.copy(source,tee);
  *   tee.close();
  *   //at this point both destination1 and destination2 contains the same bytes.
  * </pre>
  * 
- * @see org.apache.commons.io.input.TeeInputStream
  * @author dvd.smnt
  * @since 1.2.4
  */
@@ -115,6 +114,11 @@ public class TeeOutputStream extends OutputStream {
 	}
 
 	/**
+	 * <p>
+	 * This method returns the size in bytes of the data written to this
+	 * OutputStream. It can be used to collect statistics on the write
+	 * operations.
+	 * </p>
 	 * 
 	 * @return size in bytes of the data written to the
 	 *         <code>OutputStreams</code>.
@@ -139,6 +143,9 @@ public class TeeOutputStream extends OutputStream {
 		return this.writeTime;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void write(final byte[] b) throws IOException {
 		if (b == null) {
@@ -154,6 +161,9 @@ public class TeeOutputStream extends OutputStream {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void write(final byte[] b, final int off, final int len)
 			throws IOException {
@@ -170,6 +180,9 @@ public class TeeOutputStream extends OutputStream {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void write(final int b) throws IOException {
 		if (!this.closeCalled) {

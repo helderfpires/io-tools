@@ -26,7 +26,8 @@ import java.util.concurrent.TimeUnit;
 public final class ExecutorServiceFactory {
 
 	/**
-	 * Executor that stops after a single execution.
+	 * Executor that stops after a single execution. Used when a thread per
+	 * instance strategy is requested.
 	 * 
 	 */
 	private static class OneShotThreadExecutor extends
@@ -124,9 +125,11 @@ public final class ExecutorServiceFactory {
 
 	}
 
-	/**<p>
-	 * Call this method to initialize the <code>ExecutorService</code> that is used in
-	 * <code>STATIC_THREAD_POOL</code> execution mode.</p>
+	/**
+	 * <p>
+	 * Call this method to initialize the <code>ExecutorService</code> that is
+	 * used in <code>STATIC_THREAD_POOL</code> execution mode.
+	 * </p>
 	 * 
 	 * @see ExecutionModel#STATIC_THREAD_POOL
 	 * @see #setDefaultThreadPoolExecutor(ExecutorService)
