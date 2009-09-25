@@ -26,15 +26,15 @@ import com.gc.iotools.stream.base.EasyStreamConstants;
  * <p>
  * Bytes skipped are in any case copied to the <code>OutputStream</code>. Mark
  * and reset of the outer <code>InputStream</code> doesn't affect the data
- * copied to the <code>OutputStream</code>, that remain similar to the
+ * copied to the <code>OutputStream(s)</code>, that remain similar to the
  * <code>InputStream</code> passed in the constructor.
  * </p>
  * <p>
  * It also calculate some statistics on the read/write operations.
  * {@link #getWriteTime()} returns the time spent writing to the OutputStreams,
- * {@link getReadTime()} returns the time spent reading from the InputStream and
- * {@link TeeInputStreamOutputStream#getWriteSize()} returns the amount of data
- * written to a single <code>OutputStream</code> until now.
+ * {@link #getReadTime()} returns the time spent reading from the InputStream
+ * and {@link TeeInputStreamOutputStream#getWriteSize()} returns the amount of
+ * data written to a single <code>OutputStream</code> until now.
  * </p>
  * <p>
  * Sample usage:
@@ -45,11 +45,13 @@ import com.gc.iotools.stream.base.EasyStreamConstants;
  *   ByteArrayOutputStream destination1= new ByteArrayOutputStream();
  *   ByteArrayOutputStream destination2= new ByteArrayOutputStream();
  *   
- *   TeeOutputStream tee=
- *                          new TeeOutputStream(source,destination1);
+ *   TeeInputStreamOutputStream tee=
+ *                          new TeeInputStreamOutputStream(source,destination1);
  *   org.apache.commons.io.IOUtils.copy(tee,destination2);
  *   tee.close();
- *   //at this point both destination1 and destination2 contains the same bytes.
+ *   //at this point both destination1 and destination2 contains the same bytes
+ *   //in destination1 were put by TeeInputStreamOutputStream while in 
+ *   //destination2 they were copied by IOUtils.
  *   byte[] bytes=destination1.getBytes();
  * </pre>
  * 
@@ -59,32 +61,30 @@ import com.gc.iotools.stream.base.EasyStreamConstants;
  */
 public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 
-	private final long[] writeTime;
-
-	private final long readTime = 0;
-
-	private final long writeSize = 0;
-
-	private long markPosition = 0;
-
-	private long destinationPosition = 0;
-
-	private long sourcePosition = 0;
-	/**
-	 * The destination <code>OutputStream</code> where data is written.
-	 */
-	protected final OutputStream[] destinations;
 	/**
 	 * If <code>true</code> <code>source</code> and <code>destination</code>
 	 * streams are closed when {@link #close()} is invoked.
 	 */
 	protected final boolean closeStreams;
 
+	private long destinationPosition = 0;
+
+	/**
+	 * The destination <code>OutputStream</code> where data is written.
+	 */
+	protected final OutputStream[] destinations;
+
+	private long markPosition = 0;
+
+	private long readTime = 0;
+	private long sourcePosition = 0;
+	private final long[] writeTime;
+
 	/**
 	 * <p>
-	 * Creates a <code>TeeOutputStream</code> and saves its argument, the input
-	 * stream <code>source</code> and the output stream <code>destination</code>
-	 * for later use.
+	 * Creates a <code>TeeInputStreamOutputStream</code> and saves its argument,
+	 * the input stream <code>source</code> and the output stream
+	 * <code>destination</code> for later use.
 	 * </p>
 	 * <p>
 	 * This constructor allow to specify multiple <code>OutputStream</code> to
@@ -160,7 +160,7 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 * @param destination
 	 *            Data read from <code>source</code> are also written to this
 	 *            <code>OutputStream</code>.
-	 * @param closeCalled
+	 * @param closeStreams
 	 *            if <code>true</code> the <code>destination</code> will be
 	 *            closed when the {@link #close()} method is invoked. If
 	 *            <code>false</code> the close method on the underlying streams
@@ -210,20 +210,56 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 			}
 		} catch (final IOException e) {
 			e1 = new IOException(
-					"It's not possible to copy to the destination OutputStream.");
+					"Incomplete data was written to the destination " +
+					"OutputStream(s).");
 			e1.initCause(e);
 		}
 		if (this.closeStreams) {
+			final long startr = System.currentTimeMillis();
 			this.source.close();
+			this.readTime += System.currentTimeMillis() - startr;
 			for (int i = 0; i < this.destinations.length; i++) {
 				final long start = System.currentTimeMillis();
 				this.destinations[i].close();
-				getWriteTime()[i] += System.currentTimeMillis() - start;
+				this.writeTime[i] += System.currentTimeMillis() - start;
 			}
 		}
 		if (e1 != null) {
 			throw e1;
 		}
+	}
+
+	/**
+	 * <p>
+	 * Returns the number of milliseconds spent reading from the
+	 * <code>source</code> <code>InputStream</code>.
+	 * </p>
+	 * 
+	 * @return number of milliseconds spent reading from the <code>source</code>
+	 *         .
+	 * @since 1.2.5
+	 */
+	public long getReadTime() {
+		return this.readTime;
+	}
+
+	/**
+	 * <p>
+	 * Returns the number of bytes written until now to a single destination
+	 * <code>OutputStream</code>.
+	 * </p>
+	 * <p>
+	 * This number is not affected by any of the mark and reset that are made on
+	 * this {@linkplain TeeInputStreamOutputStream} and reflects only the number
+	 * of bytes written.
+	 * </p>
+	 * 
+	 * @return number of bytes written until now to a single destination
+	 *         <code>destination/code>.
+	 * @since 1.2.5
+	 */
+	public long getWriteSize() {
+		return this.destinationPosition;
 	}
 
 	/**
@@ -245,8 +281,10 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	@Override
 	public int innerRead(final byte[] b, final int off, final int len)
 			throws IOException {
-
+		final long startr = System.currentTimeMillis();
 		final int result = this.source.read(b, off, len);
+		this.readTime += System.currentTimeMillis() - startr;
+
 		if (result > 0) {
 			if (this.sourcePosition + result > this.destinationPosition) {
 				final int newLen = (int) (this.sourcePosition + result - this.destinationPosition);
