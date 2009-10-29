@@ -1,5 +1,5 @@
+#summary How to read an !InputStream multiple times
 #labels Draft
-#How to read an !InputStream multiple times
 
 = Introduction =
 
