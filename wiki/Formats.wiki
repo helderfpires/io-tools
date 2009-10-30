@@ -44,7 +44,7 @@ The number of supported format is great, but low performances might be an issue 
 <tr><td>DXB</td><td>Drawing Interchange Binary Format</td><td>1.0</td></tr>
 <tr><td>DRAWING_INTERCHANGE_FILE_FORMAT_ASCII</td><td>Drawing Interchange File Format (ASCII)</td><td>1.0, 1.2, 1.3, 1.4, 2.0, 2.1, 2.2, 2.5, 2.6, R9, R10, <br/> R11/12, R13, R14, 2000-2002, 2004-2005, Generic</td></tr>
 <tr><td>DRAWING_INTERCHANGE_FILE_FORMAT_BINARY</td><td>Drawing Interchange File Format (Binary)</td><td>R10, R11/12, R13, R14, 2000-2002, 2004-2005</td></tr>
-<tr><td>EPSF</td><td>Encapsulated PostScript File Format</td><td>1.2, 3.0, 2.0</td></tr>
+<tr><td>EPSF</td><td>Encapsulated !PostScript File Format</td><td>1.2, 3.0, 2.0</td></tr>
 <tr><td>EXCHANGEABLE_IMAGE_FILE_FORMAT_AUDIO</td><td>Exchangeable Image File Format (Audio)</td><td>2.1, 2.2, 2.0</td></tr>
 <tr><td>EXCHANGEABLE_IMAGE_FILE_FORMAT_COMPRESSED</td><td>Exchangeable Image File Format (Compressed)</td><td>2.1, 2.2, 2.0</td></tr>
 <tr><td>EXCHANGEABLE_IMAGE_FILE_FORMAT_UNCOMPRESSED</td><td>Exchangeable Image File Format (Uncompressed)</td><td>2.2, 2.1, 2.0</td></tr>
@@ -79,8 +79,7 @@ The number of supported format is great, but low performances might be an issue 
 <tr><td>PCX</td><td>PCX</td><td>0, 2, 3, 4, 5</td></tr>
 <tr><td>PDF</td><td>Adobe Portable Document Format (Actually broken)</td><td>1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6</td></tr>
 <tr><td>PNG</td><td>Portable Network Graphics</td><td>1.0, 1.1, 1.2</td></tr>
-<tr><td>POSTSCRIPT</td><td>PostScript</td><td>2.0, 2.1, 3.0</td></tr>
-<tr><td>POSTSCRIPT</td><td>Postscript</td><td>1.0</td></tr>
+<tr><td>POSTSCRIPT</td><td>!PostScript</td><td>1.0, 2.0, 2.1, 3.0</td></tr>
 <tr><td>QTM</td><td>Quicktime</td><td></td></tr>
 <tr><td>RAW_JPEG_STREAM</td><td>Raw JPEG Stream</td><td></td></tr>
 <tr><td>RAM</td><td>RealAudio Metafile</td><td></td></tr>
