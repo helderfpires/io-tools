@@ -20,6 +20,7 @@
 </tbody>
 </table>
 
+
 <h2>`DroidDetectorImpl`</h2>
 <p>These formats are supported by `DroidDetectorImpl`. This detector is based on [Droid http://droid.sourceforge.net/wiki/index.php/Introduction droid] format detection library (mantained by UK National Archives).</p>
 <p>Implementation isn't fast and requires a full read of the stream before the identification can begin. 
@@ -31,7 +32,7 @@ The number of supported format is great, but low performances might be an issue 
 </thead> <tbody>
 <tr><td>ADVANCED_SYSTEMS_FORMAT</td><td>Advanced Systems Format</td><td></td></tr>
 <tr><td>AVI</td><td>Audio/Video Interleaved Format</td><td></td></tr>
-<tr><td>DWG</td><td>AutoCAD Drawing</td><td>1.0, 1.2, 1.3, 1.4, 2.0, 2.1, 2.2, 2.5, 2.6, R9, R10, R11/12, R13, R14, 2000-2002, 2004-2005</td></tr>
+<tr><td>DWG</td><td>AutoCAD Drawing</td><td>1.0, 1.2, 1.3, 1.4, 2.0, 2.1, 2.2, 2.5, 2.6, R9, <br/> R10, R11/12, R13, R14, 2000-2002, 2004-2005</td></tr>
 <tr><td>BINARY_INTERCHANGE_FILE_FORMAT_BIFF_WORKBOOK</td><td>Binary Interchange File Format (BIFF) Workbook</td><td>4W, 5, 7, 8, 8X</td></tr>
 <tr><td>BINARY_INTERCHANGE_FILE_FORMAT_BIFF_WORKSHEET</td><td>Binary Interchange File Format (BIFF) Worksheet</td><td>2, 3, 4S</td></tr>
 <tr><td>BROADCAST_WAVE</td><td>Broadcast WAVE</td><td>1, 0</td>
@@ -41,7 +42,7 @@ The number of supported format is great, but low performances might be an issue 
 <tr><td>DROID_FILE_COLLECTION_FILE_FORMAT</td><td>DROID File Collection File Format</td><td>1.0</td></tr>
 <tr><td>DROID_SIGNATURE_FILE_FORMAT</td><td>DROID Signature File Format</td><td>1.0</td></tr>
 <tr><td>DXB</td><td>Drawing Interchange Binary Format</td><td>1.0</td></tr>
-<tr><td>DRAWING_INTERCHANGE_FILE_FORMAT_ASCII</td><td>Drawing Interchange File Format (ASCII)</td><td>1.0, 1.2, 1.3, 1.4, 2.0, 2.1, 2.2, 2.5, 2.6, R9, R10, R11/12, R13, R14, 2000-2002, 2004-2005, Generic</td></tr>
+<tr><td>DRAWING_INTERCHANGE_FILE_FORMAT_ASCII</td><td>Drawing Interchange File Format (ASCII)</td><td>1.0, 1.2, 1.3, 1.4, 2.0, 2.1, 2.2, 2.5, 2.6, R9, R10, <br/> R11/12, R13, R14, 2000-2002, 2004-2005, Generic</td></tr>
 <tr><td>DRAWING_INTERCHANGE_FILE_FORMAT_BINARY</td><td>Drawing Interchange File Format (Binary)</td><td>R10, R11/12, R13, R14, 2000-2002, 2004-2005</td></tr>
 <tr><td>EPSF</td><td>Encapsulated PostScript File Format</td><td>1.2, 3.0, 2.0</td></tr>
 <tr><td>EXCHANGEABLE_IMAGE_FILE_FORMAT_AUDIO</td><td>Exchangeable Image File Format (Audio)</td><td>2.1, 2.2, 2.0</td></tr>
@@ -56,7 +57,7 @@ The number of supported format is great, but low performances might be an issue 
 <tr><td>JPEG</td><td>JPEG File Interchange Format</td><td>1.00, 1.01, 1.02</td></tr>
 <tr><td>JAR</td><td>Java Archive Format</td><td></td></tr>
 <tr><td>MDB</td><td>Microsoft Access Database</td><td>2000</td></tr>
-<tr><td>MSG</td><td>Microsoft Outlook Email Message</td><td>97-2003</td></tr><tr>
+<tr><td>MSG</td><td>Microsoft Outlook Email Message</td><td>97-2003</td></tr>
 <tr><td>MPEG_1_VIDEO_FORMAT</td><td>MPEG-1 Video Format</td><td></td></tr>
 <tr><td>MPEG_2_VIDEO_FORMAT</td><td>MPEG-2 Video Format</td><td></td></tr>
 <tr><td>MS_DOS_EXECUTABLE</td><td>MS-DOS Executable</td><td></td></tr>
@@ -65,16 +66,16 @@ The number of supported format is great, but low performances might be an issue 
 <tr><td>PPT</td><td>Microsoft Powerpoint Presentation</td><td>4.0, 95, 97-2002</td></tr>
 <tr><td>DOC</td><td>Microsoft Word for Windows Document</td><td>6.0/95, 97-2003, 1.0, 2.0</td></tr>
 <tr><td>OLE2_COMPOUND_DOCUMENT_FORMAT</td><td>OLE2 Compound Document Format</td><td></td></tr>
-<tr><td>ODB</td><td>OpenDocument Database Format</td><td>1.0</td></tr>
-<tr><td>ODG</td><td>OpenDocument Drawing Format</td><td>1.0</td></tr>
+<tr><td>ODB</td><td>!OpenDocument Database Format</td><td>1.0</td></tr>
+<tr><td>ODG</td><td>!OpenDocument Drawing Format</td><td>1.0</td></tr>
 <tr><td>OPENDOCUMENT_FORMAT</td><td>OpenDocument Format</td><td>1.0</td></tr>
-<tr><td>ODP</td><td>OpenDocument Presentation Format</td><td>1.0</td></tr>
-<tr><td>ODS</td><td>OpenDocument Spreadsheet Format</td><td>1.0</td></tr>
-<tr><td>ODT</td><td>OpenDocument Text Format</td><td>1.0</td></tr>
-<tr><td>SXC</td><td>OpenOffice Calc</td><td>1.0</td></tr>
-<tr><td>SXD</td><td>OpenOffice Draw</td><td>1.0</td></tr>
-<tr><td>SXI</td><td>OpenOffice Impress</td><td>1.0</td></tr>
-<tr><td>SXW</td><td>OpenOffice Writer</td><td>1.0</td></tr>
+<tr><td>ODP</td><td>!OpenDocument Presentation Format</td><td>1.0</td></tr>
+<tr><td>ODS</td><td>!OpenDocument Spreadsheet Format</td><td>1.0</td></tr>
+<tr><td>ODT</td><td>!OpenDocument Text Format</td><td>1.0</td></tr>
+<tr><td>SXC</td><td>!OpenOffice Calc</td><td>1.0</td></tr>
+<tr><td>SXD</td><td>!OpenOffice Draw</td><td>1.0</td></tr>
+<tr><td>SXI</td><td>!OpenOffice Impress</td><td>1.0</td></tr>
+<tr><td>SXW</td><td>!OpenOffice Writer</td><td>1.0</td></tr>
 <tr><td>PCX</td><td>PCX</td><td>0, 2, 3, 4, 5</td></tr>
 <tr><td>PDF</td><td>Adobe Portable Document Format (Actually broken)</td><td>1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6</td></tr>
 <tr><td>PNG</td><td>Portable Network Graphics</td><td>1.0, 1.1, 1.2</td></tr>
@@ -94,9 +95,9 @@ The number of supported format is great, but low performances might be an issue 
 <tr><td>WINDOWS_MEDIA_VIDEO</td><td>Windows Media Video</td><td></td></tr>
 <tr><td>WINDOWS_NEW_EXECUTABLE</td><td>Windows New Executable</td><td></td></tr>
 <tr><td>WINDOWS_PORTABLE_EXECUTABLE</td><td>Windows Portable Executable</td><td></td></tr>
-<tr><td>WPG</td><td>WordPerfect Graphics Metafile</td><td>1.0</td></tr>
-<tr><td>WORDPERFECT_FOR_MS_DOS_DOCUMENT</td><td>WordPerfect for MS-DOS Document</td><td>5.0</td></tr>
-<tr><td>WORDPERFECT_FOR_MS_DOS_WINDOWS_DOCUMENT</td><td>WordPerfect for MS-DOS/Windows Document</td><td>5.1</td></tr>
+<tr><td>WPG</td><td>!WordPerfect Graphics Metafile</td><td>1.0</td></tr>
+<tr><td>WORDPERFECT_FOR_MS_DOS_DOCUMENT</td><td>!WordPerfect for MS-DOS Document</td><td>5.0</td></tr>
+<tr><td>WORDPERFECT_FOR_MS_DOS_WINDOWS_DOCUMENT</td><td>!WordPerfect for MS-DOS/Windows Document</td><td>5.1</td></tr>
 <tr><td>ZIP</td><td>PKZIP Archive Format</td><td></td></tr>
 </tbody>
 </table>
