@@ -158,6 +158,7 @@ public class TeeOutputStream extends OutputStream {
 				stream.write(b);
 				this.writeTime[i] += System.currentTimeMillis() - start;
 			}
+			this.size += b.length;
 		}
 	}
 
@@ -177,6 +178,7 @@ public class TeeOutputStream extends OutputStream {
 				stream.write(b, off, len);
 				this.writeTime[i] += System.currentTimeMillis() - start;
 			}
+			this.size += len;
 		}
 	}
 
@@ -193,6 +195,7 @@ public class TeeOutputStream extends OutputStream {
 				this.size++;
 				this.writeTime[i] += System.currentTimeMillis() - start;
 			}
+			this.size ++;
 		}
 	}
 }
