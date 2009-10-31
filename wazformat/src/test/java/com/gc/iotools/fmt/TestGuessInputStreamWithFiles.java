@@ -57,6 +57,11 @@ public class TestGuessInputStreamWithFiles {
 	}
 
 	@org.junit.Test
+	public void testDocDetector() throws Exception {
+		checkDetector(FormatEnum.DOC, new String[] { "doc" });
+	}
+
+	@org.junit.Test
 	public void testGifDetectorModule() throws Exception {
 		checkDetector(FormatEnum.GIF, new String[] { "gif" });
 	}
