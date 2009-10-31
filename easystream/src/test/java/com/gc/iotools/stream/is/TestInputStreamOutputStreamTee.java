@@ -36,17 +36,18 @@ public class TestInputStreamOutputStreamTee {
 		bis.resetToBeginning();
 		final ByteArrayOutputStream bos[] = { new ByteArrayOutputStream(),
 				new ByteArrayOutputStream(), new ByteArrayOutputStream() };
-		final  TeeInputStreamOutputStream teeStream = new TeeInputStreamOutputStream(bis, true, bos);
+		final TeeInputStreamOutputStream teeStream = new TeeInputStreamOutputStream(
+				bis, true, bos);
 		teeStream.close();
 		for (ByteArrayOutputStream byteArrayOutputStream : bos) {
 			final byte[] result = byteArrayOutputStream.toByteArray();
-			assertArrayEquals("Arrays equal", reference, result);			
+			assertArrayEquals("Arrays equal", reference, result);
 		}
-		long[] wtime=teeStream.getWriteTime();
-		assertEquals("array length",3,wtime.length);
-//		for (long l : wtime) {
-//			assertTrue("Time ["+l+"] >0",l>0);
-//		}
+		long[] wtime = teeStream.getWriteTime();
+		assertEquals("array length", 4, wtime.length);
+		// for (long l : wtime) {
+		// assertTrue("Time ["+l+"] >0",l>0);
+		// }
 	}
 
 	@org.junit.Test
