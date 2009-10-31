@@ -24,6 +24,11 @@ import org.apache.commons.lang.enums.ValuedEnum;
  * </tr>
  * </thead> <tbody>
  * <tr>
+ * <td>N3DM</td>
+ * <td>3DM</td>
+ * <td>4, 1, 2, 3</td>
+ * </tr>
+ * <tr>
  * <td>ADVANCED_SYSTEMS_FORMAT</td>
  * <td>Advanced Systems Format</td>
  * <td></td>
@@ -60,6 +65,11 @@ import org.apache.commons.lang.enums.ValuedEnum;
  * {@link <a href="http://en.wikipedia.org/wiki/Bzip2">BZIP2</a>}compressed file
  * format.</td>
  * <td></td>
+ * </tr>
+ * <tr>
+ * <td>CATPART</td>
+ * <td>CATIA Model (Part Description)</td>
+ * <td>5</td>
  * </tr>
  * <tr>
  * <td>DROID_FILE_COLLECTION_FILE_FORMAT</td>
@@ -148,6 +158,11 @@ import org.apache.commons.lang.enums.ValuedEnum;
  * <td></td>
  * </tr>
  * <tr>
+ * <td>CLASS</td>
+ * <td>Java Compiled Object Code</td>
+ * <td></td>
+ * </tr>
+ * <tr>
  * <td>MPEG_1_VIDEO_FORMAT</td>
  * <td>MPEG-1 Video Format</td>
  * <td></td>
@@ -171,6 +186,16 @@ import org.apache.commons.lang.enums.ValuedEnum;
  * <td>SWF</td>
  * <td>Macromedia Flash</td>
  * <td>1, 2, 3, 4, 5, 6, 7</td>
+ * </tr>
+ * <tr>
+ * <td>MDB</td>
+ * <td>Microsoft Access Database</td>
+ * <td>2000</td>
+ * </tr>
+ * <tr>
+ * <td>MSG</td>
+ * <td>Microsoft Outlook Email Message</td>
+ * <td>97-2003</td>
  * </tr>
  * <tr>
  * <td>PPT</td>
@@ -270,6 +295,11 @@ import org.apache.commons.lang.enums.ValuedEnum;
  * <tr>
  * <td>RAW_JPEG_STREAM</td>
  * <td>Raw JPEG Stream</td>
+ * <td></td>
+ * </tr>
+ * <tr>
+ * <td>RAM</td>
+ * <td>RealAudio Metafile</td>
  * <td></td>
  * </tr>
  * <tr>
@@ -439,6 +469,25 @@ public class FormatEnum extends ValuedEnum {
 	 * file format.
 	 */
 	public static final FormatEnum BZIP2 = new FormatEnum("BZIP2", BZIP2_INT);
+	/**
+	 * Constant integer for enum : CATPART .
+	 */
+	public static final int CATPART_INT = 851;
+	/**
+	 * Enum : CATPART : this enum describes format CATIA Model (Part
+	 * Description). Supported versions :5
+	 */
+	public static final FormatEnum CATPART = new FormatEnum("CATPART",
+			CATPART_INT);
+
+	/**
+	 * Constant integer for enum : CLASS .
+	 */
+	public static final int CLASS_INT = 802;
+	/**
+	 * Enum : CLASS : this enum describes format Java Compiled Object Code.
+	 */
+	public static final FormatEnum CLASS = new FormatEnum("CLASS", CLASS_INT);
 
 	/**
 	 * Constant integer for enum : DOC .
@@ -677,6 +726,16 @@ public class FormatEnum extends ValuedEnum {
 			MPEG_2_INT);
 
 	/**
+	 * Constant integer for enum : MSG .
+	 */
+	public static final int MSG_INT = 822;
+	/**
+	 * Enum : MSG : this enum describes format Microsoft Outlook Email Message.
+	 * Supported versions :97-2003
+	 */
+	public static final FormatEnum MSG = new FormatEnum("MSG", MSG_INT);
+
+	/**
 	 * Constant integer for enum : MS_DOS_EXECUTABLE .
 	 */
 	public static final int MS_DOS_EXECUTABLE_INT = 774;
@@ -685,6 +744,16 @@ public class FormatEnum extends ValuedEnum {
 	 */
 	public static final FormatEnum MS_DOS_EXECUTABLE = new FormatEnum(
 			"MS_DOS_EXECUTABLE", MS_DOS_EXECUTABLE_INT);
+
+	/**
+	 * Constant integer for enum : N3DM .
+	 */
+	public static final int N3DM_INT = 831;
+	/**
+	 * Enum : N3DM : this enum describes format 3DM. Supported versions :4, 1,
+	 * 2, 3
+	 */
+	public static final FormatEnum N3DM = new FormatEnum("N3DM", N3DM_INT);
 
 	/**
 	 * Constant integer for enum : ODB .
@@ -818,6 +887,15 @@ public class FormatEnum extends ValuedEnum {
 	 * Enum : QTM : this enum describes format Quicktime.
 	 */
 	public static final FormatEnum QTM = new FormatEnum("QTM", QTM_INT);
+
+	/**
+	 * Constant integer for enum : RAM .
+	 */
+	public static final int RAM_INT = 256;
+	/**
+	 * Enum : RAM : this enum describes format RealAudio Metafile.
+	 */
+	public static final FormatEnum RAM = new FormatEnum("RAM", RAM_INT);
 
 	/**
 	 * Constant integer for enum : RAW_JPEG_STREAM .

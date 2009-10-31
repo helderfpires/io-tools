@@ -17,7 +17,6 @@ import java.util.Properties;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.commons.io.FileCleaningTracker;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +48,7 @@ public class DroidDetectorImpl implements DetectionLibrary {
 	 * Namespace for the xml file format signatures file.
 	 */
 	public static final String SIGNATURE_FILE_NS = "http://www.nationalarchives.gov.uk/pronom/SignatureFile";
-	private static final String SIGNATURE_FILE = "DROID_SignatureFile_V13.xml";
+	private static final String SIGNATURE_FILE = "DROID_SignatureFile_V18.xml";
 	private static final String MAPPING_FILE = "mapping.properties";
 
 	private final Class<?> formatEnumClass;
