@@ -13,8 +13,7 @@
 	</scm>
 	<issueManagement>
 		<system>GoogleIssues</system>
-		<url>http://code.google.com/p/io-tools/issues/list
-		</url>
+		<url>http://code.google.com/p/io-tools/issues/list</url>
 	</issueManagement>
 	<developers>
 		<developer>
@@ -26,32 +25,14 @@
 	<licenses>
 		<license>
 			<name>The BSD Software License</name>
-			<url>http://www.opensource.org/licenses/bsd-license.php
-			</url>
+			<url>http://www.opensource.org/licenses/bsd-license.php</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
 	<distributionManagement>
-		<!--
-			repository> <id>jtools-repo</id>
-			<url>ftp://ftp.jtools.heliohost.org/</url> </repository
-		-->
-		<!--
-			repository> <uniqueVersion>false</uniqueVersion>
-			<id>jsignature.sourceforge.repository</id> <name>JSignature
-			Repository</name>
-			<url>scp://shell.sourceforge.net/home/groups/j/js/jsignature/htdocs/maven2</url>
-			</repository
-		-->
-
-		<!--
-			site> <id>io-tools-web-x10</id> <name>jtools-site</name>
-			<url>ftp://ftp.jtools.x10hosting.com/</url> </site
-		-->
 		<site>
 			<id>io-tools-web</id>
-			<url>ftp://ftp.jtools.heliohost.org/
-			</url>
+			<url>ftp://ftp.jtools.heliohost.org/</url>
 		</site>
 	</distributionManagement>
 	<modules>
@@ -63,7 +44,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.5</version>
+			<version>4.7</version>
 			<type>jar</type>
 			<!-- scope provided for javadoc plugin -->
 			<scope>provided</scope>
@@ -74,7 +55,7 @@
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.5</version>
+				<version>4.7</version>
 				<type>jar</type>
 				<scope>test</scope>
 			</dependency>
@@ -190,6 +171,23 @@
 					</configuration>
 				</plugin>
 				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>retrotranslator-maven-plugin</artifactId>
+					<version>1.0-alpha-4</version>
+					<configuration>
+						<classifier>retrotranslator</classifier>
+					</configuration>
+					<extensions>true</extensions>
+					<executions>
+						<execution>
+							<id>retrotranslate</id>
+							<goals>
+								<goal>translate-project</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-eclipse-plugin</artifactId>
 					<configuration>
@@ -221,16 +219,16 @@
 							</link>
 						</links>
 					</configuration>
-					<executions>
+					<!-- executions>
 						<execution>
 							<id>attach-javadoc</id>
 							<goals>
 								<goal>jar</goal>
 							</goals>
 						</execution>
-					</executions>
+					</executions-->
 				</plugin>
-				<plugin>
+				<!-- plugin>
 					<artifactId>maven-source-plugin</artifactId>
 					<executions>
 						<execution>
@@ -240,14 +238,13 @@
 							</goals>
 						</execution>
 					</executions>
-				</plugin>
-			</plugins>
+				</plugin-->
+			</plugins> 
 		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.4</version>
 				<configuration>
 					<updateReleaseInfo>true</updateReleaseInfo>
 				</configuration>
@@ -257,19 +254,11 @@
 				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
-					<generateReleasePoms>false</generateReleasePoms>
+					<generateReleasePoms>true</generateReleasePoms>
 					<!-- install required for assembly plugin -->
 					<preparationGoals>clean install</preparationGoals>
 				</configuration>
 			</plugin>
-			<!--
-				plugin> <artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2-beta-2</version> <executions> <execution>
-				<phase>package</phase> <goals> <goal>attached</goal> </goals>
-				<configuration> <tarLongFileMode>gnu</tarLongFileMode> <descriptors>
-				<descriptor>assembly.xml</descriptor> </descriptors>
-				</configuration> </execution> </executions> </plugin
-			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
@@ -316,8 +305,7 @@
 							<charset>UTF-8</charset>
 							<encoding>US-ASCII</encoding>
 							<links>
-								<link>http://java.sun.com/javase/6/docs/api/
-								</link>
+								<link>http://java.sun.com/javase/6/docs/api/</link>
 								<link>http://commons.apache.org/io/api-release/
 								</link>
 								<link>http://jakarta.apache.org/commons/lang/apidocs/
@@ -331,8 +319,7 @@
 				</reportSets>
 			</plugin>
 			<plugin>
-				<artifactId>maven-checkstyle-plugin
-				</artifactId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
 				<configuration>
 					<configLocation>src/config/checks.xml
 					</configLocation>
@@ -348,93 +335,42 @@
 		</plugins>
 	</reporting>
 	<profiles>
-		<profile>
-			<id>java.net</id>
-			<distributionManagement>
+		<profile> 
+			<id>java.net</id> 
+			<distributionManagement> 
 				<repository>
-					<id>java.net-maven2-repository</id>
-					<uniqueVersion>false</uniqueVersion>
-					<url>java-net:/maven2-repository/trunk/repository/
-					</url>
-				</repository>
-			</distributionManagement>
-			<repositories>
-				<repository>
-					<id>maven2-repository.dev.java.net
-					</id>
-					<name>Java.net Repository for Maven</name>
-					<url>http://download.java.net/maven/2/
-					</url>
-				</repository>
-				<repository>
-					<id>jboss.org</id>
-					<name>jboss.org</name>
-					<url>http://repository.jboss.com/maven2
-					</url>
-				</repository>
-			</repositories>
-			<pluginRepositories>
-                <pluginRepository>
-                    <id>jboss.org</id>
-                    <name>jboss.org</name>
-                    <url>http://repository.jboss.com/maven2
-                    </url>
-                </pluginRepository>
-			</pluginRepositories>
-			<build>
-				<pluginManagement>
-					<plugins>
-						<plugin>
-							<groupId>org.jboss.maven.plugins</groupId>
-							<artifactId>maven-jboss-retro-plugin</artifactId>
-							<configuration>
-								<weaveClassifier>jdk14</weaveClassifier>
-								<weaverClass>org.jboss.weaver.retro.WeaverRetroJdk14</weaverClass>
-								<attachJar>true</attachJar>
-								<classifier>jdk14</classifier>
-							</configuration>
-							<executions>
-								<execution>
-									<id>weave-classes</id>
-									<!-- phase>package</phase -->
-									<inherited>true</inherited>
-									<goals>
-										<goal>weave</goal>
-									</goals>
-								</execution>
-							</executions>
-							<!--
-								execution> <id>check-weave</id> <goals> <goal>retro-check</goal>
-								</goals> <configuration>
-								<checkDirectory>classes-jdk14</checkDirectory>
-								<jvm>${java14_home}/bin/${javaExecutable}</jvm> </configuration>
-								</execution> </executions> <dependencies> <dependency>
-								<groupId>junit</groupId> <artifactId>junit</artifactId>
-								<version>3.8.1</version> </dependency> </dependencies
-							-->
-						</plugin>
-					</plugins>
-				</pluginManagement>
-				<plugins>
-					<plugin>
-						<groupId>org.jboss.maven.plugins</groupId>
-						<artifactId>maven-jboss-retro-plugin</artifactId>
-						<inherited>true</inherited>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
+			<id>java.net-maven2-repository</id>
+			<uniqueVersion>false</uniqueVersion>
+			<url>java-net:/maven2-repository/trunk/repository/</url>
+			</repository> 
+			</distributionManagement> <repositories> <repository>
+			<id>maven2-repository.dev.java.net </id> <name>Java.net Repository
+			for Maven</name> <url>http://download.java.net/maven/2/ </url>
+			</repository> <repository> <id>jboss.org</id> <name>jboss.org</name>
+			<url>http://repository.jboss.com/maven2 </url> </repository>
+			</repositories> <pluginRepositories> <pluginRepository>
+			<id>jboss.org</id> <name>jboss.org</name>
+			<url>http://repository.jboss.com/maven2 </url> </pluginRepository>
+			</pluginRepositories> <build> <pluginManagement> <plugins> <plugin>
+			<groupId>org.jboss.maven.plugins</groupId>
+			<artifactId>maven-jboss-retro-plugin</artifactId> <configuration>
+			<weaveClassifier>jdk14</weaveClassifier>
+			<weaverClass>org.jboss.weaver.retro.WeaverRetroJdk14</weaverClass>
+			<attachJar>true</attachJar> <classifier>jdk14</classifier>
+			</configuration> <executions> <execution> <id>weave-classes</id>
+			<inherited>true</inherited> <goals> <goal>weave</goal> </goals>
+			</execution> </executions> </plugin> </plugins> </pluginManagement>
+			<plugins> <plugin> <groupId>org.jboss.maven.plugins</groupId>
+			<artifactId>maven-jboss-retro-plugin</artifactId>
+			<inherited>true</inherited> </plugin> </plugins> </build> </profile>
 		<profile>
 			<id>sourceforge</id>
 			<distributionManagement>
 				<repository>
 					<uniqueVersion>false</uniqueVersion>
-					<id>jsignature.sourceforge.repository
-					</id>
+					<id>jsignature.sourceforge.repository</id>
 					<name>JSignature Repository</name>
-					<url>
-						scp://shell.sourceforge.net/home/groups/j/js/jsignature/htdocs/maven2
-					</url>
+					<url>scp://shell.sourceforge.net/home/groups/j/js/jsignature/htdocs/maven2</url>
 				</repository>
 			</distributionManagement>
 		</profile>
