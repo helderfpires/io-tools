@@ -96,7 +96,7 @@ public class GuessInputStream extends InputStream {
 				.toArray(new Decoder[0]));
 	}
 
-	// private static final Loggerger LOGGER = Loggerger
+	// private static final Loggerger LOGGER = LoggerFactoryger
 	// .getLoggerger(GuessFormatInputStream.class);
 
 	/**

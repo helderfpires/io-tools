@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://io-tools.googlecode.com/format-info/" targetNamespace="http://io-tools.googlecode.com/format-info/">
+    <element name="formats" type="tns:formatsType">
+    </element>
+
+    <complexType name="formatsType">
+    	<sequence>
+    		<element name="format" maxOccurs="unbounded" minOccurs="0">
+    			<complexType>
+    				<sequence>
+    					<element maxOccurs="1" minOccurs="1" name="name"
+    						type="string">
+    					</element>
+    					<element maxOccurs="1" minOccurs="0"
+    						name="description" type="string">
+    					</element>
+    					<element maxOccurs="1" minOccurs="0"
+    						name="mimetypes" type="string">
+    					</element>
+    					<element maxOccurs="1" minOccurs="0"
+    						name="extensions" type="string" />
+    					<element name="superseeds" type="string" maxOccurs="1" minOccurs="0"></element>
+    				</sequence>
+    			</complexType>
+      </element>
+    	</sequence>
+    </complexType>
+</schema>
