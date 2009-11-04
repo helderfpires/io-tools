@@ -64,6 +64,7 @@ Main features are:
 			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<inherited>true</inherited>
 			</plugin>
 			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
