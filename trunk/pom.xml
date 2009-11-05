@@ -245,8 +245,8 @@ org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launch
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<generateReleasePoms>true</generateReleasePoms>
-					<!-- install required for assembly plugin -->
 					<preparationGoals>clean install</preparationGoals>
+					<releaseProfiles>central</releaseProfiles>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -335,7 +335,7 @@ org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launch
 		</plugins>
 	</reporting>
 	<profiles>
-		<profile>
+		<!--profile>
 			<id>java.net</id>
 			<distributionManagement>
 				<repository>
@@ -395,9 +395,9 @@ org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launch
 					</plugin>
 				</plugins>
 			</build>
-		</profile>
+		</profile -->
 		<profile>
-			<id>sourceforge</id>
+			<id>central</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
