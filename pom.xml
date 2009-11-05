@@ -195,7 +195,7 @@
 						<buildOutputDirectory>bin</buildOutputDirectory>
 						<classpathContainers>
 							<classpathContainer>
-								org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5
+org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6
 							</classpathContainer>
 						</classpathContainers>
 						<downloadSources>true</downloadSources>
@@ -247,6 +247,7 @@
 					<generateReleasePoms>true</generateReleasePoms>
 					<!-- install required for assembly plugin -->
 					<preparationGoals>clean install</preparationGoals>
+					<releaseProfiles>central</releaseProfiles>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -260,12 +261,12 @@
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.2-beta-4</version>
-						<configuration>
-							<tarLongFileMode>gnu</tarLongFileMode>
-							<descriptors>
-								<descriptor>${basedir}/assembly.xml</descriptor>
-							</descriptors>
-						</configuration>
+				<configuration>
+					<tarLongFileMode>gnu</tarLongFileMode>
+					<descriptors>
+						<descriptor>${basedir}/assembly.xml</descriptor>
+					</descriptors>
+				</configuration>
 			</plugin>
 		</plugins>
 		<extensions>
@@ -321,16 +322,14 @@
 			<plugin>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<configuration>
-					<configLocation>src/config/checks.xml
-					</configLocation>
+					<configLocation>src/config/checks.xml</configLocation>
 				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<artifactId>maven-project-info-reports-plugin
-				</artifactId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</reporting>
@@ -397,7 +396,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>sourceforge</id>
+			<id>central</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
