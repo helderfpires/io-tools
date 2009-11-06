@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.sf.jsignature.io-tools</groupId>
 	<artifactId>easystream</artifactId>
-	<version>1.2.5</version>
+	<version>1.2.5-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<description>
 Small set of Java tools for dealing with streams (InputStreams and OutputStreams). 
