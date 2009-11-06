@@ -47,7 +47,7 @@ final InputStreamFromOutputStream<String> isos = new InputStreamFromOutputStream
 }
 }}}
 
-For further information read the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/InputStreamFromOutputStream.html api javadoc].
+For further information read the [http://jsignature.sourceforge.net/io-tools/easystream/apidocs/com/gc/iotools/stream/is/InputStreamFromOutputStream.html api javadoc].
 
 === !OutputStreamToInputStream ===
 Another class that you can use if you need to write to an !OutputStream and read the data written from an !InputStream is `OutputStreamToInputStream` . It works opposite way than the previous one and allow some result to be returned after the processing of the !InputStream.
@@ -85,13 +85,13 @@ String result = oStream2IStream.getResults();
 
 This class propagates the `Exception` from the internal `doRead()` to the external `OutputStream`, and closing the `oStream2IStream` `OutputStream` will cause an EOF on the `InputStream` passed as `doRead()` parameter. 
 
-For further information see the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/os/OutputStreamToInputStream.html api javadoc].
+For further information see the [http://jsignature.sourceforge.net/io-tools/easystream/apidocs/com/gc/iotools/stream/os/OutputStreamToInputStream.html api javadoc].
 
 == Statistics gathering ==
 
 Two main classes in this section: `StatsInputStream` and `StatsOutputStream`
 
-=== [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/StatsInputStream.html StatsInputStream] ===
+=== [http://jsignature.sourceforge.net/io-tools/easystream/apidocs/com/gc/iotools/stream/is/StatsInputStream.html StatsInputStream] ===
 Gathers statistics of the !InputStream passed in the constructor. It can be used to: 
  * determine the size of the read data 
  * the time spent reading from the internal !InputStream.
@@ -106,7 +106,7 @@ long size = srIstream.getSize();
 String bitRate = srIstream.getBitRateString();
 }}}
 
-=== [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/os/StatsOutputStream.html StatsOutputStream] ===
+=== [http://jsignature.sourceforge.net/io-tools/easystream/apidocs/com/gc/iotools/stream/os/StatsOutputStream.html StatsOutputStream] ===
 Gathers statistics of the !OutputStream passed in the constructor. It can be used to determine the number of bytes written or the time spent writing to the !OutputStream.
 {{{
 StatsOutputStream srStream = new StatsOutputStream(originalStream);
@@ -129,7 +129,7 @@ Adds the following functionality to another input stream:
  * the ability to be read multiple times
  * `seek()` to a random position.
  * Support the `mark` and `reset` methods.
-Caching of data is done in a [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/store/Store.html Store], so every application can choose where to store its temporary data. Default implementation cache first 64K in memory and then on disk.
+Caching of data is done in a [http://jsignature.sourceforge.net/io-tools/easystream/apidocs/com/gc/iotools/stream/store/Store.html Store], so every application can choose where to store its temporary data. Default implementation cache first 64K in memory and then on disk.
 
 How to read two times the content of a file:
 {{{
@@ -145,12 +145,12 @@ How to read two times the content of a file:
 }}}
 
 Method `mark()` and `reset()` are also supported.
-For further information read the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/RandomAccessInputStream.html api javadoc].
+For further information read the [http://jsignature.sourceforge.net/io-tools/easystream/apidocs/com/gc/iotools/stream/is/RandomAccessInputStream.html api javadoc].
 
 === !ChunkInputStream ===
 This class is useful when you have an `InputStream` and you want to filter some parts of it basing on its content without reading it into memory.
 
-For further information read the [http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/ChunkInputStream.html api javadoc].
+For further information read the [http://jsignature.sourceforge.net/io-tools/easystream/apidocs/com/gc/iotools/stream/is/ChunkInputStream.html api javadoc].
 
 === !TeeInputStreamOutputStream ===
 While data is being read from the source `InputStream` (passed in the constructor) it is also copied to the `OutputStream` passed in the constructor. The data copied are similar to the underlying `InputStream`.
