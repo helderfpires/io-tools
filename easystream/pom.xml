@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.sf.jsignature.io-tools</groupId>
 	<artifactId>easystream</artifactId>
@@ -101,4 +102,26 @@ Main features are:
 			</plugin>
 		</plugins>
 	</reporting>
+	<profiles>
+		<profile>
+			<id>central</id>
+			<activation>
+				<property>
+					<name>central</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<properties>
+				<central>true</central>
+			</properties>
+			<distributionManagement>
+				<repository>
+					<uniqueVersion>false</uniqueVersion>
+					<id>jsignature.sourceforge.repository</id>
+					<name>JSignature Repository</name>
+					<url>scp://shell.sourceforge.net/home/groups/j/js/jsignature/htdocs/maven2</url>
+				</repository>
+			</distributionManagement>
+		</profile>
+	</profiles>
 </project>
