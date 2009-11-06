@@ -397,6 +397,9 @@ org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launch
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+			<properties>
+				<central>true</central>
+			</properties>
 			<distributionManagement>
 				<repository>
 					<uniqueVersion>false</uniqueVersion>
