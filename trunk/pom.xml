@@ -3,7 +3,7 @@
 	<packaging>pom</packaging>
 	<groupId>net.sf.jsignature.io-tools</groupId>
 	<artifactId>io-tools</artifactId>
-	<version>1.2.6-SNAPSHOT</version>
+	<version>1.2.5-SNAPSHOT</version>
 	<name>IO-Toools-Parent</name>
 	<description>IO-tools utilites for stream and format detection</description>
 	<scm>
@@ -240,7 +240,8 @@ org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launch
 				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
-					<generateReleasePoms>true</generateReleasePoms>
+					<!-- problems with release profiles -->
+					<generateReleasePoms>false</generateReleasePoms>
 					<preparationGoals>clean install</preparationGoals>
 					<releaseProfiles>central</releaseProfiles>
 				</configuration>
@@ -265,16 +266,10 @@ org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launch
 			</plugin>
 		</plugins>
 		<extensions>
-			<extension>
-				<!-- to publish the website -->
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ftp</artifactId>
-				<version>1.0-beta-5</version>
-			</extension>
 			<extension> <!--to publish on sourceforge-->
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-ssh</artifactId>
-				<version>1.0-beta-4</version>
+				<version>1.0-beta-6</version>
 			</extension>
 			<extension>
 				<!-- deploy on dev.java.net -->
@@ -317,8 +312,7 @@ org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launch
 			<plugin>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<configuration>
-					<configLocation>src/config/checks.xml
-					</configLocation>
+					<configLocation>src/config/checks.xml</configLocation>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -403,7 +397,7 @@ org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launch
 			<distributionManagement>
 				<repository>
 					<uniqueVersion>false</uniqueVersion>
-					<id>jsignature.sourceforge.repository</id>
+					<id>jsignature.sourceforge.net</id>
 					<name>JSignature Repository</name>
 					<url>scp://shell.sourceforge.net/home/groups/j/js/jsignature/htdocs/maven2</url>
 				</repository>
