@@ -119,12 +119,12 @@ long size = srStream.getSize();
 == Other Stream utilities ==
 
 Other classes in this library are:
- * `[http://jsignature.sourceforge.net/io-tools/easystream/apidocs/com/gc/iotools/stream/is/RandomAccessInputStream.html RandomAccessInputStream]` allows to read the content of an `InputStream` multiple times or seek to a definite position.
+ * `RandomAccessInputStream` allows to read the content of an `InputStream` multiple times or seek to a definite position.
  * `ChunkInputStream` filter some parts of an `InputStream` basing on its content.
  * `StatsInputStream` and `StatsOutputStream`: Collects some statistics (bytes read or wrote, bandwidth...) of a given stream.
  * `TeeInputStreamOutputStream` allows to "tee" the data read from a source `InputStream` to a supplied `OutputStream`.
 
-=== !RandomAccessInputStream ===
+=== [http://jsignature.sourceforge.net/io-tools/easystream/apidocs/com/gc/iotools/stream/is/RandomAccessInputStream.html RandomAccessInputStream] ===
 Adds the following functionality to another input stream: 
  * the ability to be read multiple times
  * `seek()` to a random position.
