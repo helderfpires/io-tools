@@ -4,17 +4,13 @@
 = Stream Utilities =
 
 == Convert `OutputStream` to an `InputStream` ==
-Sometimes a library you're using writes its results to an `OutputStream` and you need to read them back from an `InputStream` for a further elaboration (you have to convert the `OutputStream` into an `InputStream`). The possibilities are: 
- * copy the data to a memory buffer (`ByteArrayOutputStream` or a circular buffer) and read it again. This is the best approach if you're sure your data fits into memory.
- * copy your data to a temporary file and read it back.
- * use pipes: this is the best approach both for memory usage and speed (you can take full advantage of the multi-core processors) and also the standard solution offered by Sun, on the other hand their use is not easy. `InputStreamFromOutputStream` and `OutputStreamToInputStream` should ease the task.
-
-These classes internally use pipes. The two ends (`PipedInputStream` and `PipedOutputStream`) must be in two different `Threads`. Easystream offer some [ExecutionModel option] for instantiating the new Threads. 
+Here i'm assuming you know it's not an easy problem, and you already are prepared to go for the hard way because the easy solutions doesn't fit your needs of performance and memory usage. If you came here at first and you don't understand why this is so complicated you can have a look at this [ConvertOutputStreamInputStream preamble].
 
 === !InputStreamFromOutputStream ===
 
 Users must extend this abstract class and implement the abstract metod `produce(OutputStream)`.
 This function is called back by the library when the `InputStreamFromOutputStream` is used. The library pass an `OutputStream` as a parameter and the user should produce its data inside the `produce()` method, and write it to the supplied `OutputStream`. The data is then available for reading through the `InputStreamFromOutputStream` class (that is an `InputSream` subclass).
+
 This is the preferred way to convert data written from an `OutputStream` into an `InputStream`, because the behaviour of the code tends to be more clear.
 
 Sample usage:
