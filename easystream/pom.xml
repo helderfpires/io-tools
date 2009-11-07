@@ -20,7 +20,7 @@ Main features are:
 		<version>1.2.6-SNAPSHOT</version>
 	</parent>
 	<name>EasyStream</name>
-	<url>http://io-tools.googlecode.com</url>
+	<url>http://code.google.com/p/io-tools/</url>
 	<inceptionYear>2008</inceptionYear>
 	<issueManagement>
 		<system>GoogleIssues</system>
@@ -101,7 +101,7 @@ Main features are:
 			</plugin>
 		</plugins>
 	</reporting>
-	<profiles>
+	<!-- profiles>
 		<profile>
 			<id>central</id>
 			<activation>
@@ -116,11 +116,11 @@ Main features are:
 			<distributionManagement>
 				<repository>
 					<uniqueVersion>false</uniqueVersion>
-					<id>jsignature.sourceforge.repository</id>
+					<id>jsignature.sourceforge.net</id>
 					<name>JSignature Repository</name>
 					<url>scp://shell.sourceforge.net/home/groups/j/js/jsignature/htdocs/maven2</url>
 				</repository>
 			</distributionManagement>
 		</profile>
-	</profiles>
+	</profiles -->
 </project>

@@ -189,10 +189,10 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 * </p>
 	 * <p>
 	 * The standard behavior is to close both the underlying
-	 * <code>InputStream</code> and <code>OutputStream</code>. When the class
-	 * was constructed with the parameter {@link TeeOutputStream#closeCalled
-	 * closeCalled} set to false the underlying streams must be closed
-	 * externally.
+	 * <code>InputStream</code> and <code>OutputStream(s)</code>. When the class
+	 * was constructed with the parameter
+	 * {@link TeeInputStreamOutputStream#closeCalled closeCalled} set to false
+	 * the underlying streams must be closed externally.
 	 * 
 	 * @throws IOException
 	 *             thrown when a IO problem occurs in reading or writing the
@@ -210,8 +210,8 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 			}
 		} catch (final IOException e) {
 			e1 = new IOException(
-					"Incomplete data was written to the destination " +
-					"OutputStream(s).");
+					"Incomplete data was written to the destination "
+							+ "OutputStream(s).");
 			e1.initCause(e);
 		}
 		if (this.closeStreams) {
