@@ -1,1 +1,9 @@
 #summary How to convert an OutputStream into an InputStream
+
+== Convert `OutputStream` to an `InputStream` ==
+Sometimes a library you're using writes its results to an `OutputStream` and you need to read them back from an `InputStream` for a further elaboration (you have to convert the `OutputStream` into an `InputStream`). The possibilities are: 
+ * copy the data to a memory buffer (`ByteArrayOutputStream` or a circular buffer) and read it again. This is the best approach if you're sure your data fits into memory.
+ * copy your data to a temporary file and read it back.
+ * use pipes: this is the best approach both for memory usage and speed (you can take full advantage of the multi-core processors) and also the standard solution offered by Sun, on the other hand their use is not easy. `InputStreamFromOutputStream` and `OutputStreamToInputStream` should ease the task.
+
+These classes internally use pipes. The two ends (`PipedInputStream` and `PipedOutputStream`) must be in two different `Threads`. Easystream offer some [ExecutionModel option] for instantiating the new Threads. 
