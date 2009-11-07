@@ -1,4 +1,5 @@
 #summary For beginners: a 5 minutes How To.
+#labels Deprecated
 
 = Stream Utilities =
 
