@@ -33,7 +33,7 @@ import com.gc.iotools.stream.base.ExecutorServiceFactory;
  * <p>
  * More detailiy it is an <code>OutputStream</code> that, when extended, allows
  * to read the data written to it from the <code>InputStream</code> inside the
- * method {@linkplain #doRead()}.
+ * method {@linkplain #doRead(InputStream)}.
  * </p>
  * <p>
  * To use this class you must extend it and implement the method
@@ -447,7 +447,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * <p>
 	 * Any exception eventually threw inside this method will be propagated to
 	 * the external <code>OutputStream</code>. When the next {@linkplain
-	 * write(byte[])} operation is called an <code>IOException</code> will be
+	 * #write(byte[])} operation is called an <code>IOException</code> will be
 	 * thrown and the original exception can be accessed calling the getCause()
 	 * method on the IOException. It will also be available by calling the
 	 * method {@link #getResults()}.

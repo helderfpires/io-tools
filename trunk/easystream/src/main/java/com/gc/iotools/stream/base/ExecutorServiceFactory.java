@@ -146,7 +146,8 @@ public final class ExecutorServiceFactory {
 	 * <p>
 	 * It is mandatory when you use this library in a container, otherwise the
 	 * container doesn't terminate gracefully (for instance you can call it in a
-	 * {@link ContextListener#shutdown()}).
+	 * web application context listener <code>ContextListener.shutdown()</code>
+	 * ).
 	 * </p>
 	 */
 	public static void shutDown() {

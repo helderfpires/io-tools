@@ -12,7 +12,7 @@
 	<packaging>jar</packaging>
 	<name>WaZFormat</name>
 	<description>Format identification utilities</description>
-	<url>http://io-tools.googlecode.com</url>
+	<url>http://code.google.com/p/io-tools/</url>
 	<inceptionYear>2008</inceptionYear>
 	<issueManagement>
 		<system>GoogleIssues</system>
@@ -112,7 +112,7 @@
 			</plugin>
 		</plugins>
 	</build>
-	<profiles>
+	<!-- profiles>
 		<profile>
 			<id>central</id>
 			<activation>
@@ -127,11 +127,11 @@
 			<distributionManagement>
 				<repository>
 					<uniqueVersion>false</uniqueVersion>
-					<id>jsignature.sourceforge.repository</id>
+					<id>jsignature.sourceforge.net</id>
 					<name>JSignature Repository</name>
 					<url>scp://shell.sourceforge.net/home/groups/j/js/jsignature/htdocs/maven2</url>
 				</repository>
 			</distributionManagement>
 		</profile>
-	</profiles>
+	</profiles-->
 </project>
