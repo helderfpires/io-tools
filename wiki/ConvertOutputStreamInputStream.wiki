@@ -1,11 +1,11 @@
-#summary How to convert an OutputStream into an InputStream
+#summary Convert an OutputStream into an InputStream
 #labels Draft
 
 = Convert `OutputStream` to an `InputStream` =
 
 If are programming using java streams, sometimes you'll find yourself in a situation in which a method creates data and writes them into an `OutputStream` and you need to use them in another method that expects to read the data from an `InputStream`.
 
-Bad news: there is no (both easy and efficient) way to get the `OutputStream` to fit the `InputStream` interface or to get the first converted into the latter. There are anyway different strategies: 
+Bad news: there is no (both easy and efficient) way to get the `OutputStream` to fit the `InputStream` interface or to get the first converted into the latter. However there are some different strategies: 
  * copy the data into a memory buffer (`ByteArrayOutputStream`) and read it again. This is the best approach if you're sure your data fits into memory.
  * copy your data to a temporary file and read it back.
  * use pipes: this is the best approach both for memory usage and speed (you can take full advantage of the multi-core processors) and also the standard solution offered by Sun.
