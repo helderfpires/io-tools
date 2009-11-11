@@ -1,9 +1,50 @@
 #summary How to convert an OutputStream into an InputStream
+#labels Draft
 
-== Convert `OutputStream` to an `InputStream` ==
-Sometimes a library you're using writes its results to an `OutputStream` and you need to read them back from an `InputStream` for a further elaboration (you have to convert the `OutputStream` into an `InputStream`). The possibilities are: 
- * copy the data to a memory buffer (`ByteArrayOutputStream` or a circular buffer) and read it again. This is the best approach if you're sure your data fits into memory.
+= Convert `OutputStream` to an `InputStream` =
+
+If are programming using java streams, sometimes you'll find yourself in a situation in which a method creates data and writes them into an `OutputStream` and you need to use them in another method that expects to read the data from an `InputStream`.
+
+Bad news: there is no (both easy and efficient) way to get the `OutputStream` to fit the `InputStream` interface or to get the first converted into the latter. There are anyway different strategies: 
+ * copy the data into a memory buffer (`ByteArrayOutputStream`) and read it again. This is the best approach if you're sure your data fits into memory.
  * copy your data to a temporary file and read it back.
- * use pipes: this is the best approach both for memory usage and speed (you can take full advantage of the multi-core processors) and also the standard solution offered by Sun, on the other hand their use is not easy. `InputStreamFromOutputStream` and `OutputStreamToInputStream` should ease the task.
+ * use pipes: this is the best approach both for memory usage and speed (you can take full advantage of the multi-core processors) and also the standard solution offered by Sun.
+ * use "circular buffers".
+ * Use `InputStreamFromOutputStream` and `OutputStreamToInputStream` from this library.
 
-These classes internally use pipes. The two ends (`PipedInputStream` and `PipedOutputStream`) must be in two different `Threads`. Easystream offer some [ExecutionModel option] for instantiating the new Threads. 
+== Copy the data into memory ==
+This is the easiest approach if your data easily fit into memory. I don't recommend this approach if the data you're reading is more than 100Mb (because it's it's not the only one object in your heap and if you're in a web application 10-15 simultaneous users can crash your jvm). 
+
+You can use this approach to read the data multiple times too:
+
+{{{
+  ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+  //write data on your OutputStream here
+  writeDataOnTheOutputStream(out);
+
+  byte[] data = out.toByteArray();
+  ByteArrayInputStream istream = new ByteArrayInputStream(data);
+  processDataFromInputStream(istream);
+  //eventually you can use it twice:
+  //processAgainDataFromInputSream(new ByteArrayInputStream(data));
+}}}
+
+== File ==
+
+== Pipes ==
+The two ends (`PipedInputStream` and `PipedOutputStream`) must be in two different `Threads`.
+
+== Circular Buffers ==
+
+== Use `InputStreamFromOutputStream` and `OutputStreamToInputStream` ==
+
+This approach has many advantages:
+
+ * These classes internally use pipes, so they have a fixed memory fingerprint (doesn't fill up your memory with data).
+ * Details of threads are hidden from the user. You don't have to deal with instantiation/start/synchronization/stop. 
+ * You can easily choose between many [ExecutionModel options] for instantiating new `Threads` (thread pool, thread per instance ...) or just don't care and get the default. 
+ * Details of pipes are hidden. No  `PipeInputStream` or `PipeOutputStream` in your code.
+ * The internal pipe size can be adjusted to fit your needs.
+
+So if you like this last approach you read the [Tutorial_EasyStream tutorial] and see how to use these classes.
