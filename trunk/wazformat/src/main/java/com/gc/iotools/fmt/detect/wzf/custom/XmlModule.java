@@ -74,14 +74,14 @@ public final class XmlModule implements DefiniteLengthModule {
 
 	}
 
-	public boolean detect(final byte[] readedBytes) {
+	public boolean detect(final byte[] readBytes) {
 		final XMLInputFactory factory = XMLInputFactory.newInstance(
 				MXParserFactory.class.getName(), XmlModule.class
 						.getClassLoader());
 		factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
 		factory.setXMLReporter(new MyReporter());
 
-		final InputStream in = new ByteArrayInputStream(readedBytes);
+		final InputStream in = new ByteArrayInputStream(readBytes);
 		boolean xmlDetected = false;
 		long currentEvent = -1;
 		try {
@@ -97,7 +97,7 @@ public final class XmlModule implements DefiniteLengthModule {
 		} catch (final XMLStreamException e) {
 			if ((e.getMessage() != null)
 					&& (e.getMessage().indexOf("end of stream") >= 0)
-					&& (readedBytes.length == XmlModule.XML_GUESS_SIZE)) {
+					&& (readBytes.length == XmlModule.XML_GUESS_SIZE)) {
 				xmlDetected = evaluateException(currentEvent);
 			} else {
 				XmlModule.LOGGER.debug("XML not detected " + e);

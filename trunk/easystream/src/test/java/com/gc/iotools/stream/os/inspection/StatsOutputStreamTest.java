@@ -1,4 +1,4 @@
-package com.gc.iotools.stream.os;
+package com.gc.iotools.stream.os.inspection;
 
 import static org.junit.Assert.*;
 
@@ -13,7 +13,7 @@ public class StatsOutputStreamTest {
 	@Before
 	public void setUp() throws Exception {
 	}
-	
+
 	@org.junit.Test
 	public void testSize() throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

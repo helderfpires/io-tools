@@ -15,12 +15,12 @@ public class StringDetectorModule implements DefiniteLengthModule {
 	private int detectLength = -1;
 	private FormatId detectedFormat;
 
-	public boolean detect(final byte[] readedBytes) {
+	public boolean detect(final byte[] readBytes) {
 		boolean result;
 		if (this.detectLength == this.byteSequence.length) {
-			result = Arrays.equals(readedBytes, this.byteSequence);
+			result = Arrays.equals(readBytes, this.byteSequence);
 		} else {
-			result = ArrayTools.indexOf(readedBytes, this.byteSequence) >= 0;
+			result = ArrayTools.indexOf(readBytes, this.byteSequence) >= 0;
 		}
 		return result;
 	}

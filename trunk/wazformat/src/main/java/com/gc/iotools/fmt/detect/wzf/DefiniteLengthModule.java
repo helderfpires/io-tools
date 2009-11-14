@@ -30,7 +30,7 @@ import com.gc.iotools.fmt.base.FormatId;
 
 public interface DefiniteLengthModule {
 
-	boolean detect(final byte[] readedBytes);
+	boolean detect(final byte[] readBytes);
 
 	FormatId getDetectedFormat();
 

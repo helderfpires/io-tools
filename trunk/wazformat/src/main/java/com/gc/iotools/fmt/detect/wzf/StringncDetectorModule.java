@@ -11,9 +11,9 @@ public class StringncDetectorModule implements DefiniteLengthModule {
 	private int detectLength = -1;
 	private FormatId detectedFormat;
 
-	public boolean detect(final byte[] readedBytes) {
+	public boolean detect(final byte[] readBytes) {
 		boolean result;
-		final String readString = new String(readedBytes);
+		final String readString = new String(readBytes);
 		final String ucaseStr = readString.toUpperCase();
 		if (this.detectLength == this.byteSequence.length()) {
 			result = this.byteSequence.equals(ucaseStr);

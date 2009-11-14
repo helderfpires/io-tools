@@ -1,16 +1,17 @@
 package com.gc.iotools.stream.is;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
+
+import com.gc.iotools.stream.utils.SlowOutputStream;
 
 public class TestInputStreamOutputStreamTee {
 	@org.junit.Test
@@ -31,23 +32,31 @@ public class TestInputStreamOutputStreamTee {
 
 	@org.junit.Test
 	public void testMultipleStreams() throws Exception {
-		final BigDocumentIstream bis = new BigDocumentIstream(131072);
+		final BigDocumentIstream bis = new BigDocumentIstream(2048);
 		final byte[] reference = IOUtils.toByteArray(bis);
 		bis.resetToBeginning();
-		final ByteArrayOutputStream bos[] = { new ByteArrayOutputStream(),
-				new ByteArrayOutputStream(), new ByteArrayOutputStream() };
+		final OutputStream bos[] = { new ByteArrayOutputStream(),
+				new ByteArrayOutputStream(),
+				new SlowOutputStream(105, new ByteArrayOutputStream()) };
 		final TeeInputStreamOutputStream teeStream = new TeeInputStreamOutputStream(
 				bis, true, bos);
 		teeStream.close();
-		for (ByteArrayOutputStream byteArrayOutputStream : bos) {
-			final byte[] result = byteArrayOutputStream.toByteArray();
+		for (OutputStream byteArrayOutputStream : bos) {
+			final byte[] result;
+			if (byteArrayOutputStream instanceof ByteArrayOutputStream) {
+				result = ((ByteArrayOutputStream) byteArrayOutputStream)
+						.toByteArray();
+			} else {
+				result = ((ByteArrayOutputStream) ((SlowOutputStream) byteArrayOutputStream)
+						.getRawStream()).toByteArray();
+			}
 			assertArrayEquals("Arrays equal", reference, result);
 		}
 		long[] wtime = teeStream.getWriteTime();
-		assertEquals("array length", 4, wtime.length);
-		// for (long l : wtime) {
-		// assertTrue("Time ["+l+"] >0",l>0);
-		// }
+		assertEquals("array length", 3, wtime.length);
+		assertTrue("Time stream 1 less 100 ms [" + wtime[0] + "]",
+				100 > wtime[0]);
+		assertTrue("Time stream 3 more 100 ms", 100 < wtime[2]);
 	}
 
 	@org.junit.Test

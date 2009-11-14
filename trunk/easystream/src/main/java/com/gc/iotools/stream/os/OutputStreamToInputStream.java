@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import com.gc.iotools.stream.base.EasyStreamConstants;
 import com.gc.iotools.stream.base.ExecutionModel;
 import com.gc.iotools.stream.base.ExecutorServiceFactory;
+import com.gc.iotools.stream.utils.LogUtils;
 
 /**
  * <p>
@@ -231,10 +232,10 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * internal thread to terminate.
 	 * </p>
 	 * 
-	 * @throws IOException
+	 * @throws IllegalStateException
 	 *             Exception thrown if pipe can't be created.
 	 */
-	public OutputStreamToInputStream() throws IOException {
+	public OutputStreamToInputStream() {
 		this(true, ExecutionModel.THREAD_PER_INSTANCE);
 	}
 
@@ -255,37 +256,85 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 *            if <code>true</code> the internal thread will be joined when
 	 *            close is invoked.
 	 * @param executionModel
-	 *            Strategy for allocating threads.
-	 * @throws IOException
+	 *            The strategy for allocating threads.
+	 * @throws IllegalStateException
 	 *             Exception thrown if pipe can't be created.
 	 */
 	public OutputStreamToInputStream(final boolean joinOnClose,
-			final ExecutionModel executionModel) throws IOException {
+			final ExecutionModel executionModel) {
 		this(joinOnClose, ExecutorServiceFactory.getExecutor(executionModel));
 	}
 
 	/**
+	 * <p>
+	 * Creates a new <code>OutputStreamToInputStream</code>. It let the user
+	 * specify the thread instantiation service and what will happen upon the
+	 * invocation of <code>close()</code> method.
+	 * </p>
+	 * <p>
+	 * If <code>joinOnClose</code> is <code>true</code> when the
+	 * <code>close()</code> method is invoked this class will wait for the
+	 * internal thread to terminate.
+	 * </p>
 	 * 
+	 * @since 1.2.6
 	 * @param joinOnClose
 	 *            if <code>true</code> the internal thread will be joined when
 	 *            close is invoked.
 	 * @param executorService
 	 *            Service for executing the internal thread.
-	 * @throws IOException
+	 * @throws IllegalStateException
 	 *             Exception thrown if pipe can't be created.
 	 */
 	public OutputStreamToInputStream(final boolean joinOnClose,
-			final ExecutorService executorService) throws IOException {
+			final ExecutorService executorService) {
+		this(joinOnClose, executorService, defaultPipeSize);
+	}
+
+	/**
+	 * <p>
+	 * Creates a new <code>OutputStreamToInputStream</code>. It let the user
+	 * specify the thread instantiation service and what will happen upon the
+	 * invocation of <code>close()</code> method.
+	 * </p>
+	 * <p>
+	 * If <code>joinOnClose</code> is <code>true</code> when the
+	 * <code>close()</code> method is invoked this class will wait for the
+	 * internal thread to terminate.
+	 * </p>
+	 * <p>
+	 * It also let the user specify the size of the pipe buffer to allocate.
+	 * </p>
+	 * 
+	 * @since 1.2.6
+	 * @param joinOnClose
+	 *            if <code>true</code> the internal thread will be joined when
+	 *            close is invoked.
+	 * @param executorService
+	 *            Service for executing the internal thread.
+	 * @param pipeBufferSize
+	 *            The size of the pipe buffer to allocate.
+	 * @throws IllegalStateException
+	 *             Exception thrown if pipe can't be created.
+	 */
+	public OutputStreamToInputStream(final boolean joinOnClose,
+			final ExecutorService executorService, final int pipeBufferSize) {
 		if (executorService == null) {
 			throw new IllegalArgumentException(
 					"executor service can't be null");
 		}
+		String callerId = LogUtils.getCaller(getClass());
 		this.pipedOs = new PipedOutputStream();
 		final PipedInputStream pipedIS = new MyPipedInputStream(
-				defaultPipeSize);
-		pipedIS.connect(this.pipedOs);
+				pipeBufferSize);
+		try {
+			pipedIS.connect(this.pipedOs);
+		} catch (IOException e) {
+			throw new IllegalStateException("Error during pipe creaton", e);
+		}
 		final DataConsumer executingProcess = new DataConsumer(pipedIS);
 		this.joinOnClose = joinOnClose;
+		LOG.debug("invoked by[{}] queued for start.", callerId);
 		this.writingResult = executorService.submit(executingProcess);
 	}
 
@@ -446,11 +495,11 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * </p>
 	 * <p>
 	 * Any exception eventually threw inside this method will be propagated to
-	 * the external <code>OutputStream</code>. When the next {@linkplain
-	 * #write(byte[])} operation is called an <code>IOException</code> will be
-	 * thrown and the original exception can be accessed calling the getCause()
-	 * method on the IOException. It will also be available by calling the
-	 * method {@link #getResults()}.
+	 * the external <code>OutputStream</code>. When the next
+	 * {@linkplain #write(byte[])} operation is called an
+	 * <code>IOException</code> will be thrown and the original exception can be
+	 * accessed calling the getCause() method on the IOException. It will also
+	 * be available by calling the method {@link #getResults()}.
 	 * </p>
 	 * 
 	 * @param istream

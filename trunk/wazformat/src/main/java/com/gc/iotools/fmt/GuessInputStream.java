@@ -12,6 +12,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.gc.iotools.fmt.base.Decoder;
 import com.gc.iotools.fmt.base.DetectionLibrary;
 import com.gc.iotools.fmt.base.FormatEnum;
@@ -41,7 +44,8 @@ import com.gc.iotools.stream.is.RandomAccessInputStream;
  */
 public class GuessInputStream extends InputStream {
 	public static final Collection<Decoder> DEFAULT_DECODERS = new HashSet<Decoder>();
-
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(GuessInputStream.class);
 	static {
 		DEFAULT_DECODERS.add(new Base64Decoder());
 		DEFAULT_DECODERS.add(new GzipDecoder());
@@ -74,7 +78,7 @@ public class GuessInputStream extends InputStream {
 	}
 
 	public static GuessInputStream getInstance(final InputStream istream,
-			final Class clazz, final String droidSignatureFile,
+			final Class<?> clazz, final String droidSignatureFile,
 			final String streamConfigFile) {
 		if ((droidSignatureFile == null) && (streamConfigFile == null)) {
 			throw new IllegalArgumentException(
@@ -235,9 +239,13 @@ public class GuessInputStream extends InputStream {
 	 */
 	@Override
 	protected void finalize() throws Throwable {
-		// double check the base stream is closed to delete any temporary file
-		// eventually left
-		this.baseStream.close();
+		if (!this.baseStream.isCloseCalled()) {
+			LOGGER.warn(this.getClass().getSimpleName()
+					+ " is being finalized but close() method has "
+					+ "not been called. Please ensure the "
+					+ "stream is correctly " + "closed before finalization.");
+			this.baseStream.close();
+		}
 	}
 
 	/**

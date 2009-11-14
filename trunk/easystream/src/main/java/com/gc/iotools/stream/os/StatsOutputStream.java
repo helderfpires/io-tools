@@ -1,14 +1,11 @@
 package com.gc.iotools.stream.os;
 
+import java.io.OutputStream;
+
 /*
  * Copyright (c) 2008,2009 Davide Simonetti.
  * This source code is released under the BSD License.
  */
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.concurrent.TimeUnit;
-
-import com.gc.iotools.stream.utils.StreamUtils;
 
 /**
  * <p>
@@ -29,118 +26,17 @@ import com.gc.iotools.stream.utils.StreamUtils;
  * {@linkplain #close()} while partial statistics are available on the fly.
  * </p>
  * 
+ * @deprecated
  * @author dvd.smnt
  * @since 1.2.1
  */
-public class StatsOutputStream extends OutputStream {
+@Deprecated
+public class StatsOutputStream extends
+		com.gc.iotools.stream.os.inspection.StatsOutputStream {
 
-	private boolean closeCalled;
-	private final OutputStream innerOs;
-	private long size = 0;
-	private long time = 0;
-
-	/**
-	 * Creates a new <code>SizeRecorderOutputStream</code> with the given
-	 * destination stream.
-	 * 
-	 * @param destination
-	 *            Destination stream where data are written.
-	 */
-	public StatsOutputStream(final OutputStream destination) {
-		this.innerOs = destination;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void close() throws IOException {
-		if (!this.closeCalled) {
-			this.closeCalled = true;
-			final long start = System.currentTimeMillis();
-			this.innerOs.close();
-			this.time += System.currentTimeMillis() - start;
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void flush() throws IOException {
-		final long start = System.currentTimeMillis();
-		this.innerOs.flush();
-		this.time += System.currentTimeMillis() - start;
-	}
-
-	/**
-	 * Returns the number of bytes written until now.
-	 * 
-	 * @return return the number of bytes written until now.
-	 */
-	public long getSize() {
-		return this.size;
-	}
-
-	/**
-	 * <p>
-	 * Returns a string representation of the writing bit rate formatted with a
-	 * convenient unit. The unit will change trying to keep not more than 3
-	 * digits.
-	 * </p>
-	 * 
-	 * @return The bitRate of the stream.
-	 * @since 1.2.2
-	 */
-	public String getBitRateString() {
-		return StreamUtils.getRateString(this.size, this.time);
-	}
-
-	/**
-	 * <p>
-	 * Returns the time spent waiting for the internal stream to write the data.
-	 * </p>
-	 * 
-	 * @param tu
-	 *            Unit to measure the time.
-	 * @return time spent in waiting.
-	 */
-	public long getTime(final TimeUnit tu) {
-		return tu.convert(this.time, TimeUnit.MILLISECONDS);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void write(final byte[] b) throws IOException {
-		final long start = System.currentTimeMillis();
-		this.innerOs.write(b);
-		this.time += System.currentTimeMillis() - start;
-		this.size += b.length;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void write(final byte[] b, final int off, final int len)
-			throws IOException {
-		final long start = System.currentTimeMillis();
-		this.innerOs.write(b, off, len);
-		this.time += System.currentTimeMillis() - start;
-		this.size += len;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void write(final int b) throws IOException {
-		final long start = System.currentTimeMillis();
-		this.innerOs.write(b);
-		this.time += System.currentTimeMillis() - start;
-		this.size++;
+	public StatsOutputStream(OutputStream destination) {
+		super(destination);
+		// TODO Auto-generated constructor stub
 	}
 
 }

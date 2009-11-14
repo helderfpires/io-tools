@@ -53,8 +53,8 @@ public class PKCS7Detector implements DefiniteLengthModule {
 
 	}
 
-	public boolean detect(final byte[] readedBytes) {
-		final InputStream buffer = new ByteArrayInputStream(readedBytes);
+	public boolean detect(final byte[] readBytes) {
+		final InputStream buffer = new ByteArrayInputStream(readBytes);
 		boolean result = false;
 		try {
 			final ASN1Reader pkcsHdrRead = new ASN1Reader(buffer);
