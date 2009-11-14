@@ -19,7 +19,7 @@ import java.io.OutputStream;
  * </p>
  * 
  * <pre>
- * 	 InputStream source=... //some data to be readed.
+ * 	 InputStream source=... //some data to be read.
  *   ByteArrayOutputStream destination1= new ByteArrayOutputStream();
  *   ByteArrayOutputStream destination2= new ByteArrayOutputStream();
  *   

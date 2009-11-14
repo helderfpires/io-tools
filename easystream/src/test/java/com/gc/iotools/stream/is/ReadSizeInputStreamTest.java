@@ -17,7 +17,7 @@ public class ReadSizeInputStreamTest {
 		final SizeReaderInputStream ris = new SizeReaderInputStream(istream,
 				true);
 		ris.read(new byte[5]);
-		assertEquals("readed size", 5, ris.getSize());
+		assertEquals("read size", 5, ris.getSize());
 		ris.close();
 		assertEquals("in the end", 30, ris.getSize());
 	}
@@ -29,7 +29,7 @@ public class ReadSizeInputStreamTest {
 		final SizeReaderInputStream ris = new SizeReaderInputStream(istream,
 				true);
 		ris.read(new byte[5]);
-		assertEquals("readed size", 5, ris.getSize());
+		assertEquals("read size", 5, ris.getSize());
 		ris.mark(50);
 		ris.read(new byte[10]);
 		assertEquals("read after mark", 15, ris.getSize());
@@ -46,7 +46,7 @@ public class ReadSizeInputStreamTest {
 		final SizeReaderInputStream ris = new SizeReaderInputStream(istream,
 				false);
 		ris.read(new byte[5]);
-		assertEquals("readed size", 5, ris.getSize());
+		assertEquals("read size", 5, ris.getSize());
 		ris.close();
 		assertEquals("in the end", 5, ris.getSize());
 	}
@@ -56,7 +56,7 @@ public class ReadSizeInputStreamTest {
 		final InputStream istream = ReadSizeInputStreamTest.class
 				.getResourceAsStream("/testFile.txt");
 		final SizeReaderInputStream ris = new SizeReaderInputStream(istream);
-		assertEquals("readed size", 0, ris.getSize());
+		assertEquals("read size", 0, ris.getSize());
 		IOUtils.copy(ris, new NullOutputStream());
 		assertEquals("in the end", 30, ris.getSize());
 	}
@@ -68,9 +68,9 @@ public class ReadSizeInputStreamTest {
 		final SizeReaderInputStream ris = new SizeReaderInputStream(istream,
 				true);
 		ris.read(new byte[5]);
-		assertEquals("readed size", 5, ris.getSize());
+		assertEquals("read size", 5, ris.getSize());
 		ris.skip(10);
-		assertEquals("readed size", 15, ris.getSize());
+		assertEquals("read size", 15, ris.getSize());
 		ris.close();
 		assertEquals("in the end", 30, ris.getSize());
 	}

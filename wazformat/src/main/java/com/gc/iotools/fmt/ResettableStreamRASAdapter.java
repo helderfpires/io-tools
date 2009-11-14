@@ -15,6 +15,7 @@ import com.gc.iotools.stream.store.ThresholdStore;
 
 public class ResettableStreamRASAdapter extends ResettableInputStream {
 	private final RandomAccessInputStream ras;
+	private boolean closeCalled = false;
 
 	public ResettableStreamRASAdapter(final InputStream source) {
 		final ThresholdStore ts = new ThresholdStore(128 * 1024);
@@ -29,7 +30,10 @@ public class ResettableStreamRASAdapter extends ResettableInputStream {
 
 	@Override
 	public void close() throws IOException {
-		this.ras.close();
+		if (!closeCalled) {
+			closeCalled = true;
+			this.ras.close();
+		}
 	}
 
 	public void enable(final boolean enable) {
@@ -39,6 +43,10 @@ public class ResettableStreamRASAdapter extends ResettableInputStream {
 
 	public Store getStore() {
 		return this.ras.getStore();
+	}
+
+	public boolean isCloseCalled() {
+		return this.closeCalled;
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package com.gc.iotools.stream.is;
+package com.gc.iotools.stream.is.inspection;
 
 import static org.junit.Assert.*;
 
@@ -14,10 +14,9 @@ public class StatsInputStreamTest {
 	public void fullReadOnClose() throws IOException {
 		final InputStream istream = StatsInputStreamTest.class
 				.getResourceAsStream("/testFile.txt");
-		final StatsInputStream ris = new StatsInputStream(istream,
-				true);
+		final StatsInputStream ris = new StatsInputStream(istream, true);
 		ris.read(new byte[5]);
-		assertEquals("readed size", 5, ris.getSize());
+		assertEquals("read size", 5, ris.getSize());
 		ris.close();
 		assertEquals("in the end", 30, ris.getSize());
 	}
@@ -26,10 +25,9 @@ public class StatsInputStreamTest {
 	public void markAndReset() throws Exception {
 		final InputStream istream = StatsInputStreamTest.class
 				.getResourceAsStream("/testFile.txt");
-		final StatsInputStream ris = new StatsInputStream(istream,
-				true);
+		final StatsInputStream ris = new StatsInputStream(istream, true);
 		ris.read(new byte[5]);
-		assertEquals("readed size", 5, ris.getSize());
+		assertEquals("read size", 5, ris.getSize());
 		ris.mark(50);
 		ris.read(new byte[10]);
 		assertEquals("read after mark", 15, ris.getSize());
@@ -43,10 +41,9 @@ public class StatsInputStreamTest {
 	public void noFullReadOnClose() throws IOException {
 		final InputStream istream = StatsInputStreamTest.class
 				.getResourceAsStream("/testFile.txt");
-		final StatsInputStream ris = new StatsInputStream(istream,
-				false);
+		final StatsInputStream ris = new StatsInputStream(istream, false);
 		ris.read(new byte[5]);
-		assertEquals("readed size", 5, ris.getSize());
+		assertEquals("read size", 5, ris.getSize());
 		ris.close();
 		assertEquals("in the end", 5, ris.getSize());
 	}
@@ -56,7 +53,7 @@ public class StatsInputStreamTest {
 		final InputStream istream = StatsInputStreamTest.class
 				.getResourceAsStream("/testFile.txt");
 		final StatsInputStream ris = new StatsInputStream(istream);
-		assertEquals("readed size", 0, ris.getSize());
+		assertEquals("read size", 0, ris.getSize());
 		IOUtils.copy(ris, new NullOutputStream());
 		assertEquals("in the end", 30, ris.getSize());
 	}
@@ -65,12 +62,11 @@ public class StatsInputStreamTest {
 	public void skip() throws Exception {
 		final InputStream istream = StatsInputStreamTest.class
 				.getResourceAsStream("/testFile.txt");
-		final StatsInputStream ris = new StatsInputStream(istream,
-				true);
+		final StatsInputStream ris = new StatsInputStream(istream, true);
 		ris.read(new byte[5]);
-		assertEquals("readed size", 5, ris.getSize());
+		assertEquals("read size", 5, ris.getSize());
 		ris.skip(10);
-		assertEquals("readed size", 15, ris.getSize());
+		assertEquals("read size", 15, ris.getSize());
 		ris.close();
 		assertEquals("in the end", 30, ris.getSize());
 	}

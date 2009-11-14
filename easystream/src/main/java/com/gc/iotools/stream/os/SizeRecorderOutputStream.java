@@ -12,12 +12,13 @@ import java.io.OutputStream;
  * <code>OutputStream</code> passed in the constructor.
  * </p>
  * 
- * Will be removed in 1.3 version.
+ * Will be removed in 1.3 version. Please use
+ * com.gc.iotools.stream.os.inspection.StatsOutputStream
  * 
  * TODO: junits
  * 
  * @deprecated
- * @see StatsOutputStream
+ * @see com.gc.iotools.stream.os.inspection.StatsOutputStream
  * @author dvd.smnt
  * @since 1.0.6
  */

@@ -73,13 +73,13 @@ public class ThresholdStorageTest {
 		assertEquals("temporary files after cleanup", 0, getTmpFileNum());
 		// still works after cleanup
 		tss.put(ref1, 0, ref1.length);
-		final byte[] readed = new byte[280];
+		final byte[] read1 = new byte[280];
 		int pos = 0;
-		while ((n = tss.get(readed, pos, (readed.length - pos))) >= 0) {
+		while ((n = tss.get(read1, pos, (read1.length - pos))) >= 0) {
 			pos += n;
 		}
 		assertEquals("read", ref1.length, pos);
-		assertArrayEquals(ref1, ArrayUtils.subarray(readed, 0, ref1.length));
+		assertArrayEquals(ref1, ArrayUtils.subarray(read, 0, ref1.length));
 	}
 
 	@Test
@@ -103,7 +103,7 @@ public class ThresholdStorageTest {
 		tss.cleanup();
 		assertEquals("temporary files after cleanup", 0, getTmpFileNum());
 	}
-	
+
 	@Test
 	public void testPutMoreThanTreshold() throws IOException {
 		final ThresholdStore tss = new ThresholdStore(50);
@@ -115,7 +115,7 @@ public class ThresholdStorageTest {
 		assertEquals("get over eof", -1, tss.get(new byte[10], 0, 10));
 		seekEqualsReference(tss, ref1);
 	}
-	
+
 	@Test
 	public void testGetPositionAcrossThreshold() throws IOException {
 		final ThresholdStore tss = new ThresholdStore(150);
@@ -124,16 +124,16 @@ public class ThresholdStorageTest {
 		r.nextBytes(ref1);
 		tss.put(ref1, 0, ref1.length);
 		tss.get(new byte[5], 0, 5);
-		//goes over threshold
+		// goes over threshold
 		tss.put(ref1, 0, ref1.length);
-		for (int i = 0; i < (ref1.length-5); i++) {
-			byte b = ref1[i+5];
+		for (int i = 0; i < (ref1.length - 5); i++) {
+			byte b = ref1[i + 5];
 			byte[] read = new byte[1];
 			tss.get(read, 0, 1);
 			assertEquals("position [" + i + "]", b, read[0]);
 		}
 	}
-	
+
 	@Test
 	public void testPutTwiceLessThanTreshold() throws IOException {
 		final ThresholdStore tss = new ThresholdStore(50);
@@ -144,6 +144,7 @@ public class ThresholdStorageTest {
 		tss.put(ref1, 0, ref1.length);
 		seekEqualsReference(tss, ArrayUtils.addAll(ref1, ref1));
 	}
+
 	private void seekEqualsReference(ThresholdStore t, byte[] reference)
 			throws IOException {
 		for (int i = 0; i < reference.length; i++) {

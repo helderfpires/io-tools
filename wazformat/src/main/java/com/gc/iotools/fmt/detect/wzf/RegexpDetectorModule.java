@@ -35,9 +35,9 @@ class RegexpDetectorModule implements DefiniteLengthModule {
 	private Pattern pattern = null;
 	private int detectLength = 1;
 
-	public boolean detect(final byte[] readedBytes) {
-		final String readed = new String(readedBytes);
-		return this.pattern.matcher(readed).matches();
+	public boolean detect(final byte[] readBytes) {
+		final String read = new String(readBytes);
+		return this.pattern.matcher(read).matches();
 	}
 
 	public FormatId getDetectedFormat() {

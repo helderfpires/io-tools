@@ -20,7 +20,7 @@ public class ChunkInputStreamTest {
 		Arrays.fill(bytes, (byte) 1);
 		chis.read(bytes, 1, bytes.length - 1);
 		final byte[] reference = new byte[] { 1, "1".getBytes()[0], 1, 1, 1 };
-		assertArrayEquals("readed buffer", reference, bytes);
+		assertArrayEquals("read buffer", reference, bytes);
 	}
 
 	@Test
@@ -38,8 +38,8 @@ public class ChunkInputStreamTest {
 		final int n1 = chis.read(new byte[5], 0, 5);
 		assertEquals("stream not initialized", -1, n1);
 		while (chis.fetchNextChunk()) {
-			final byte[] readed = IOUtils.toByteArray(chis);
-			assertArrayEquals("bytes readed", reference[i++], readed);
+			final byte[] read = IOUtils.toByteArray(chis);
+			assertArrayEquals("bytes read", reference[i++], read);
 		}
 		final ChunkInputStream chis1 = getStream("012st3en45st67en   st89",
 				"st", "en", false, false);
@@ -81,8 +81,8 @@ public class ChunkInputStreamTest {
 		final int n1 = chis.read(new byte[5], 0, 5);
 		assertEquals("stream not initialized", -1, n1);
 		while (chis.fetchNextChunk()) {
-			final byte[] readed = IOUtils.toByteArray(chis);
-			assertArrayEquals("bytes readed", reference[i++], readed);
+			final byte[] read = IOUtils.toByteArray(chis);
+			assertArrayEquals("bytes read", reference[i++], read);
 		}
 	}
 

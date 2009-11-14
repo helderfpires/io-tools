@@ -41,7 +41,7 @@ import com.gc.iotools.stream.base.EasyStreamConstants;
  * </p>
  * 
  * <pre>
- * 	 InputStream source=... //some data to be readed.
+ * 	 InputStream source=... //some data to be read.
  *   ByteArrayOutputStream destination1= new ByteArrayOutputStream();
  *   ByteArrayOutputStream destination2= new ByteArrayOutputStream();
  *   
@@ -120,7 +120,7 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 						"One of the outputstreams in the array is null");
 			}
 		}
-		this.writeTime = new long[destinations.length + 1];
+		this.writeTime = new long[destinations.length];
 		this.destinations = destinations;
 		this.closeStreams = closeStreams;
 	}

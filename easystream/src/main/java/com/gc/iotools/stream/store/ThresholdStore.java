@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Store that puts data in memory until threshold size is reach. At that point
  * data is written to the disk.
+ * 
  * @author dvd.smnt
  * @since 1.2.0
  */
@@ -58,6 +59,9 @@ public class ThresholdStore implements SeekableStore {
 			this.fileAccess = null;
 		}
 		if (this.fileStorage != null) {
+			// FileCleaningTracker ftc=new FileCleaningTracker();
+			// ftc.exitWhenFinished()
+
 			final boolean deleted = this.fileStorage.delete();
 			if (deleted) {
 				this.fileStorage = null;

@@ -1,4 +1,4 @@
-	package com.gc.iotools.stream.is;
+package com.gc.iotools.stream.is;
 
 /*
  * Copyright (c) 2008,2009 Davide Simonetti.
@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import com.gc.iotools.stream.base.EasyStreamConstants;
 import com.gc.iotools.stream.base.ExecutionModel;
 import com.gc.iotools.stream.base.ExecutorServiceFactory;
+import com.gc.iotools.stream.utils.LogUtils;
 
 /**
  * <p>
@@ -53,7 +54,7 @@ import com.gc.iotools.stream.base.ExecutorServiceFactory;
  *  try {
  *    //now you can read from the InputStream the data that was written to the 
  *    //dataSink OutputStream
- *     byte[] readed=IOUtils.toByteArray(isos);
+ *     byte[] read=IOUtils.toByteArray(isos);
  *     //Use data here
  *   } catch (final IOException e) {
  *     //Handle exception here
@@ -183,14 +184,16 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 
 	/**
 	 * Set the size for the pipe circular buffer for the newly created
-	 * <code>InputStreamFromOutputStream</code>. Default is 4096 bytes.
-	 * will be removed in 1.3.0. Use setDefaultPipeSize instead. 
-	 * @deprecated 
+	 * <code>InputStreamFromOutputStream</code>. Default is 4096 bytes. will be
+	 * removed in 1.3.0. Use setDefaultPipeSize instead.
+	 * 
+	 * @deprecated
 	 * 
 	 * @since 1.2.0
 	 * @param defaultPipeSize
 	 *            the default pipe buffer size in bytes.
 	 */
+	@Deprecated
 	public static void setDefaultBufferSize(final int defaultPipeSize) {
 		InputStreamFromOutputStream.defaultPipeSize = defaultPipeSize;
 	}
@@ -198,7 +201,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	/**
 	 * Set the size for the pipe circular buffer for the newly created
 	 * <code>InputStreamFromOutputStream</code>. Default is 4096 bytes.
-	 *  
+	 * 
 	 * @since 1.2.2
 	 * @param defaultPipeSize
 	 *            the default pipe buffer size in bytes.
@@ -265,11 +268,37 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 */
 	public InputStreamFromOutputStream(final boolean joinOnClose,
 			final ExecutorService executor) {
-		final String callerId = getCaller();
+		this(joinOnClose, executor, defaultPipeSize);
+	}
+
+	/**
+	 * <p>
+	 * It creates a <code>InputStreamFromOutputStream</code> and let the user
+	 * specify the <code>ExecutorService</code> that will execute the
+	 * {@linkplain #produce(OutputStream)} method and the pipe buffer size.
+	 * </p>
+	 * <p>
+	 * Using this method the default size is ignored.
+	 * </p>
+	 * 
+	 * @since 1.2.6
+	 * @see ExecutorService
+	 * @param executor
+	 *            Defines the ExecutorService that will allocate the the
+	 *            internal thread.
+	 * @param joinOnClose
+	 *            If <code>true</code> the {@linkplain #close()} method will
+	 *            also wait for the internal thread to finish.
+	 * @param pipeBufferSize
+	 *            The size of the pipe buffer to allocate.
+	 */
+	public InputStreamFromOutputStream(final boolean joinOnClose,
+			final ExecutorService executor, final int pipeBufferSize) {
+		final String callerId = LogUtils.getCaller(this.getClass());
 		this.joinOnClose = joinOnClose;
 		PipedOutputStream pipedOS = null;
 		try {
-			this.pipedIS = new MyPipedInputStream(defaultPipeSize);
+			this.pipedIS = new MyPipedInputStream(pipeBufferSize);
 			pipedOS = new PipedOutputStream(this.pipedIS);
 		} catch (final IOException e) {
 			throw new RuntimeException("Error during pipe creaton", e);
@@ -277,8 +306,8 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 		final Callable<T> executingCallable = new DataProducer(callerId,
 				pipedOS);
 		this.futureResult = executor.submit(executingCallable);
-		InputStreamFromOutputStream.LOG.debug("thread invoked by[" + callerId
-				+ "] queued for start.");
+		InputStreamFromOutputStream.LOG.debug(
+				"thread invoked by[{}] queued for start.", callerId);
 	}
 
 	/**
@@ -417,23 +446,6 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 			throw e1;
 
 		}
-	}
-
-	private String getCaller() {
-		final Exception exception = new Exception();
-		final StackTraceElement[] stes = exception.getStackTrace();
-		boolean found = false;
-		StackTraceElement caller = null;
-		for (int i = 0; (i < stes.length) && !found; i++) {
-			caller = stes[i];
-			found = !this.getClass().equals(caller.getClass());
-		}
-
-		final String result = getClass().getName().substring(
-				getClass().getPackage().getName().length() + 1)
-				+ "callBy:" + caller.toString();
-		InputStreamFromOutputStream.LOG.debug("OpenedBy [" + result + "]");
-		return result;
 	}
 
 	/**

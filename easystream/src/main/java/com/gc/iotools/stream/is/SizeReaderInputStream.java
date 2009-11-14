@@ -27,9 +27,13 @@ import java.io.InputStream;
  * srIstream.close();
  * long size = srIstream.getSize();
  * </pre>
+ * <p>
+ * This class is deprecated and will be removed in 1.3 release. Please use
+ * {@link com.gc.iotools.stream.is.inspection.StatsInputStream} instead
+ * </p>
  * 
  * @deprecated
- * @see StatsInputStream
+ * @see com.gc.iotools.stream.is.inspection.StatsInputStream
  * @author dvd.smnt
  * @since 1.0.6
  */
