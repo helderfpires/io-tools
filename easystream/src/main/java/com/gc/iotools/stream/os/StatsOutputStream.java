@@ -25,8 +25,11 @@ import java.io.OutputStream;
  * other parts of the application), or after invoking the method
  * {@linkplain #close()} while partial statistics are available on the fly.
  * </p>
+ * Removal scheduled in 1.3 version. Please use
+ * com.gc.iotools.stream.os.inspection.StatsOutputStream
  * 
  * @deprecated
+ * @see com.gc.iotools.stream.os.inspection.StatsOutputStream
  * @author dvd.smnt
  * @since 1.2.1
  */
