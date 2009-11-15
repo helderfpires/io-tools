@@ -14,7 +14,7 @@ import com.gc.iotools.stream.utils.LogUtils;
 /**
  * <p>
  * Detects and log useful debug informations about the stream passed in the
- * constructor, and detects wrong usage patterns:
+ * constructor, and detects wrong usage patterns.
  * </p>
  * 
  * <ul>
@@ -24,6 +24,11 @@ import com.gc.iotools.stream.utils.LogUtils;
  * <li>Missing <code>close()</code> invocation. Stream being garbage collected
  * without <code>close()</code> being called.</li>
  * </ul>
+ * <p>
+ * It normally acts as a {@link FilterInputStream} simply forwarding all the
+ * calls to the <code>InputStream</code> passed in the constructor, but also
+ * keeping track of the usage of the methods.
+ * </p>
  * 
  * <p>
  * Errors are both logged at WARN level and available through the standard class
@@ -193,7 +198,20 @@ public class DiagnosticInputStream<T extends InputStream> extends
 		return this.warnings.toArray(new String[this.warnings.size()]);
 	}
 
-	public T getRawInputStream() {
+	/**
+	 * <p>
+	 * Returns the wrapped (original) <code>InputStream</code> passed in the
+	 * constructor. Any calls made to the returned stream will not be tracked by
+	 * <code>DiagnosticInputStream</code>, so this method should be used with
+	 * care, and <code>close()</code> and <code>read()</code> methods should'nt
+	 * be called on the returned <code>InputStream</code>. Instead these methods
+	 * should be called on <code>DiagnosticInputStream</code> that simply
+	 * forwards them to the underlying stream.
+	 * </p>
+	 * 
+	 * @return The original <code>InputStream</code> passed in the constructor
+	 */
+	public T getWrappedInputStream() {
 		@SuppressWarnings("unchecked")
 		final T result = (T) super.in;
 		return result;
