@@ -16,10 +16,10 @@ public final class ArrayTools {
 	 * Find the index of the contained array in the src array.
 	 * 
 	 * @param src
-	 * 	Source array.
+	 *            Source array.
 	 * @param contained
-	 * @return
-	 * 	position of the contained array or -1 if not found.
+	 *            Array to search for.
+	 * @return position of the contained array or -1 if not found.
 	 */
 	public static int indexOf(final byte[] src, final byte[] contained) {
 		if (src == null) {

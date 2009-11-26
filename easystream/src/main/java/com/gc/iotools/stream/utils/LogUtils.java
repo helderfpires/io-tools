@@ -7,9 +7,6 @@ package com.gc.iotools.stream.utils;
  * @since 1.0.9
  */
 public final class LogUtils {
-	private LogUtils() {
-	}
-
 	/**
 	 * Returns the caller of the class passed as an argument. Useful for
 	 * logging.
@@ -18,24 +15,23 @@ public final class LogUtils {
 	 *            The current class
 	 * @return The class name up one level in the stack.
 	 */
-	public static String getCaller(Class<?> clazz) {
+	public static String getCaller(final Class<?> clazz) {
 		return getCaller(clazz, 1);
 	}
 
 	/**
-	 * Returns the caller stack of the class passed as an argument.
-	 * 
-	 * Useful for logging.
+	 * Returns the caller stack of the class passed as an argument. Useful for
+	 * logging.
 	 * 
 	 * @since 1.2.6
 	 * @param nframes
 	 *            Number of stack frames to log out.
-	 * @param clazz
+	 * @param me
 	 *            The current class
 	 * @return All the class names, methods and line numbers up nframes level in
 	 *         the stack.
 	 */
-	public static String getCaller(Class<?> me, int nframes) {
+	public static String getCaller(final Class<?> me, final int nframes) {
 		final StackTraceElement[] stes = Thread.currentThread()
 				.getStackTrace();
 		boolean foundCaller = false;
@@ -71,5 +67,8 @@ public final class LogUtils {
 			result = resBuffer.toString();
 		}
 		return result;
+	}
+
+	private LogUtils() {
 	}
 }

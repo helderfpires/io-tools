@@ -24,9 +24,9 @@ import java.io.InputStream;
  */
 public abstract class AbstractInputStreamWrapper extends InputStream {
 
-	protected final InputStream source;
-
 	protected boolean closeCalled;
+
+	protected final InputStream source;
 
 	protected AbstractInputStreamWrapper(final InputStream source) {
 		if (source == null) {
@@ -36,6 +36,22 @@ public abstract class AbstractInputStreamWrapper extends InputStream {
 		this.source = source;
 	}
 
+	private void checkReadArguments(final byte[] b, final int off,
+			final int len) {
+		if (b == null) {
+			throw new NullPointerException(
+					"Buffer for read(b,off,len) is null");
+		} else if (off < 0) {
+			throw new IndexOutOfBoundsException(
+					"read(b,off,len) called with off < 0 ");
+		} else if ((off > b.length) || (len < 0) || ((off + len) > b.length)
+				|| ((off + len) < 0)) {
+			throw new IndexOutOfBoundsException();
+		} else if (this.closeCalled) {
+			throw new IllegalStateException("Stream already closed");
+		}
+	}
+
 	@Override
 	public void close() throws IOException {
 		if (!this.closeCalled) {
@@ -43,6 +59,8 @@ public abstract class AbstractInputStreamWrapper extends InputStream {
 			closeOnce();
 		}
 	}
+
+	protected abstract void closeOnce() throws IOException;
 
 	protected abstract int innerRead(byte[] b, int off, int len)
 			throws IOException;
@@ -84,22 +102,4 @@ public abstract class AbstractInputStreamWrapper extends InputStream {
 		}
 		return curPos;
 	}
-
-	private void checkReadArguments(final byte[] b, final int off,
-			final int len) {
-		if (b == null) {
-			throw new NullPointerException(
-					"Buffer for read(b,off,len) is null");
-		} else if (off < 0) {
-			throw new IndexOutOfBoundsException(
-					"read(b,off,len) called with off < 0 ");
-		} else if ((off > b.length) || (len < 0) || ((off + len) > b.length)
-				|| ((off + len) < 0)) {
-			throw new IndexOutOfBoundsException();
-		} else if (this.closeCalled) {
-			throw new IllegalStateException("Stream already closed");
-		}
-	}
-
-	protected abstract void closeOnce() throws IOException;
 }

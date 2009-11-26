@@ -16,7 +16,6 @@ import com.gc.iotools.stream.utils.LogUtils;
  * Detects and log useful debug informations about the stream passed in the
  * constructor, and detects wrong usage patterns.
  * </p>
- * 
  * <ul>
  * <li><code>InputStream</code> methods accessed after invocation of
  * <code>close()</code>.</li>
@@ -29,7 +28,6 @@ import com.gc.iotools.stream.utils.LogUtils;
  * calls to the <code>InputStream</code> passed in the constructor, but also
  * keeping track of the usage of the methods.
  * </p>
- * 
  * <p>
  * Errors are both logged at WARN level and available through the standard class
  * interface. Future version will allow the customization of this behavior
@@ -53,8 +51,8 @@ import com.gc.iotools.stream.utils.LogUtils;
  * &#064;org.junit.Test
  * public void testWarnDoubleClose() throws Exception {
  *  InputStream myTestData = ....
- *  DiagnosticInputStream&lt;InputStream&gt; diagIs = new DiagnosticInputStream&lt;InputStream&gt;(
- * 			myTestData);
+ *  DiagnosticInputStream&lt;InputStream&gt; diagIs = 
+ *  	    new DiagnosticInputStream&lt;InputStream&gt;(myTestData);
  *  //The class and the method under test
  *  MyClassUnderTest.myMethodUnderTest(diagIs);
  *  final String[] instanceWarnings = diagIs.getInstanceWarnings();
@@ -74,7 +72,8 @@ import com.gc.iotools.stream.utils.LogUtils;
  * 
  * @since 1.2.6
  * @author dvd.msnt
- * 
+ * @param <T>
+ *            Type of the wrapped (contained)<code>InputStream</code>.
  */
 public class DiagnosticInputStream<T extends InputStream> extends
 		FilterInputStream {
@@ -107,7 +106,6 @@ public class DiagnosticInputStream<T extends InputStream> extends
 	private final Collection<String> warnings = new ArrayList<String>();
 
 	/**
-	 * 
 	 * @param in
 	 *            the source InputStream.
 	 */
@@ -116,7 +114,6 @@ public class DiagnosticInputStream<T extends InputStream> extends
 	}
 
 	/**
-	 * 
 	 * @param inputStream
 	 *            the source InputStream
 	 * @param logDepth
@@ -137,16 +134,36 @@ public class DiagnosticInputStream<T extends InputStream> extends
 		this.constructorTrace = LogUtils.getCaller(getClass(), logDepth);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int available() throws IOException {
 		checkCloseInvoked("available");
 		return super.available();
 	}
 
+	private void checkCloseInvoked(final String methodName) {
+		if (this.closeCount > 0) {
+			this.methodCalledAfterClose = true;
+			String warning = "ALREADY_CLOSED: ["
+					+ methodName
+					+ "] called by ["
+					+ LogUtils.getCaller(DiagnosticInputStream.class,
+							this.logDepth) + "]";
+			this.warnings.add(warning);
+			LOGGER.warn(warning + "but the stream was already closed by ["
+					+ this.closeTrace + "]");
+		}
+	}
+
 	public void clearInstanceWarnings() {
 		this.warnings.clear();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void close() throws IOException {
 		if (this.closeCount == 0) {
@@ -190,31 +207,22 @@ public class DiagnosticInputStream<T extends InputStream> extends
 		}
 	}
 
+	/**
+	 * Returns the number of times that close was called on this stream.
+	 * 
+	 * @return number of times that close was called on this stream.
+	 */
 	public int getCloseCount() {
 		return this.closeCount;
 	}
 
-	public String[] getInstanceWarnings() {
-		return this.warnings.toArray(new String[this.warnings.size()]);
+	private String getConstructorCallerMethod() {
+		return this.constructorTrace.substring(this.constructorTrace
+				.indexOf('.') + 1, this.constructorTrace.indexOf(':'));
 	}
 
-	/**
-	 * <p>
-	 * Returns the wrapped (original) <code>InputStream</code> passed in the
-	 * constructor. Any calls made to the returned stream will not be tracked by
-	 * <code>DiagnosticInputStream</code>, so this method should be used with
-	 * care, and <code>close()</code> and <code>read()</code> methods should'nt
-	 * be called on the returned <code>InputStream</code>. Instead these methods
-	 * should be called on <code>DiagnosticInputStream</code> that simply
-	 * forwards them to the underlying stream.
-	 * </p>
-	 * 
-	 * @return The original <code>InputStream</code> passed in the constructor
-	 */
-	public T getWrappedInputStream() {
-		@SuppressWarnings("unchecked")
-		final T result = (T) super.in;
-		return result;
+	public String[] getInstanceWarnings() {
+		return this.warnings.toArray(new String[this.warnings.size()]);
 	}
 
 	/**
@@ -248,34 +256,68 @@ public class DiagnosticInputStream<T extends InputStream> extends
 		return result;
 	}
 
+	/**
+	 * <p>
+	 * Returns the wrapped (original) <code>InputStream</code> passed in the
+	 * constructor. Any calls made to the returned stream will not be tracked by
+	 * <code>DiagnosticInputStream</code>, so this method should be used with
+	 * care, and <code>close()</code> and <code>read()</code> methods should'nt
+	 * be called on the returned <code>InputStream</code>. Instead these methods
+	 * should be called on <code>DiagnosticInputStream</code> that simply
+	 * forwards them to the underlying stream.
+	 * </p>
+	 * 
+	 * @return The original <code>InputStream</code> passed in the constructor
+	 */
+	public T getWrappedInputStream() {
+		@SuppressWarnings("unchecked")
+		final T result = (T) super.in;
+		return result;
+	}
+
 	public boolean isMethodCalledAfterClose() {
 		return this.methodCalledAfterClose;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public synchronized void mark(final int readlimit) {
 		checkCloseInvoked("mark");
 		super.mark(readlimit);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean markSupported() {
 		checkCloseInvoked("markSupported");
 		return super.markSupported();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int read() throws IOException {
 		checkCloseInvoked("read()");
 		return super.read();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int read(final byte[] b) throws IOException {
 		checkCloseInvoked("read(byte[])");
 		return super.read(b);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int read(final byte[] b, final int off, final int len)
 			throws IOException {
@@ -283,34 +325,21 @@ public class DiagnosticInputStream<T extends InputStream> extends
 		return super.read(b, off, len);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public synchronized void reset() throws IOException {
 		checkCloseInvoked("reset");
 		super.reset();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public long skip(final long n) throws IOException {
 		checkCloseInvoked("skip");
 		return super.skip(n);
-	}
-
-	private void checkCloseInvoked(final String methodName) {
-		if (this.closeCount > 0) {
-			this.methodCalledAfterClose = true;
-			String warning = "ALREADY_CLOSED: ["
-					+ methodName
-					+ "] called by ["
-					+ LogUtils.getCaller(DiagnosticInputStream.class,
-							this.logDepth) + "]";
-			this.warnings.add(warning);
-			LOGGER.warn(warning + "but the stream was already closed by ["
-					+ this.closeTrace + "]");
-		}
-	}
-
-	private String getConstructorCallerMethod() {
-		return this.constructorTrace.substring(this.constructorTrace
-				.indexOf('.') + 1, this.constructorTrace.indexOf(':'));
 	}
 }

@@ -1,12 +1,14 @@
 package com.gc.iotools.stream.utils;
 
 /*
- * Copyright (c) 2008,2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008,2009 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
+
+import com.gc.iotools.stream.base.EasyStreamConstants;
 
 /**
  * General utilities for handling streams.
@@ -15,7 +17,7 @@ import java.text.DecimalFormat;
  * @since 1.0.9
  */
 public final class StreamUtils {
-	private static final int KB = 1024;
+	private static final double ONE_THOUSAND = 1000D;
 
 	/**
 	 * Returns a string representing the transfer rate. The unit is chosen
@@ -31,12 +33,15 @@ public final class StreamUtils {
 	public static String getRateString(final long bytes,
 			final long milliseconds) {
 		final String[] units = new String[] { "Byte", "KB", "MB", "GB" };
-		final double bytesSec = (bytes * 1000D) / milliseconds;
+		final double bytesSec = (bytes * StreamUtils.ONE_THOUSAND)
+				/ milliseconds;
 		// log1024(bytesSec)
-		final double idx = Math.log(bytesSec) / Math.log(KB);
+		final double idx = Math.log(bytesSec)
+				/ Math.log(EasyStreamConstants.ONE_KILOBYTE);
 		final int intIdx = Math.max(0, Math.min((int) Math.floor(idx),
 				units.length - 1));
-		final double reducedRate = bytesSec / Math.pow(KB, intIdx);
+		final double reducedRate = bytesSec
+				/ Math.pow(EasyStreamConstants.ONE_KILOBYTE, intIdx);
 		final DecimalFormat df = new DecimalFormat();
 		final int ndigit = (int) Math.floor(Math.max(Math.log10(reducedRate),
 				0));
@@ -52,8 +57,8 @@ public final class StreamUtils {
 	 * place them into the returned byte array.
 	 * </p>
 	 * <p>
-	 * This utility ensures that either <code>size</code> bytes are read or the
-	 * end of the stream has been reached.
+	 * This utility ensures that either <code>size</code> bytes are read or
+	 * the end of the stream has been reached.
 	 * 
 	 * @param source
 	 *            Stream from which the data is read.
@@ -62,9 +67,9 @@ public final class StreamUtils {
 	 * @return byte[] containing the data read from the stream.
 	 *         <code>null</code> if the End Of File has been reached.
 	 * @exception IOException
-	 *                If the first byte cannot be read for any reason other than
-	 *                end of file, or if the input stream has been closed, or if
-	 *                some other I/O error occurs.
+	 *                If the first byte cannot be read for any reason other
+	 *                than end of file, or if the input stream has been
+	 *                closed, or if some other I/O error occurs.
 	 * @since 1.0.9
 	 */
 	public static byte[] read(final InputStream source, final int size)
@@ -94,7 +99,6 @@ public final class StreamUtils {
 	 * </p>
 	 * 
 	 * @see InputStream#read(byte[] buf,int off, int len)
-	 * 
 	 * @param source
 	 *            Stream from which the data is read.
 	 * @param buffer
@@ -104,22 +108,19 @@ public final class StreamUtils {
 	 *            data is written.
 	 * @param len
 	 *            maximum length of the bytes read.
-	 * 
 	 * @return the total number of bytes read into the buffer, or
 	 *         <code>-1</code> if there is no more data because the end of the
 	 *         stream has been reached.
-	 * 
 	 * @throws IOException
 	 *             If the first byte cannot be read for any reason other than
 	 *             end of file, or if the input stream has been closed, or if
 	 *             some other I/O error occurs.
-	 * @exception NullPointerException
-	 *                If <code>b</code> is <code>null</code>.
-	 * @exception IndexOutOfBoundsException
-	 *                If <code>off</code> is negative, <code>len</code> is
-	 *                negative, or <code>len</code> is greater than
-	 *                <code>b.length - off</code>
-	 * 
+	 * @throws NullPointerException
+	 *             If <code>b</code> is <code>null</code>.
+	 * @throws IndexOutOfBoundsException
+	 *             If <code>off</code> is negative, <code>len</code> is
+	 *             negative, or <code>len</code> is greater than
+	 *             <code>b.length - off</code>
 	 * @since 1.0.8
 	 */
 	public static int tryReadFully(final InputStream source,

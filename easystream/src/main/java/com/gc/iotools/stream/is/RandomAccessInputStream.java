@@ -1,8 +1,8 @@
 package com.gc.iotools.stream.is;
 
 /*
- * Copyright (c) 2008,2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008,2009 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,17 +21,17 @@ import com.gc.iotools.stream.store.ThresholdStore;
  * </p>
  * <p>
  * When the <code>RandomAccessInputStream</code> is created, an internal
- * {@linkplain Store} is created. As bytes from the stream are read or skipped,
- * the internal <code>store</code> is refilled as necessary from the source
- * input stream. The implementation of <code>store</code> can be changed to fit
- * the application needs: cache on disk rather than in memory. The default
- * <code>store</code> implementation caches 64K in memory and then write the
- * content on disk.
+ * {@linkplain Store} is created. As bytes from the stream are read or
+ * skipped, the internal <code>store</code> is refilled as necessary from the
+ * source input stream. The implementation of <code>store</code> can be
+ * changed to fit the application needs: cache on disk rather than in memory.
+ * The default <code>store</code> implementation caches 64K in memory and then
+ * write the content on disk.
  * </p>
  * <p>
- * It also adds the functionality of marking an <code>InputStream</code> without
- * specifying a mark length, thus allowing a <code>reset</code> after an
- * indefinite length of bytes has been read. Check the {@link #mark(int))}
+ * It also adds the functionality of marking an <code>InputStream</code>
+ * without specifying a mark length, thus allowing a <code>reset</code> after
+ * an indefinite length of bytes has been read. Check the {@link #mark(int))}
  * javadoc for details.
  * </p>
  * 
@@ -46,22 +46,24 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	 */
 	public static final int DEFAULT_DISK_TRHESHOLD = 32768 * 2;
 	/**
-	 * Position of reading in the source stream.
+	 * Store where data is kept.
 	 */
-	protected long sourcePosition = 0;
+	private Store store;
+	protected long markLimit = 0;
+	/**
+	 * Position in the stream when the mark() was issued.
+	 */
+	protected long markPosition = 0;
 	/**
 	 * Position of read cursor in the RandomAccessInputStream.
 	 */
 	protected long randomAccessIsPosition = 0;
-	protected long markPosition = 0;
-	protected long markLimit = 0;
 	/**
-	 * Store where data is kept.
+	 * Position of reading in the source stream.
 	 */
-	private Store store;
+	protected long sourcePosition = 0;
 
 	/**
-	 * 
 	 * @param source
 	 *            The underlying input stream.
 	 */
@@ -93,8 +95,6 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	}
 
 	/**
-	 * 
-	 * 
 	 * @param source
 	 *            The underlying input stream.
 	 * @param store
@@ -118,6 +118,12 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 				Integer.MAX_VALUE);
 	}
 
+	@Override
+	protected void closeOnce() throws IOException {
+		this.store.cleanup();
+		this.source.close();
+	}
+
 	/**
 	 * Return the underlying store where the cache of data is kept.
 	 * 
@@ -127,11 +133,52 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 		return this.store;
 	}
 
+	@Override
+	protected int innerRead(final byte[] b, final int off, final int len)
+			throws IOException {
+		int n;
+		if (this.sourcePosition == this.randomAccessIsPosition) {
+			// source and external same position so read from source.
+			n = super.source.read(b, off, len);
+			if (n > 0) {
+				this.sourcePosition += n;
+				this.randomAccessIsPosition += n;
+				this.store.put(b, off, n);
+			}
+		} else if (this.randomAccessIsPosition < this.sourcePosition) {
+			// resetIS has been called. Read from buffer;n
+			final int efflen = (int) Math.min(len, this.sourcePosition
+					- this.randomAccessIsPosition);
+			n = this.store.get(b, off, efflen);
+			if (n <= 0) {
+				throw new IllegalStateException(
+						"Problem reading from buffer. Expecting bytes ["
+								+ efflen + "] but buffer is empty.");
+			}
+			this.randomAccessIsPosition += n;
+		} else {
+			/*
+			 * shouldn't be here. refactor throw exception
+			 * randomAccessIsPosition > sourcePosition. A reset() was called
+			 * on the StorageBufInputStream. just read from source don't
+			 * buffer.
+			 */
+			// final int efflen = (int) Math.min(len,
+			// this.randomAccessIsPosition - this.sourcePosition);
+			// n = this.source.read(b, off, efflen);
+			// this.sourcePosition += Math.max(n, 0);
+			throw new IllegalStateException("randomAccessIsPosition["
+					+ this.randomAccessIsPosition + "] > sourcePosition["
+					+ this.sourcePosition + "]");
+		}
+		return n;
+	}
+
 	/**
 	 * <p>
-	 * Marks the current position in this input stream. A subsequent call to the
-	 * {@linkplain #reset()} method repositions this stream at the last marked
-	 * position so that subsequent reads re-read the same bytes.
+	 * Marks the current position in this input stream. A subsequent call to
+	 * the {@linkplain #reset()} method repositions this stream at the last
+	 * marked position so that subsequent reads re-read the same bytes.
 	 *</p>
 	 * <p>
 	 * This method extends the original behavior of the class
@@ -140,8 +187,8 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	 * <li><code>readLimit&gt; 0</code> The <code>readLimit</code> arguments
 	 * tells this input stream to allow that many bytes to be read before the
 	 * mark position gets invalidated.</li>
-	 * <li><code>readLimit == 0</code> Invalidate the all the current marks and
-	 * clean up the temporary files.</li>
+	 * <li><code>readLimit == 0</code> Invalidate the all the current marks
+	 * and clean up the temporary files.</li>
 	 * <li><code>readLimit &lt; 0 </code> Set up an indefinite mark: reset can
 	 * be invoked regardless on how many bytes have been read.</li>
 	 * </ul>
@@ -149,9 +196,8 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	 * 
 	 * @param readLimit
 	 *            the maximum limit of bytes that can be read before the mark
-	 *            position becomes invalid. If negative allows <i>indefinite</i>
-	 *            marking (the mark never becomes invalid).
-	 * 
+	 *            position becomes invalid. If negative allows
+	 *            <i>indefinite</i> marking (the mark never becomes invalid).
 	 * @see RandomAccessInputStream#reset()
 	 * @see java.io.InputStream#reset()
 	 */
@@ -175,17 +221,17 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 
 	/**
 	 * <p>
-	 * Repositions this stream to the position at the time the <code>mark</code>
-	 * method was last called on this input stream.
+	 * Repositions this stream to the position at the time the
+	 * <code>mark</code> method was last called on this input stream.
 	 * </p>
 	 * <p>
-	 * After invoking <code>mark</code> it can be invoked multiple times and it
-	 * always reset the stream at the previously marked position.
+	 * After invoking <code>mark</code> it can be invoked multiple times and
+	 * it always reset the stream at the previously marked position.
 	 * </p>
 	 * 
 	 * @exception IOException
-	 *                if this stream has not been marked or if the mark has been
-	 *                invalidated.
+	 *                if this stream has not been marked or if the mark has
+	 *                been invalidated.
 	 * @see RandomAccessInputStream#mark(int)
 	 * @see java.io.InputStream#reset()
 	 */
@@ -234,8 +280,8 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	}
 
 	/**
-	 * Provides a String representation of the state of the stream for debugging
-	 * purposes.
+	 * Provides a String representation of the state of the stream for
+	 * debugging purposes.
 	 * 
 	 * @return String that represent the state.
 	 */
@@ -244,52 +290,6 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 		return this.getClass().getSimpleName() + "[randomAccPos="
 				+ this.randomAccessIsPosition + ",srcPos="
 				+ this.sourcePosition + ", store=" + this.store + "]";
-	}
-
-	@Override
-	protected void closeOnce() throws IOException {
-		this.store.cleanup();
-		this.source.close();
-	}
-
-	@Override
-	protected int innerRead(final byte[] b, final int off, final int len)
-			throws IOException {
-		int n;
-		if (this.sourcePosition == this.randomAccessIsPosition) {
-			// source and external same position so read from source.
-			n = super.source.read(b, off, len);
-			if (n > 0) {
-				this.sourcePosition += n;
-				this.randomAccessIsPosition += n;
-				this.store.put(b, off, n);
-			}
-		} else if (this.randomAccessIsPosition < this.sourcePosition) {
-			// resetIS has been called. Read from buffer;n
-			final int efflen = (int) Math.min(len, this.sourcePosition
-					- this.randomAccessIsPosition);
-			n = this.store.get(b, off, efflen);
-			if (n <= 0) {
-				throw new IllegalStateException(
-						"Problem reading from buffer. Expecting bytes ["
-								+ efflen + "] but buffer is empty.");
-			}
-			this.randomAccessIsPosition += n;
-		} else {
-			/*
-			 * shouldn't be here. refactor throw exception
-			 * randomAccessIsPosition > sourcePosition. A reset() was called on
-			 * the StorageBufInputStream. just read from source don't buffer.
-			 */
-			// final int efflen = (int) Math.min(len,
-			// this.randomAccessIsPosition - this.sourcePosition);
-			// n = this.source.read(b, off, efflen);
-			// this.sourcePosition += Math.max(n, 0);
-			throw new IllegalStateException("randomAccessIsPosition["
-					+ this.randomAccessIsPosition + "] > sourcePosition["
-					+ this.sourcePosition + "]");
-		}
-		return n;
 	}
 
 }

@@ -38,15 +38,15 @@ public class TeeOutputStream extends OutputStream {
 	private final long[] writeTime;
 
 	/**
-	 * The destination <code>OutputStream(s)</code> where data is written.
-	 */
-	protected final OutputStream[] destinations;
-	/**
 	 * <code>True</code> when {@link #close()} is invoked. Prevents data from
 	 * being written to the destination <code>OutputStream(s)</code> after
 	 * {@link #close()} has been invoked.
 	 */
 	protected boolean closeCalled = false;
+	/**
+	 * The destination <code>OutputStream(s)</code> where data is written.
+	 */
+	protected final OutputStream[] destinations;
 
 	/**
 	 * <p>
@@ -64,6 +64,12 @@ public class TeeOutputStream extends OutputStream {
 	 *            all the <code>destinations</code>.
 	 */
 	public TeeOutputStream(final OutputStream... destinations) {
+		checkDestinations(destinations);
+		this.writeTime = new long[destinations.length];
+		this.destinations = destinations;
+	}
+
+	private void checkDestinations(final OutputStream... destinations) {
 		if (destinations == null) {
 			throw new IllegalArgumentException(
 					"Destinations OutputStream can't be null");
@@ -78,8 +84,6 @@ public class TeeOutputStream extends OutputStream {
 						"One of the outputstreams in the array is null");
 			}
 		}
-		this.writeTime = new long[destinations.length];
-		this.destinations = destinations;
 	}
 
 	/**
@@ -195,7 +199,7 @@ public class TeeOutputStream extends OutputStream {
 				this.size++;
 				this.writeTime[i] += System.currentTimeMillis() - start;
 			}
-			this.size ++;
+			this.size++;
 		}
 	}
 }

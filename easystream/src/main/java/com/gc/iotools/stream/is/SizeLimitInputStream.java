@@ -19,6 +19,13 @@ public class SizeLimitInputStream extends InputStream {
 
 	private boolean closed = false;
 	/**
+	 * The number of bytes that have been read from the {@link #in} stream. Read
+	 * methods should check to ensure that currentPosition never exceeds
+	 * {@link #maxSize}.
+	 */
+	protected long currentPosition = 0;
+
+	/**
 	 * The underlying stream from which data are read. All methods are forwarded
 	 * to it, after checking that the {@linkplain #maxSize} size that hasn't
 	 * been reached.
@@ -27,26 +34,19 @@ public class SizeLimitInputStream extends InputStream {
 	protected InputStream in;
 
 	/**
+	 * The position in the stream when {@linkplain #mark} was called. It's used
+	 * to reset the current position when {@linkplain #reset} is called.
+	 * 
+	 */
+	protected long markPosition = 0;
+
+	/**
 	 * The number of bytes to read at most from the {@link #in} stream. Read
 	 * methods should check to ensure that the number of bytes read never
 	 * exceeds maxSize.
 	 * 
 	 */
 	protected final long maxSize;
-
-	/**
-	 * The number of bytes that have been read from the {@link #in} stream. Read
-	 * methods should check to ensure that currentPosition never exceeds
-	 * {@link #maxSize}.
-	 */
-	protected long currentPosition = 0;
-
-	/**
-	 * The position in the stream when {@linkplain #mark} was called. It's used
-	 * to reset the current position when {@linkplain #reset} is called.
-	 * 
-	 */
-	protected long markPosition = 0;
 
 	/**
 	 * <p>

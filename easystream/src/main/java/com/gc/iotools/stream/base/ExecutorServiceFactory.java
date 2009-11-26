@@ -102,6 +102,20 @@ public final class ExecutorServiceFactory {
 
 	/**
 	 * <p>
+	 * Call this method to initialize the <code>ExecutorService</code> that is
+	 * used in <code>STATIC_THREAD_POOL</code> execution mode.
+	 * </p>
+	 * 
+	 * @see ExecutionModel#STATIC_THREAD_POOL
+	 * @see #setDefaultThreadPoolExecutor(ExecutorService)
+	 */
+	public static void init() {
+		setDefaultThreadPoolExecutor(new ThreadPoolExecutor(0, 20, 5,
+				TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(500)));
+	}
+
+	/**
+	 * <p>
 	 * Sets the default ExecutorService returned when this class is invoked with
 	 * {@link ExecutionModel#STATIC_THREAD_POOL}.
 	 * </p>
@@ -119,27 +133,6 @@ public final class ExecutorServiceFactory {
 	}
 
 	/**
-	 * Users should not instantiate this class directly.
-	 */
-	private ExecutorServiceFactory() {
-
-	}
-
-	/**
-	 * <p>
-	 * Call this method to initialize the <code>ExecutorService</code> that is
-	 * used in <code>STATIC_THREAD_POOL</code> execution mode.
-	 * </p>
-	 * 
-	 * @see ExecutionModel#STATIC_THREAD_POOL
-	 * @see #setDefaultThreadPoolExecutor(ExecutorService)
-	 */
-	public static void init() {
-		setDefaultThreadPoolExecutor(new ThreadPoolExecutor(0, 20, 5,
-				TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(500)));
-	}
-
-	/**
 	 * <p>
 	 * Call this method to finalize the execution queue.
 	 * </p>
@@ -152,5 +145,12 @@ public final class ExecutorServiceFactory {
 	 */
 	public static void shutDown() {
 		executor.shutdown();
+	}
+
+	/**
+	 * Users should not instantiate this class directly.
+	 */
+	private ExecutorServiceFactory() {
+
 	}
 }

@@ -13,11 +13,17 @@ package com.gc.iotools.stream.base;
  * 
  * @author dvd.smnt
  * @since 1.0
- * @see #com.gc.iotools.stream.is.InputStreamFromOutputStream
- * @see #com.gc.iotools.stream.os.OutputStreamToInputStream
+ * @see #com
+ * @see #com
  */
 
 public enum ExecutionModel {
+	/**
+	 * <p>
+	 * Only one thread is shared by all instances (slow).
+	 * </p>
+	 */
+	SINGLE_THREAD,
 	/**
 	 * <p>
 	 * Threads are taken from a static pool.
@@ -38,11 +44,5 @@ public enum ExecutionModel {
 	 * threads leaks.
 	 * </p>
 	 */
-	THREAD_PER_INSTANCE,
-	/**
-	 * <p>
-	 * Only one thread is shared by all instances (slow).
-	 * </p>
-	 */
-	SINGLE_THREAD
+	THREAD_PER_INSTANCE
 }
