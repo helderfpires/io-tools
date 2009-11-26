@@ -76,6 +76,14 @@ public class ThresholdStore implements SeekableStore {
 		}
 	}
 
+	/**
+	 * Clean up the temporary files eventually open.
+	 */
+	@Override
+	protected void finalize() throws Throwable {
+		cleanup();
+	}
+
 	public int get(final byte[] bytes, final int offset, final int length)
 			throws IOException {
 		int result;
@@ -185,13 +193,5 @@ public class ThresholdStore implements SeekableStore {
 			}
 		}
 		return str + "]";
-	}
-
-	/**
-	 * Clean up the temporary files eventually open.
-	 */
-	@Override
-	protected void finalize() throws Throwable {
-		cleanup();
 	}
 }

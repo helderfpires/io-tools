@@ -1,13 +1,16 @@
 package com.gc.iotools.stream.is.inspection;
 
 /*
- * Copyright (c) 2008,2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008,2009 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.gc.iotools.stream.base.EasyStreamConstants;
 import com.gc.iotools.stream.utils.StreamUtils;
@@ -22,8 +25,8 @@ import com.gc.iotools.stream.utils.StreamUtils;
  * <ul>
  * <li>The size of the internal stream.</li>
  * <li>The time spent reading the bytes.</li>
- * <li>The raw bandwidth of the underlying stream, calculated excluding the time
- * spent by the external process to elaborate the data.</li>
+ * <li>The raw bandwidth of the underlying stream, calculated excluding the
+ * time spent by the external process to elaborate the data.</li>
  * </ul>
  * </p>
  * <p>
@@ -48,8 +51,13 @@ import com.gc.iotools.stream.utils.StreamUtils;
  */
 public class StatsInputStream extends InputStream {
 
-	private boolean closeCalled = false;
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(StatsInputStream.class);
 
+	private boolean areStatsLogged = false;
+
+	private final boolean automaticLog;
+	private boolean closeCalled = false;
 	private final boolean fullReadOnClose;
 	private final InputStream innerStream;
 	private long markPosition = 0;
@@ -59,8 +67,8 @@ public class StatsInputStream extends InputStream {
 	/**
 	 * <p>
 	 * Constructs an <code>SizeReaderInputStream</code>. When
-	 * {@linkplain #close()} is called the underlying stream will be closed. No
-	 * further read will be done.
+	 * {@linkplain #close()} is called the underlying stream will be closed.
+	 * No further read will be done.
 	 * </p>
 	 * 
 	 * @param source
@@ -83,11 +91,38 @@ public class StatsInputStream extends InputStream {
 	 */
 	public StatsInputStream(final InputStream istream,
 			final boolean fullReadOnClose) {
+		this(istream, fullReadOnClose, false);
+	}
+
+	/**
+	 * <p>
+	 * Constructs an <code>SizeReaderInputStream</code> and allow to specify
+	 * actions to do on close.
+	 * </p>
+	 * <p>
+	 * If automaticLog is <code>true</code> the statistics will be written
+	 * when the <code>SizeReaderInputStream</code> is closed or finalized.
+	 * </p>
+	 * 
+	 * @param istream
+	 *            Stream whose bytes must be counted.
+	 * @param fullReadOnClose
+	 *            if <i>true</i> after the close the inner stream is read
+	 *            completely and the effective size of the inner stream is
+	 *            calculated.
+	 * @param automaticLog
+	 *            if <code>true</code> statistics will be automatically
+	 *            written when the stream is closed or finalized.
+	 * @since 1.2.7
+	 */
+	public StatsInputStream(final InputStream istream,
+			final boolean fullReadOnClose, final boolean automaticLog) {
 		if (istream == null) {
 			throw new IllegalArgumentException("InputStream can't be null");
 		}
 		this.innerStream = istream;
 		this.fullReadOnClose = fullReadOnClose;
+		this.automaticLog = automaticLog;
 	}
 
 	/**
@@ -117,15 +152,28 @@ public class StatsInputStream extends InputStream {
 				if (this.fullReadOnClose) {
 					final byte[] buffer = new byte[EasyStreamConstants.SKIP_BUFFER_SIZE];
 					while (this.read(buffer) >= 0) {
-						// Do nothing, just throw away the bytes and count them.
+						// Do nothing, just throw away the bytes and count
+						// them.
 					}
 				}
 			} finally {
 				this.innerStream.close();
 				this.time += System.currentTimeMillis() - start;
+				if (this.automaticLog && !this.areStatsLogged) {
+					logCurrentStatistics();
+					this.areStatsLogged = true;
+				}
 			}
 
 		}
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		if (this.automaticLog && !this.areStatsLogged) {
+			logCurrentStatistics();
+		}
+		super.finalize();
 	}
 
 	/**
@@ -134,7 +182,8 @@ public class StatsInputStream extends InputStream {
 	 * @return The KB/Sec bitRate of the stream.
 	 */
 	public float getBitRate() {
-		return (this.size / 1024F) / (this.time / 1000F);
+		return (this.size / EasyStreamConstants.ONE_KILOBYTE)
+				/ TimeUnit.SECONDS.convert(this.time, TimeUnit.MILLISECONDS);
 	}
 
 	/**
@@ -150,7 +199,8 @@ public class StatsInputStream extends InputStream {
 	 * <p>
 	 * Returns the number of bytes read until now from the internal
 	 * <code>InputStream</code> or total length of the stream if the
-	 * <code>{@link #close()}</code> method has been called or EOF was reached.
+	 * <code>{@link #close()}</code> method has been called or EOF was
+	 * reached.
 	 * </p>
 	 * <p>
 	 * Calculation refers to the original size of the internal
@@ -160,8 +210,8 @@ public class StatsInputStream extends InputStream {
 	 * <code>mark</code> position is reached again.
 	 * </p>
 	 * 
-	 * @return bytes read until now or the total length of the stream if close()
-	 *         was called.
+	 * @return bytes read until now or the total length of the stream if
+	 *         close() was called.
 	 */
 	public long getSize() {
 		return this.size;
@@ -193,15 +243,38 @@ public class StatsInputStream extends InputStream {
 		return tu.convert(this.time, TimeUnit.MILLISECONDS);
 	}
 
+	private void internallogCurrentStatistics(
+			final boolean addNotClosedWarning) {
+		StringBuffer message = new StringBuffer("Time spent[");
+		message.append(getTime());
+		message.append("]ms, bytes read [");
+		message.append(getSize());
+		message.append("] at [");
+		message.append(getBitRate());
+		message.append("].");
+		if (addNotClosedWarning) {
+			message.append("The stream is being finalized and "
+					+ "close() was not called.");
+		}
+		LOGGER.info(message.toString());
+	}
+
 	/**
-	 * Returns the behavior of the close method. If true when close is invoked a
-	 * full read of the stream will be performed.
+	 * Returns the behavior of the close method. If true when close is invoked
+	 * a full read of the stream will be performed.
 	 * 
 	 * @return Whether a full read will be performed on the invocation of
 	 *         {@linkplain #close()} method.
 	 */
 	public boolean isFullReadOnClose() {
 		return this.fullReadOnClose;
+	}
+
+	/**
+	 * Logs the current statistics.
+	 */
+	public void logCurrentStatistics() {
+		internallogCurrentStatistics(false);
 	}
 
 	/**

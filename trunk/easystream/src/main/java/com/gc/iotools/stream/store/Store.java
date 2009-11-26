@@ -1,8 +1,8 @@
 package com.gc.iotools.stream.store;
 
 /*
- * Copyright (c) 2008, 2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008, 2009 Davide Simonetti. This source code is released under
+ * the BSD License.
  */
 
 import java.io.IOException;
@@ -33,6 +33,8 @@ public interface Store {
 	 * @return number of bytes effectively put in the array or -1 if the Store
 	 *         was empty.
 	 * @throws IOException
+	 *             when an error occurs in the store, and data can't be
+	 *             retrieved.
 	 */
 	int get(byte[] bytes, int offset, int length) throws IOException;
 

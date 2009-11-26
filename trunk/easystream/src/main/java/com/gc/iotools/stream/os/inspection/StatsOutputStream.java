@@ -74,15 +74,6 @@ public class StatsOutputStream extends OutputStream {
 	}
 
 	/**
-	 * Returns the number of bytes written until now.
-	 * 
-	 * @return return the number of bytes written until now.
-	 */
-	public long getSize() {
-		return this.size;
-	}
-
-	/**
 	 * <p>
 	 * Returns a string representation of the writing bit rate formatted with a
 	 * convenient unit. The unit will change trying to keep not more than 3
@@ -94,6 +85,15 @@ public class StatsOutputStream extends OutputStream {
 	 */
 	public String getBitRateString() {
 		return StreamUtils.getRateString(this.size, this.time);
+	}
+
+	/**
+	 * Returns the number of bytes written until now.
+	 * 
+	 * @return return the number of bytes written until now.
+	 */
+	public long getSize() {
+		return this.size;
 	}
 
 	/**
