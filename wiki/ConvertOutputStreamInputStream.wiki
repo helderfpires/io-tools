@@ -13,9 +13,9 @@ Bad news: there is no (both easy and efficient) way to get the `OutputStream` to
  * Use `InputStreamFromOutputStream` and `OutputStreamToInputStream` from this library.
 
 == Copy the data into memory ==
-This is the easiest approach if your data easily fit into memory. I don't recommend this approach if the data you're reading is more than 100Mb (because it's it's not the only one object in your heap and if you're in a web application 10-15 simultaneous users can crash your jvm). 
+This is the easiest approach if your data easily fit into memory. I don't recommend this approach if the data you're reading is more than 100Mb (because it's it's not the only one object in your heap and if you're in a web application 10-15 simultaneous users can easily eat up all your jvm heap). 
 
-You can use this approach to read the data multiple times too:
+This approach also supports multiple reads of the same data:
 
 {{{
   ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -30,8 +30,35 @@ You can use this approach to read the data multiple times too:
   //processAgainDataFromInputSream(new ByteArrayInputStream(data));
 }}}
 
-== File ==
+== Copy your data into a temporary File ==
+This is the easiest approach if you don't know in advance the size of data and you suspect it might be huge (>100Mb). 
 
+The main disadvantages are :
+ * It's utterly slow.
+ * If used on large scale file handlers tend to finish.
+ * File handlers might be a serious problem if you're not very careful closing all the streams: temporary files might not be deleted and file handlers might be still in use.
+
+{{{
+// create a temporary file.
+File tempFile = File.createTempFile("tempFile", ".tmp");
+OutputStream out = new FileOutputStream(tempFile);
+
+// write data on your OutputStream here
+writeDataOnTheOutputStream(out);
+//be sure to close the OutputStream 
+//(be sure the previous method doesn't throw exceptions)
+out.close();
+//get an InputStream from the previous file.
+InputStream istream = new FileInputStream(tempFile);
+				
+//process the data as you like.				processDataFromInputStream(istream);
+
+//be sure to close here.
+istream.close();
+//delete temporary file when you finish to use it.
+//if streams where not correctly closed this might fail (return false)
+tempFile.delete();
+}}}
 == Pipes ==
 The two ends (`PipedInputStream` and `PipedOutputStream`) must be in two different `Threads`.
 
