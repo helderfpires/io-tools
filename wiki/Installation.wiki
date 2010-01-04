@@ -48,7 +48,9 @@ While to use commons logging you must add the following dependency to your pom.x
 }}} 
 
 For further information go to the [http://www.slf4j.org/ slf4j] web site.
+
 === Release Candidates===
+*This step is optional*
 Release candidates are deployed on `dev.java.net` repository. You have to add the following lines to your pom.xml to download them:
 
 {{{
@@ -60,6 +62,8 @@ Release candidates are deployed on `dev.java.net` repository. You have to add th
 </repository>
 }}}
 
+Release candidates are not tested as much as standard builds. You should download them only if the main release has a stopper bug not yet fixed.
+
 ==Other==
 Non maven2 users should download the zip distribution and unpack it. All the jars in the `lib` directory of the distribution zip must be added to your classpath in order 
-to get the libraries working.
+to get the libraries working. The zip distribution is not kept up to date frequently.
