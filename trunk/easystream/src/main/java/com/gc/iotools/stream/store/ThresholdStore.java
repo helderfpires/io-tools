@@ -1,8 +1,8 @@
 package com.gc.iotools.stream.store;
 
 /*
- * Copyright (c) 2008,2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008,2010 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 
 import java.io.File;
@@ -74,14 +74,6 @@ public class ThresholdStore implements SeekableStore {
 						+ " resources are not released.");
 			}
 		}
-	}
-
-	/**
-	 * Clean up the temporary files eventually open.
-	 */
-	@Override
-	protected void finalize() throws Throwable {
-		cleanup();
 	}
 
 	public int get(final byte[] bytes, final int offset, final int length)
@@ -173,8 +165,8 @@ public class ThresholdStore implements SeekableStore {
 	}
 
 	/**
-	 * Provides a String representation of the state of the Store for debugging
-	 * purposes.
+	 * Provides a String representation of the state of the Store for
+	 * debugging purposes.
 	 */
 	@Override
 	public String toString() {
@@ -193,5 +185,13 @@ public class ThresholdStore implements SeekableStore {
 			}
 		}
 		return str + "]";
+	}
+
+	/**
+	 * Clean up the temporary files eventually open.
+	 */
+	@Override
+	protected void finalize() throws Throwable {
+		cleanup();
 	}
 }

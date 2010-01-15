@@ -1,14 +1,14 @@
 package com.gc.iotools.stream.base;
 
 /*
- * Copyright (c) 2008,2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008,2010 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 
 /**
  * <p>
- * This class enumerates the policies for instantiating <code>Threads</code> in
- * classes of EasyStream library that needs of them.
+ * This class enumerates the policies for instantiating <code>Threads</code>
+ * in classes of EasyStream library that needs of them.
  * </p>
  * 
  * @author dvd.smnt

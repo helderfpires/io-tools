@@ -1,8 +1,8 @@
 package com.gc.iotools.stream.os;
 
 /*
- * Copyright (c) 2008,2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008,2010 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 import java.io.IOException;
 import java.io.OutputStream;
@@ -69,23 +69,6 @@ public class TeeOutputStream extends OutputStream {
 		this.destinations = destinations;
 	}
 
-	private void checkDestinations(final OutputStream... destinations) {
-		if (destinations == null) {
-			throw new IllegalArgumentException(
-					"Destinations OutputStream can't be null");
-		}
-		if (destinations.length == 0) {
-			throw new IllegalArgumentException(
-					"At least one destination OutputStream must be specified");
-		}
-		for (final OutputStream destination : destinations) {
-			if (destination == null) {
-				throw new IllegalArgumentException(
-						"One of the outputstreams in the array is null");
-			}
-		}
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -141,7 +124,8 @@ public class TeeOutputStream extends OutputStream {
 	 * passed in the constructor.
 	 * </p>
 	 * 
-	 * @return time spent writing on the destination <code>OutputStreams</code>.
+	 * @return time spent writing on the destination
+	 *         <code>OutputStreams</code>.
 	 */
 	public long[] getWriteTime() {
 		return this.writeTime;
@@ -200,6 +184,23 @@ public class TeeOutputStream extends OutputStream {
 				this.writeTime[i] += System.currentTimeMillis() - start;
 			}
 			this.size++;
+		}
+	}
+
+	private void checkDestinations(final OutputStream... destinations) {
+		if (destinations == null) {
+			throw new IllegalArgumentException(
+					"Destinations OutputStream can't be null");
+		}
+		if (destinations.length == 0) {
+			throw new IllegalArgumentException(
+					"At least one destination OutputStream must be specified");
+		}
+		for (final OutputStream destination : destinations) {
+			if (destination == null) {
+				throw new IllegalArgumentException(
+						"One of the outputstreams in the array is null");
+			}
 		}
 	}
 }

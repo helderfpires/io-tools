@@ -1,8 +1,8 @@
 package com.gc.iotools.stream.os;
 
 /*
- * Copyright (c) 2008,2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008,2010 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,25 +32,25 @@ import com.gc.iotools.stream.utils.LogUtils;
  * <code>OutputStream</code> -> <code>InputStream</code> conversion).
  * </p>
  * <p>
- * More detailiy it is an <code>OutputStream</code> that, when extended, allows
- * to read the data written to it from the <code>InputStream</code> inside the
- * method {@linkplain #doRead(InputStream)}.
+ * More detailiy it is an <code>OutputStream</code> that, when extended,
+ * allows to read the data written to it from the <code>InputStream</code>
+ * inside the method {@linkplain #doRead(InputStream)}.
  * </p>
  * <p>
  * To use this class you must extend it and implement the method
  * {@linkplain #doRead(InputStream)}. Inside this method place the logic that
  * needs to read the data from the <code>InputStream</code>. Then the data can
  * be written to this class that implements <code>OutputStream</code>. When
- * {@linkplain #close()} method is called on the outer <code>OutputStream</code>
- * an EOF is generated in the <code>InputStream</code> passed in the
- * {@linkplain #doRead(InputStream)}.
+ * {@linkplain #close()} method is called on the outer
+ * <code>OutputStream</code> an EOF is generated in the
+ * <code>InputStream</code> passed in the {@linkplain #doRead(InputStream)}.
  * </p>
  * <p>
  * The {@linkplain #doRead(InputStream)} call executes in another thread, so
- * there is no warranty on when it will start and when it will end. Special care
- * must be taken in passing variables to it: all the arguments must be final and
- * inside {@linkplain #doRead(InputStream)} you shouldn't change the variables
- * of the outer class.
+ * there is no warranty on when it will start and when it will end. Special
+ * care must be taken in passing variables to it: all the arguments must be
+ * final and inside {@linkplain #doRead(InputStream)} you shouldn't change the
+ * variables of the outer class.
  * </p>
  * <p>
  * Any Exception threw inside the {@linkplain #doRead(InputStream)} method is
@@ -92,8 +92,8 @@ import com.gc.iotools.stream.utils.LogUtils;
  * </pre></code>
  * 
  * @param <T>
- *            Type returned by the method {@link #getResults()} after the thread
- *            has finished.
+ *            Type returned by the method {@link #getResults()} after the
+ *            thread has finished.
  * @since 1.0
  * @author dvd.smnt
  */
@@ -102,7 +102,6 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * This class executes in the second thread.
 	 * 
 	 * @author dvd.smnt
-	 * 
 	 */
 	private final class DataConsumer implements Callable<T> {
 
@@ -157,7 +156,6 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 
 	/**
 	 * Extends PipedInputStream to allow set the default buffer size.
-	 * 
 	 */
 	private final class MyPipedInputStream extends PipedInputStream {
 
@@ -180,13 +178,12 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	/**
 	 * <p>
 	 * Set the size for the pipe circular buffer. This setting has effect for
-	 * the newly created <code>OutputStreamToInputStream</code>. Default is 4096
-	 * bytes.
+	 * the newly created <code>OutputStreamToInputStream</code>. Default is
+	 * 4096 bytes.
 	 * </p>
-	 * 
 	 * <p>
-	 * Will be removed in the 1.3 release. Use {@link #setDefaultPipeSize(int)}
-	 * instead.
+	 * Will be removed in the 1.3 release. Use
+	 * {@link #setDefaultPipeSize(int)} instead.
 	 * </p>
 	 * 
 	 * @since 1.2.0
@@ -202,8 +199,8 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 
 	/**
 	 * Set the size for the pipe circular buffer. This setting has effect for
-	 * the newly created <code>OutputStreamToInputStream</code>. Default is 4096
-	 * bytes.
+	 * the newly created <code>OutputStreamToInputStream</code>. Default is
+	 * 4096 bytes.
 	 * 
 	 * @since 1.2.3
 	 * @param defaultPipeSize
@@ -222,9 +219,9 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 
 	/**
 	 * <p>
-	 * Creates a new <code>OutputStreamToInputStream</code>. It uses the default
-	 * {@link ExecutionModel#THREAD_PER_INSTANCE} thread instantiation strategy.
-	 * This means that a new thread is created for every instance of
+	 * Creates a new <code>OutputStreamToInputStream</code>. It uses the
+	 * default {@link ExecutionModel#THREAD_PER_INSTANCE} thread instantiation
+	 * strategy. This means that a new thread is created for every instance of
 	 * <code>OutputStreamToInputStream</code>.
 	 * </p>
 	 * <p>
@@ -356,39 +353,14 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * @param tu
 	 *            Time unit for the timeout.
 	 * @throws IOException
-	 *             Threw if some problem (timeout or internal exception) occurs.
-	 *             see the <code>getCause()</code> method for the explanation.
+	 *             Threw if some problem (timeout or internal exception)
+	 *             occurs. see the <code>getCause()</code> method for the
+	 *             explanation.
 	 */
 	public final void close(final long timeout, final TimeUnit tu)
 			throws IOException {
 		internalClose(true, tu, timeout);
 	}
-
-	/**
-	 * <p>
-	 * This method has to be implemented to use this class. It allows to
-	 * retrieve the data written to the outer <code>OutputStream</code> from the
-	 * <code>InputStream</code> passed as a parameter.
-	 * </p>
-	 * <p>
-	 * Any exception eventually threw inside this method will be propagated to
-	 * the external <code>OutputStream</code>. When the next
-	 * {@linkplain #write(byte[])} operation is called an
-	 * <code>IOException</code> will be thrown and the original exception can be
-	 * accessed calling the getCause() method on the IOException. It will also
-	 * be available by calling the method {@link #getResults()}.
-	 * </p>
-	 * 
-	 * @param istream
-	 *            The InputStream where the data can be retrieved.
-	 * @return Optionally returns a result of the elaboration.
-	 * @throws Exception
-	 *             If an <code>Exception</code> occurs during the elaboration it
-	 *             can be thrown. It will be propagated to the external
-	 *             <code>OutputStream</code> and will be available calling the
-	 *             method {@link #getResults()}.
-	 */
-	protected abstract T doRead(InputStream istream) throws Exception;
 
 	/**
 	 * {@inheritDoc}
@@ -405,8 +377,8 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 
 	/**
 	 * <p>
-	 * This method returns the result of the method {@link #doRead(InputStream)}
-	 * and ensure the previous method is over.
+	 * This method returns the result of the method
+	 * {@link #doRead(InputStream)} and ensure the previous method is over.
 	 * </p>
 	 * <p>
 	 * This method suspend the calling thread and waits for the function
@@ -425,8 +397,8 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 *                threw an Exception. The <code>getCause()</code> returns
 	 *                the original Exception.
 	 * @throws IllegalStateException
-	 *             When it is called before the method {@link #close()} has been
-	 *             called.
+	 *             When it is called before the method {@link #close()} has
+	 *             been called.
 	 * @return the object returned from the doRead() method.
 	 */
 	public final T getResults() throws InterruptedException,
@@ -436,41 +408,6 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 					+ " before getResults");
 		}
 		return this.writingResult.get();
-	}
-
-	private void internalClose(final boolean join, final TimeUnit timeUnit,
-			final long timeout) throws IOException {
-		if (!this.closeCalled) {
-			this.closeCalled = true;
-			this.pipedOs.close();
-			if (join) {
-				// waiting for thread to finish..
-				try {
-					this.writingResult.get(timeout, timeUnit);
-				} catch (final ExecutionException e) {
-					final IOException e1 = new IOException(
-							"The doRead() threw exception. Use "
-									+ "getCause() for details.");
-					e1.initCause(e.getCause());
-					throw e1;
-				} catch (final InterruptedException e) {
-					final IOException e1 = new IOException(
-							"Waiting of the thread has been interrupted");
-					e1.initCause(e);
-					throw e1;
-				} catch (final TimeoutException e) {
-					if (!this.writingResult.isDone()) {
-						this.writingResult.cancel(true);
-					}
-					final IOException e1 = new IOException(
-							"Waiting for the internal "
-									+ "thread to finish took more than ["
-									+ timeout + "] " + timeUnit);
-					e1.initCause(e);
-					throw e1;
-				}
-			}
-		}
 	}
 
 	/**
@@ -512,5 +449,66 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 			this.pipedOs.write(bytetowr);
 		}
 	}
+
+	private void internalClose(final boolean join, final TimeUnit timeUnit,
+			final long timeout) throws IOException {
+		if (!this.closeCalled) {
+			this.closeCalled = true;
+			this.pipedOs.close();
+			if (join) {
+				// waiting for thread to finish..
+				try {
+					this.writingResult.get(timeout, timeUnit);
+				} catch (final ExecutionException e) {
+					final IOException e1 = new IOException(
+							"The doRead() threw exception. Use "
+									+ "getCause() for details.");
+					e1.initCause(e.getCause());
+					throw e1;
+				} catch (final InterruptedException e) {
+					final IOException e1 = new IOException(
+							"Waiting of the thread has been interrupted");
+					e1.initCause(e);
+					throw e1;
+				} catch (final TimeoutException e) {
+					if (!this.writingResult.isDone()) {
+						this.writingResult.cancel(true);
+					}
+					final IOException e1 = new IOException(
+							"Waiting for the internal "
+									+ "thread to finish took more than ["
+									+ timeout + "] " + timeUnit);
+					e1.initCause(e);
+					throw e1;
+				}
+			}
+		}
+	}
+
+	/**
+	 * <p>
+	 * This method has to be implemented to use this class. It allows to
+	 * retrieve the data written to the outer <code>OutputStream</code> from
+	 * the <code>InputStream</code> passed as a parameter.
+	 * </p>
+	 * <p>
+	 * Any exception eventually threw inside this method will be propagated to
+	 * the external <code>OutputStream</code>. When the next
+	 * {@linkplain #write(byte[])} operation is called an
+	 * <code>IOException</code> will be thrown and the original exception can
+	 * be accessed calling the getCause() method on the IOException. It will
+	 * also be available by calling the method {@link #getResults()}.
+	 * </p>
+	 * 
+	 * @param istream
+	 *            The InputStream where the data can be retrieved.
+	 * @return Optionally returns a result of the elaboration.
+	 * @throws Exception
+	 *             If an <code>Exception</code> occurs during the elaboration
+	 *             it can be thrown. It will be propagated to the external
+	 *             <code>OutputStream</code> and will be available calling the
+	 *             method {@link #getResults()}.
+	 */
+	protected abstract T doRead(InputStream istream) throws Exception;
 
 }

@@ -1,8 +1,8 @@
 package com.gc.iotools.stream.is;
 
 /*
- * Copyright (c) 2008,2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008,2010 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 
 import java.io.InputStream;
@@ -21,9 +21,9 @@ import com.gc.iotools.stream.base.ExecutorServiceFactory;
  * </p>
  * <p>
  * This can speed up reading when the time spent in reading from the stream is
- * same order as the time spent in elaborating the stream, because it decouples
- * the reading process and the elaboration in two different threads putting them
- * in parallel.
+ * same order as the time spent in elaborating the stream, because it
+ * decouples the reading process and the elaboration in two different threads
+ * putting them in parallel.
  * </p>
  * <p>
  * Sample Usage:

@@ -1,8 +1,8 @@
 package com.gc.iotools.stream.base;
 
 /*
- * Copyright (c) 2008,2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008,2010 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 
 import java.util.List;
@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit;
  * This class is responsible of instantiating the right executor given an
  * ExecutionModel.
  * 
- * 
  * @author Davide Simonetti
  * @since 1.0.2
  */
@@ -28,7 +27,6 @@ public final class ExecutorServiceFactory {
 	/**
 	 * Executor that stops after a single execution. Used when a thread per
 	 * instance strategy is requested.
-	 * 
 	 */
 	private static class OneShotThreadExecutor extends
 			AbstractExecutorService {
@@ -116,12 +114,12 @@ public final class ExecutorServiceFactory {
 
 	/**
 	 * <p>
-	 * Sets the default ExecutorService returned when this class is invoked with
-	 * {@link ExecutionModel#STATIC_THREAD_POOL}.
+	 * Sets the default ExecutorService returned when this class is invoked
+	 * with {@link ExecutionModel#STATIC_THREAD_POOL}.
 	 * </p>
 	 * <p>
-	 * It can also be used to initialize the class (for instance for use into a
-	 * web application).
+	 * It can also be used to initialize the class (for instance for use into
+	 * a web application).
 	 * </p>
 	 * 
 	 * @param executor
@@ -138,9 +136,9 @@ public final class ExecutorServiceFactory {
 	 * </p>
 	 * <p>
 	 * It is mandatory when you use this library in a container, otherwise the
-	 * container doesn't terminate gracefully (for instance you can call it in a
-	 * web application context listener <code>ContextListener.shutdown()</code>
-	 * ).
+	 * container doesn't terminate gracefully (for instance you can call it in
+	 * a web application context listener
+	 * <code>ContextListener.shutdown()</code> ).
 	 * </p>
 	 */
 	public static void shutDown() {

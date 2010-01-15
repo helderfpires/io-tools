@@ -1,8 +1,8 @@
 package com.gc.iotools.stream.is;
 
 /*
- * Copyright (c) 2008,2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008,2010 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 
 import java.io.IOException;
@@ -19,24 +19,22 @@ public class SizeLimitInputStream extends InputStream {
 
 	private boolean closed = false;
 	/**
-	 * The number of bytes that have been read from the {@link #in} stream. Read
-	 * methods should check to ensure that currentPosition never exceeds
+	 * The number of bytes that have been read from the {@link #in} stream.
+	 * Read methods should check to ensure that currentPosition never exceeds
 	 * {@link #maxSize}.
 	 */
 	protected long currentPosition = 0;
 
 	/**
-	 * The underlying stream from which data are read. All methods are forwarded
-	 * to it, after checking that the {@linkplain #maxSize} size that hasn't
-	 * been reached.
-	 * 
+	 * The underlying stream from which data are read. All methods are
+	 * forwarded to it, after checking that the {@linkplain #maxSize} size
+	 * that hasn't been reached.
 	 */
 	protected InputStream in;
 
 	/**
-	 * The position in the stream when {@linkplain #mark} was called. It's used
-	 * to reset the current position when {@linkplain #reset} is called.
-	 * 
+	 * The position in the stream when {@linkplain #mark} was called. It's
+	 * used to reset the current position when {@linkplain #reset} is called.
 	 */
 	protected long markPosition = 0;
 
@@ -44,14 +42,13 @@ public class SizeLimitInputStream extends InputStream {
 	 * The number of bytes to read at most from the {@link #in} stream. Read
 	 * methods should check to ensure that the number of bytes read never
 	 * exceeds maxSize.
-	 * 
 	 */
 	protected final long maxSize;
 
 	/**
 	 * <p>
-	 * Create a new <code>SizeLimitInputStream</code> from another stream given
-	 * a size limit.
+	 * Create a new <code>SizeLimitInputStream</code> from another stream
+	 * given a size limit.
 	 * </p>
 	 * <p>
 	 * Bytes are read from the underlying stream until size limit is reached.
@@ -62,7 +59,6 @@ public class SizeLimitInputStream extends InputStream {
 	 * @param maxSize
 	 *            the max number of bytes to allow to be read from the
 	 *            underlying stream.
-	 * 
 	 */
 	public SizeLimitInputStream(final InputStream in, final long maxSize) {
 		this.in = in;
@@ -97,12 +93,11 @@ public class SizeLimitInputStream extends InputStream {
 	}
 
 	/**
-	 * Get the maximum number of bytes left to read before the limit, set in the
-	 * constructor, is reached.
+	 * Get the maximum number of bytes left to read before the limit, set in
+	 * the constructor, is reached.
 	 * 
-	 * @return The number of bytes that (at a maximum) are left to be taken from
-	 *         this stream.
-	 * 
+	 * @return The number of bytes that (at a maximum) are left to be taken
+	 *         from this stream.
 	 */
 	public long getBytesLeft() {
 		return this.maxSize - this.currentPosition;
@@ -112,18 +107,16 @@ public class SizeLimitInputStream extends InputStream {
 	 * Get the number of bytes actually read from this stream.
 	 * 
 	 * @return number of bytes that have already been taken from this stream.
-	 * 
 	 */
 	public long getBytesRead() {
 		return this.currentPosition;
 	}
 
 	/**
-	 * Get the number of total bytes (including bytes already read) that can be
-	 * read from this stream (as set in the constructor).
+	 * Get the number of total bytes (including bytes already read) that can
+	 * be read from this stream (as set in the constructor).
 	 * 
 	 * @return Maximum bytes that can be read until the size limit runs out
-	 * 
 	 */
 	public long getMaxSize() {
 		return this.maxSize;

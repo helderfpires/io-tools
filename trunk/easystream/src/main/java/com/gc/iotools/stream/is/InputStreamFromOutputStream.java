@@ -1,8 +1,8 @@
 package com.gc.iotools.stream.is;
 
 /*
- * Copyright (c) 2008,2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008,2010 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 import java.io.IOException;
 import java.io.InputStream;
@@ -74,8 +74,8 @@ import com.gc.iotools.stream.utils.LogUtils;
  * @param <T>
  *            Optional result returned by the function
  *            {@linkplain #produce(OutputStream)} after the data has been
- *            written. It can be obtained calling the {@linkplain #getResult()}
- * 
+ *            written. It can be obtained calling the
+ *            {@linkplain #getResult()}
  * @see ExecutionModel
  * @author dvd.smnt
  * @since 1.0
@@ -144,7 +144,6 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 
 	/**
 	 * Extends PipedInputStream to allow set the default buffer size.
-	 * 
 	 */
 	private final class MyPipedInputStream extends PipedInputStream {
 
@@ -184,11 +183,10 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 
 	/**
 	 * Set the size for the pipe circular buffer for the newly created
-	 * <code>InputStreamFromOutputStream</code>. Default is 4096 bytes. will be
-	 * removed in 1.3.0. Use setDefaultPipeSize instead.
+	 * <code>InputStreamFromOutputStream</code>. Default is 4096 bytes. will
+	 * be removed in 1.3.0. Use setDefaultPipeSize instead.
 	 * 
 	 * @deprecated
-	 * 
 	 * @since 1.2.0
 	 * @param defaultPipeSize
 	 *            the default pipe buffer size in bytes.
@@ -322,7 +320,6 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * @see ExecutionModel
 	 * @param executionModel
 	 *            Defines how the internal thread is allocated.
-	 * 
 	 */
 	public InputStreamFromOutputStream(final ExecutionModel executionModel) {
 		this(false, executionModel);
@@ -342,22 +339,6 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 */
 	public InputStreamFromOutputStream(final ExecutorService executor) {
 		this(false, executor);
-	}
-
-	private void checkException() throws IOException {
-		try {
-			this.futureResult.get();
-		} catch (final ExecutionException e) {
-			final Throwable t = e.getCause();
-			final IOException e1 = new IOException("Exception producing data");
-			e1.initCause(t);
-			throw e1;
-		} catch (final InterruptedException e) {
-			final IOException e1 = new IOException("Thread interrupted");
-			e1.initCause(e);
-			throw e1;
-
-		}
 	}
 
 	/**
@@ -424,32 +405,6 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	}
 
 	/**
-	 * <p>
-	 * This method must be implemented by the user of this class to produce the
-	 * data that must be read from the external <code>InputStream</code>.
-	 * </p>
-	 * <p>
-	 * Special care must be paid passing arguments to this method or setting
-	 * global fields because it is executed in another thread.
-	 * </p>
-	 * <p>
-	 * The right way to set a field variable is to return a value in the
-	 * <code>produce</code>and retrieve it in the getResult().
-	 * </p>
-	 * 
-	 * @return The implementing class can use this to return a result of data
-	 *         production. The result will be available through the method
-	 *         {@linkplain #getResult()}.
-	 * @param sink
-	 *            the implementing class should write its data to this stream.
-	 * @throws Exception
-	 *             the exception eventually thrown by the implementing class is
-	 *             returned by the {@linkplain #read()} methods.
-	 * @see #getResult()
-	 */
-	protected abstract T produce(final OutputStream sink) throws Exception;
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -473,5 +428,47 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 		}
 		return result;
 	}
+
+	private void checkException() throws IOException {
+		try {
+			this.futureResult.get();
+		} catch (final ExecutionException e) {
+			final Throwable t = e.getCause();
+			final IOException e1 = new IOException("Exception producing data");
+			e1.initCause(t);
+			throw e1;
+		} catch (final InterruptedException e) {
+			final IOException e1 = new IOException("Thread interrupted");
+			e1.initCause(e);
+			throw e1;
+
+		}
+	}
+
+	/**
+	 * <p>
+	 * This method must be implemented by the user of this class to produce
+	 * the data that must be read from the external <code>InputStream</code>.
+	 * </p>
+	 * <p>
+	 * Special care must be paid passing arguments to this method or setting
+	 * global fields because it is executed in another thread.
+	 * </p>
+	 * <p>
+	 * The right way to set a field variable is to return a value in the
+	 * <code>produce</code>and retrieve it in the getResult().
+	 * </p>
+	 * 
+	 * @return The implementing class can use this to return a result of data
+	 *         production. The result will be available through the method
+	 *         {@linkplain #getResult()}.
+	 * @param sink
+	 *            the implementing class should write its data to this stream.
+	 * @throws Exception
+	 *             the exception eventually thrown by the implementing class
+	 *             is returned by the {@linkplain #read()} methods.
+	 * @see #getResult()
+	 */
+	protected abstract T produce(final OutputStream sink) throws Exception;
 
 }

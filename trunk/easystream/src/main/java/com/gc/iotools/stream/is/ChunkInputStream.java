@@ -1,7 +1,7 @@
 package com.gc.iotools.stream.is;
 
 /*
- * Copyright (c) 2008,2009 Davide Simonetti. This source code is released
+ * Copyright (c) 2008,2010 Davide Simonetti. This source code is released
  * under the BSD License.
  */
 import java.io.BufferedInputStream;
@@ -203,13 +203,6 @@ public final class ChunkInputStream extends InputStream {
 		return this.copyToOuter;
 	}
 
-	private void findStartMarker() throws IOException {
-		if (!this.copyToOuter && this.automaticFetch) {
-			// if no start marker set copy
-			this.copyToOuter = moveToNextStartMarker();
-		}
-	}
-
 	/**
 	 * {@inheritDoc}.
 	 */
@@ -224,47 +217,6 @@ public final class ChunkInputStream extends InputStream {
 	@Override
 	public boolean markSupported() {
 		return this.wrappedIs.markSupported();
-	}
-
-	private boolean moveToNextStartMarker() throws IOException {
-		boolean found;
-		if (this.start.length == 0) {
-			this.wrappedIs.mark(2);
-			// if EOF stop.
-			found = (this.wrappedIs.read() >= 0);
-			this.wrappedIs.reset();
-		} else {
-			int n;
-			found = false;
-			final byte[] buffer = new byte[EasyStreamConstants.SKIP_BUFFER_SIZE
-					+ this.start.length];
-			do {
-				this.wrappedIs.mark(EasyStreamConstants.SKIP_BUFFER_SIZE
-						+ this.start.length);
-				n = StreamUtils.tryReadFully(this.wrappedIs, buffer, 0,
-						EasyStreamConstants.SKIP_BUFFER_SIZE
-								+ this.start.length);
-				if (n > 0) {
-					final int pos = ArrayTools.indexOf(ArrayUtils.subarray(
-							buffer, 0, n), this.start);
-					if (pos >= 0) {
-						// found
-						found = true;
-						this.wrappedIs.reset();
-						final int skip = pos
-								+ (this.showMarkers ? 0 : this.start.length);
-						this.wrappedIs.skip(skip);
-					} else {
-						// not found
-						if (n - this.start.length > 0) {
-							this.wrappedIs.reset();
-							this.wrappedIs.skip(n - this.start.length);
-						}
-					}
-				}
-			} while (!found && (n >= 0));
-		}
-		return found;
 	}
 
 	/**
@@ -357,5 +309,53 @@ public final class ChunkInputStream extends InputStream {
 	public long skip(final long n) throws IOException {
 		findStartMarker();
 		return super.skip(n);
+	}
+
+	private void findStartMarker() throws IOException {
+		if (!this.copyToOuter && this.automaticFetch) {
+			// if no start marker set copy
+			this.copyToOuter = moveToNextStartMarker();
+		}
+	}
+
+	private boolean moveToNextStartMarker() throws IOException {
+		boolean found;
+		if (this.start.length == 0) {
+			this.wrappedIs.mark(2);
+			// if EOF stop.
+			found = (this.wrappedIs.read() >= 0);
+			this.wrappedIs.reset();
+		} else {
+			int n;
+			found = false;
+			final byte[] buffer = new byte[EasyStreamConstants.SKIP_BUFFER_SIZE
+					+ this.start.length];
+			do {
+				this.wrappedIs.mark(EasyStreamConstants.SKIP_BUFFER_SIZE
+						+ this.start.length);
+				n = StreamUtils.tryReadFully(this.wrappedIs, buffer, 0,
+						EasyStreamConstants.SKIP_BUFFER_SIZE
+								+ this.start.length);
+				if (n > 0) {
+					final int pos = ArrayTools.indexOf(ArrayUtils.subarray(
+							buffer, 0, n), this.start);
+					if (pos >= 0) {
+						// found
+						found = true;
+						this.wrappedIs.reset();
+						final int skip = pos
+								+ (this.showMarkers ? 0 : this.start.length);
+						this.wrappedIs.skip(skip);
+					} else {
+						// not found
+						if (n - this.start.length > 0) {
+							this.wrappedIs.reset();
+							this.wrappedIs.skip(n - this.start.length);
+						}
+					}
+				}
+			} while (!found && (n >= 0));
+		}
+		return found;
 	}
 }

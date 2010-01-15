@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
+import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.io.IOUtils;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnit4Mockery;
@@ -15,7 +16,6 @@ import com.gc.iotools.fmt.base.DetectionLibrary;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
 import com.gc.iotools.fmt.base.ResettableInputStream;
-import com.gc.iotools.stream.utils.Base64;
 
 public class TestGuessInputStream extends JUnit4Mockery {
 
@@ -105,8 +105,8 @@ public class TestGuessInputStream extends JUnit4Mockery {
 	@org.junit.Test
 	public void testDecode() throws IOException {
 		final byte[] reference = "<xml>this is xml</xml>".getBytes();
-		final InputStream istream = new Base64.InputStream(
-				new ByteArrayInputStream(reference), Base64.ENCODE);
+		final InputStream istream = new Base64InputStream(
+				new ByteArrayInputStream(reference), true);
 		final GuessInputStream gis = GuessInputStream.getInstance(istream,
 				new FormatEnum[] { FormatEnum.BASE64 });
 		gis.decode(true);
@@ -124,9 +124,9 @@ public class TestGuessInputStream extends JUnit4Mockery {
 	@org.junit.Test
 	public void testMaxRecursion() throws Exception {
 		final byte[] reference = "<xml>this is xml</xml>".getBytes();
-		final InputStream istream = new Base64.InputStream(
-				new Base64.InputStream(new ByteArrayInputStream(reference),
-						Base64.ENCODE), Base64.ENCODE);
+		final InputStream istream = new Base64InputStream(
+				new Base64InputStream(new ByteArrayInputStream(reference),
+						true), true);
 		GuessInputStream gis = GuessInputStream.getInstance(istream,
 				new FormatEnum[] { FormatEnum.BASE64, FormatEnum.XML });
 		gis.setIdentificationDepth(1);

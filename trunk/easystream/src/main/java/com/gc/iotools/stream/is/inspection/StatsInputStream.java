@@ -1,18 +1,22 @@
 package com.gc.iotools.stream.is.inspection;
 
 /*
- * Copyright (c) 2008,2009 Davide Simonetti. This source code is released
+ * Copyright (c) 2008,2010 Davide Simonetti. This source code is released
  * under the BSD License.
  */
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gc.iotools.stream.base.EasyStreamConstants;
+import com.gc.iotools.stream.utils.LogUtils;
 import com.gc.iotools.stream.utils.StreamUtils;
 
 /**
@@ -27,6 +31,7 @@ import com.gc.iotools.stream.utils.StreamUtils;
  * <li>The time spent reading the bytes.</li>
  * <li>The raw bandwidth of the underlying stream, calculated excluding the
  * time spent by the external process to elaborate the data.</li>
+ * <li>The average bytes read each read() call.</li>
  * </ul>
  * </p>
  * <p>
@@ -51,16 +56,22 @@ import com.gc.iotools.stream.utils.StreamUtils;
  */
 public class StatsInputStream extends InputStream {
 
+	private static Map<String, Long> instanceNumber = new HashMap<String, Long>();
+
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(StatsInputStream.class);
-
-	private boolean areStatsLogged = false;
-
+	private static Map<String, BigInteger> totalBytes = new HashMap<String, BigInteger>();
+	private static Map<String, BigInteger> totalRead = new HashMap<String, BigInteger>();
+	private static Map<String, Long> totalTime = new HashMap<String, Long>();
 	private final boolean automaticLog;
+
+	private final String callerId;
+	private final StatsInputStream chainStream;
 	private boolean closeCalled = false;
 	private final boolean fullReadOnClose;
 	private final InputStream innerStream;
 	private long markPosition = 0;
+	private long numberRead = 0;
 	private long size = 0;
 	private long time = 0;
 
@@ -101,7 +112,7 @@ public class StatsInputStream extends InputStream {
 	 * </p>
 	 * <p>
 	 * If automaticLog is <code>true</code> the statistics will be written
-	 * when the <code>SizeReaderInputStream</code> is closed or finalized.
+	 * when the <code>StatsInputStream</code> is closed or finalized.
 	 * </p>
 	 * 
 	 * @param istream
@@ -117,12 +128,64 @@ public class StatsInputStream extends InputStream {
 	 */
 	public StatsInputStream(final InputStream istream,
 			final boolean fullReadOnClose, final boolean automaticLog) {
+		this(istream, fullReadOnClose, automaticLog, null);
+	}
+
+	/**
+	 * <p>
+	 * Constructs an <code>SizeReaderInputStream</code> and allow to specify
+	 * actions to do on close.
+	 * </p>
+	 * <p>
+	 * If automaticLog is <code>true</code> the statistics will be written
+	 * when the <code>StatsInputStream</code> is closed or finalized.
+	 * </p>
+	 * <p>
+	 * Indicates another <code>StatsInputStream</code> to chain with. The aim
+	 * is to test performances of a single <code>InputStream</code> in a chain
+	 * of multiple <code>InputStreams</code>. You should put the
+	 * <code>InputStream</code> to be tested between two
+	 * <code>StatsInputStream</code> and chain the two together.
+	 * <p>
+	 * <code>
+	 *  InputStream source = //source of data
+	 * 	StatsInputStream sourceStats = new StatsInputStream(source);
+	 * 	InputStream toBeTested = new InputStreamToBeTested(stis);
+	 * 	StatsInputStream wrapperStis=new StatsInputStream(toBeTested, false, false, sourceStats);
+	 * </code>
+	 * <p>
+	 * This will allow to produce statistics of the single
+	 * <code>InputStream</code> to be tested, in a way independent from the
+	 * source. Times spent will be the difference between the times from the
+	 * source and times on the final wrapper.
+	 * </p>
+	 * 
+	 * @param istream
+	 *            Stream whose bytes must be counted.
+	 * @param fullReadOnClose
+	 *            if <i>true</i> after the close the inner stream is read
+	 *            completely and the effective size of the inner stream is
+	 *            calculated.
+	 * @param automaticLog
+	 *            if <code>true</code> statistics will be automatically
+	 *            written when the stream is closed or finalized.
+	 * @param chainStream
+	 *            The <code>InputStream</code> to chain.
+	 * @since 1.3.0
+	 */
+	public StatsInputStream(final InputStream istream,
+			final boolean fullReadOnClose, final boolean automaticLog,
+			final StatsInputStream chainStream) {
 		if (istream == null) {
 			throw new IllegalArgumentException("InputStream can't be null");
 		}
 		this.innerStream = istream;
 		this.fullReadOnClose = fullReadOnClose;
 		this.automaticLog = automaticLog;
+		this.callerId = LogUtils.getCaller(this.getClass());
+		this.chainStream = chainStream;
+		addToMapL(instanceNumber, 1);
+
 	}
 
 	/**
@@ -158,32 +221,43 @@ public class StatsInputStream extends InputStream {
 				}
 			} finally {
 				this.innerStream.close();
-				this.time += System.currentTimeMillis() - start;
-				if (this.automaticLog && !this.areStatsLogged) {
-					logCurrentStatistics();
-					this.areStatsLogged = true;
-				}
+				final long timeElapsed = System.currentTimeMillis() - start;
+				this.time += timeElapsed;
+				addToMapL(totalTime, timeElapsed);
 			}
 
 		}
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
-		if (this.automaticLog && !this.areStatsLogged) {
-			logCurrentStatistics();
-		}
-		super.finalize();
+	/**
+	 * <p>
+	 * Returns the average bytes per read.
+	 * </p>
+	 * <p>
+	 * If this parameter is near 1 means that too many calls are made to read
+	 * the <code>InputStream</code> bringing a loss of performances for large
+	 * amount of data. Access to this <code>InputStream</code> should be made
+	 * trough a <code>BufferedInputStream</code> with a reasonable buffer
+	 * size.
+	 * </p>
+	 * <p>
+	 * WARN: This measure is not accurate in case of mark and reset.
+	 * </p>
+	 * 
+	 * @return The average bytes per read().
+	 */
+	public float getAverageBytePerRead() {
+		return (this.size * 1.0f) / this.numberRead;
 	}
 
 	/**
-	 * Returns the reading bit rate in KB per second.
+	 * Returns the reading bit rate in KB per second of this single instance.
 	 * 
 	 * @return The KB/Sec bitRate of the stream.
 	 */
 	public float getBitRate() {
 		return (this.size / EasyStreamConstants.ONE_KILOBYTE)
-				/ TimeUnit.SECONDS.convert(this.time, TimeUnit.MILLISECONDS);
+				/ TimeUnit.SECONDS.convert(getTime(), TimeUnit.MILLISECONDS);
 	}
 
 	/**
@@ -193,6 +267,17 @@ public class StatsInputStream extends InputStream {
 	 */
 	public String getBitRateString() {
 		return StreamUtils.getRateString(this.size, this.time);
+	}
+
+	/**
+	 * Number of calls to <code>int read()</code> ,
+	 * <code>int read(byte[])</code> and <code>int read(byte[],int,int)</code>
+	 * methods.
+	 * 
+	 * @return Long representing the number of calls to read() methods.
+	 */
+	public long getNumberRead() {
+		return this.numberRead;
 	}
 
 	/**
@@ -226,7 +311,11 @@ public class StatsInputStream extends InputStream {
 	 * @return time spent in waiting in milliseconds.
 	 */
 	public long getTime() {
-		return this.time;
+		long time2 = this.time;
+		if (this.chainStream != null) {
+			time2 -= this.chainStream.getTime();
+		}
+		return time2;
 	}
 
 	/**
@@ -240,23 +329,51 @@ public class StatsInputStream extends InputStream {
 	 * @return time spent in waiting.
 	 */
 	public long getTime(final TimeUnit tu) {
-		return tu.convert(this.time, TimeUnit.MILLISECONDS);
+		if (tu == null) {
+			throw new IllegalArgumentException("TimeUnit can't be null");
+		}
+		long convertedTime = tu.convert(this.time, TimeUnit.MILLISECONDS);
+		if (this.chainStream != null) {
+			convertedTime -= this.chainStream.getTime(tu);
+		}
+		return convertedTime;
 	}
 
-	private void internallogCurrentStatistics(
-			final boolean addNotClosedWarning) {
-		StringBuffer message = new StringBuffer("Time spent[");
-		message.append(getTime());
-		message.append("]ms, bytes read [");
-		message.append(getSize());
-		message.append("] at [");
-		message.append(getBitRate());
-		message.append("].");
-		if (addNotClosedWarning) {
-			message.append("The stream is being finalized and "
-					+ "close() was not called.");
+	/**
+	 * Total count of calls to <code>int read()</code>,
+	 * <code>int read(byte[])</code> and <code>int read(byte[],int,int)</code>
+	 * methods, made by this instance over the subsequent calls.
+	 * 
+	 * @return Long representing the number of calls to read() methods.
+	 */
+	public long getTotalNumberRead() {
+		BigInteger numberRead = StatsInputStream.totalRead.get(this.callerId);
+		return numberRead == null ? 0 : numberRead.longValue();
+	}
+
+	/**
+	 * <p>
+	 * Returns the total time (in milliseconds) spent until now waiting for
+	 * reading from the internal <code>InputStream</code> by the instances
+	 * (identified by their constructor position).
+	 * </p>
+	 * 
+	 * @param tu
+	 *            Unit to measure the time.
+	 * @return time spent in waiting.
+	 */
+	public long getTotalTime(final TimeUnit tu) {
+		if (tu == null) {
+			throw new IllegalArgumentException("TimeUnit can't be null");
 		}
-		LOGGER.info(message.toString());
+		Long totalTime = StatsInputStream.totalTime.get(this.callerId);
+		final long timeMs = totalTime == null ? 0 : totalTime;
+		long convertedTotalTime = tu.convert(timeMs, TimeUnit.MILLISECONDS);
+		if (this.chainStream != null) {
+			convertedTotalTime = convertedTotalTime
+					- this.chainStream.getTotalTime(tu);
+		}
+		return convertedTotalTime;
 	}
 
 	/**
@@ -285,7 +402,9 @@ public class StatsInputStream extends InputStream {
 		final long start = System.currentTimeMillis();
 		this.innerStream.mark(readlimit);
 		this.markPosition = this.size;
-		this.time += System.currentTimeMillis() - start;
+		final long timeElapsed = System.currentTimeMillis() - start;
+		this.time += timeElapsed;
+		addToMapL(totalTime, timeElapsed);
 	}
 
 	/**
@@ -305,8 +424,13 @@ public class StatsInputStream extends InputStream {
 		final int read = this.innerStream.read();
 		if (read >= 0) {
 			this.size++;
+			addToMap(totalBytes, 1);
 		}
-		this.time += System.currentTimeMillis() - start;
+		addToMap(totalRead, 1);
+		this.numberRead++;
+		final long timeElapsed = System.currentTimeMillis() - start;
+		this.time += timeElapsed;
+		addToMapL(totalTime, timeElapsed);
 		return read;
 	}
 
@@ -319,8 +443,13 @@ public class StatsInputStream extends InputStream {
 		final int read = this.innerStream.read(b);
 		if (read >= 0) {
 			this.size += read;
+			addToMap(totalBytes, read);
 		}
-		this.time += System.currentTimeMillis() - start;
+		final long timeElapsed = System.currentTimeMillis() - start;
+		this.time += timeElapsed;
+		addToMapL(totalTime, timeElapsed);
+		this.numberRead++;
+		addToMap(totalRead, 1);
 		return read;
 	}
 
@@ -334,8 +463,13 @@ public class StatsInputStream extends InputStream {
 		final int read = this.innerStream.read(b, off, len);
 		if (read >= 0) {
 			this.size += read;
+			addToMap(totalBytes, read);
 		}
-		this.time += System.currentTimeMillis() - start;
+		this.numberRead++;
+		addToMap(totalRead, 1);
+		final long timeElapsed = System.currentTimeMillis() - start;
+		this.time += timeElapsed;
+		addToMapL(totalTime, timeElapsed);
 		return read;
 	}
 
@@ -347,7 +481,9 @@ public class StatsInputStream extends InputStream {
 		final long start = System.currentTimeMillis();
 		this.innerStream.reset();
 		this.size = this.markPosition;
-		this.time += System.currentTimeMillis() - start;
+		final long timeElapsed = System.currentTimeMillis() - start;
+		this.time += timeElapsed;
+		addToMapL(totalTime, timeElapsed);
 	}
 
 	/**
@@ -358,8 +494,52 @@ public class StatsInputStream extends InputStream {
 		final long start = System.currentTimeMillis();
 		final long skipSize = this.innerStream.skip(n);
 		this.size += skipSize;
-		this.time += System.currentTimeMillis() - start;
+		final long timeElapsed = System.currentTimeMillis() - start;
+		this.time += timeElapsed;
+		addToMapL(totalTime, timeElapsed);
 		return skipSize;
+	}
+
+	private void addToMap(final Map<String, BigInteger> map, final long value) {
+		if (!map.containsKey(this.callerId)) {
+			map.put(this.callerId, BigInteger.valueOf(value));
+		} else {
+			BigInteger mvalue = map.get(this.callerId);
+			mvalue.add(BigInteger.valueOf(value));
+		}
+	}
+
+	private void addToMapL(final Map<String, Long> map, final long value) {
+		if (!map.containsKey(this.callerId)) {
+			map.put(this.callerId, value);
+		} else {
+			long mvalue = map.get(this.callerId);
+			map.put(this.callerId, mvalue + value);
+		}
+	}
+
+	private void internallogCurrentStatistics(
+			final boolean addNotClosedWarning) {
+		StringBuffer message = new StringBuffer("Time spent[");
+		message.append(getTime());
+		message.append("]ms, bytes read [");
+		message.append(getSize());
+		message.append("] at [");
+		message.append(getBitRate());
+		message.append("].");
+		if (addNotClosedWarning) {
+			message.append("The stream is being finalized and "
+					+ "close() was not called.");
+		}
+		LOGGER.info(message.toString());
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		if (this.automaticLog) {
+			logCurrentStatistics();
+		}
+		super.finalize();
 	}
 
 }

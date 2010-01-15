@@ -1,11 +1,13 @@
 package com.gc.iotools.stream.is;
 
 /*
- * Copyright (c) 2008,2009 Davide Simonetti. This source code is released
+ * Copyright (c) 2008,2010 Davide Simonetti. This source code is released
  * under the BSD License.
  */
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 
 import com.gc.iotools.stream.base.AbstractInputStreamWrapper;
 import com.gc.iotools.stream.store.SeekableStore;
@@ -33,6 +35,13 @@ import com.gc.iotools.stream.store.ThresholdStore;
  * without specifying a mark length, thus allowing a <code>reset</code> after
  * an indefinite length of bytes has been read. Check the {@link #mark(int))}
  * javadoc for details.
+ * </p>
+ * <p>
+ * Internally it uses a {@link RandomAccessFile} to cache and seek the data.
+ * Since it must be able to random seek it can't be (easily) buffered
+ * internally. External programs should wrap this class with a
+ * {@link BufferedInputStream} to improve performances (especially if
+ * <code>int read()</code> method is called).
  * </p>
  * 
  * @author dvd.smnt
@@ -118,12 +127,6 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 				Integer.MAX_VALUE);
 	}
 
-	@Override
-	protected void closeOnce() throws IOException {
-		this.store.cleanup();
-		this.source.close();
-	}
-
 	/**
 	 * Return the underlying store where the cache of data is kept.
 	 * 
@@ -131,47 +134,6 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	 */
 	public Store getStore() {
 		return this.store;
-	}
-
-	@Override
-	protected int innerRead(final byte[] b, final int off, final int len)
-			throws IOException {
-		int n;
-		if (this.sourcePosition == this.randomAccessIsPosition) {
-			// source and external same position so read from source.
-			n = super.source.read(b, off, len);
-			if (n > 0) {
-				this.sourcePosition += n;
-				this.randomAccessIsPosition += n;
-				this.store.put(b, off, n);
-			}
-		} else if (this.randomAccessIsPosition < this.sourcePosition) {
-			// resetIS has been called. Read from buffer;n
-			final int efflen = (int) Math.min(len, this.sourcePosition
-					- this.randomAccessIsPosition);
-			n = this.store.get(b, off, efflen);
-			if (n <= 0) {
-				throw new IllegalStateException(
-						"Problem reading from buffer. Expecting bytes ["
-								+ efflen + "] but buffer is empty.");
-			}
-			this.randomAccessIsPosition += n;
-		} else {
-			/*
-			 * shouldn't be here. refactor throw exception
-			 * randomAccessIsPosition > sourcePosition. A reset() was called
-			 * on the StorageBufInputStream. just read from source don't
-			 * buffer.
-			 */
-			// final int efflen = (int) Math.min(len,
-			// this.randomAccessIsPosition - this.sourcePosition);
-			// n = this.source.read(b, off, efflen);
-			// this.sourcePosition += Math.max(n, 0);
-			throw new IllegalStateException("randomAccessIsPosition["
-					+ this.randomAccessIsPosition + "] > sourcePosition["
-					+ this.sourcePosition + "]");
-		}
-		return n;
 	}
 
 	/**
@@ -290,6 +252,53 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 		return this.getClass().getSimpleName() + "[randomAccPos="
 				+ this.randomAccessIsPosition + ",srcPos="
 				+ this.sourcePosition + ", store=" + this.store + "]";
+	}
+
+	@Override
+	protected void closeOnce() throws IOException {
+		this.store.cleanup();
+		this.source.close();
+	}
+
+	@Override
+	protected int innerRead(final byte[] b, final int off, final int len)
+			throws IOException {
+		int n;
+		if (this.sourcePosition == this.randomAccessIsPosition) {
+			// source and external same position so read from source.
+			n = super.source.read(b, off, len);
+			if (n > 0) {
+				this.sourcePosition += n;
+				this.randomAccessIsPosition += n;
+				this.store.put(b, off, n);
+			}
+		} else if (this.randomAccessIsPosition < this.sourcePosition) {
+			// resetIS has been called. Read from buffer;n
+			final int efflen = (int) Math.min(len, this.sourcePosition
+					- this.randomAccessIsPosition);
+			n = this.store.get(b, off, efflen);
+			if (n <= 0) {
+				throw new IllegalStateException(
+						"Problem reading from buffer. Expecting bytes ["
+								+ efflen + "] but buffer is empty.");
+			}
+			this.randomAccessIsPosition += n;
+		} else {
+			/*
+			 * shouldn't be here. refactor throw exception
+			 * randomAccessIsPosition > sourcePosition. A reset() was called
+			 * on the StorageBufInputStream. just read from source don't
+			 * buffer.
+			 */
+			// final int efflen = (int) Math.min(len,
+			// this.randomAccessIsPosition - this.sourcePosition);
+			// n = this.source.read(b, off, efflen);
+			// this.sourcePosition += Math.max(n, 0);
+			throw new IllegalStateException("randomAccessIsPosition["
+					+ this.randomAccessIsPosition + "] > sourcePosition["
+					+ this.sourcePosition + "]");
+		}
+		return n;
 	}
 
 }

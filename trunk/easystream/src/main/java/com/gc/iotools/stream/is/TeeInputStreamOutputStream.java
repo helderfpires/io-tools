@@ -1,8 +1,8 @@
 package com.gc.iotools.stream.is;
 
 /*
- * Copyright (c) 2008,2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008,2010 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,8 +20,8 @@ import com.gc.iotools.stream.base.EasyStreamConstants;
  * <p>
  * When the method <code>{@link #close()}</code> is invoked all the bytes
  * remaining in the underlying <code>InputStream</code> are copied to the
- * <code>OutputStream(s)</code>. This behavior is different from this class and
- * {@code TeeInputStream} in Apache commons-io.
+ * <code>OutputStream(s)</code>. This behavior is different from this class
+ * and {@code TeeInputStream} in Apache commons-io.
  * </p>
  * <p>
  * Bytes skipped are in any case copied to the <code>OutputStream</code>. Mark
@@ -31,10 +31,11 @@ import com.gc.iotools.stream.base.EasyStreamConstants;
  * </p>
  * <p>
  * It also calculate some statistics on the read/write operations.
- * {@link #getWriteTime()} returns the time spent writing to the OutputStreams,
- * {@link #getReadTime()} returns the time spent reading from the InputStream
- * and {@link TeeInputStreamOutputStream#getWriteSize()} returns the amount of
- * data written to a single <code>OutputStream</code> until now.
+ * {@link #getWriteTime()} returns the time spent writing to the
+ * OutputStreams, {@link #getReadTime()} returns the time spent reading from
+ * the InputStream and {@link TeeInputStreamOutputStream#getWriteSize()}
+ * returns the amount of data written to a single <code>OutputStream</code>
+ * until now.
  * </p>
  * <p>
  * Sample usage:
@@ -82,8 +83,8 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 
 	/**
 	 * <p>
-	 * Creates a <code>TeeInputStreamOutputStream</code> and saves its argument,
-	 * the input stream <code>source</code> and the output stream
+	 * Creates a <code>TeeInputStreamOutputStream</code> and saves its
+	 * argument, the input stream <code>source</code> and the output stream
 	 * <code>destination</code> for later use.
 	 * </p>
 	 * <p>
@@ -94,11 +95,11 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 * @since 1.2.3
 	 * @param source
 	 *            The underlying <code>InputStream</code>
-	 * @param closeCalled
+	 * @param closeStreams
 	 *            if <code>true</code> the <code>destination</code> will be
 	 *            closed when the {@link #close()} method is invoked. If
-	 *            <code>false</code> the close method on the underlying streams
-	 *            will not be called (it must be invoked externally).
+	 *            <code>false</code> the close method on the underlying
+	 *            streams will not be called (it must be invoked externally).
 	 * @param destinations
 	 *            Data read from <code>source</code> are also written to this
 	 *            <code>OutputStream</code>.
@@ -127,15 +128,15 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 
 	/**
 	 * <p>
-	 * Creates a <code>TeeOutputStream</code> and saves its argument, the input
-	 * stream <code>source</code> and the <code>OutputStream</code>
+	 * Creates a <code>TeeOutputStream</code> and saves its argument, the
+	 * input stream <code>source</code> and the <code>OutputStream</code>
 	 * <code>destination</code> for later use.
 	 * </p>
 	 * <p>
 	 * When the method {@link #close()} it is invoked the remaining content of
-	 * the <code>source</code> stream is copied to the <code>destination</code>
-	 * and the <code>source</code> and <code>destination</code> streams are
-	 * closed.
+	 * the <code>source</code> stream is copied to the
+	 * <code>destination</code> and the <code>source</code> and
+	 * <code>destination</code> streams are closed.
 	 * </p>
 	 * 
 	 * @param source
@@ -150,9 +151,9 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	}
 
 	/**
-	 * Creates a <code>TeeOutputStream</code> and saves its argument, the input
-	 * stream <code>source</code> and the output stream <code>destination</code>
-	 * for later use.
+	 * Creates a <code>TeeOutputStream</code> and saves its argument, the
+	 * input stream <code>source</code> and the output stream
+	 * <code>destination</code> for later use.
 	 * 
 	 * @since 1.2.0
 	 * @param source
@@ -163,9 +164,8 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 * @param closeStreams
 	 *            if <code>true</code> the <code>destination</code> will be
 	 *            closed when the {@link #close()} method is invoked. If
-	 *            <code>false</code> the close method on the underlying streams
-	 *            will not be called (it must be invoked externally).
-	 * 
+	 *            <code>false</code> the close method on the underlying
+	 *            streams will not be called (it must be invoked externally).
 	 */
 	public TeeInputStreamOutputStream(final InputStream source,
 			final OutputStream destination, final boolean closeStreams) {
@@ -189,8 +189,8 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 * </p>
 	 * <p>
 	 * The standard behavior is to close both the underlying
-	 * <code>InputStream</code> and <code>OutputStream(s)</code>. When the class
-	 * was constructed with the parameter
+	 * <code>InputStream</code> and <code>OutputStream(s)</code>. When the
+	 * class was constructed with the parameter
 	 * {@link TeeInputStreamOutputStream#closeCalled closeCalled} set to false
 	 * the underlying streams must be closed externally.
 	 * 
@@ -235,8 +235,8 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 * <code>source</code> <code>InputStream</code>.
 	 * </p>
 	 * 
-	 * @return number of milliseconds spent reading from the <code>source</code>
-	 *         .
+	 * @return number of milliseconds spent reading from the
+	 *         <code>source</code> .
 	 * @since 1.2.5
 	 */
 	public long getReadTime() {
@@ -249,13 +249,13 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 * <code>OutputStream</code>.
 	 * </p>
 	 * <p>
-	 * This number is not affected by any of the mark and reset that are made on
-	 * this {@linkplain TeeInputStreamOutputStream} and reflects only the number
-	 * of bytes written.
+	 * This number is not affected by any of the mark and reset that are made
+	 * on this {@linkplain TeeInputStreamOutputStream} and reflects only the
+	 * number of bytes written.
 	 * </p>
 	 * 
-	 * @return number of bytes written until now to a single destination
-	 *         <code>destination/code>.
+	 * @return number of bytes written until now to a single
+	 *         <code>destination</code>.
 	 * @since 1.2.5
 	 */
 	public long getWriteSize() {
@@ -272,7 +272,8 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 * passed in the constructor.
 	 * </p>
 	 * 
-	 * @return time spent writing on the destination <code>OutputStreams</code>.
+	 * @return time spent writing on the destination
+	 *         <code>OutputStreams</code>.
 	 */
 	public long[] getWriteTime() {
 		return this.writeTime;
@@ -303,9 +304,9 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 
 	/**
 	 * <p>
-	 * Marks the current position in this input stream. A subsequent call to the
-	 * <code>reset</code> method repositions this stream at the last marked
-	 * position so that subsequent reads re-read the same bytes.
+	 * Marks the current position in this input stream. A subsequent call to
+	 * the <code>reset</code> method repositions this stream at the last
+	 * marked position so that subsequent reads re-read the same bytes.
 	 * </p>
 	 * 
 	 * @param readLimit
@@ -334,7 +335,10 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 */
 	@Override
 	public int read() throws IOException {
+		final long startr = System.currentTimeMillis();
 		final int result = this.source.read();
+		this.readTime += System.currentTimeMillis() - startr;
+
 		if (result >= 0) {
 			this.sourcePosition++;
 			if (this.sourcePosition > this.destinationPosition) {
@@ -351,8 +355,8 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 
 	/**
 	 * <p>
-	 * Repositions this stream to the position at the time the <code>mark</code>
-	 * method was last called on this input stream.
+	 * Repositions this stream to the position at the time the
+	 * <code>mark</code> method was last called on this input stream.
 	 * </p>
 	 * <p>
 	 * After <code>reset()</code> method is called the data is not copied
@@ -366,7 +370,8 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	 * @see #mark(int)
 	 * @see java.io.InputStream#reset()
 	 * @exception IOException
-	 *                If the source stream has an exception in calling reset().
+	 *                If the source stream has an exception in calling
+	 *                reset().
 	 * @since 1.2.0
 	 */
 	@Override
