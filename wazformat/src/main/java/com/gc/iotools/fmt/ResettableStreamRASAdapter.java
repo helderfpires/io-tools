@@ -1,9 +1,10 @@
 package com.gc.iotools.fmt;
 
 /*
- * Copyright (c) 2008, 2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008, 2009 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -14,6 +15,7 @@ import com.gc.iotools.stream.store.Store;
 import com.gc.iotools.stream.store.ThresholdStore;
 
 public class ResettableStreamRASAdapter extends ResettableInputStream {
+	private BufferedInputStream bis;
 	private final RandomAccessInputStream ras;
 	private boolean closeCalled = false;
 
@@ -21,11 +23,12 @@ public class ResettableStreamRASAdapter extends ResettableInputStream {
 		final ThresholdStore ts = new ThresholdStore(128 * 1024);
 		final OnOffStore os = new OnOffStore(ts);
 		this.ras = new RandomAccessInputStream(source, os);
+		this.bis = new BufferedInputStream(ras);
 	}
 
 	@Override
 	public int available() throws IOException {
-		return this.ras.available();
+		return this.bis.available();
 	}
 
 	@Override
@@ -33,6 +36,7 @@ public class ResettableStreamRASAdapter extends ResettableInputStream {
 		if (!closeCalled) {
 			closeCalled = true;
 			this.ras.close();
+			this.bis = null;
 		}
 	}
 
@@ -51,28 +55,28 @@ public class ResettableStreamRASAdapter extends ResettableInputStream {
 
 	@Override
 	public void mark(final int readLimit) {
-		this.ras.mark(readLimit);
+		this.bis.mark(readLimit);
 	}
 
 	@Override
 	public boolean markSupported() {
-		return this.ras.markSupported();
+		return this.bis.markSupported();
 	}
 
 	@Override
 	public int read() throws IOException {
-		return this.ras.read();
+		return this.bis.read();
 	}
 
 	@Override
 	public int read(final byte[] b) throws IOException {
-		return this.ras.read(b);
+		return this.bis.read(b);
 	}
 
 	@Override
 	public final int read(final byte[] b, final int off, final int len)
 			throws IOException {
-		return this.ras.read(b, off, len);
+		return this.bis.read(b, off, len);
 	}
 
 	@Override
@@ -83,10 +87,11 @@ public class ResettableStreamRASAdapter extends ResettableInputStream {
 	@Override
 	public void resetToBeginning() throws IOException {
 		this.ras.seek(0);
+		this.bis = new BufferedInputStream(ras);
 	}
 
 	@Override
 	public long skip(final long n) throws IOException {
-		return this.ras.skip(n);
+		return this.bis.skip(n);
 	}
 }

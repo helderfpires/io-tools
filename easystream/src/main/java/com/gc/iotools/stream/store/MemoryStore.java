@@ -1,8 +1,8 @@
 package com.gc.iotools.stream.store;
 
 /*
- * Copyright (c) 2008, 2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008, 2009 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 
 /**
@@ -58,8 +58,8 @@ public class MemoryStore implements SeekableStore {
 	}
 
 	/**
-	 * Provides a String representation of the state of the Store for debugging
-	 * purposes.
+	 * Provides a String representation of the state of the Store for
+	 * debugging purposes.
 	 */
 	@Override
 	public String toString() {

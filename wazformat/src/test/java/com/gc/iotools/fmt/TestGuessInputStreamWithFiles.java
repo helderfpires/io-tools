@@ -14,6 +14,7 @@ import org.apache.commons.io.IOUtils;
 
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.TestUtils;
+import com.gc.iotools.fmt.decoders.Base64Decoder;
 import com.gc.iotools.fmt.detect.droid.TestDroidDetector;
 
 public class TestGuessInputStreamWithFiles {
@@ -48,6 +49,7 @@ public class TestGuessInputStreamWithFiles {
 			assertTrue("file [" + fileName
 					+ "] WAS UNCORRECTLY recognized as [" + expectedFormat
 					+ "]", !expectedFormat.equals(gis.getFormat()));
+			gis.close();
 		}
 	}
 
@@ -114,5 +116,27 @@ public class TestGuessInputStreamWithFiles {
 		final GuessInputStream gis = GuessInputStream.getInstance(is);
 		assertEquals("file format ", FormatEnum.UNKNOWN, gis.getFormat());
 		assertEquals("Read empty", -1, gis.read());
+	}
+
+	@org.junit.Test
+	public void testBase64Doc() throws Exception {
+//		final InputStream is1 = TestDroidDetector.class
+//				.getResourceAsStream("/testFiles/canto_8parte.doc.b64");
+//		Base64Decoder decoder=new Base64Decoder();
+//		final GuessInputStream gis1 = GuessInputStream.getInstance(decoder.decode(is1));
+//		gis1.setIdentificationDepth(4);
+//		assertEquals("Formats detected [" + Arrays.toString(gis1.getFormats())
+//				+ "]", 1, gis1.getFormats().length);
+//		assertEquals("file format 1", FormatEnum.DOC, gis1.getFormats()[0]);
+		//Test arrives here...
+		final InputStream is = TestDroidDetector.class
+				.getResourceAsStream("/testFiles/canto_8parte.doc.b64");
+		final GuessInputStream gis = GuessInputStream.getInstance(is);
+		gis.setIdentificationDepth(4);
+		assertEquals("Formats detected [" + Arrays.toString(gis.getFormats())
+				+ "]", 2, gis.getFormats().length);
+		assertEquals("file format ", FormatEnum.BASE64, gis.getFormats()[0]);
+		assertEquals("file format 2", FormatEnum.DOC, gis.getFormats()[1]);
+		gis.close();
 	}
 }

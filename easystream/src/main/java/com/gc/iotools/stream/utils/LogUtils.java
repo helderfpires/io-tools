@@ -28,25 +28,15 @@ public final class LogUtils {
 	 *            Number of stack frames to log out.
 	 * @param me
 	 *            The current class
-	 * @return All the class names, methods and line numbers up nframes level in
-	 *         the stack.
+	 * @return All the class names, methods and line numbers up nframes level
+	 *         in the stack.
 	 */
 	public static String getCaller(final Class<?> me, final int nframes) {
 		final StackTraceElement[] stes = Thread.currentThread()
 				.getStackTrace();
-		boolean foundCaller = false;
-		boolean foundClazz = false;
-		int stackTracePosition = 0;
-		for (; (stackTracePosition < stes.length) && !foundCaller; stackTracePosition++) {
-			StackTraceElement stackTraceElement = stes[stackTracePosition];
-			foundClazz |= me.getName().equals(
-					stackTraceElement.getClassName());
-			foundCaller |= foundClazz
-					&& !me.getName().equals(stackTraceElement.getClassName());
-		}
-		stackTracePosition--;
+		int stackTracePosition = getCallerPosition(me, stes);
 		String result;
-		if (!foundCaller) {
+		if (stackTracePosition >= stes.length - 1) {
 			result = "class [" + me.getName()
 					+ "] not found in caller's stack trace.";
 		} else {
@@ -67,6 +57,22 @@ public final class LogUtils {
 			result = resBuffer.toString();
 		}
 		return result;
+	}
+
+	private static int getCallerPosition(final Class<?> me,
+			final StackTraceElement[] stes) {
+		boolean foundCaller = false;
+		boolean foundClazz = false;
+		int stackTracePosition = 0;
+		for (; (stackTracePosition < stes.length) && !foundCaller; stackTracePosition++) {
+			StackTraceElement stackTraceElement = stes[stackTracePosition];
+			foundClazz |= me.getName().equals(
+					stackTraceElement.getClassName());
+			foundCaller |= foundClazz
+					&& !me.getName().equals(stackTraceElement.getClassName());
+		}
+		stackTracePosition--;
+		return stackTracePosition;
 	}
 
 	private LogUtils() {

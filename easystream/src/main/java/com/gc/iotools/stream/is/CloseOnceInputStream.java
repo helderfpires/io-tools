@@ -9,8 +9,8 @@ import java.io.InputStream;
  * A <code>CloseOnceInputStream</code> contains some other input stream, which
  * it uses as its basic source of data. The class
  * <code>CloseOnceInputStream</code> pass all requests to the contained input
- * stream, except the {@linkplain #close()} method that is passed only one time
- * to the underlying stream.
+ * stream, except the {@linkplain #close()} method that is passed only one
+ * time to the underlying stream.
  * </p>
  * <p>
  * Multiple invocation of the <code>close()</code> method will result in only
@@ -29,8 +29,8 @@ public class CloseOnceInputStream<T extends InputStream> extends
 	private int closeCount = 0;
 
 	/**
-	 * Construct a <code>CloseOnceInputStream</code> that forwards the calls to
-	 * the source InputStream passed in the constructor.
+	 * Construct a <code>CloseOnceInputStream</code> that forwards the calls
+	 * to the source InputStream passed in the constructor.
 	 * 
 	 * @param source
 	 *            original InputStream
@@ -41,8 +41,8 @@ public class CloseOnceInputStream<T extends InputStream> extends
 
 	/**
 	 * <p>
-	 * Multiple invocation of this method will result in only one invocation of
-	 * the <code>close()</code> on the underlying stream.
+	 * Multiple invocation of this method will result in only one invocation
+	 * of the <code>close()</code> on the underlying stream.
 	 * </p>
 	 * 
 	 * @throws IOException

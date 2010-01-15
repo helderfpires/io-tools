@@ -1,8 +1,8 @@
 package com.gc.iotools.stream.store;
 
 /*
- * Copyright (c) 2008, 2009 Davide Simonetti. This source code is released under
- * the BSD License.
+ * Copyright (c) 2008, 2009 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 
 import java.io.IOException;

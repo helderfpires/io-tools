@@ -1,5 +1,8 @@
 package com.gc.iotools.stream.is.inspection;
-
+/*
+ * Copyright (c) 2008,2010 Davide Simonetti. This source code is released
+ * under the BSD License.
+ */
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,15 +32,15 @@ import com.gc.iotools.stream.utils.LogUtils;
  * keeping track of the usage of the methods.
  * </p>
  * <p>
- * Errors are both logged at WARN level and available through the standard class
- * interface. Future version will allow the customization of this behavior
- * disable the logging.
+ * Errors are both logged at WARN level and available through the standard
+ * class interface. Future version will allow the customization of this
+ * behavior disable the logging.
  * </p>
  * <p>
- * It is designed to detect also errors that happens during object finalization,
- * but to detect these errors in tests you must be very careful on your test
- * design (see example). Errors in finalizers are available trough the
- * {@linkplain #getFinalizationErrors()} method.
+ * It is designed to detect also errors that happens during object
+ * finalization, but to detect these errors in tests you must be very careful
+ * on your test design (see example). Errors in finalizers are available
+ * trough the {@linkplain #getFinalizationErrors()} method.
  * </p>
  * <p>
  * It's an useful tool in unit tests to detect wrong handling of the streams,
@@ -60,14 +63,13 @@ import com.gc.iotools.stream.utils.LogUtils;
  * 			instanceWarnings.length == 0);
  * }
  * </pre>
- * 
  * </p>
  * <p>
  * If your code free resources in <code>finalize()</code> methods, or the
- * libraries you use do so you must use a more complex testing strategy because
- * the references to to the active <code>DiagnosticInputStream</code> instance
- * in your Junit prevents the class from being garbage collected. See the wiki
- * for details and {@linkplain #getFinalizationErrors()}.
+ * libraries you use do so you must use a more complex testing strategy
+ * because the references to to the active <code>DiagnosticInputStream</code>
+ * instance in your Junit prevents the class from being garbage collected. See
+ * the wiki for details and {@linkplain #getFinalizationErrors()}.
  * </p>
  * 
  * @since 1.2.6
@@ -117,8 +119,8 @@ public class DiagnosticInputStream<T extends InputStream> extends
 	 * @param inputStream
 	 *            the source InputStream
 	 * @param logDepth
-	 *            Number of stack frames to log. It overrides the default static
-	 *            value.
+	 *            Number of stack frames to log. It overrides the default
+	 *            static value.
 	 */
 	public DiagnosticInputStream(final T inputStream, final int logDepth) {
 		super(inputStream);
@@ -141,20 +143,6 @@ public class DiagnosticInputStream<T extends InputStream> extends
 	public int available() throws IOException {
 		checkCloseInvoked("available");
 		return super.available();
-	}
-
-	private void checkCloseInvoked(final String methodName) {
-		if (this.closeCount > 0) {
-			this.methodCalledAfterClose = true;
-			String warning = "ALREADY_CLOSED: ["
-					+ methodName
-					+ "] called by ["
-					+ LogUtils.getCaller(DiagnosticInputStream.class,
-							this.logDepth) + "]";
-			this.warnings.add(warning);
-			LOGGER.warn(warning + "but the stream was already closed by ["
-					+ this.closeTrace + "]");
-		}
 	}
 
 	public void clearInstanceWarnings() {
@@ -216,11 +204,6 @@ public class DiagnosticInputStream<T extends InputStream> extends
 		return this.closeCount;
 	}
 
-	private String getConstructorCallerMethod() {
-		return this.constructorTrace.substring(this.constructorTrace
-				.indexOf('.') + 1, this.constructorTrace.indexOf(':'));
-	}
-
 	public String[] getInstanceWarnings() {
 		return this.warnings.toArray(new String[this.warnings.size()]);
 	}
@@ -259,12 +242,12 @@ public class DiagnosticInputStream<T extends InputStream> extends
 	/**
 	 * <p>
 	 * Returns the wrapped (original) <code>InputStream</code> passed in the
-	 * constructor. Any calls made to the returned stream will not be tracked by
-	 * <code>DiagnosticInputStream</code>, so this method should be used with
-	 * care, and <code>close()</code> and <code>read()</code> methods should'nt
-	 * be called on the returned <code>InputStream</code>. Instead these methods
-	 * should be called on <code>DiagnosticInputStream</code> that simply
-	 * forwards them to the underlying stream.
+	 * constructor. Any calls made to the returned stream will not be tracked
+	 * by <code>DiagnosticInputStream</code>, so this method should be used
+	 * with care, and <code>close()</code> and <code>read()</code> methods
+	 * should'nt be called on the returned <code>InputStream</code>. Instead
+	 * these methods should be called on <code>DiagnosticInputStream</code>
+	 * that simply forwards them to the underlying stream.
 	 * </p>
 	 * 
 	 * @return The original <code>InputStream</code> passed in the constructor
@@ -341,5 +324,24 @@ public class DiagnosticInputStream<T extends InputStream> extends
 	public long skip(final long n) throws IOException {
 		checkCloseInvoked("skip");
 		return super.skip(n);
+	}
+
+	private void checkCloseInvoked(final String methodName) {
+		if (this.closeCount > 0) {
+			this.methodCalledAfterClose = true;
+			String warning = "ALREADY_CLOSED: ["
+					+ methodName
+					+ "] called by ["
+					+ LogUtils.getCaller(DiagnosticInputStream.class,
+							this.logDepth) + "]";
+			this.warnings.add(warning);
+			LOGGER.warn(warning + "but the stream was already closed by ["
+					+ this.closeTrace + "]");
+		}
+	}
+
+	private String getConstructorCallerMethod() {
+		return this.constructorTrace.substring(this.constructorTrace
+				.indexOf('.') + 1, this.constructorTrace.indexOf(':'));
 	}
 }

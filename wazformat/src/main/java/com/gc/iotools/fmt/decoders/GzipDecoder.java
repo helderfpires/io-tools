@@ -1,8 +1,8 @@
 package com.gc.iotools.fmt.decoders;
 
 /*
- * Copyright (c) 2008, 2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008, 2009 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +19,6 @@ import com.gc.iotools.fmt.base.FormatEnum;
  * @see Decoder
  */
 public class GzipDecoder implements Decoder {
-	private static final int START_SIZE = 4096;
 
 	/**
 	 * {@inheritDoc}
@@ -35,6 +34,5 @@ public class GzipDecoder implements Decoder {
 	public FormatEnum getFormat() {
 		return FormatEnum.GZ;
 	}
-
 
 }
