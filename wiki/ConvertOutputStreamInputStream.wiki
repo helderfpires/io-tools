@@ -1,5 +1,4 @@
 #summary Convert an OutputStream into an InputStream
-#labels Draft
 
 = Convert `OutputStream` to an `InputStream` =
 
@@ -62,6 +61,23 @@ tempFile.delete();
 == Pipes ==
 The two ends (`PipedInputStream` and `PipedOutputStream`) must be in two different `Threads`.
 
+{{{
+  PipedInputStream in = new PipedInputStream();
+  PipedOUtputStream out = new PipedOutputStream(in);
+  new Thread(
+    new Runnable(){
+      public void run(){
+        putDataOnOutputStream(out);
+      }
+    }
+  ).start();
+  //process thu data as you like.	
+  processDataFromInputStream(in);
+}}}
+This code is just a little example, and pipes look very easy to use.
+In fact they provide a very good performance and low memory usage. But don't be fooled by the example. It's very easy you forget to close the `PipedInputStream` (maybe for an exception) and you end up with a dangling Thread that never completes. So you must take special care of exception handling and closing all the streams with care.
+
+There is also the other way round of this example:
 == Circular Buffers ==
 
 == Use `InputStreamFromOutputStream` and `OutputStreamToInputStream` ==
