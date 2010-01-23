@@ -43,6 +43,8 @@ final InputStreamFromOutputStream<String> isos = new InputStreamFromOutputStream
 }
 }}}
 
+Some programmers might be unfamiliar with the syntax of this example. It `isos` is an anonymous inner class that overrides the method `produce(OutputStream)`. You can still use standard inheritance if you prefer.
+
 For further information read the [http://jsignature.sourceforge.net/io-tools/easystream/apidocs/com/gc/iotools/stream/is/InputStreamFromOutputStream.html api javadoc].
 
 === !OutputStreamToInputStream ===
