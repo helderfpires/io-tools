@@ -67,25 +67,43 @@ The two ends (`PipedInputStream` and `PipedOutputStream`) must be in two differe
   new Thread(
     new Runnable(){
       public void run(){
+        //put your code that writes data to the outputstream here.
         putDataOnOutputStream(out);
       }
     }
   ).start();
-  //process thu data as you like.	
+  //data can be read from the pipedInputStream here.	
   processDataFromInputStream(in);
 }}}
 This code is just a little example, and pipes look very easy to use.
 In fact they provide a very good performance and low memory usage. But don't be fooled by the example. It's very easy you forget to close the `PipedInputStream` (maybe for an exception) and you end up with a dangling Thread that never completes. So you must take special care of exception handling and closing all the streams with care.
 
 There is also the other way round of this example:
+{{{
+  PipedInputStream in = new PipedInputStream();
+  PipedOUtputStream out = new PipedOutputStream(in);
+  new Thread(
+    new Runnable(){
+      public void run(){
+        //data can be read from the pipedInputStream here.	
+        processDataFromInputStream(in);
+      }
+    }
+  ).start();
+//put your code that writes data to the outputstream here.
+putDataOnOutputStream(out);
+}}}
+
 == Circular Buffers ==
+There is a well known library that uses this method. In fact it doesn't have many advantages compared to pipes (still need to handle two threads instantiation/execution) like in previous example.
+If you want further details you can have a look here http://ostermiller.org/convert_java_outputstream_inputstream.html
 
 == Use `InputStreamFromOutputStream` and `OutputStreamToInputStream` ==
 
-This approach has many advantages:
+If you want fixed memory fingerprint, speed and ease of use ehm... here are a couple of classes that you should consider to put in your code.
 
  * These classes internally use pipes, so they have a fixed memory fingerprint (doesn't fill up your memory with data).
- * Details of threads are hidden from the user. You don't have to deal with instantiation/start/synchronization/stop. 
+ * Details of threads are hidden from the user. You don't have to deal with instantiation/start/synchronization/stop. Also exception handling is already done in a nice way.
  * You can easily choose between many [ExecutionModel options] for instantiating new `Threads` (thread pool, thread per instance ...) or just don't care and get the default. 
  * Details of pipes are hidden. No  `PipeInputStream` or `PipeOutputStream` in your code.
  * The internal pipe size can be adjusted to fit your needs.
