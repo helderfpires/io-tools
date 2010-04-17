@@ -119,6 +119,7 @@ public class ThresholdStore implements SeekableStore {
 				int len;
 				while ((len = this.ms.get(buffer, 0, buffer.length)) > 0) {
 					this.fileAccess.write(buffer, 0, len);
+
 				}
 				this.ms.cleanup();
 			} else {

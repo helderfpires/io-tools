@@ -222,13 +222,16 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 					+ this.store + "] is not an instance of ["
 					+ SeekableStore.class + "]");
 		}
+		long startingPos = this.randomAccessIsPosition;
 		final long len = position - this.randomAccessIsPosition;
 		if (len > 0) {
 			final long n = skip(len);
 			if (n < len) {
 				throw new IOException("Requested seek to [" + position
 						+ "] but the stream is only ["
-						+ (n + this.randomAccessIsPosition) + "] bytes long.");
+						+ (this.randomAccessIsPosition)
+						+ "] bytes long. skipped[" + n + "] startingPos["
+						+ startingPos + "].");
 			}
 		} else if (len < 0) {
 			// if len==0 already at the right place. Do Nothing.

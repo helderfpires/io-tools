@@ -79,7 +79,9 @@ public class ThresholdStorageTest {
 			pos += n;
 		}
 		assertEquals("read", ref1.length, pos);
-		assertArrayEquals(ref1, ArrayUtils.subarray(read, 0, ref1.length));
+		assertArrayEquals("arrays equal", ref1, ArrayUtils.subarray(read1, 0,
+				ref1.length));
+		tss.cleanup();
 	}
 
 	@Test
@@ -114,6 +116,29 @@ public class ThresholdStorageTest {
 		seekEqualsReference(tss, ref1);
 		assertEquals("get over eof", -1, tss.get(new byte[10], 0, 10));
 		seekEqualsReference(tss, ref1);
+		tss.cleanup();
+	}
+
+	@Test
+	public void testRandomAccess() throws IOException {
+		byte[] ref1 = new byte[1024 * 8];
+		final Random r = new Random();
+		r.nextBytes(ref1);
+		for (int i = 0; i < 1024; i++) {
+			final ThresholdStore tss = new ThresholdStore(1024);
+			for (int j = 0; j < ref1.length; j++) {
+				tss.put(ref1, 0, ref1.length);
+			}
+			int pos = r.nextInt(ref1.length - 129);
+			tss.seek(pos);
+			byte[] read = new byte[128];
+			int rl = tss.get(read, 0, read.length);
+			byte[] ref = new byte[128];
+			System.arraycopy(ref1, pos, ref, 0, rl);
+			assertArrayEquals("array equals", ref, read);
+			tss.cleanup();
+		}
+
 	}
 
 	@Test
@@ -132,6 +157,7 @@ public class ThresholdStorageTest {
 			tss.get(read, 0, 1);
 			assertEquals("position [" + i + "]", b, read[0]);
 		}
+		tss.cleanup();
 	}
 
 	@Test
@@ -143,6 +169,7 @@ public class ThresholdStorageTest {
 		tss.put(ref1, 0, ref1.length);
 		tss.put(ref1, 0, ref1.length);
 		seekEqualsReference(tss, ArrayUtils.addAll(ref1, ref1));
+		tss.cleanup();
 	}
 
 	private void seekEqualsReference(ThresholdStore t, byte[] reference)
