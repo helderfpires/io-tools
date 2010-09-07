@@ -420,4 +420,7 @@
 			</distributionManagement>
 		</profile>
 	</profiles>
+        <properties>
+           <project.build.sourceEncoding>US-ASCII</project.build.sourceEncoding>
+        </properties>
 </project>
