@@ -1,9 +1,11 @@
 package com.gc.iotools.fmt.detect.droid;
 
 /*
- * Copyright (c) 2008, 2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008, 2009 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -17,6 +19,7 @@ import java.util.Properties;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +44,6 @@ import com.gc.iotools.fmt.base.ResettableInputStream;
  * Implementation of a FileDetector that relies on droid classes.
  * 
  * @author dvd.smnt
- * 
  */
 public class DroidDetectorImpl implements DetectionLibrary {
 	/**
@@ -110,6 +112,12 @@ public class DroidDetectorImpl implements DetectionLibrary {
 	public FormatId detect(final FormatEnum[] enabledFormats,
 			final ResettableInputStream stream) throws IOException {
 		final IdentificationFile idFile = new IdentificationFile("-");
+		File file = File.createTempFile("io-tools-doc", ".doc");
+		FileOutputStream fos = new FileOutputStream(file);
+		IOUtils.copy(stream, fos);
+		fos.close();
+		System.out.println("Data written to [" + file.getName() + "]");
+		stream.resetToBeginning();
 		final ByteReader testFile = new RandomAccessByteReader(idFile, stream);
 		final FFSignatureFile fsigfile = CONF_MAP.get(this.configFile);
 		FFSignatureFile reduced = reduceDetectedSequences(fsigfile,

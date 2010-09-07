@@ -23,12 +23,12 @@ public class ResettableStreamRASAdapter extends ResettableInputStream {
 		final ThresholdStore ts = new ThresholdStore(128 * 1024);
 		final OnOffStore os = new OnOffStore(ts);
 		this.ras = new RandomAccessInputStream(source, os);
-		this.bis = new BufferedInputStream(ras);
+		// this.bis = new BufferedInputStream(ras);
 	}
 
 	@Override
 	public int available() throws IOException {
-		return this.bis.available();
+		return this.ras.available();
 	}
 
 	@Override
@@ -55,28 +55,28 @@ public class ResettableStreamRASAdapter extends ResettableInputStream {
 
 	@Override
 	public void mark(final int readLimit) {
-		this.bis.mark(readLimit);
+		this.ras.mark(readLimit);
 	}
 
 	@Override
 	public boolean markSupported() {
-		return this.bis.markSupported();
+		return this.ras.markSupported();
 	}
 
 	@Override
 	public int read() throws IOException {
-		return this.bis.read();
+		return this.ras.read();
 	}
 
 	@Override
 	public int read(final byte[] b) throws IOException {
-		return this.bis.read(b);
+		return this.ras.read(b);
 	}
 
 	@Override
 	public final int read(final byte[] b, final int off, final int len)
 			throws IOException {
-		return this.bis.read(b, off, len);
+		return this.ras.read(b, off, len);
 	}
 
 	@Override
@@ -87,11 +87,11 @@ public class ResettableStreamRASAdapter extends ResettableInputStream {
 	@Override
 	public void resetToBeginning() throws IOException {
 		this.ras.seek(0);
-		this.bis = new BufferedInputStream(ras);
+		// this.bis = new BufferedInputStream(ras);
 	}
 
 	@Override
 	public long skip(final long n) throws IOException {
-		return this.bis.skip(n);
+		return this.ras.skip(n);
 	}
 }

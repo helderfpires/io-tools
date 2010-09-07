@@ -20,7 +20,7 @@ import java.nio.CharBuffer;
  * </p>
  * 
  * @author dvd.smnt
- * @since 1.2.6
+ * @since 1.2.7
  * @param <T>
  *            Type of the InputStream passed in the constructor.
  */

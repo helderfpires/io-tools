@@ -6,7 +6,10 @@ package com.gc.iotools.stream.reader;
  */
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.io.Writer;
+
+import org.apache.commons.io.IOUtils;
 
 import com.gc.iotools.stream.base.EasyStreamConstants;
 
@@ -42,17 +45,16 @@ import com.gc.iotools.stream.base.EasyStreamConstants;
  * 
  * <pre>
  * 	 Reader source=... //some data to be read.
- *   ByteArrayOutputStream destination1= new ByteArrayOutputStream();
- *   ByteArrayOutputStream destination2= new ByteArrayOutputStream();
+ *   StringWriter destination1= new StringWriter();
+ *   StringWriter destination2= new StringWriter();
  *   
- *   TeeReaderWriter tee=
- *                          new TeeReaderWriter(source,destination1);
+ *   TeeReaderWriter tee = new TeeReaderWriter(source,destination1);
  *   org.apache.commons.io.IOUtils.copy(tee,destination2);
  *   tee.close();
  *   //at this point both destination1 and destination2 contains the same bytes
  *   //in destination1 were put by TeeReaderWriter while in 
  *   //destination2 they were copied by IOUtils.
- *   byte[] bytes=destination1.getBytes();
+ *   StringBuffer buffer=destination1.getBuffer();
  * </pre>
  * 
  * @see org.apache.commons.io.input.TeeReader
@@ -91,7 +93,7 @@ public class TeeReaderWriter extends Reader {
 	 * which the data will be copied.
 	 * </p>
 	 * 
-	 * @since 1.2.3
+	 * @since 1.2.7
 	 * @param source
 	 *            The underlying <code>Reader</code>
 	 * @param closeStreams
@@ -154,7 +156,7 @@ public class TeeReaderWriter extends Reader {
 	 * input stream <code>source</code> and the output stream
 	 * <code>destination</code> for later use.
 	 * 
-	 * @since 1.2.0
+	 * @since 1.2.7
 	 * @param source
 	 *            The underlying <code>Reader</code>
 	 * @param destination
@@ -229,7 +231,7 @@ public class TeeReaderWriter extends Reader {
 	 * 
 	 * @return number of milliseconds spent reading from the
 	 *         <code>source</code> .
-	 * @since 1.2.5
+	 * @since 1.2.7
 	 */
 	public long getReadTime() {
 		return this.readTime;
@@ -248,7 +250,7 @@ public class TeeReaderWriter extends Reader {
 	 * 
 	 * @return number of bytes written until now to a single
 	 *         <code>destination</code>.
-	 * @since 1.2.5
+	 * @since 1.2.7
 	 */
 	public long getWriteSize() {
 		return this.destinationPosition;
@@ -306,7 +308,7 @@ public class TeeReaderWriter extends Reader {
 	 *            position becomes invalid.
 	 * @see #reset()
 	 * @see java.io.Reader#mark(int)
-	 * @since 1.2.0
+	 * @since 1.2.7
 	 */
 	@Override
 	public void mark(final int readLimit) throws IOException{
@@ -364,7 +366,7 @@ public class TeeReaderWriter extends Reader {
 	 * @exception IOException
 	 *                If the source stream has an exception in calling
 	 *                reset().
-	 * @since 1.2.0
+	 * @since 1.2.7
 	 */
 	@Override
 	public synchronized void reset() throws IOException {

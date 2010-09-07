@@ -34,7 +34,7 @@ public class StorageBufInputStreamTest {
 
 	@Test
 	public void testFullReadAndReset() throws IOException {
-		// final BigDocumentIstream bis = new BigDocumentIstream(131072);
+		// final BigDocumentReader bis = new BigDocumentReader(131072);
 		// final byte[] reference = IOUtils.toByteArray(bis);
 		// bis.resetToBeginning();
 		// final StorageBufInputStream ris = new StorageBufInputStream(bis);
@@ -47,7 +47,7 @@ public class StorageBufInputStreamTest {
 
 	@Test
 	public void testMarkAndReset() throws IOException {
-		// final BigDocumentIstream bis = new BigDocumentIstream(131072);
+		// final BigDocumentReader bis = new BigDocumentReader(131072);
 		// final byte[] reference = IOUtils.toByteArray(bis);
 		// bis.resetToBeginning();
 		//
@@ -71,7 +71,7 @@ public class StorageBufInputStreamTest {
 
 	@Test
 	public void testSkipAndReset() throws IOException {
-		// final BigDocumentIstream bis = new BigDocumentIstream(131072);
+		// final BigDocumentReader bis = new BigDocumentReader(131072);
 		// final byte[] reference = IOUtils.toByteArray(bis);
 		// bis.resetToBeginning();
 		// final StorageBufInputStream ris = new StorageBufInputStream(bis);
