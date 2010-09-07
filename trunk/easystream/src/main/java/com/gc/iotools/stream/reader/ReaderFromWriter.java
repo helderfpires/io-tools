@@ -17,6 +17,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,7 @@ import com.gc.iotools.stream.utils.LogUtils;
  * 
  * <pre>
  * final String dataId=//id of some data.
- * final ReaderFromWriter&lt;String&gt; isos 
+ * final ReaderFromWriter&lt;String&gt; rfw 
  *                          = new ReaderFromWriter&lt;String&gt;() {
  *   &#064;Override
  *   public String produce(final Writer dataSink) throws Exception {
@@ -54,12 +55,12 @@ import com.gc.iotools.stream.utils.LogUtils;
  *  try {
  *    //now you can read from the Reader the data that was written to the 
  *    //dataSink Writer
- *     byte[] read=IOUtils.toByteArray(isos);
+ *     char[] read=IOUtils.toCharArray(rfw);
  *     //Use data here
  *   } catch (final IOException e) {
  *     //Handle exception here
  *   } finally {
- *   isos.close();
+ *   rfw.close();
  * }
  * //You can get the result of produceMyData after the stream has been closed.
  * String resultOfProduction = isos.getResult();
@@ -181,26 +182,13 @@ public abstract class ReaderFromWriter<T> extends Reader {
 		return result;
 	}
 
-	/**
-	 * Set the size for the pipe circular buffer for the newly created
-	 * <code>ReaderFromWriter</code>. Default is 4096 bytes. will
-	 * be removed in 1.3.0. Use setDefaultPipeSize instead.
-	 * 
-	 * @deprecated
-	 * @since 1.2.0
-	 * @param defaultPipeSize
-	 *            the default pipe buffer size in bytes.
-	 */
-	@Deprecated
-	public static void setDefaultBufferSize(final int defaultPipeSize) {
-		ReaderFromWriter.defaultPipeSize = defaultPipeSize;
-	}
+
 
 	/**
 	 * Set the size for the pipe circular buffer for the newly created
 	 * <code>ReaderFromWriter</code>. Default is 4096 bytes.
 	 * 
-	 * @since 1.2.2
+	 * @since 1.2.7
 	 * @param defaultPipeSize
 	 *            the default pipe buffer size in bytes.
 	 */
@@ -235,7 +223,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 * This class executes the produce method in a thread created internally.
 	 * </p>
 	 * 
-	 * @since 1.2.2
+	 * @since 1.2.7
 	 * @see ExecutionModel
 	 * @param executionModel
 	 *            Defines how the internal thread is allocated.
@@ -255,7 +243,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 * {@linkplain #produce(Writer)} method.
 	 * </p>
 	 * 
-	 * @since 1.2.2
+	 * @since 1.2.7
 	 * @see ExecutorService
 	 * @param executor
 	 *            Defines the ExecutorService that will allocate the the
@@ -279,7 +267,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 * Using this method the default size is ignored.
 	 * </p>
 	 * 
-	 * @since 1.2.6
+	 * @since 1.2.7
 	 * @see ExecutorService
 	 * @param executor
 	 *            Defines the ExecutorService that will allocate the the
@@ -374,7 +362,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 * otherwise an IllegalStateException is thrown.
 	 * </p>
 	 * 
-	 * @since 1.2.0
+	 * @since 1.2.7
 	 * @return Object that was returned by the
 	 *         {@linkplain #produce(Writer)} method.
 	 * @throws Exception

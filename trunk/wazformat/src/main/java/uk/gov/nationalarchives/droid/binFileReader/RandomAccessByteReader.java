@@ -6,11 +6,10 @@ import java.io.InputStream;
 import com.gc.iotools.fmt.base.ResettableInputStream;
 
 /**
- * 
- * TODO a 2K buffer at beginning and end of the file will improve performances.
+ * TODO a 2K buffer at beginning and end of the file will improve
+ * performances.
  * 
  * @author dvd.smt
- * 
  */
 public final class RandomAccessByteReader extends AbstractByteReader {
 
@@ -91,7 +90,10 @@ public final class RandomAccessByteReader extends AbstractByteReader {
 		} else if (fileIndex < this.position) {
 			this.ras.resetToBeginning();
 			if (fileIndex > 0) {
-				this.ras.skip(fileIndex);
+				long l = this.ras.skip(fileIndex);
+				if (l != fileIndex) {
+					throw new IOException();
+				}
 			}
 		}
 		this.position = fileIndex;

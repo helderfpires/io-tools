@@ -1,8 +1,8 @@
 package com.gc.iotools.fmt;
 
 /*
- * Copyright (c) 2008, 2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008, 2009 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,9 +11,8 @@ import com.gc.iotools.fmt.base.Decoder;
 import com.gc.iotools.fmt.base.ResettableInputStream;
 
 /**
- * Helps in mark and reset of decoded streams.
- * 
- * Mark and reset are done on baseStream. Reads are done on decodedStream.
+ * Helps in mark and reset of decoded streams. Mark and reset are done on
+ * baseStream. Reads are done on decodedStream.
  * 
  * @since 1.2.0
  * @author dvd.smnt
@@ -37,7 +36,7 @@ public class ResettableStreamWrapper extends ResettableInputStream {
 
 	@Override
 	public boolean markSupported() {
-		return this.baseStream.markSupported();
+		return false;
 	}
 
 	@Override
@@ -72,13 +71,16 @@ public class ResettableStreamWrapper extends ResettableInputStream {
 	}
 
 	private void checkInitialized() throws IOException {
-		if (this.decodedStream == null)
+		if (this.decodedStream == null) {
+			this.baseStream.resetToBeginning();
 			this.decodedStream = this.decoder.decode(this.baseStream);
+		}
 	}
 
 	@Override
 	public void close() throws IOException {
 		this.baseStream.close();
+		this.decodedStream = null;
 	}
 
 }

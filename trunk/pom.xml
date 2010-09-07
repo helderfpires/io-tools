@@ -7,8 +7,8 @@
 	<name>IO-Toools</name>
 	<description>IO-tools utilites for stream and format detection</description>
 	<scm>
-		<connection>scm:svn:http://io-tools.googlecode.com/svn/tags/io-tools-1.2.5</connection>
-		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/tags/io-tools-1.2.5</developerConnection>
+		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk</connection>
+		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk</developerConnection>
 	</scm>
 	<issueManagement>
 		<system>GoogleIssues</system>
@@ -31,7 +31,7 @@
 	<distributionManagement>
 		<site>
 			<id>jsignature.sourceforge.net</id>
-			<url>scp://shell.sourceforge.net/home/groups/j/js/jsignature/htdocs/io-tools</url>
+			<url>scp://web.sourceforge.net/home/groups/j/js/jsignature/htdocs/io-tools</url>
 		</site>
 	</distributionManagement>
 	<modules>
