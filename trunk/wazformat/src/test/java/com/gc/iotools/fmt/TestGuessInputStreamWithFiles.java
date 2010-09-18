@@ -2,8 +2,10 @@ package com.gc.iotools.fmt;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
@@ -11,10 +13,10 @@ import java.util.Iterator;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.junit.Test;
 
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.TestUtils;
-import com.gc.iotools.fmt.decoders.Base64Decoder;
 import com.gc.iotools.fmt.detect.droid.TestDroidDetector;
 
 public class TestGuessInputStreamWithFiles {
@@ -36,8 +38,8 @@ public class TestGuessInputStreamWithFiles {
 					gis.getFormat());
 			final byte[] reference = IOUtils.toByteArray(new FileInputStream(
 					file));
-			assertTrue("Read equals reference [" + fileName + "]", Arrays
-					.equals(reference, IOUtils.toByteArray(gis)));
+			assertTrue("Read equals reference [" + fileName + "]",
+					Arrays.equals(reference, IOUtils.toByteArray(gis)));
 			gis.close();
 		}
 		final String[] badFiles = TestUtils
@@ -84,13 +86,13 @@ public class TestGuessInputStreamWithFiles {
 		InputStream istream = TestDroidDetector.class
 				.getResourceAsStream(fileName);
 		GuessInputStream gis = GuessInputStream.getInstance(istream);
-		assertEquals("file format [" + fileName + "]", FormatEnum.PKCS7, gis
-				.getFormat());
+		assertEquals("file format [" + fileName + "]", FormatEnum.PKCS7,
+				gis.getFormat());
 		fileName = "/testFiles/ietf.p7m";
 		istream = TestDroidDetector.class.getResourceAsStream(fileName);
 		gis = GuessInputStream.getInstance(istream);
-		assertEquals("file format [" + fileName + "]", FormatEnum.PKCS7, gis
-				.getFormat());
+		assertEquals("file format [" + fileName + "]", FormatEnum.PKCS7,
+				gis.getFormat());
 
 	}
 
@@ -120,15 +122,18 @@ public class TestGuessInputStreamWithFiles {
 
 	@org.junit.Test
 	public void testBase64Doc() throws Exception {
-//		final InputStream is1 = TestDroidDetector.class
-//				.getResourceAsStream("/testFiles/canto_8parte.doc.b64");
-//		Base64Decoder decoder=new Base64Decoder();
-//		final GuessInputStream gis1 = GuessInputStream.getInstance(decoder.decode(is1));
-//		gis1.setIdentificationDepth(4);
-//		assertEquals("Formats detected [" + Arrays.toString(gis1.getFormats())
-//				+ "]", 1, gis1.getFormats().length);
-//		assertEquals("file format 1", FormatEnum.DOC, gis1.getFormats()[0]);
-		//Test arrives here...
+		// final InputStream is1 = TestDroidDetector.class
+		// .getResourceAsStream("/testFiles/canto_8parte.doc.b64");
+		// Base64Decoder decoder=new Base64Decoder();
+		// final GuessInputStream gis1 =
+		// GuessInputStream.getInstance(decoder.decode(is1));
+		// gis1.setIdentificationDepth(4);
+		// assertEquals("Formats detected [" +
+		// Arrays.toString(gis1.getFormats())
+		// + "]", 1, gis1.getFormats().length);
+		// assertEquals("file format 1", FormatEnum.DOC,
+		// gis1.getFormats()[0]);
+		// Test arrives here...
 		final InputStream is = TestDroidDetector.class
 				.getResourceAsStream("/testFiles/canto_8parte.doc.b64");
 		final GuessInputStream gis = GuessInputStream.getInstance(is);
@@ -138,5 +143,15 @@ public class TestGuessInputStreamWithFiles {
 		assertEquals("file format ", FormatEnum.BASE64, gis.getFormats()[0]);
 		assertEquals("file format 2", FormatEnum.DOC, gis.getFormats()[1]);
 		gis.close();
+	}
+
+	@Test
+	public void testBase64ConWhitespace() throws IOException {
+		final String str = "N	D I=";
+		final ByteArrayInputStream baIS = new ByteArrayInputStream(
+				str.getBytes());
+		final GuessInputStream gIS = GuessInputStream.getInstance(baIS);
+		final FormatEnum format = gIS.getFormat();
+		assertEquals("Format not recognized", FormatEnum.BASE64, format);
 	}
 }
