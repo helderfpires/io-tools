@@ -1,47 +1,21 @@
 /*
- ** ByteSeqSpecifier.java
- *
- * The National Archives 2005-2006.  All rights reserved.
- * See Licence.txt for full licence details.
- *
- * Developed by:
- * Tessella Support Services plc
- * 3 Vineyard Chambers
- * Abingdon, OX14 3PX
- * United Kingdom
- * http://www.tessella.com
- *
- * Tessella/NPD/4826
- * PRONOM 4
- *
- * $Id: ByteSeqSpecifier.java,v 1.7 2006/03/13 15:15:28 linb Exp $
- *
- * $Logger: ByteSeqSpecifier.java,v $
- * Revision 1.7  2006/03/13 15:15:28  linb
- * Changed copyright holder from Crown Copyright to The National Archives.
- * Added reference to licence.txt
- * Changed dates to 2005-2006
- *
- * Revision 1.6  2006/02/13 09:26:16  gaur
- * Fixed bug in searching files from EOF, after first STS round
- *
- * Revision 1.5  2006/02/09 15:04:37  gaur
- * Corrected formatting
- *
- * Revision 1.4  2006/02/07 17:16:22  linb
- * - Change fileReader to ByteReader in formal parameters of methods
- * - use new static constructors
- * - Add detection of if a filePath is a URL or not
- *
- * Revision 1.3  2006/02/07 11:30:04  gaur
- * Added support for endianness of signature
- *
- * Revision 1.2  2006/02/03 16:54:41  gaur
+ * * ByteSeqSpecifier.java The National Archives 2005-2006. All rights
+ * reserved. See Licence.txt for full licence details. Developed by: Tessella
+ * Support Services plc 3 Vineyard Chambers Abingdon, OX14 3PX United Kingdom
+ * http://www.tessella.com Tessella/NPD/4826 PRONOM 4 $Id:
+ * ByteSeqSpecifier.java,v 1.7 2006/03/13 15:15:28 linb Exp $ $Logger:
+ * ByteSeqSpecifier.java,v $ Revision 1.7 2006/03/13 15:15:28 linb Changed
+ * copyright holder from Crown Copyright to The National Archives. Added
+ * reference to licence.txt Changed dates to 2005-2006 Revision 1.6 2006/02/13
+ * 09:26:16 gaur Fixed bug in searching files from EOF, after first STS round
+ * Revision 1.5 2006/02/09 15:04:37 gaur Corrected formatting Revision 1.4
+ * 2006/02/07 17:16:22 linb - Change fileReader to ByteReader in formal
+ * parameters of methods - use new static constructors - Add detection of if a
+ * filePath is a URL or not Revision 1.3 2006/02/07 11:30:04 gaur Added
+ * support for endianness of signature Revision 1.2 2006/02/03 16:54:41 gaur
  * We now allow general wildcards of arbitrary endianness: e.g., [!~A1B1:C1D1]
- *
- * Revision 1.1  2006/02/02 17:17:04  gaur
- * Initial version.  Functionality not yet complete, but should be sufficient to emulate the old behaviour.
- *
+ * Revision 1.1 2006/02/02 17:17:04 gaur Initial version. Functionality not
+ * yet complete, but should be sufficient to emulate the old behaviour.
  */
 
 package uk.gov.nationalarchives.droid.signatureFile;
@@ -57,13 +31,13 @@ import uk.gov.nationalarchives.droid.binFileReader.ByteReader;
  */
 public class ByteSeqSpecifier {
 
-	// Private members
-	private final byte[] minSeq; // The minimum (inclusive) value which the
 	// sequence can take: 80, 80 in the example
 	// in the header (except that we take off
 	// 128 before storing a value in the array,
 	// since bytes are unsigned)
 	private final byte[] maxSeq; // The maximum (inclusive) value which the
+	// Private members
+	private final byte[] minSeq; // The minimum (inclusive) value which the
 	// sequence can take: 80, 8F in the example
 	// in the header
 	private boolean negate; // If true, negates the sense of the test (in the
@@ -76,8 +50,8 @@ public class ByteSeqSpecifier {
 	 * 
 	 * @param asciiRep
 	 *            A StringBuffer whose initial portion will be an ASCII
-	 *            representation of the bytes specifier. This will be altered so
-	 *            that this initial portion is removed.
+	 *            representation of the bytes specifier. This will be altered
+	 *            so that this initial portion is removed.
 	 */
 	public ByteSeqSpecifier(final StringBuffer asciiRep) throws Exception {
 		String specifier; // The string of characters defining the bytes
@@ -95,7 +69,8 @@ public class ByteSeqSpecifier {
 		}
 
 		this.negate = false;
-		// Does the specifier begin with a ! (indicating negation)? Remove it if
+		// Does the specifier begin with a ! (indicating negation)? Remove it
+		// if
 		// so.
 		while ((specifier.charAt(0) == '!') || (specifier.charAt(0) == '~')) {
 			if (specifier.charAt(0) == '!') {
@@ -130,8 +105,8 @@ public class ByteSeqSpecifier {
 		this.minSeq = new byte[seqLength];
 		this.maxSeq = new byte[seqLength];
 		for (int i = 0; i < seqLength; i++) {
-			int byteVal = Integer.parseInt(minRange.substring(2 * i,
-					2 * (i + 1)), 16);
+			int byteVal = Integer.parseInt(
+					minRange.substring(2 * i, 2 * (i + 1)), 16);
 			this.minSeq[i] = (byte) (byteVal + Byte.MIN_VALUE);
 			byteVal = Integer.parseInt(
 					maxRange.substring(2 * i, 2 * (i + 1)), 16);
@@ -162,17 +137,19 @@ public class ByteSeqSpecifier {
 	 *         Note: In an ideal world, we would hold bigEndian as a private
 	 *         member, set up on construction. However, the framework used
 	 *         during parsing of the XML file does not lend itself to easily
-	 *         fetching information from a grandparent element. Consequently, we
-	 *         parse the byte sequence specifier in ignorance of its endianness,
-	 *         and wait until we try to match against a specific byte sequence
-	 *         (here) to find out how minSeq and maxSeq should be interpreted.
+	 *         fetching information from a grandparent element. Consequently,
+	 *         we parse the byte sequence specifier in ignorance of its
+	 *         endianness, and wait until we try to match against a specific
+	 *         byte sequence (here) to find out how minSeq and maxSeq should
+	 *         be interpreted.
 	 */
 	public boolean matchesByteSequence(final ByteReader file, long startPos,
 			int direction, final boolean bigEndian) {
 		try {
 			// We have to perform the comparison from big-end to little-end.
 			// Consequently, if we're reading
-			// from right to left but using big-endian-ness, or if we're reading
+			// from right to left but using big-endian-ness, or if we're
+			// reading
 			// from left-to-right but using
 			// little-endian-ness, we have to search through our sequence
 			// backwards -- that is, left-to-right

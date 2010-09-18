@@ -1,51 +1,24 @@
 /*
- * The National Archives 2005-2006.  All rights reserved.
- * See Licence.txt for full licence details.
- *
- * Developed by:
- * Tessella Support Services plc
- * 3 Vineyard Chambers
- * Abingdon, OX14 3PX
- * United Kingdom
- * http://www.tessella.com
- *
- * Tessella/NPD/4305
- * PRONOM 4
- *
- * $Id: sideFragment.java,v 1.6 2006/03/13 15:15:29 linb Exp $
- *
- * $Logger: sideFragment.java,v $
- * Revision 1.6  2006/03/13 15:15:29  linb
- * Changed copyright holder from Crown Copyright to The National Archives.
- * Added reference to licence.txt
- * Changed dates to 2005-2006
- *
- * Revision 1.5  2006/02/09 15:04:37  gaur
- * Corrected formatting
- *
- * Revision 1.4  2006/02/07 11:30:04  gaur
- * Added support for endianness of signature
- *
- * Revision 1.3  2006/02/03 16:54:42  gaur
- * We now allow general wildcards of arbitrary endianness: e.g., [!~A1B1:C1D1]
- *
- * Revision 1.2  2006/02/02 17:15:47  gaur
- * Started migration to being able to handle byte specifier wildcards.  This version should have the same functionality as the old one (but making use of the new ByteSeqSpecifier class).
- *
- *
- * $History: sideFragment.java $
- *
- * *****************  Version 4  *****************
- * User: Walm         Date: 17/05/05   Time: 12:48
- * Updated in $/PRONOM4/FFIT_SOURCE/signatureFile
- * wait for end of element tag before setting its content via the
- * completeElementContent method
- *
- * *****************  Version 3  *****************
- * User: Walm         Date: 5/04/05    Time: 18:07
- * Updated in $/PRONOM4/FFIT_SOURCE/signatureFile
- * review headers
- *
+ * The National Archives 2005-2006. All rights reserved. See Licence.txt for
+ * full licence details. Developed by: Tessella Support Services plc 3
+ * Vineyard Chambers Abingdon, OX14 3PX United Kingdom http://www.tessella.com
+ * Tessella/NPD/4305 PRONOM 4 $Id: sideFragment.java,v 1.6 2006/03/13 15:15:29
+ * linb Exp $ $Logger: sideFragment.java,v $ Revision 1.6 2006/03/13 15:15:29
+ * linb Changed copyright holder from Crown Copyright to The National
+ * Archives. Added reference to licence.txt Changed dates to 2005-2006
+ * Revision 1.5 2006/02/09 15:04:37 gaur Corrected formatting Revision 1.4
+ * 2006/02/07 11:30:04 gaur Added support for endianness of signature Revision
+ * 1.3 2006/02/03 16:54:42 gaur We now allow general wildcards of arbitrary
+ * endianness: e.g., [!~A1B1:C1D1] Revision 1.2 2006/02/02 17:15:47 gaur
+ * Started migration to being able to handle byte specifier wildcards. This
+ * version should have the same functionality as the old one (but making use
+ * of the new ByteSeqSpecifier class). $History: sideFragment.java $
+ * ***************** Version 4 ***************** User: Walm Date: 17/05/05
+ * Time: 12:48 Updated in $/PRONOM4/FFIT_SOURCE/signatureFile wait for end of
+ * element tag before setting its content via the completeElementContent
+ * method ***************** Version 3 ***************** User: Walm Date:
+ * 5/04/05 Time: 18:07 Updated in $/PRONOM4/FFIT_SOURCE/signatureFile review
+ * headers
  */
 package uk.gov.nationalarchives.droid.signatureFile;
 
@@ -61,12 +34,12 @@ import uk.gov.nationalarchives.droid.base.SimpleElement;
  * @version 4.0.0
  */
 public class SideFragment extends SimpleElement {
-	int myPosition;
-	int myMinOffset;
-	int myMaxOffset;
-	int numBytes;
-	String mySequenceFragment;
 	ArrayList<ByteSeqSpecifier> myByteSpecifierSequence;
+	int myMaxOffset;
+	int myMinOffset;
+	int myPosition;
+	String mySequenceFragment;
+	int numBytes;
 
 	/**
 	 * Set the sideFragment sequence (this will have been stored in the text
@@ -110,7 +83,8 @@ public class SideFragment extends SimpleElement {
 
 	public int getNumByteSeqSpecifiers() {
 		return this.myByteSpecifierSequence.size();
-	} // Number of byte sequence specifiers we hold (each of which specifies at
+	} // Number of byte sequence specifiers we hold (each of which specifies
+		// at
 
 	// least one byte)
 

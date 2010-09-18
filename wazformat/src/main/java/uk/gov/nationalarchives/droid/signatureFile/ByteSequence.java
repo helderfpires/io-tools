@@ -1,50 +1,20 @@
 /*
- * The National Archives 2005-2006.  All rights reserved.
- * See Licence.txt for full licence details.
- *
- * Developed by:
- * Tessella Support Services plc
- * 3 Vineyard Chambers
- * Abingdon, OX14 3PX
- * United Kingdom
- * http://www.tessella.com
- *
- * Tessella/NPD/4305
- * PRONOM 4
- *
- * $Id: ByteSequence.java,v 1.7 2006/03/13 15:15:29 linb Exp $
- *
- * $Logger: ByteSequence.java,v $
- * Revision 1.7  2006/03/13 15:15:29  linb
- * Changed copyright holder from Crown Copyright to The National Archives.
- * Added reference to licence.txt
- * Changed dates to 2005-2006
- *
- * Revision 1.6  2006/02/09 15:04:37  gaur
- * Corrected formatting
- *
- * Revision 1.5  2006/02/08 16:14:01  gaur
- * Corrected error in merge
- *
- * Revision 1.4  2006/02/08 16:06:29  gaur
- * Moved endianness from internal signatures to byte sequences
- *
- * Revision 1.3  2006/02/07 17:16:22  linb
- * - Change fileReader to ByteReader in formal parameters of methods
- * - use new static constructors
- * - Add detection of if a filePath is a URL or not
- *
- * Revision 1.2  2006/02/07 11:30:04  gaur
- * Added support for endianness of signature
- *
- *
- * $History: ByteSequence.java $
- *
- * *****************  Version 5  *****************
- * User: Walm         Date: 5/04/05    Time: 18:07
- * Updated in $/PRONOM4/FFIT_SOURCE/signatureFile
- * review headers
- *
+ * The National Archives 2005-2006. All rights reserved. See Licence.txt for
+ * full licence details. Developed by: Tessella Support Services plc 3
+ * Vineyard Chambers Abingdon, OX14 3PX United Kingdom http://www.tessella.com
+ * Tessella/NPD/4305 PRONOM 4 $Id: ByteSequence.java,v 1.7 2006/03/13 15:15:29
+ * linb Exp $ $Logger: ByteSequence.java,v $ Revision 1.7 2006/03/13 15:15:29
+ * linb Changed copyright holder from Crown Copyright to The National
+ * Archives. Added reference to licence.txt Changed dates to 2005-2006
+ * Revision 1.6 2006/02/09 15:04:37 gaur Corrected formatting Revision 1.5
+ * 2006/02/08 16:14:01 gaur Corrected error in merge Revision 1.4 2006/02/08
+ * 16:06:29 gaur Moved endianness from internal signatures to byte sequences
+ * Revision 1.3 2006/02/07 17:16:22 linb - Change fileReader to ByteReader in
+ * formal parameters of methods - use new static constructors - Add detection
+ * of if a filePath is a URL or not Revision 1.2 2006/02/07 11:30:04 gaur
+ * Added support for endianness of signature $History: ByteSequence.java $
+ * ***************** Version 5 ***************** User: Walm Date: 5/04/05
+ * Time: 18:07 Updated in $/PRONOM4/FFIT_SOURCE/signatureFile review headers
  */
 package uk.gov.nationalarchives.droid.signatureFile;
 
@@ -63,13 +33,14 @@ import uk.gov.nationalarchives.droid.binFileReader.ByteReader;
  */
 public class ByteSequence extends SimpleElement {
 
-	int parentSignature;
-	List<SubSequence> subSequences = new ArrayList<SubSequence>();
-	String reference = "";
-	boolean bigEndian = true; // Assume a signature is big-endian unless we are
+	boolean bigEndian = true; // Assume a signature is big-endian unless we
+								// are
 	// told to the contrary.
 	int indirectOffsetLength = 0;
 	int indirectOffsetLocation = 0;
+	int parentSignature;
+	String reference = "";
+	List<SubSequence> subSequences = new ArrayList<SubSequence>();
 
 	// int MaxOffset = 0;
 
@@ -125,15 +96,16 @@ public class ByteSequence extends SimpleElement {
 	}
 
 	/**
-	 * checks whether the binary file specified by targetFile is compliant with
-	 * this byte sequence
+	 * checks whether the binary file specified by targetFile is compliant
+	 * with this byte sequence
 	 * 
 	 * @param targetFile
 	 *            The binary file to be identified
 	 */
 	public boolean isFileCompliant(final ByteReader targetFile) {
 		// System.out.println("Looking at new byte sequence with reference "+Reference);
-		// initialise variables and start with the file marker at the beginning
+		// initialise variables and start with the file marker at the
+		// beginning
 		// of the file
 		boolean isCompliant = true;
 		final boolean reverseOrder = (getReference()

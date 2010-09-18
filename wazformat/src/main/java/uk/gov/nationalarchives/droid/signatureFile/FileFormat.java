@@ -21,14 +21,14 @@ import uk.gov.nationalarchives.droid.base.SimpleElement;
  * @version 4.0.0
  */
 public class FileFormat extends SimpleElement {
-	int identifier;
-	String name;
-	String version;
-	String PUID;
-	List<Integer> internalSigIDs = new ArrayList<Integer>();
 	List<String> extensions = new ArrayList<String>();
 	List<Integer> hasPriorityOver = new ArrayList<Integer>();
+	int identifier;
+	List<Integer> internalSigIDs = new ArrayList<Integer>();
 	String mimeType;
+	String name;
+	String PUID;
+	String version;
 
 	public String getExtension(final int theIndex) {
 		return this.extensions.get(theIndex);
