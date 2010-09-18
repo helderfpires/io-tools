@@ -1,0 +1,25 @@
+<document xmlns="http://maven.apache.org/changes/1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 changes-1.0.0.xsd">
+	<properties>
+		<title>EasyStream Release Notes</title>
+		<author email="dvd.smnt@gmail.com">Davide Simonetti</author>
+	</properties>
+	<body>
+	   <release version="1.2.7">
+           <action dev="dvd-smnt" type="add">StatsInputStream: added average instance statistics "getTotalXXX" methods.</action>
+           <action dev="dvd-smnt" type="add">StatsInputStream: added chain mode to test performances of an InputStream in a chain.</action>
+	   </release>
+	   <release version="1.2.7">
+	       <action dev="dvd-smnt" type="add">StatsInputStream: added average bytes per read().</action>
+	       <action dev="dvd-smnt" type="fix">GuessInputStream: Fixed poor performances of read() method (issue #28).</action>
+	   </release>
+		<release version="1.2.6">
+			<action dev="dvd-smnt" type="add">ReadAheadInputStream: InputStream for reading from a slow source.</action>
+			<action dev="dvd-smnt" type="add">
+				CloseOnceInputStream: An InputStream wrapper that passes the calls to the close() method
+				only once to the underlying InputStream.
+		</action>
+		</release>
+	</body>
+</document>
