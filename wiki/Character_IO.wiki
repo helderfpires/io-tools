@@ -7,9 +7,9 @@ These classes address character `I/O` namely deal with `Reader` and `Writers`.
 
 = Writers =
 
-== CloseShieldWriter ==
-== TeeWriter ==
-== WriterToReader ==
+== !CloseShieldWriter ==
+== !TeeWriter ==
+== !WriterToReader ==
  
 = Details =
 
