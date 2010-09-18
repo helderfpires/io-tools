@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.io.IOUtils;
 import org.jmock.Expectations;
@@ -107,6 +108,7 @@ public class TestGuessInputStream extends JUnit4Mockery {
 		final byte[] reference = "<xml>this is xml</xml>".getBytes();
 		final InputStream istream = new Base64InputStream(
 				new ByteArrayInputStream(reference), true);
+		//System.out.println(IOUtils.toString(istream));
 		final GuessInputStream gis = GuessInputStream.getInstance(istream,
 				new FormatEnum[] { FormatEnum.BASE64 });
 		gis.decode(true);

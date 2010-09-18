@@ -1,44 +1,19 @@
 /*
- * The National Archives 2005-2006.  All rights reserved.
- * See Licence.txt for full licence details.
- *
- * Developed by:
- * Tessella Support Services plc
- * 3 Vineyard Chambers
- * Abingdon, OX14 3PX
- * United Kingdom
- * http://www.tessella.com
- *
- * Tessella/NPD/4305
- * PRONOM 4
- *
- * $Id: InternalSignature.java,v 1.5 2006/03/13 15:15:29 linb Exp $
- *
- * $Logger: InternalSignature.java,v $
- * Revision 1.5  2006/03/13 15:15:29  linb
- * Changed copyright holder from Crown Copyright to The National Archives.
- * Added reference to licence.txt
- * Changed dates to 2005-2006
- *
- * Revision 1.4  2006/02/08 16:06:35  gaur
- * Moved endianness from internal signatures to byte sequences
- *
- * Revision 1.3  2006/02/07 17:16:22  linb
- * - Change fileReader to ByteReader in formal parameters of methods
- * - use new static constructors
- * - Add detection of if a filePath is a URL or not
- *
- * Revision 1.2  2006/02/07 11:30:04  gaur
- * Added support for endianness of signature
- *
- *
- * $History: InternalSignature.java $
- * 
- * *****************  Version 3  *****************
- * User: Walm         Date: 5/04/05    Time: 18:07
- * Updated in $/PRONOM4/FFIT_SOURCE/signatureFile
- * review headers
- *
+ * The National Archives 2005-2006. All rights reserved. See Licence.txt for
+ * full licence details. Developed by: Tessella Support Services plc 3
+ * Vineyard Chambers Abingdon, OX14 3PX United Kingdom http://www.tessella.com
+ * Tessella/NPD/4305 PRONOM 4 $Id: InternalSignature.java,v 1.5 2006/03/13
+ * 15:15:29 linb Exp $ $Logger: InternalSignature.java,v $ Revision 1.5
+ * 2006/03/13 15:15:29 linb Changed copyright holder from Crown Copyright to
+ * The National Archives. Added reference to licence.txt Changed dates to
+ * 2005-2006 Revision 1.4 2006/02/08 16:06:35 gaur Moved endianness from
+ * internal signatures to byte sequences Revision 1.3 2006/02/07 17:16:22 linb
+ * - Change fileReader to ByteReader in formal parameters of methods - use new
+ * static constructors - Add detection of if a filePath is a URL or not
+ * Revision 1.2 2006/02/07 11:30:04 gaur Added support for endianness of
+ * signature $History: InternalSignature.java $ ***************** Version 3
+ * ***************** User: Walm Date: 5/04/05 Time: 18:07 Updated in
+ * $/PRONOM4/FFIT_SOURCE/signatureFile review headers
  */
 package uk.gov.nationalarchives.droid.signatureFile;
 
@@ -58,9 +33,9 @@ import uk.gov.nationalarchives.droid.binFileReader.ByteReader;
 public class InternalSignature extends SimpleElement {
 
 	private List<ByteSequence> byteSequences = new ArrayList<ByteSequence>();
+	List<FileFormat> fileFormatList = new ArrayList<FileFormat>();
 	int intSigID;
 	String specificity;
-	List<FileFormat> fileFormatList = new ArrayList<FileFormat>();
 
 	/* setters */
 	public void addByteSequence(final ByteSequence byteSequence) {
@@ -117,7 +92,8 @@ public class InternalSignature extends SimpleElement {
 	public boolean isFileCompliant(final ByteReader targetFile) {
 		// initialise variable
 		boolean isCompliant = true;
-		// check each byte sequence in turn - stop as soon as one is found to be
+		// check each byte sequence in turn - stop as soon as one is found to
+		// be
 		// non-compliant
 		for (int i = 0; (i < this.byteSequences.size()) && isCompliant; i++) {
 			isCompliant = getByteSequence(i).isFileCompliant(targetFile);
@@ -130,8 +106,8 @@ public class InternalSignature extends SimpleElement {
 	}
 
 	/**
-	 * Reset the bytesequences after reordering (to ensure BOF and EOF sequences
-	 * are checked first
+	 * Reset the bytesequences after reordering (to ensure BOF and EOF
+	 * sequences are checked first
 	 * 
 	 * @param byteSequences
 	 */

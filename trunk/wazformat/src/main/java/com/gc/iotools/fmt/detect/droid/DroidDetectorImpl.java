@@ -116,7 +116,7 @@ public class DroidDetectorImpl implements DetectionLibrary {
 		FileOutputStream fos = new FileOutputStream(file);
 		IOUtils.copy(stream, fos);
 		fos.close();
-		System.out.println("Data written to [" + file.getName() + "]");
+		//System.out.println("Data written to [" + file.getName() + "]");
 		stream.resetToBeginning();
 		final ByteReader testFile = new RandomAccessByteReader(idFile, stream);
 		final FFSignatureFile fsigfile = CONF_MAP.get(this.configFile);
