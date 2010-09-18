@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.io.IOUtils;
 import org.jmock.Expectations;
@@ -119,7 +118,7 @@ public class TestGuessInputStream extends JUnit4Mockery {
 			gis.decode(false);
 			fail("Illegal State exception must be thrown here");
 		} catch (IllegalStateException e) {
-
+			//EVERYTHING OK
 		}
 	}
 
@@ -152,7 +151,7 @@ public class TestGuessInputStream extends JUnit4Mockery {
 
 	@org.junit.Test
 	public void testRecursiveDecode() {
-
+		//TODO
 	}
 
 	@org.junit.Test
