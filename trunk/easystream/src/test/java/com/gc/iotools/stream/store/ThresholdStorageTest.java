@@ -35,13 +35,24 @@ public class ThresholdStorageTest {
 		tss.seek(20);
 		final byte[] read = new byte[20];
 		tss.get(read, 0, read.length);
-		assertArrayEquals("lettura corretta", ArrayUtils.subarray(ref1, 20,
-				40), read);
+		assertArrayEquals("lettura corretta",
+				ArrayUtils.subarray(ref1, 20, 40), read);
 		tss.seek(0);
 		tss.get(read, 0, read.length);
-		assertArrayEquals("lettura corretta", ArrayUtils
-				.subarray(ref1, 0, 20), read);
+		assertArrayEquals("lettura corretta",
+				ArrayUtils.subarray(ref1, 0, 20), read);
 		tss.cleanup();
+	}
+
+	private void seekEqualsReference(final ThresholdStore t,
+			final byte[] reference) throws IOException {
+		for (int i = 0; i < reference.length; i++) {
+			final byte b = reference[i];
+			final byte[] read = new byte[1];
+			t.seek(i);
+			t.get(read, 0, 1);
+			assertEquals("position [" + i + "]", b, read[0]);
+		}
 	}
 
 	@Before
@@ -50,10 +61,22 @@ public class ThresholdStorageTest {
 		final File[] files = tmpDir.listFiles();
 		for (final File file : files) {
 			final String name = file.getName();
-			if (name.matches("iotools-storage.*tmp")) {
+			if (name.matches("iotools-storage.*tmp") && file.isFile()) {
 				final boolean canDelete = file.delete();
 				if (!canDelete) {
-					throw new IOException("Can't delete file [" + name + "]");
+					System.gc();
+					System.runFinalization();
+					Thread.sleep(2000);
+					final boolean canDelete2 = file.delete();
+					if (!canDelete2) {
+						final File dest = File.createTempFile(
+								"iotools-movedstorage", ".tmp");
+						if (!file.renameTo(dest)) {
+							throw new IOException(
+									"Can't delete or move file [" + name
+											+ "]");
+						}
+					}
 				}
 			}
 		}
@@ -79,8 +102,8 @@ public class ThresholdStorageTest {
 			pos += n;
 		}
 		assertEquals("read", ref1.length, pos);
-		assertArrayEquals("arrays equal", ref1, ArrayUtils.subarray(read1, 0,
-				ref1.length));
+		assertArrayEquals("arrays equal", ref1,
+				ArrayUtils.subarray(read1, 0, ref1.length));
 		tss.cleanup();
 	}
 
@@ -107,9 +130,28 @@ public class ThresholdStorageTest {
 	}
 
 	@Test
+	public void testGetPositionAcrossThreshold() throws IOException {
+		final ThresholdStore tss = new ThresholdStore(150);
+		final byte[] ref1 = new byte[130];
+		final Random r = new Random();
+		r.nextBytes(ref1);
+		tss.put(ref1, 0, ref1.length);
+		tss.get(new byte[5], 0, 5);
+		// goes over threshold
+		tss.put(ref1, 0, ref1.length);
+		for (int i = 0; i < (ref1.length - 5); i++) {
+			final byte b = ref1[i + 5];
+			final byte[] read = new byte[1];
+			tss.get(read, 0, 1);
+			assertEquals("position [" + i + "]", b, read[0]);
+		}
+		tss.cleanup();
+	}
+
+	@Test
 	public void testPutMoreThanTreshold() throws IOException {
 		final ThresholdStore tss = new ThresholdStore(50);
-		byte[] ref1 = new byte[130];
+		final byte[] ref1 = new byte[130];
 		final Random r = new Random();
 		r.nextBytes(ref1);
 		tss.put(ref1, 0, ref1.length);
@@ -120,50 +162,9 @@ public class ThresholdStorageTest {
 	}
 
 	@Test
-	public void testRandomAccess() throws IOException {
-		byte[] ref1 = new byte[1024 * 8];
-		final Random r = new Random();
-		r.nextBytes(ref1);
-		for (int i = 0; i < 1024; i++) {
-			final ThresholdStore tss = new ThresholdStore(1024);
-			for (int j = 0; j < ref1.length; j++) {
-				tss.put(ref1, 0, ref1.length);
-			}
-			int pos = r.nextInt(ref1.length - 129);
-			tss.seek(pos);
-			byte[] read = new byte[128];
-			int rl = tss.get(read, 0, read.length);
-			byte[] ref = new byte[128];
-			System.arraycopy(ref1, pos, ref, 0, rl);
-			assertArrayEquals("array equals", ref, read);
-			tss.cleanup();
-		}
-
-	}
-
-	@Test
-	public void testGetPositionAcrossThreshold() throws IOException {
-		final ThresholdStore tss = new ThresholdStore(150);
-		byte[] ref1 = new byte[130];
-		final Random r = new Random();
-		r.nextBytes(ref1);
-		tss.put(ref1, 0, ref1.length);
-		tss.get(new byte[5], 0, 5);
-		// goes over threshold
-		tss.put(ref1, 0, ref1.length);
-		for (int i = 0; i < (ref1.length - 5); i++) {
-			byte b = ref1[i + 5];
-			byte[] read = new byte[1];
-			tss.get(read, 0, 1);
-			assertEquals("position [" + i + "]", b, read[0]);
-		}
-		tss.cleanup();
-	}
-
-	@Test
 	public void testPutTwiceLessThanTreshold() throws IOException {
 		final ThresholdStore tss = new ThresholdStore(50);
-		byte[] ref1 = new byte[25];
+		final byte[] ref1 = new byte[25];
 		final Random r = new Random();
 		r.nextBytes(ref1);
 		tss.put(ref1, 0, ref1.length);
@@ -172,14 +173,25 @@ public class ThresholdStorageTest {
 		tss.cleanup();
 	}
 
-	private void seekEqualsReference(ThresholdStore t, byte[] reference)
-			throws IOException {
-		for (int i = 0; i < reference.length; i++) {
-			byte b = reference[i];
-			byte[] read = new byte[1];
-			t.seek(i);
-			t.get(read, 0, 1);
-			assertEquals("position [" + i + "]", b, read[0]);
+	@Test
+	public void testRandomAccess() throws IOException {
+		final byte[] ref1 = new byte[1024 * 8];
+		final Random r = new Random();
+		r.nextBytes(ref1);
+		for (int i = 0; i < 1024; i++) {
+			final ThresholdStore tss = new ThresholdStore(1024);
+			for (final byte element : ref1) {
+				tss.put(new byte[] { element }, 0, 1);
+			}
+			final int pos = r.nextInt(ref1.length - 1);
+			tss.seek(pos);
+			final byte[] read = new byte[128];
+			final int rl = tss.get(read, 0, read.length);
+			final byte[] ref = new byte[128];
+			System.arraycopy(ref1, pos, ref, 0, rl);
+			assertArrayEquals("array equals pos["+pos+"]", ref, read);
+			tss.cleanup();
 		}
+
 	}
 }

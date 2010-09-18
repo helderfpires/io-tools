@@ -6,38 +6,37 @@ import java.nio.CharBuffer;
 
 /**
  * <p>
- * A <code>CloseOnceReader</code> wraps some other <code>Reader</code>, which
- * it uses as its basic source of data. The class <code>CloseOnceReader</code>
- * pass all requests to the contained input stream, except the
- * {@linkplain #close()} method that is passed only one time to the underlying
+ * A <code>CloseShieldReader</code> wraps some other <code>Reader</code>,
+ * which it uses as its basic source of data. The class
+ * <code>CloseShieldReader</code> pass all requests to the contained stream,
+ * except the {@linkplain #close()} method that is not to the underlying
  * stream.
  * </p>
  * <p>
- * Multiple invocation of the <code>close()</code> method will result in only
- * one invocation of the same method on the underlying stream. This is useful
- * with some buggy <code>Reader</code> that don't allow
- * <code>close()</code> to be called multiple times.
+ * This class is typically used in cases where a <code>Reader</code> needs to be
+ * passed to a component that wants to explicitly close the stream even if
+ * more input would still be available to other components.
  * </p>
  * 
  * @author dvd.smnt
- * @since 1.2.7
+ * @since 1.2.8
  * @param <T>
  *            Type of the Reader passed in the constructor.
  */
-public class CloseOnceReader<T extends Reader> extends Reader {
+public class CloseShieldReader<T extends Reader> extends Reader {
 	private int closeCount = 0;
 
 	private final Reader source;
 
 	/**
-	 * Construct a <code>CloseOnceReader</code> that forwards the calls to the
-	 * source Reader passed in the constructor.
+	 * Construct a <code>CloseShieldReader</code> that forwards the calls to
+	 * the source Reader passed in the constructor.
 	 * 
 	 * @param source
 	 *            original Reader
 	 */
-	public CloseOnceReader(final T source) {
-		if(source == null){
+	public CloseShieldReader(final T source) {
+		if (source == null) {
 			throw new IllegalArgumentException("Source reader can't be null");
 		}
 		this.source = source;
@@ -56,9 +55,6 @@ public class CloseOnceReader<T extends Reader> extends Reader {
 	@Override
 	public void close() throws IOException {
 		this.closeCount++;
-		if (this.closeCount <= 1) {
-			this.source.close();
-		}
 	}
 
 	/**

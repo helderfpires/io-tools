@@ -397,9 +397,8 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 			final Throwable cause = e.getCause();
 			if (cause instanceof Exception) {
 				throw (Exception) cause;
-			} else {
-				throw e;
-			}
+			} 
+			throw e;
 		}
 		return result;
 	}

@@ -159,7 +159,7 @@ public class RandomAccessInputStreamTest {
 			ris.seek(pos + 2);
 			fail("Exception must be thrown");
 		} catch (IOException e) {
-
+			//ok here
 		}
 	}
 

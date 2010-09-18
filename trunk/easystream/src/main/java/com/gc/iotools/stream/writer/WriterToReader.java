@@ -5,10 +5,10 @@ package com.gc.iotools.stream.writer;
  * under the BSD License.
  */
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+import java.io.PipedReader;
+import java.io.PipedWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -16,46 +16,46 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.io.input.CloseShieldInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gc.iotools.stream.base.EasyStreamConstants;
 import com.gc.iotools.stream.base.ExecutionModel;
 import com.gc.iotools.stream.base.ExecutorServiceFactory;
+import com.gc.iotools.stream.reader.CloseShieldReader;
 import com.gc.iotools.stream.utils.LogUtils;
 
 /**
  * <p>
- * This class allow to read from an <code>InputStream</code> the data who has
- * been written to an <code>OutputStream</code> (performs an
- * <code>OutputStream</code> -> <code>InputStream</code> conversion).
+ * This class allow to read from an <code>Reader</code> the data who has been
+ * written to an <code>Writer</code> (performs an <code>Writer</code> ->
+ * <code>Reader</code> conversion).
  * </p>
  * <p>
- * More detailiy it is an <code>OutputStream</code> that, when extended,
- * allows to read the data written to it from the <code>InputStream</code>
- * inside the method {@linkplain #doRead(InputStream)}.
+ * More detailiy it is an <code>Writer</code> that, when extended, allows to
+ * read the data written to it from the <code>Reader</code> inside the method
+ * {@linkplain #doRead(Reader)}.
  * </p>
  * <p>
  * To use this class you must extend it and implement the method
- * {@linkplain #doRead(InputStream)}. Inside this method place the logic that
- * needs to read the data from the <code>InputStream</code>. Then the data can
- * be written to this class that implements <code>OutputStream</code>. When
- * {@linkplain #close()} method is called on the outer
- * <code>OutputStream</code> an EOF is generated in the
- * <code>InputStream</code> passed in the {@linkplain #doRead(InputStream)}.
+ * {@linkplain #doRead(Reader)}. Inside this method place the logic that needs
+ * to read the data from the <code>Reader</code>. Then the data can be written
+ * to this class that implements <code>Writer</code>. When
+ * {@linkplain #close()} method is called on the outer <code>Writer</code> an
+ * EOF is generated in the <code>Reader</code> passed in the
+ * {@linkplain #doRead(Reader)}.
  * </p>
  * <p>
- * The {@linkplain #doRead(InputStream)} call executes in another thread, so
- * there is no warranty on when it will start and when it will end. Special
- * care must be taken in passing variables to it: all the arguments must be
- * final and inside {@linkplain #doRead(InputStream)} you shouldn't change the
- * variables of the outer class.
+ * The {@linkplain #doRead(Reader)} call executes in another thread, so there
+ * is no warranty on when it will start and when it will end. Special care
+ * must be taken in passing variables to it: all the arguments must be final
+ * and inside {@linkplain #doRead(Reader)} you shouldn't change the variables
+ * of the outer class.
  * </p>
  * <p>
- * Any Exception threw inside the {@linkplain #doRead(InputStream)} method is
- * propagated to the outer <code>OutputStream</code> on the next
- * <code>write</code> operation.
+ * Any Exception threw inside the {@linkplain #doRead(Reader)} method is
+ * propagated to the outer <code>Writer</code> on the next <code>write</code>
+ * operation.
  * </p>
  * <p>
  * The method {@link #getResults()} suspend the outer thread and wait for the
@@ -67,20 +67,20 @@ import com.gc.iotools.stream.utils.LogUtils;
  * </p>
  * <code>
  * <pre>
- * OutputStreamToInputStream&lt;String&gt; oStream2IStream = 
- * new OutputStreamToInputStream&lt;String&gt;() {
- * 	protected String doRead(final InputStream istream) throws Exception {
+ * WriterToReader&lt;String&gt; oStream2IStream = 
+ * new WriterToReader&lt;String&gt;() {
+ * 	protected String doRead(final Reader istream) throws Exception {
  * 		// Users of this class should place all the code that need to read data
- *      // from the InputStream in this method. Data available through the 
- *      // InputStream passed as a parameter is the data that is written to the 
- * 		// OutputStream oStream2IStream through its write method.  
+ *      // from the Reader in this method. Data available through the 
+ *      // Reader passed as a parameter is the data that is written to the 
+ * 		// Writer oStream2IStream through its write method.  
  * 		final String result = IOUtils.toString(istream);
  * 		return result + &quot; was processed.&quot;;
  * 	}
  * };
  * try {
- * 	// some data is written to the OutputStream, will be passed to the method
- * 	// doRead(InputStream i) above and after close() is called the results 
+ * 	// some data is written to the Writer, will be passed to the method
+ * 	// doRead(Reader i) above and after close() is called the results 
  * 	// will be available through the getResults() method.  
  * 	oStream2IStream.write(&quot;test&quot;.getBytes());
  * } finally {
@@ -97,7 +97,7 @@ import com.gc.iotools.stream.utils.LogUtils;
  * @since 1.2.7
  * @author dvd.smnt
  */
-public abstract class WriterToReader<T> extends OutputStream {
+public abstract class WriterToReader<T> extends Writer {
 	/**
 	 * This class executes in the second thread.
 	 * 
@@ -105,62 +105,50 @@ public abstract class WriterToReader<T> extends OutputStream {
 	 */
 	private final class DataConsumer implements Callable<T> {
 
-		private final InputStream inputstream;
+		private final Reader reader;
 
-		DataConsumer(final InputStream istream) {
-			this.inputstream = istream;
+		DataConsumer(final Reader istream) {
+			this.reader = istream;
 		}
 
 		public synchronized T call() throws Exception {
 			T processResult;
 			try {
 				// avoid the internal class close the stream.
-				final CloseShieldInputStream istream = new CloseShieldInputStream(
-						this.inputstream);
+				final CloseShieldReader<Reader> istream = new CloseShieldReader<Reader>(
+						this.reader);
 				processResult = doRead(istream);
 			} catch (final Exception e) {
 				WriterToReader.this.abort = true;
 				throw e;
 			} finally {
-				emptyInputStream();
-				this.inputstream.close();
+				emptyReader();
+				this.reader.close();
 			}
 			return processResult;
 		}
 
-		private void emptyInputStream() {
+		private void emptyReader() {
 			try {
-				final byte[] buffer = new byte[EasyStreamConstants.SKIP_BUFFER_SIZE];
-				while (this.inputstream.read(buffer) >= 0) {
+				final char[] buffer = new char[EasyStreamConstants.SKIP_BUFFER_SIZE];
+				while (this.reader.read(buffer) >= 0) {
 					;
 					// empty block: just throw bytes away
 				}
 			} catch (final IOException e) {
 				if ((e.getMessage() != null)
 						&& (e.getMessage().indexOf("closed") > 0)) {
-					WriterToReader.LOG
-							.debug("Stream already closed");
+					WriterToReader.LOG.debug("Stream already closed");
 
 				} else {
 					WriterToReader.LOG.error(
-							"IOException while empty InputStream a "
+							"IOException while empty Reader a "
 									+ "thread can be locked", e);
 				}
 			} catch (final Throwable e) {
-				WriterToReader.LOG.error(
-						"IOException while empty InputStream a "
-								+ "thread can be locked", e);
+				WriterToReader.LOG.error("IOException while empty Reader a "
+						+ "thread can be locked", e);
 			}
-		}
-	}
-
-	/**
-	 * Extends PipedInputStream to allow set the default buffer size.
-	 */
-	private final class MyPipedInputStream extends PipedInputStream {
-
-		MyPipedInputStream(final int bufferSize) {
-			super.buffer = new byte[bufferSize];
 		}
 	}
 
@@ -178,8 +166,7 @@ public abstract class WriterToReader<T> extends OutputStream {
 	/**
 	 * <p>
 	 * Set the size for the pipe circular buffer. This setting has effect for
-	 * the newly created <code>OutputStreamToInputStream</code>. Default is
-	 * 4096 bytes.
+	 * the newly created <code>WriterToReader</code>. Default is 4096 bytes.
 	 * </p>
 	 * <p>
 	 * Will be removed in the 1.3 release. Use
@@ -199,8 +186,7 @@ public abstract class WriterToReader<T> extends OutputStream {
 
 	/**
 	 * Set the size for the pipe circular buffer. This setting has effect for
-	 * the newly created <code>OutputStreamToInputStream</code>. Default is
-	 * 4096 bytes.
+	 * the newly created <code>WriterToReader</code>. Default is 4096 bytes.
 	 * 
 	 * @since 1.2.3
 	 * @param defaultPipeSize
@@ -214,15 +200,15 @@ public abstract class WriterToReader<T> extends OutputStream {
 	private boolean abort = false;
 	private boolean closeCalled = false;
 	private final boolean joinOnClose;
-	private final PipedOutputStream pipedOs;
+	private final PipedWriter pipedOs;
 	private final Future<T> writingResult;
 
 	/**
 	 * <p>
-	 * Creates a new <code>OutputStreamToInputStream</code>. It uses the
-	 * default {@link ExecutionModel#THREAD_PER_INSTANCE} thread instantiation
+	 * Creates a new <code>WriterToReader</code>. It uses the default
+	 * {@link ExecutionModel#THREAD_PER_INSTANCE} thread instantiation
 	 * strategy. This means that a new thread is created for every instance of
-	 * <code>OutputStreamToInputStream</code>.
+	 * <code>WriterToReader</code>.
 	 * </p>
 	 * <p>
 	 * When the {@linkplain #close()} method is called this class wait for the
@@ -238,9 +224,9 @@ public abstract class WriterToReader<T> extends OutputStream {
 
 	/**
 	 * <p>
-	 * Creates a new <code>OutputStreamToInputStream</code>. It let the user
-	 * specify the thread instantiation strategy and what will happen upon the
-	 * invocation of <code>close()</code> method.
+	 * Creates a new <code>WriterToReader</code>. It let the user specify the
+	 * thread instantiation strategy and what will happen upon the invocation
+	 * of <code>close()</code> method.
 	 * </p>
 	 * <p>
 	 * If <code>joinOnClose</code> is <code>true</code> when the
@@ -264,9 +250,9 @@ public abstract class WriterToReader<T> extends OutputStream {
 
 	/**
 	 * <p>
-	 * Creates a new <code>OutputStreamToInputStream</code>. It let the user
-	 * specify the thread instantiation service and what will happen upon the
-	 * invocation of <code>close()</code> method.
+	 * Creates a new <code>WriterToReader</code>. It let the user specify the
+	 * thread instantiation service and what will happen upon the invocation
+	 * of <code>close()</code> method.
 	 * </p>
 	 * <p>
 	 * If <code>joinOnClose</code> is <code>true</code> when the
@@ -290,9 +276,9 @@ public abstract class WriterToReader<T> extends OutputStream {
 
 	/**
 	 * <p>
-	 * Creates a new <code>OutputStreamToInputStream</code>. It let the user
-	 * specify the thread instantiation service and what will happen upon the
-	 * invocation of <code>close()</code> method.
+	 * Creates a new <code>WriterToReader</code>. It let the user specify the
+	 * thread instantiation service and what will happen upon the invocation
+	 * of <code>close()</code> method.
 	 * </p>
 	 * <p>
 	 * If <code>joinOnClose</code> is <code>true</code> when the
@@ -321,9 +307,8 @@ public abstract class WriterToReader<T> extends OutputStream {
 					"executor service can't be null");
 		}
 		String callerId = LogUtils.getCaller(getClass());
-		this.pipedOs = new PipedOutputStream();
-		final PipedInputStream pipedIS = new MyPipedInputStream(
-				pipeBufferSize);
+		this.pipedOs = new PipedWriter();
+		final PipedReader pipedIS = new PipedReader(pipeBufferSize);
 		try {
 			pipedIS.connect(this.pipedOs);
 		} catch (IOException e) {
@@ -377,12 +362,12 @@ public abstract class WriterToReader<T> extends OutputStream {
 
 	/**
 	 * <p>
-	 * This method returns the result of the method
-	 * {@link #doRead(InputStream)} and ensure the previous method is over.
+	 * This method returns the result of the method {@link #doRead(Reader)}
+	 * and ensure the previous method is over.
 	 * </p>
 	 * <p>
 	 * This method suspend the calling thread and waits for the function
-	 * {@link #doRead(InputStream)} to finish. It returns when the
+	 * {@link #doRead(Reader)} to finish. It returns when the
 	 * <code>doRead()</code> terminates and has produced its result.
 	 * </p>
 	 * <p>
@@ -393,9 +378,9 @@ public abstract class WriterToReader<T> extends OutputStream {
 	 * @exception InterruptedException
 	 *                Thrown when the thread is interrupted.
 	 * @exception ExecutionException
-	 *                Thrown if the method {@linkplain #doRead(InputStream)}
-	 *                threw an Exception. The <code>getCause()</code> returns
-	 *                the original Exception.
+	 *                Thrown if the method {@linkplain #doRead(Reader)} threw
+	 *                an Exception. The <code>getCause()</code> returns the
+	 *                original Exception.
 	 * @throws IllegalStateException
 	 *             When it is called before the method {@link #close()} has
 	 *             been called.
@@ -414,7 +399,7 @@ public abstract class WriterToReader<T> extends OutputStream {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final void write(final byte[] bytes) throws IOException {
+	public final void write(final char[] bytes) throws IOException {
 		if (this.abort) {
 			// internal thread is already aborting. wait for short time.
 			internalClose(true, TimeUnit.SECONDS, 1);
@@ -427,7 +412,7 @@ public abstract class WriterToReader<T> extends OutputStream {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final void write(final byte[] bytes, final int offset,
+	public final void write(final char[] bytes, final int offset,
 			final int length) throws IOException {
 		if (this.abort) {
 			// internal thread is already aborting. wait for short time.
@@ -441,12 +426,12 @@ public abstract class WriterToReader<T> extends OutputStream {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final void write(final int bytetowr) throws IOException {
+	public final void write(final int chartowrite) throws IOException {
 		if (this.abort) {
 			// internal thread is already aborting. wait for short time.
 			internalClose(true, TimeUnit.SECONDS, 1);
 		} else {
-			this.pipedOs.write(bytetowr);
+			this.pipedOs.write(chartowrite);
 		}
 	}
 
@@ -488,12 +473,12 @@ public abstract class WriterToReader<T> extends OutputStream {
 	/**
 	 * <p>
 	 * This method has to be implemented to use this class. It allows to
-	 * retrieve the data written to the outer <code>OutputStream</code> from
-	 * the <code>InputStream</code> passed as a parameter.
+	 * retrieve the data written to the outer <code>Writer</code> from the
+	 * <code>Reader</code> passed as a parameter.
 	 * </p>
 	 * <p>
 	 * Any exception eventually threw inside this method will be propagated to
-	 * the external <code>OutputStream</code>. When the next
+	 * the external <code>Writer</code>. When the next
 	 * {@linkplain #write(byte[])} operation is called an
 	 * <code>IOException</code> will be thrown and the original exception can
 	 * be accessed calling the getCause() method on the IOException. It will
@@ -501,14 +486,14 @@ public abstract class WriterToReader<T> extends OutputStream {
 	 * </p>
 	 * 
 	 * @param istream
-	 *            The InputStream where the data can be retrieved.
+	 *            The Reader where the data can be retrieved.
 	 * @return Optionally returns a result of the elaboration.
 	 * @throws Exception
 	 *             If an <code>Exception</code> occurs during the elaboration
 	 *             it can be thrown. It will be propagated to the external
-	 *             <code>OutputStream</code> and will be available calling the
+	 *             <code>Writer</code> and will be available calling the
 	 *             method {@link #getResults()}.
 	 */
-	protected abstract T doRead(InputStream istream) throws Exception;
+	protected abstract T doRead(Reader istream) throws Exception;
 
 }

@@ -38,8 +38,8 @@ public final class StreamUtils {
 		// log1024(bytesSec)
 		final double idx = Math.log(bytesSec)
 				/ Math.log(EasyStreamConstants.ONE_KILOBYTE);
-		final int intIdx = Math.max(0, Math.min((int) Math.floor(idx),
-				units.length - 1));
+		final int intIdx = Math.max(0,
+				Math.min((int) Math.floor(idx), units.length - 1));
 		final double reducedRate = bytesSec
 				/ Math.pow(EasyStreamConstants.ONE_KILOBYTE, intIdx);
 		final DecimalFormat df = new DecimalFormat();
@@ -143,10 +143,9 @@ public final class StreamUtils {
 		return n;
 	}
 
-	/**
-	 * Utility class: shouldn't be instantiated.
-	 */
 	private StreamUtils() {
-
+		/*
+		 * Utility class: shouldn't be instantiated.
+		 */
 	}
 }

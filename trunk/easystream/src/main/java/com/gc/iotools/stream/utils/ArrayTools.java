@@ -41,10 +41,10 @@ public final class ArrayTools {
 		return result;
 	}
 
-	/**
+	/*
 	 * utility class, shouldn't be instantiated.
 	 */
 	private ArrayTools() {
-
+		//utility class, shouldn't be instantiated.
 	}
 }
