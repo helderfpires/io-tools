@@ -12,6 +12,7 @@ public class StatsOutputStreamTest {
 
 	@Before
 	public void setUp() throws Exception {
+		//nothing to do
 	}
 
 	@org.junit.Test

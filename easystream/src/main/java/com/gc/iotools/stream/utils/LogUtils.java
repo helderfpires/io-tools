@@ -74,7 +74,10 @@ public final class LogUtils {
 		stackTracePosition--;
 		return stackTracePosition;
 	}
-
+	/*
+	 * Utility class: shouldn't be instantiated.
+	 */
 	private LogUtils() {
+		//utility class.
 	}
 }

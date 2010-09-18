@@ -6,10 +6,7 @@ package com.gc.iotools.stream.reader;
  */
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringWriter;
 import java.io.Writer;
-
-import org.apache.commons.io.IOUtils;
 
 import com.gc.iotools.stream.base.EasyStreamConstants;
 

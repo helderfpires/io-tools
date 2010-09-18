@@ -5,10 +5,10 @@ package com.gc.iotools.stream.reader;
  * under the BSD License.
  */
 import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
 import java.io.PipedReader;
 import java.io.PipedWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +17,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +27,7 @@ import com.gc.iotools.stream.utils.LogUtils;
 
 /**
  * <p>
- * This class allow to read the data written to an Writer from an
- * Reader.
+ * This class allow to read the data written to an Writer from an Reader.
  * </p>
  * <p>
  * To use this class you must subclass it and implement the abstract method
@@ -74,9 +72,8 @@ import com.gc.iotools.stream.utils.LogUtils;
  * 
  * @param <T>
  *            Optional result returned by the function
- *            {@linkplain #produce(Writer)} after the data has been
- *            written. It can be obtained calling the
- *            {@linkplain #getResult()}
+ *            {@linkplain #produce(Writer)} after the data has been written.
+ *            It can be obtained calling the {@linkplain #getResult()}
  * @see ExecutionModel
  * @author dvd.smnt
  * @since 1.2.7
@@ -103,14 +100,13 @@ public abstract class ReaderFromWriter<T> extends Reader {
 			final String threadName = getName();
 			T result;
 			ReaderFromWriter.ACTIVE_THREAD_NAMES.add(threadName);
-			ReaderFromWriter.LOG.debug("thread [" + threadName
-					+ "] started.");
+			ReaderFromWriter.LOG
+					.debug("thread [" + threadName + "] started.");
 			try {
 				result = produce(this.writer);
 			} finally {
 				closeStream();
-				ReaderFromWriter.ACTIVE_THREAD_NAMES
-						.remove(threadName);
+				ReaderFromWriter.ACTIVE_THREAD_NAMES.remove(threadName);
 				ReaderFromWriter.LOG.debug("thread [" + threadName
 						+ "] closed.");
 			}
@@ -123,17 +119,14 @@ public abstract class ReaderFromWriter<T> extends Reader {
 			} catch (final IOException e) {
 				if ((e.getMessage() != null)
 						&& (e.getMessage().indexOf("closed") > 0)) {
-					ReaderFromWriter.LOG
-							.debug("Stream already closed");
+					ReaderFromWriter.LOG.debug("Stream already closed");
 				} else {
-					ReaderFromWriter.LOG.error(
-							"IOException closing Writer"
-									+ " Thread might be locked", e);
+					ReaderFromWriter.LOG.error("IOException closing Writer"
+							+ " Thread might be locked", e);
 				}
 			} catch (final Throwable t) {
-				ReaderFromWriter.LOG.error(
-						"Error closing Reader"
-								+ " Thread might be locked", t);
+				ReaderFromWriter.LOG.error("Error closing Reader"
+						+ " Thread might be locked", t);
 			}
 		}
 
@@ -182,8 +175,6 @@ public abstract class ReaderFromWriter<T> extends Reader {
 		return result;
 	}
 
-
-
 	/**
 	 * Set the size for the pipe circular buffer for the newly created
 	 * <code>ReaderFromWriter</code>. Default is 4096 bytes.
@@ -204,8 +195,8 @@ public abstract class ReaderFromWriter<T> extends Reader {
 
 	/**
 	 * <p>
-	 * It creates a <code>ReaderFromWriter</code> with a
-	 * THREAD_PER_INSTANCE thread strategy.
+	 * It creates a <code>ReaderFromWriter</code> with a THREAD_PER_INSTANCE
+	 * thread strategy.
 	 * </p>
 	 * 
 	 * @see ExecutionModel#THREAD_PER_INSTANCE
@@ -216,8 +207,8 @@ public abstract class ReaderFromWriter<T> extends Reader {
 
 	/**
 	 * <p>
-	 * It creates a <code>ReaderFromWriter</code> and let the user
-	 * choose the thread allocation strategy he likes.
+	 * It creates a <code>ReaderFromWriter</code> and let the user choose the
+	 * thread allocation strategy he likes.
 	 * </p>
 	 * <p>
 	 * This class executes the produce method in a thread created internally.
@@ -238,9 +229,9 @@ public abstract class ReaderFromWriter<T> extends Reader {
 
 	/**
 	 * <p>
-	 * It creates a <code>ReaderFromWriter</code> and let the user
-	 * specify the ExecutorService that will execute the
-	 * {@linkplain #produce(Writer)} method.
+	 * It creates a <code>ReaderFromWriter</code> and let the user specify the
+	 * ExecutorService that will execute the {@linkplain #produce(Writer)}
+	 * method.
 	 * </p>
 	 * 
 	 * @since 1.2.7
@@ -259,8 +250,8 @@ public abstract class ReaderFromWriter<T> extends Reader {
 
 	/**
 	 * <p>
-	 * It creates a <code>ReaderFromWriter</code> and let the user
-	 * specify the <code>ExecutorService</code> that will execute the
+	 * It creates a <code>ReaderFromWriter</code> and let the user specify the
+	 * <code>ExecutorService</code> that will execute the
 	 * {@linkplain #produce(Writer)} method and the pipe buffer size.
 	 * </p>
 	 * <p>
@@ -292,14 +283,14 @@ public abstract class ReaderFromWriter<T> extends Reader {
 		final Callable<T> executingCallable = new DataProducer(callerId,
 				pipedOS);
 		this.futureResult = executor.submit(executingCallable);
-		ReaderFromWriter.LOG.debug(
-				"thread invoked by[{}] queued for start.", callerId);
+		ReaderFromWriter.LOG.debug("thread invoked by[{}] queued for start.",
+				callerId);
 	}
 
 	/**
 	 * <p>
-	 * It creates a <code>ReaderFromWriter</code> and let the user
-	 * choose the thread allocation strategy he likes.
+	 * It creates a <code>ReaderFromWriter</code> and let the user choose the
+	 * thread allocation strategy he likes.
 	 * </p>
 	 * <p>
 	 * This class executes the produce method in a thread created internally.
@@ -315,9 +306,9 @@ public abstract class ReaderFromWriter<T> extends Reader {
 
 	/**
 	 * <p>
-	 * It creates a <code>ReaderFromWriter</code> and let the user
-	 * specify the ExecutorService that will execute the
-	 * {@linkplain #produce(Writer)} method.
+	 * It creates a <code>ReaderFromWriter</code> and let the user specify the
+	 * ExecutorService that will execute the {@linkplain #produce(Writer)}
+	 * method.
 	 * </p>
 	 * 
 	 * @see ExecutorService
@@ -363,8 +354,8 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 * </p>
 	 * 
 	 * @since 1.2.7
-	 * @return Object that was returned by the
-	 *         {@linkplain #produce(Writer)} method.
+	 * @return Object that was returned by the {@linkplain #produce(Writer)}
+	 *         method.
 	 * @throws Exception
 	 *             If the {@linkplain #produce(Writer)} method threw an
 	 *             Exception this method will throw again the same exception.
@@ -385,9 +376,8 @@ public abstract class ReaderFromWriter<T> extends Reader {
 			final Throwable cause = e.getCause();
 			if (cause instanceof Exception) {
 				throw (Exception) cause;
-			} else {
-				throw e;
 			}
+			throw e;
 		}
 		return result;
 	}

@@ -1,7 +1,6 @@
 package com.gc.iotools.stream.utils;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Writer;
 
 /**

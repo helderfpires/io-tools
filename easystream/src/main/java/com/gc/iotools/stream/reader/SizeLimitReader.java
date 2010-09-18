@@ -6,7 +6,6 @@ package com.gc.iotools.stream.reader;
  */
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
 
 /**
