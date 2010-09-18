@@ -31,7 +31,7 @@
 	<distributionManagement>
 		<site>
 			<id>jsignature.sourceforge.net</id>
-			<url>scp://web.sourceforge.net/home/groups/j/js/jsignature/htdocs/io-tools</url>
+			<url>scp://shell.sourceforge.net/home/groups/j/js/jsignature/htdocs/io-tools</url>
 		</site>
 	</distributionManagement>
 	<modules>
@@ -415,7 +415,7 @@
 					<uniqueVersion>false</uniqueVersion>
 					<id>jsignature.sourceforge.net</id>
 					<name>JSignature Repository</name>
-					<url>scp://web.sourceforge.net/home/groups/j/js/jsignature/htdocs/io-tools</url>
+					<url>scp://shell.sourceforge.net/home/groups/j/js/jsignature/htdocs/io-tools</url>
 				</repository>
 			</distributionManagement>
 		</profile>
