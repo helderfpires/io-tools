@@ -12,6 +12,53 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 public class ChunkInputStreamTest {
+	private void doTest(final String base, final String start,
+			final String end, final String expected) throws IOException {
+		ChunkInputStream chIs = getStream(base, start, end, false, true);
+		String str = IOUtils.toString(chIs);
+		assertEquals("Method read(buf,int,int)", expected, str);
+		chIs = getStream(base, start, end, false, true);
+		str = new String(readWithSingleByte(chIs));
+		assertEquals("Method read()", expected, str);
+	}
+
+	private ChunkInputStream getStream(final String referencestr,
+			final String start, final String end, final boolean showMarkers,
+			final boolean automaticFetch) {
+		final InputStream reference = new ByteArrayInputStream(
+				referencestr.getBytes());
+
+		byte[] startb = null;
+		if (start != null) {
+			startb = start.getBytes();
+		}
+
+		byte[] endb = null;
+		if (end != null) {
+			endb = end.getBytes();
+		}
+
+		final ChunkInputStream chIs = new ChunkInputStream(reference, startb,
+				endb, showMarkers, automaticFetch);
+		return chIs;
+	}
+
+	private byte[] readWithSingleByte(final InputStream is)
+			throws IOException {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		int n = 0;
+		while ((n = is.read()) >= 0) {
+			baos.write(n);
+		}
+		return baos.toByteArray();
+	}
+
+	// Not implemented yet
+	// @Test
+	// public void testIncludeMarkers() throws IOException {
+	// doTest("0123456789", null, "67", "012345");
+	// }
+
 	@Test
 	public void testBufferNotModified() throws IOException {
 		final ChunkInputStream chis = getStream("0123456789", "0", "2",
@@ -59,12 +106,6 @@ public class ChunkInputStreamTest {
 		}
 	}
 
-	// Not implemented yet
-	// @Test
-	// public void testIncludeMarkers() throws IOException {
-	// doTest("0123456789", null, "67", "012345");
-	// }
-
 	@Test
 	public void testNoEndMarker() throws IOException {
 		doTest("012345678", "67", null, "8");
@@ -111,56 +152,15 @@ public class ChunkInputStreamTest {
 				"<simpledocument>".getBytes(),
 				"</simpledocument>".getBytes(), false, true);
 		final String decoded = IOUtils.toString(chunkIs).trim();
-		assertTrue("doc [" + decoded + "] starts with <document>", decoded
-				.startsWith("<document>"));
-		assertTrue("doc [" + decoded + "] ends with </document>", decoded
-				.endsWith("</document>"));
+		assertTrue("doc [" + decoded + "] starts with <document>",
+				decoded.startsWith("<document>"));
+		assertTrue("doc [" + decoded + "] ends with </document>",
+				decoded.endsWith("</document>"));
 	}
 
 	@Test
 	public void testStartMarkerNotFound() throws IOException {
 		doTest("01st23en45st67enst89", "notFound", "en", "");
-	}
-
-	private void doTest(final String base, final String start,
-			final String end, final String expected) throws IOException {
-		ChunkInputStream chIs = getStream(base, start, end, false, true);
-		String str = IOUtils.toString(chIs);
-		assertEquals("Method read(buf,int,int)", expected, str);
-		chIs = getStream(base, start, end, false, true);
-		str = new String(readWithSingleByte(chIs));
-		assertEquals("Method read()", expected, str);
-	}
-
-	private ChunkInputStream getStream(final String referencestr,
-			final String start, final String end, final boolean showMarkers,
-			final boolean automaticFetch) {
-		final InputStream reference = new ByteArrayInputStream(referencestr
-				.getBytes());
-
-		byte[] startb = null;
-		if (start != null) {
-			startb = start.getBytes();
-		}
-
-		byte[] endb = null;
-		if (end != null) {
-			endb = end.getBytes();
-		}
-
-		final ChunkInputStream chIs = new ChunkInputStream(reference, startb,
-				endb, showMarkers, automaticFetch);
-		return chIs;
-	}
-
-	private byte[] readWithSingleByte(final InputStream is)
-			throws IOException {
-		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		int n = 0;
-		while ((n = is.read()) >= 0) {
-			baos.write(n);
-		}
-		return baos.toByteArray();
 	}
 
 }

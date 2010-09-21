@@ -19,15 +19,15 @@ public class LogUtilsTest {
 
 	@Test
 	public void testGetCaller() {
-		InnerClass ic = new InnerClass();
-		String result = ic.testMethod2();
+		final InnerClass ic = new InnerClass();
+		final String result = ic.testMethod2();
 		System.out.println(result);
-		assertFalse("Result contains 'not found' ", result
-				.contains("not found"));
-		assertEquals("Result deoesn't contain 'InnerClass' ", -1, result
-				.indexOf("InnerClass"));
-		assertTrue("Result contains LogUtilsTest " + result, result
-				.indexOf("LogUtilsTest") >= 0);
+		assertFalse("Result contains 'not found' ",
+				result.contains("not found"));
+		assertEquals("Result deoesn't contain 'InnerClass' ", -1,
+				result.indexOf("InnerClass"));
+		assertTrue("Result contains LogUtilsTest " + result,
+				result.indexOf("LogUtilsTest") >= 0);
 		assertEquals("Number of logged frames", 2, result.split(" / ").length);
 	}
 }

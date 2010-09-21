@@ -44,11 +44,11 @@ import java.io.Writer;
 public class WriterDumper<T extends Writer> extends FilterWriter {
 	public static final long INDEFINITE_SIZE = -1L;
 
-	private final StringWriter dataDumpStream = new StringWriter();
+	private long currentSize = 0;
 
+	private final StringWriter dataDumpStream = new StringWriter();
 	private boolean dumpEnabled = true;
 	private final long maxDumpSize;
-	private long currentSize = 0;
 
 	public WriterDumper(final T sink) {
 		this(sink, -1);
@@ -113,7 +113,7 @@ public class WriterDumper<T extends Writer> extends FilterWriter {
 		if (this.maxDumpSize == INDEFINITE_SIZE) {
 			result = true;
 		} else {
-			result = currentSize < this.maxDumpSize;
+			result = this.currentSize < this.maxDumpSize;
 		}
 		return result;
 	}
@@ -130,9 +130,10 @@ public class WriterDumper<T extends Writer> extends FilterWriter {
 			if (this.maxDumpSize == INDEFINITE_SIZE) {
 				lenght = len;
 			} else {
-				lenght = (int) Math.min(len, this.maxDumpSize - currentSize);
+				lenght = (int) Math.min(len, this.maxDumpSize
+						- this.currentSize);
 			}
-			currentSize += lenght;
+			this.currentSize += lenght;
 			this.dataDumpStream.write(b, off, lenght);
 		}
 	}
@@ -145,7 +146,7 @@ public class WriterDumper<T extends Writer> extends FilterWriter {
 		super.write(b);
 		if (this.dumpEnabled && maxSizeNotReached()) {
 			this.dataDumpStream.write(b);
-			currentSize++;
+			this.currentSize++;
 		}
 	}
 }

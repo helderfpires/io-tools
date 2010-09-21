@@ -115,7 +115,7 @@ public class OutputStreamDumper<T extends OutputStream> extends
 		if (this.maxDumpSize == INDEFINITE_SIZE) {
 			result = true;
 		} else {
-			long currentSize = this.dataDumpStream.size();
+			final long currentSize = this.dataDumpStream.size();
 			result = currentSize < this.maxDumpSize;
 		}
 		return result;
@@ -133,7 +133,7 @@ public class OutputStreamDumper<T extends OutputStream> extends
 			if (this.maxDumpSize == INDEFINITE_SIZE) {
 				lenght = len;
 			} else {
-				long currentPosition = this.dataDumpStream.size();
+				final long currentPosition = this.dataDumpStream.size();
 				lenght = (int) Math.min(len, this.maxDumpSize
 						- currentPosition);
 			}

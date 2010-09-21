@@ -189,7 +189,7 @@ public class ThresholdStorageTest {
 			final int rl = tss.get(read, 0, read.length);
 			final byte[] ref = new byte[128];
 			System.arraycopy(ref1, pos, ref, 0, rl);
-			assertArrayEquals("array equals pos["+pos+"]", ref, read);
+			assertArrayEquals("array equals pos[" + pos + "]", ref, read);
 			tss.cleanup();
 		}
 

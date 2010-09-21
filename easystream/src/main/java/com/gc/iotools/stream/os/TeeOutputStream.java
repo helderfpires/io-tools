@@ -138,6 +138,18 @@ public class TeeOutputStream extends OutputStream {
 
 	/**
 	 * <p>
+	 * Returns the <code>OutputStream</code>(s) passed in the constructor.
+	 * </p>
+	 * 
+	 * @since 1.2.9
+	 * @return Array of OutputStream passed in the constructor.
+	 */
+	public final OutputStream[] getDestinationStreams() {
+		return this.destinations;
+	}
+
+	/**
+	 * <p>
 	 * This method returns the size in bytes of the data written to this
 	 * OutputStream. It can be used to collect statistics on the write
 	 * operations.
@@ -221,16 +233,5 @@ public class TeeOutputStream extends OutputStream {
 			}
 			this.size++;
 		}
-	}
-
-	/**
-	 * <p>
-	 * Returns the <code>OutputStream</code>(s) passed in the constructor.
-	 * </p>
-	 * @since 1.2.9
-	 * @return Array of OutputStream passed in the constructor.
-	 */
-	public final OutputStream[] getDestinationStreams() {
-		return destinations;
 	}
 }

@@ -34,18 +34,18 @@ public final class LogUtils {
 	public static String getCaller(final Class<?> me, final int nframes) {
 		final StackTraceElement[] stes = Thread.currentThread()
 				.getStackTrace();
-		int stackTracePosition = getCallerPosition(me, stes);
+		final int stackTracePosition = getCallerPosition(me, stes);
 		String result;
 		if (stackTracePosition >= stes.length - 1) {
 			result = "class [" + me.getName()
 					+ "] not found in caller's stack trace.";
 		} else {
-			StringBuffer resBuffer = new StringBuffer();
+			final StringBuffer resBuffer = new StringBuffer();
 			for (int i = stackTracePosition; (i < stes.length)
 					&& (i < (stackTracePosition + nframes)); i++) {
-				StackTraceElement stelement = stes[i];
+				final StackTraceElement stelement = stes[i];
 				final String className = stelement.getClassName();
-				String simpleClassName = className.substring(className
+				final String simpleClassName = className.substring(className
 						.lastIndexOf('.') + 1);
 				if (resBuffer.length() > 0) {
 					resBuffer.append(" / ");
@@ -65,7 +65,7 @@ public final class LogUtils {
 		boolean foundClazz = false;
 		int stackTracePosition = 0;
 		for (; (stackTracePosition < stes.length) && !foundCaller; stackTracePosition++) {
-			StackTraceElement stackTraceElement = stes[stackTracePosition];
+			final StackTraceElement stackTraceElement = stes[stackTracePosition];
 			foundClazz |= me.getName().equals(
 					stackTraceElement.getClassName());
 			foundCaller |= foundClazz
@@ -74,10 +74,11 @@ public final class LogUtils {
 		stackTracePosition--;
 		return stackTracePosition;
 	}
+
 	/*
 	 * Utility class: shouldn't be instantiated.
 	 */
 	private LogUtils() {
-		//utility class.
+		// utility class.
 	}
 }

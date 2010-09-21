@@ -19,22 +19,21 @@ import com.gc.iotools.stream.base.EasyStreamConstants;
  * <p>
  * When the method <code>{@link #close()}</code> is invoked all the bytes
  * remaining in the underlying <code>Reader</code> are copied to the
- * <code>Writer(s)</code>. This behavior is different from this class
- * and {@code TeeInputStream} in Apache commons-io.
+ * <code>Writer(s)</code>. This behavior is different from this class and
+ * {@code TeeInputStream} in Apache commons-io.
  * </p>
  * <p>
- * Bytes skipped are in any case copied to the <code>Writer</code>. Mark
- * and reset of the outer <code>Reader</code> doesn't affect the data
- * copied to the <code>Writer(s)</code>, that remain similar to the
- * <code>Reader</code> passed in the constructor.
+ * Bytes skipped are in any case copied to the <code>Writer</code>. Mark and
+ * reset of the outer <code>Reader</code> doesn't affect the data copied to
+ * the <code>Writer(s)</code>, that remain similar to the <code>Reader</code>
+ * passed in the constructor.
  * </p>
  * <p>
  * It also calculate some statistics on the read/write operations.
- * {@link #getWriteTime()} returns the time spent writing to the
- * Writers, {@link #getReadTime()} returns the time spent reading from
- * the Reader and {@link TeeReaderWriter#getWriteSize()}
- * returns the amount of data written to a single <code>Writer</code>
- * until now.
+ * {@link #getWriteTime()} returns the time spent writing to the Writers,
+ * {@link #getReadTime()} returns the time spent reading from the Reader and
+ * {@link TeeReaderWriter#getWriteSize()} returns the amount of data written
+ * to a single <code>Writer</code> until now.
  * </p>
  * <p>
  * Sample usage:
@@ -60,34 +59,34 @@ import com.gc.iotools.stream.base.EasyStreamConstants;
  */
 public class TeeReaderWriter extends Reader {
 
-	private long destinationPosition = 0;
-
-	private long markPosition = 0;
-
-	private long readTime = 0;
-
-	private long sourcePosition = 0;
-	private final Reader source;
-	private final long[] writeTime;
 	/**
 	 * If <code>true</code> <code>source</code> and <code>destination</code>
 	 * streams are closed when {@link #close()} is invoked.
 	 */
 	protected final boolean closeStreams;
+
+	private long destinationPosition = 0;
+
 	/**
 	 * The destination <code>Writer</code> where data is written.
 	 */
 	protected final Writer[] destinations;
 
+	private long markPosition = 0;
+	private long readTime = 0;
+	private final Reader source;
+	private long sourcePosition = 0;
+	private final long[] writeTime;
+
 	/**
 	 * <p>
-	 * Creates a <code>TeeInputStreamWriter</code> and saves its
-	 * argument, the input stream <code>source</code> and the output stream
+	 * Creates a <code>TeeInputStreamWriter</code> and saves its argument, the
+	 * input stream <code>source</code> and the output stream
 	 * <code>destination</code> for later use.
 	 * </p>
 	 * <p>
-	 * This constructor allow to specify multiple <code>Writer</code> to
-	 * which the data will be copied.
+	 * This constructor allow to specify multiple <code>Writer</code> to which
+	 * the data will be copied.
 	 * </p>
 	 * 
 	 * @since 1.2.7
@@ -102,9 +101,9 @@ public class TeeReaderWriter extends Reader {
 	 *            Data read from <code>source</code> are also written to this
 	 *            <code>Writer</code>.
 	 */
-	public TeeReaderWriter(final Reader source,
-			final boolean closeStreams, final Writer... destinations) {
-		this.source=source;
+	public TeeReaderWriter(final Reader source, final boolean closeStreams,
+			final Writer... destinations) {
+		this.source = source;
 		if (destinations == null) {
 			throw new IllegalArgumentException(
 					"Destinations Writer can't be null");
@@ -143,8 +142,7 @@ public class TeeReaderWriter extends Reader {
 	 *            Data read from <code>source</code> are also written to this
 	 *            <code>Writer</code>.
 	 */
-	public TeeReaderWriter(final Reader source,
-			final Writer destination) {
+	public TeeReaderWriter(final Reader source, final Writer destination) {
 		this(source, destination, true);
 	}
 
@@ -165,11 +163,10 @@ public class TeeReaderWriter extends Reader {
 	 *            <code>false</code> the close method on the underlying
 	 *            streams will not be called (it must be invoked externally).
 	 */
-	public TeeReaderWriter(final Reader source,
-			final Writer destination, final boolean closeStreams) {
+	public TeeReaderWriter(final Reader source, final Writer destination,
+			final boolean closeStreams) {
 		this(source, closeStreams, new Writer[] { destination });
 	}
-
 
 	/**
 	 * <p>
@@ -180,10 +177,10 @@ public class TeeReaderWriter extends Reader {
 	 * </p>
 	 * <p>
 	 * The standard behavior is to close both the underlying
-	 * <code>Reader</code> and <code>Writer(s)</code>. When the
-	 * class was constructed with the parameter
-	 * {@link TeeReaderWriter#closeCalled closeCalled} set to false
-	 * the underlying streams must be closed externally.
+	 * <code>Reader</code> and <code>Writer(s)</code>. When the class was
+	 * constructed with the parameter {@link TeeReaderWriter#closeCalled
+	 * closeCalled} set to false the underlying streams must be closed
+	 * externally.
 	 * 
 	 * @throws IOException
 	 *             thrown when a IO problem occurs in reading or writing the
@@ -241,8 +238,8 @@ public class TeeReaderWriter extends Reader {
 	 * </p>
 	 * <p>
 	 * This number is not affected by any of the mark and reset that are made
-	 * on this {@linkplain TeeReaderWriter} and reflects only the
-	 * number of bytes written.
+	 * on this {@linkplain TeeReaderWriter} and reflects only the number of
+	 * bytes written.
 	 * </p>
 	 * 
 	 * @return number of bytes written until now to a single
@@ -255,42 +252,18 @@ public class TeeReaderWriter extends Reader {
 
 	/**
 	 * <p>
-	 * Return the time spent writing on the destination
-	 * <code>Writer(s)</code> in milliseconds.
+	 * Return the time spent writing on the destination <code>Writer(s)</code>
+	 * in milliseconds.
 	 * </p>
 	 * <p>
-	 * The returned array has one element for each <code>Writer</code>
-	 * passed in the constructor.
+	 * The returned array has one element for each <code>Writer</code> passed
+	 * in the constructor.
 	 * </p>
 	 * 
-	 * @return time spent writing on the destination
-	 *         <code>Writers</code>.
+	 * @return time spent writing on the destination <code>Writers</code>.
 	 */
 	public long[] getWriteTime() {
 		return this.writeTime;
-	}
-
-	@Override
-	public int read(final char[] b, final int off, final int len)
-			throws IOException {
-		final long startr = System.currentTimeMillis();
-		final int result = this.source.read(b, off, len);
-		this.readTime += System.currentTimeMillis() - startr;
-
-		if (result > 0) {
-			if (this.sourcePosition + result > this.destinationPosition) {
-				final int newLen = (int) (this.sourcePosition + result - this.destinationPosition);
-				final int newOff = off + (result - newLen);
-				for (int i = 0; i < this.destinations.length; i++) {
-					final long start = System.currentTimeMillis();
-					this.destinations[i].write(b, newOff, newLen);
-					getWriteTime()[i] += System.currentTimeMillis() - start;
-				}
-				this.destinationPosition += newLen;
-			}
-			this.sourcePosition += result;
-		}
-		return result;
 	}
 
 	/**
@@ -308,7 +281,7 @@ public class TeeReaderWriter extends Reader {
 	 * @since 1.2.7
 	 */
 	@Override
-	public void mark(final int readLimit) throws IOException{
+	public void mark(final int readLimit) throws IOException {
 		this.source.mark(readLimit);
 		this.markPosition = this.sourcePosition;
 	}
@@ -344,6 +317,29 @@ public class TeeReaderWriter extends Reader {
 		return result;
 	}
 
+	@Override
+	public int read(final char[] b, final int off, final int len)
+			throws IOException {
+		final long startr = System.currentTimeMillis();
+		final int result = this.source.read(b, off, len);
+		this.readTime += System.currentTimeMillis() - startr;
+
+		if (result > 0) {
+			if (this.sourcePosition + result > this.destinationPosition) {
+				final int newLen = (int) (this.sourcePosition + result - this.destinationPosition);
+				final int newOff = off + (result - newLen);
+				for (int i = 0; i < this.destinations.length; i++) {
+					final long start = System.currentTimeMillis();
+					this.destinations[i].write(b, newOff, newLen);
+					getWriteTime()[i] += System.currentTimeMillis() - start;
+				}
+				this.destinationPosition += newLen;
+			}
+			this.sourcePosition += result;
+		}
+		return result;
+	}
+
 	/**
 	 * <p>
 	 * Repositions this stream to the position at the time the
@@ -351,11 +347,10 @@ public class TeeReaderWriter extends Reader {
 	 * </p>
 	 * <p>
 	 * After <code>reset()</code> method is called the data is not copied
-	 * anymore to the destination <code>Writer</code> until the position
-	 * where <code>reset</code> was issued is reached again. This ensures the
-	 * data copied to the destination <code>Writer</code> reflects the
-	 * data contained in the source Reader (the one passed in the
-	 * constructor).
+	 * anymore to the destination <code>Writer</code> until the position where
+	 * <code>reset</code> was issued is reached again. This ensures the data
+	 * copied to the destination <code>Writer</code> reflects the data
+	 * contained in the source Reader (the one passed in the constructor).
 	 * </p>
 	 * 
 	 * @see #mark(int)

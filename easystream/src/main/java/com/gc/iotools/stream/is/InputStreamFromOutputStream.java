@@ -98,6 +98,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 			this.name = threadName;
 		}
 
+		@Override
 		public T call() throws Exception {
 			final String threadName = getName();
 			T result;
@@ -342,6 +343,38 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	}
 
 	/**
+	 * <p>
+	 * This method is called just before the {@link #close()} method
+	 * completes, and after the eventual join with the internal thread.
+	 * </p>
+	 * <p>
+	 * It is an extension point designed for applications that need to perform
+	 * some operation when the <code>InputStream</code> is closed.
+	 * </p>
+	 * 
+	 * @since 1.2.9
+	 */
+	protected void afterClose() {
+		// extension point;
+	}
+
+	private void checkException() throws IOException {
+		try {
+			this.futureResult.get();
+		} catch (final ExecutionException e) {
+			final Throwable t = e.getCause();
+			final IOException e1 = new IOException("Exception producing data");
+			e1.initCause(t);
+			throw e1;
+		} catch (final InterruptedException e) {
+			final IOException e1 = new IOException("Thread interrupted");
+			e1.initCause(e);
+			throw e1;
+
+		}
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -361,21 +394,6 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 			}
 			afterClose();
 		}
-	}
-
-	/**
-	 * <p>
-	 * This method is called just before the {@link #close()} method
-	 * completes, and after the eventual join with the internal thread.
-	 * </p>
-	 * <p>
-	 * It is an extension point designed for applications that need to perform
-	 * some operation when the <code>InputStream</code> is closed.
-	 * </p>
-	 * @since 1.2.9
-	 */
-	protected void afterClose() {
-		// extension point;
 	}
 
 	/**
@@ -420,47 +438,6 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final int read() throws IOException {
-		final int result = this.pipedIS.read();
-		if (result < 0) {
-			checkException();
-		}
-		return result;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final int read(final byte[] b, final int off, final int len)
-			throws IOException {
-		final int result = this.pipedIS.read(b, off, len);
-		if (result < 0) {
-			checkException();
-		}
-		return result;
-	}
-
-	private void checkException() throws IOException {
-		try {
-			this.futureResult.get();
-		} catch (final ExecutionException e) {
-			final Throwable t = e.getCause();
-			final IOException e1 = new IOException("Exception producing data");
-			e1.initCause(t);
-			throw e1;
-		} catch (final InterruptedException e) {
-			final IOException e1 = new IOException("Thread interrupted");
-			e1.initCause(e);
-			throw e1;
-
-		}
-	}
-
-	/**
 	 * <p>
 	 * This method must be implemented by the user of this class to produce
 	 * the data that must be read from the external <code>InputStream</code>.
@@ -485,5 +462,30 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * @see #getResult()
 	 */
 	protected abstract T produce(final OutputStream sink) throws Exception;
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final int read() throws IOException {
+		final int result = this.pipedIS.read();
+		if (result < 0) {
+			checkException();
+		}
+		return result;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final int read(final byte[] b, final int off, final int len)
+			throws IOException {
+		final int result = this.pipedIS.read(b, off, len);
+		if (result < 0) {
+			checkException();
+		}
+		return result;
+	}
 
 }

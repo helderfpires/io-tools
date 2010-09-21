@@ -96,6 +96,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 			this.name = threadName;
 		}
 
+		@Override
 		public T call() throws Exception {
 			final String threadName = getName();
 			T result;
@@ -320,6 +321,22 @@ public abstract class ReaderFromWriter<T> extends Reader {
 		this(false, executor);
 	}
 
+	private void checkException() throws IOException {
+		try {
+			this.futureResult.get();
+		} catch (final ExecutionException e) {
+			final Throwable t = e.getCause();
+			final IOException e1 = new IOException("Exception producing data");
+			e1.initCause(t);
+			throw e1;
+		} catch (final InterruptedException e) {
+			final IOException e1 = new IOException("Thread interrupted");
+			e1.initCause(e);
+			throw e1;
+
+		}
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -383,47 +400,6 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final int read() throws IOException {
-		final int result = this.pipedReader.read();
-		if (result < 0) {
-			checkException();
-		}
-		return result;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final int read(final char[] b, final int off, final int len)
-			throws IOException {
-		final int result = this.pipedReader.read(b, off, len);
-		if (result < 0) {
-			checkException();
-		}
-		return result;
-	}
-
-	private void checkException() throws IOException {
-		try {
-			this.futureResult.get();
-		} catch (final ExecutionException e) {
-			final Throwable t = e.getCause();
-			final IOException e1 = new IOException("Exception producing data");
-			e1.initCause(t);
-			throw e1;
-		} catch (final InterruptedException e) {
-			final IOException e1 = new IOException("Thread interrupted");
-			e1.initCause(e);
-			throw e1;
-
-		}
-	}
-
-	/**
 	 * <p>
 	 * This method must be implemented by the user of this class to produce
 	 * the data that must be read from the external <code>Reader</code>.
@@ -448,5 +424,30 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 * @see #getResult()
 	 */
 	protected abstract T produce(final Writer sink) throws Exception;
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final int read() throws IOException {
+		final int result = this.pipedReader.read();
+		if (result < 0) {
+			checkException();
+		}
+		return result;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final int read(final char[] b, final int off, final int len)
+			throws IOException {
+		final int result = this.pipedReader.read(b, off, len);
+		if (result < 0) {
+			checkException();
+		}
+		return result;
+	}
 
 }

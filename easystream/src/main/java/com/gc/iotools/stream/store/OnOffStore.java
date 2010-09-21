@@ -15,6 +15,7 @@ public class OnOffStore implements SeekableStore {
 		this.store = store;
 	}
 
+	@Override
 	public void cleanup() {
 		this.store.cleanup();
 	}
@@ -33,16 +34,18 @@ public class OnOffStore implements SeekableStore {
 		}
 	}
 
+	@Override
 	public int get(final byte[] bytes, final int offset, final int length)
 			throws IOException {
 
-		int num = this.store.get(bytes, offset, length);
+		final int num = this.store.get(bytes, offset, length);
 		if (!this.enabled && num == 0) {
 			cleanup();
 		}
 		return num;
 	}
 
+	@Override
 	public void put(final byte[] bytes, final int offset, final int length)
 			throws IOException {
 		if (this.enabled) {
@@ -52,6 +55,7 @@ public class OnOffStore implements SeekableStore {
 		}
 	}
 
+	@Override
 	public void seek(final long position) throws IOException {
 		this.store.seek(position);
 	}

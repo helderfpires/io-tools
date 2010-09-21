@@ -33,28 +33,34 @@ public final class ExecutorServiceFactory {
 		private final ExecutorService exec = Executors
 				.newSingleThreadExecutor();
 
+		@Override
 		public boolean awaitTermination(final long timeout,
 				final TimeUnit unit) throws InterruptedException {
 			return this.exec.awaitTermination(timeout, unit);
 		}
 
+		@Override
 		public void execute(final Runnable command) {
 			this.exec.execute(command);
 			shutdown();
 		}
 
+		@Override
 		public boolean isShutdown() {
 			return this.exec.isShutdown();
 		}
 
+		@Override
 		public boolean isTerminated() {
 			return this.exec.isTerminated();
 		}
 
+		@Override
 		public void shutdown() {
 			this.exec.shutdown();
 		}
 
+		@Override
 		public List<Runnable> shutdownNow() {
 			return this.exec.shutdownNow();
 		}
@@ -149,6 +155,6 @@ public final class ExecutorServiceFactory {
 	 * Users should not instantiate this class directly.
 	 */
 	private ExecutorServiceFactory() {
-		//don't instantiate
+		// don't instantiate
 	}
 }

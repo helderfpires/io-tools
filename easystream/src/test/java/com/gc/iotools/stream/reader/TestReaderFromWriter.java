@@ -1,7 +1,6 @@
 package com.gc.iotools.stream.reader;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -18,8 +17,7 @@ public class TestReaderFromWriter {
 		final ThreadPoolExecutor es = (ThreadPoolExecutor) Executors
 				.newFixedThreadPool(1);
 
-		final ReaderFromWriter<Void> isos = new ReaderFromWriter<Void>(
-				es) {
+		final ReaderFromWriter<Void> isos = new ReaderFromWriter<Void>(es) {
 			@Override
 			public Void produce(final Writer ostream) throws Exception {
 				ostream.write("test");
@@ -41,8 +39,7 @@ public class TestReaderFromWriter {
 		final ThreadPoolExecutor es = (ThreadPoolExecutor) Executors
 				.newFixedThreadPool(1);
 
-		final ReaderFromWriter<Void> isos = new ReaderFromWriter<Void>(
-				es) {
+		final ReaderFromWriter<Void> isos = new ReaderFromWriter<Void>(es) {
 			@Override
 			public Void produce(final Writer ostream) throws Exception {
 				final char[] buffer = new char[65536];
@@ -70,8 +67,7 @@ public class TestReaderFromWriter {
 		final ThreadPoolExecutor es = (ThreadPoolExecutor) Executors
 				.newFixedThreadPool(1);
 
-		ReaderFromWriter<Void> isos = new ReaderFromWriter<Void>(
-				es) {
+		ReaderFromWriter<Void> isos = new ReaderFromWriter<Void>(es) {
 			@Override
 			public Void produce(final Writer ostream) throws Exception {
 				while (true) {
@@ -94,11 +90,9 @@ public class TestReaderFromWriter {
 		final ThreadPoolExecutor es = (ThreadPoolExecutor) Executors
 				.newFixedThreadPool(1);
 
-		final ReaderFromWriter<String> isos = new ReaderFromWriter<String>(
-				es) {
+		final ReaderFromWriter<String> isos = new ReaderFromWriter<String>(es) {
 			@Override
-			protected String produce(final Writer ostream)
-					throws Exception {
+			protected String produce(final Writer ostream) throws Exception {
 				ostream.write("test");
 				return "return";
 			}
@@ -118,11 +112,10 @@ public class TestReaderFromWriter {
 		final ThreadPoolExecutor es = (ThreadPoolExecutor) Executors
 				.newFixedThreadPool(1);
 
-		final ReaderFromWriter<Void> isos = new ReaderFromWriter<Void>(
-				es) {
+		final ReaderFromWriter<Void> isos = new ReaderFromWriter<Void>(es) {
 			@Override
 			public Void produce(final Writer ostream) throws Exception {
-				char[] buffer = new char[256];
+				final char[] buffer = new char[256];
 				for (int i = 0; i < 10; i++) {
 					Arrays.fill(buffer, 'i');
 					Thread.sleep(100);

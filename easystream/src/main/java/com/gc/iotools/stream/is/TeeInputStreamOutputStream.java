@@ -62,24 +62,24 @@ import com.gc.iotools.stream.base.EasyStreamConstants;
  */
 public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 
-	private long destinationPosition = 0;
-
-	private long markPosition = 0;
-
-	private long readTime = 0;
-
-	private long sourcePosition = 0;
-
-	private final long[] writeTime;
 	/**
 	 * If <code>true</code> <code>source</code> and <code>destination</code>
 	 * streams are closed when {@link #close()} is invoked.
 	 */
 	protected final boolean closeStreams;
+
+	private long destinationPosition = 0;
+
 	/**
 	 * The destination <code>OutputStream</code> where data is written.
 	 */
 	protected final OutputStream[] destinations;
+
+	private long markPosition = 0;
+
+	private long readTime = 0;
+	private long sourcePosition = 0;
+	private final long[] writeTime;
 
 	/**
 	 * <p>
@@ -231,6 +231,18 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 
 	/**
 	 * <p>
+	 * Returns the <code>OutputStream</code>(s) passed in the constructor.
+	 * </p>
+	 * 
+	 * @since 1.2.9
+	 * @return Array of OutputStream passed in the constructor.
+	 */
+	public final OutputStream[] getDestinationStreams() {
+		return this.destinations;
+	}
+
+	/**
+	 * <p>
 	 * Returns the number of milliseconds spent reading from the
 	 * <code>source</code> <code>InputStream</code>.
 	 * </p>
@@ -378,17 +390,6 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 	public synchronized void reset() throws IOException {
 		this.source.reset();
 		this.sourcePosition = this.markPosition;
-	}
-	
-	/**
-	 * <p>
-	 * Returns the <code>OutputStream</code>(s) passed in the constructor.
-	 * </p>
-	 * @since 1.2.9
-	 * @return Array of OutputStream passed in the constructor.
-	 */
-	public final OutputStream[] getDestinationStreams() {
-		return destinations;
 	}
 
 }

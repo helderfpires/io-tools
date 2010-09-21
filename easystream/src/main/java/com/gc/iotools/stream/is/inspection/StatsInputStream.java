@@ -188,6 +188,24 @@ public class StatsInputStream extends InputStream {
 
 	}
 
+	private void addToMap(final Map<String, BigInteger> map, final long value) {
+		if (!map.containsKey(this.callerId)) {
+			map.put(this.callerId, BigInteger.valueOf(value));
+		} else {
+			final BigInteger mvalue = map.get(this.callerId);
+			mvalue.add(BigInteger.valueOf(value));
+		}
+	}
+
+	private void addToMapL(final Map<String, Long> map, final long value) {
+		if (!map.containsKey(this.callerId)) {
+			map.put(this.callerId, value);
+		} else {
+			final long mvalue = map.get(this.callerId);
+			map.put(this.callerId, mvalue + value);
+		}
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -227,6 +245,14 @@ public class StatsInputStream extends InputStream {
 			}
 
 		}
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		if (this.automaticLog) {
+			logCurrentStatistics();
+		}
+		super.finalize();
 	}
 
 	/**
@@ -347,7 +373,8 @@ public class StatsInputStream extends InputStream {
 	 * @return Long representing the number of calls to read() methods.
 	 */
 	public long getTotalNumberRead() {
-		BigInteger totalReadBytes = StatsInputStream.totalRead.get(this.callerId);
+		final BigInteger totalReadBytes = StatsInputStream.totalRead
+				.get(this.callerId);
 		return (totalReadBytes == null) ? 0 : totalReadBytes.longValue();
 	}
 
@@ -366,7 +393,8 @@ public class StatsInputStream extends InputStream {
 		if (tu == null) {
 			throw new IllegalArgumentException("TimeUnit can't be null");
 		}
-		Long totalTimeLocal = StatsInputStream.totalTime.get(this.callerId);
+		final Long totalTimeLocal = StatsInputStream.totalTime
+				.get(this.callerId);
 		final long timeMs = (totalTimeLocal == null) ? 0 : totalTimeLocal;
 		long convertedTotalTime = tu.convert(timeMs, TimeUnit.MILLISECONDS);
 		if (this.chainStream != null) {
@@ -374,6 +402,22 @@ public class StatsInputStream extends InputStream {
 					- this.chainStream.getTotalTime(tu);
 		}
 		return convertedTotalTime;
+	}
+
+	private void internallogCurrentStatistics(
+			final boolean addNotClosedWarning) {
+		final StringBuffer message = new StringBuffer("Time spent[");
+		message.append(getTime());
+		message.append("]ms, bytes read [");
+		message.append(getSize());
+		message.append("] at [");
+		message.append(getBitRate());
+		message.append("].");
+		if (addNotClosedWarning) {
+			message.append("The stream is being finalized and "
+					+ "close() was not called.");
+		}
+		LOGGER.info(message.toString());
 	}
 
 	/**
@@ -498,48 +542,6 @@ public class StatsInputStream extends InputStream {
 		this.time += timeElapsed;
 		addToMapL(totalTime, timeElapsed);
 		return skipSize;
-	}
-
-	private void addToMap(final Map<String, BigInteger> map, final long value) {
-		if (!map.containsKey(this.callerId)) {
-			map.put(this.callerId, BigInteger.valueOf(value));
-		} else {
-			BigInteger mvalue = map.get(this.callerId);
-			mvalue.add(BigInteger.valueOf(value));
-		}
-	}
-
-	private void addToMapL(final Map<String, Long> map, final long value) {
-		if (!map.containsKey(this.callerId)) {
-			map.put(this.callerId, value);
-		} else {
-			long mvalue = map.get(this.callerId);
-			map.put(this.callerId, mvalue + value);
-		}
-	}
-
-	private void internallogCurrentStatistics(
-			final boolean addNotClosedWarning) {
-		StringBuffer message = new StringBuffer("Time spent[");
-		message.append(getTime());
-		message.append("]ms, bytes read [");
-		message.append(getSize());
-		message.append("] at [");
-		message.append(getBitRate());
-		message.append("].");
-		if (addNotClosedWarning) {
-			message.append("The stream is being finalized and "
-					+ "close() was not called.");
-		}
-		LOGGER.info(message.toString());
-	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		if (this.automaticLog) {
-			logCurrentStatistics();
-		}
-		super.finalize();
 	}
 
 }

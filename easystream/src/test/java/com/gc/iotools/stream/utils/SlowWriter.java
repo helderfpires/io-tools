@@ -7,14 +7,13 @@ import java.io.Writer;
  * Slow OutputStream for test purposes
  * 
  * @author dvd.smnt
- * 
  */
 public class SlowWriter extends Writer {
-	private final Writer writer;
 	private final long wait;
+	private final Writer writer;
 
 	public SlowWriter(final long wait, final Writer innerStream) {
-		this.writer=innerStream;
+		this.writer = innerStream;
 		this.wait = wait;
 	}
 
@@ -22,7 +21,7 @@ public class SlowWriter extends Writer {
 	public void close() throws IOException {
 		try {
 			Thread.sleep(this.wait);
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			throw new IOException("Sleep interrupted", e);
 		}
 		if (this.writer != null) {
@@ -34,7 +33,7 @@ public class SlowWriter extends Writer {
 	public void flush() throws IOException {
 		try {
 			Thread.sleep(this.wait);
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			throw new IOException("Sleep interrupted", e);
 		}
 		if (this.writer != null) {
@@ -42,11 +41,15 @@ public class SlowWriter extends Writer {
 		}
 	}
 
+	public Writer getRawStream() {
+		return this.writer;
+	}
+
 	@Override
 	public void write(final char[] b) throws IOException {
 		try {
 			Thread.sleep(this.wait);
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			throw new IOException("Sleep interrupted", e);
 		}
 		if (this.writer != null) {
@@ -59,7 +62,7 @@ public class SlowWriter extends Writer {
 			throws IOException {
 		try {
 			Thread.sleep(this.wait);
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			throw new IOException("Sleep interrupted", e);
 		}
 		if (this.writer != null) {
@@ -67,15 +70,11 @@ public class SlowWriter extends Writer {
 		}
 	}
 
-	public Writer getRawStream() {
-		return this.writer;
-	}
-
 	@Override
 	public void write(final int b) throws IOException {
 		try {
 			Thread.sleep(this.wait);
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			throw new IOException("Sleep interrupted", e);
 		}
 		if (this.writer != null) {

@@ -42,6 +42,7 @@ public class ThresholdStore implements SeekableStore {
 		this.fileStorage = file;
 	}
 
+	@Override
 	public void cleanup() {
 		this.size = 0;
 		this.position = 0;
@@ -50,11 +51,12 @@ public class ThresholdStore implements SeekableStore {
 			try {
 				this.fileAccess.close();
 			} catch (final IOException e) {
-				ThresholdStore.LOG.warn("Exception in closing the temporary "
-						+ "stream associated to file ["
-						+ this.fileStorage.getName() + "] it "
-						+ "is possible to continue but some"
-						+ " resources are not released.", e);
+				ThresholdStore.LOG.warn(
+						"Exception in closing the temporary "
+								+ "stream associated to file ["
+								+ this.fileStorage.getName() + "] it "
+								+ "is possible to continue but some"
+								+ " resources are not released.", e);
 			}
 			this.fileAccess = null;
 		}
@@ -76,6 +78,15 @@ public class ThresholdStore implements SeekableStore {
 		}
 	}
 
+	/**
+	 * Clean up the temporary files eventually open.
+	 */
+	@Override
+	protected void finalize() throws Throwable {
+		cleanup();
+	}
+
+	@Override
 	public int get(final byte[] bytes, final int offset, final int length)
 			throws IOException {
 		int result;
@@ -99,6 +110,7 @@ public class ThresholdStore implements SeekableStore {
 		return this.treshold;
 	}
 
+	@Override
 	public void put(final byte[] bytes, final int offset, final int length)
 			throws IOException {
 		if (length <= 0) {
@@ -140,6 +152,7 @@ public class ThresholdStore implements SeekableStore {
 	 *             is thrown if some (disk) error happens or a seek over the
 	 *             buffer length is requested.
 	 */
+	@Override
 	public void seek(final long position) throws IOException {
 		// if already in place do nothing.
 		if (this.position != position) {
@@ -186,13 +199,5 @@ public class ThresholdStore implements SeekableStore {
 			}
 		}
 		return str + "]";
-	}
-
-	/**
-	 * Clean up the temporary files eventually open.
-	 */
-	@Override
-	protected void finalize() throws Throwable {
-		cleanup();
 	}
 }

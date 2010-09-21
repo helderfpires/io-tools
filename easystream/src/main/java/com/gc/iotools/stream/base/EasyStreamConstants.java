@@ -21,6 +21,6 @@ public final class EasyStreamConstants {
 	public static final int SKIP_BUFFER_SIZE = 8192;
 
 	private EasyStreamConstants() {
-		//utility class: don't instantiate
+		// utility class: don't instantiate
 	}
 }

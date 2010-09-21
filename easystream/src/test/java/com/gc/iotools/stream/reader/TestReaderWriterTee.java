@@ -1,8 +1,6 @@
 package com.gc.iotools.stream.reader;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -37,24 +35,22 @@ public class TestReaderWriterTee {
 		final BigDocumentReader bis = new BigDocumentReader(2048);
 		final String reference = new String(IOUtils.toCharArray(bis));
 		bis.resetToBeginning();
-		final Writer osString[] = { new StringWriter(),
-				new StringWriter(),
+		final Writer osString[] = { new StringWriter(), new StringWriter(),
 				new SlowWriter(105, new StringWriter()) };
-		final TeeReaderWriter teeStream = new TeeReaderWriter(
-				bis, true, osString);
+		final TeeReaderWriter teeStream = new TeeReaderWriter(bis, true,
+				osString);
 		teeStream.close();
-		for (Writer stringWriter : osString) {
+		for (final Writer stringWriter : osString) {
 			final String result;
 			if (stringWriter instanceof StringWriter) {
-				result = ((StringWriter) stringWriter)
-						.toString();
+				result = ((StringWriter) stringWriter).toString();
 			} else {
 				result = ((StringWriter) ((SlowWriter) stringWriter)
 						.getRawStream()).toString();
 			}
 			assertEquals("Arrays equal", reference, result);
 		}
-		long[] wtime = teeStream.getWriteTime();
+		final long[] wtime = teeStream.getWriteTime();
 		assertEquals("array length", 3, wtime.length);
 		assertTrue("Time stream 1 less 100 ms [" + wtime[0] + "]",
 				100 > wtime[0]);
@@ -64,20 +60,19 @@ public class TestReaderWriterTee {
 	@org.junit.Test
 	public void testReadAtSpecificPosition() throws Exception {
 		final char[] referenceString = "123".toCharArray();
-		final StringReader bais = new StringReader(new String(
-				referenceString));
+		final StringReader bais = new StringReader(
+				new String(referenceString));
 		final StringWriter baos = new StringWriter();
-		final Reader teeStream = new TeeReaderWriter(bais,
-				baos);
+		final Reader teeStream = new TeeReaderWriter(bais, baos);
 		final char[] readBuffer = new char[256];
 		Arrays.fill(readBuffer, 'i');
 		teeStream.read(readBuffer, 1, 128);
 		final char[] referenceBuffer = new char[256];
 		Arrays.fill(referenceBuffer, 'i');
-		referenceBuffer[1]='1';
-		referenceBuffer[2]='2';
-		referenceBuffer[3]='3';
-		assertArrayEquals("Stringhe uguali", referenceBuffer,readBuffer);
+		referenceBuffer[1] = '1';
+		referenceBuffer[2] = '2';
+		referenceBuffer[3] = '3';
+		assertArrayEquals("Stringhe uguali", referenceBuffer, readBuffer);
 	}
 
 	@org.junit.Test
@@ -85,8 +80,7 @@ public class TestReaderWriterTee {
 		final String reference = "testString";
 		final Reader reader = new StringReader(reference);
 		final StringWriter osString = new StringWriter();
-		final Reader teeStream = new TeeReaderWriter(reader,
-				osString);
+		final Reader teeStream = new TeeReaderWriter(reader, osString);
 		IOUtils.copy(teeStream, new NullWriter());
 		teeStream.close();
 		osString.toString();
@@ -97,8 +91,7 @@ public class TestReaderWriterTee {
 		final String testBytes = "testString";
 		final Reader reader = new StringReader(testBytes);
 		final StringWriter osString = new StringWriter();
-		final Reader teeStream = new TeeReaderWriter(reader,
-				osString);
+		final Reader teeStream = new TeeReaderWriter(reader, osString);
 		teeStream.close();
 		final String result = osString.toString();
 		assertEquals("Arrays equal", testBytes, result);

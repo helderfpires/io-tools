@@ -9,10 +9,9 @@ import java.io.Writer;
 
 /**
  * <p>
- * Copies the data that is written to this class to the
- * <code>Writer(s)</code> passed in the constructor. It also collect
- * statistics on the operations done (time spent writing to the internal
- * writers, amount of data written).
+ * Copies the data that is written to this class to the <code>Writer(s)</code>
+ * passed in the constructor. It also collect statistics on the operations
+ * done (time spent writing to the internal writers, amount of data written).
  * </p>
  * <p>
  * Usage:
@@ -34,9 +33,6 @@ import java.io.Writer;
  */
 public class TeeWriter extends Writer {
 
-	private long size = 0;
-	private final long[] writeTime;
-
 	/**
 	 * <code>True</code> when {@link #close()} is invoked. Prevents data from
 	 * being written to the destination <code>Writer(s)</code> after
@@ -48,25 +44,45 @@ public class TeeWriter extends Writer {
 	 */
 	protected final Writer[] destinations;
 
+	private long size = 0;
+	private final long[] writeTime;
+
 	/**
 	 * <p>
 	 * Creates a <code>TeeWriter</code> and saves its arguments, the
 	 * <code>destinations</code> for later use.
 	 * </p>
 	 * <p>
-	 * This constructor allow to specify multiple <code>Writer</code> to
-	 * which the data will be copied.
+	 * This constructor allow to specify multiple <code>Writer</code> to which
+	 * the data will be copied.
 	 * </p>
 	 * 
 	 * @since 1.2.4
 	 * @param destinations
-	 *            Data written to this<code>Writer</code> are copied to
-	 *            all the <code>destinations</code>.
+	 *            Data written to this<code>Writer</code> are copied to all
+	 *            the <code>destinations</code>.
 	 */
 	public TeeWriter(final Writer... destinations) {
 		checkDestinations(destinations);
 		this.writeTime = new long[destinations.length];
 		this.destinations = destinations;
+	}
+
+	private void checkDestinations(final Writer... destinations) {
+		if (destinations == null) {
+			throw new IllegalArgumentException(
+					"Destinations Writer can't be null");
+		}
+		if (destinations.length == 0) {
+			throw new IllegalArgumentException(
+					"At least one destination Writer must be specified");
+		}
+		for (final Writer destination : destinations) {
+			if (destination == null) {
+				throw new IllegalArgumentException(
+						"One of the Writers in the array is null");
+			}
+		}
 	}
 
 	/**
@@ -103,12 +119,10 @@ public class TeeWriter extends Writer {
 	/**
 	 * <p>
 	 * This method returns the size in bytes of the data written to this
-	 * Writer. It can be used to collect statistics on the write
-	 * operations.
+	 * Writer. It can be used to collect statistics on the write operations.
 	 * </p>
 	 * 
-	 * @return size in bytes of the data written to the
-	 *         <code>Writers</code>.
+	 * @return size in bytes of the data written to the <code>Writers</code>.
 	 */
 	public final long getSize() {
 		return this.size;
@@ -116,16 +130,15 @@ public class TeeWriter extends Writer {
 
 	/**
 	 * <p>
-	 * Return the time spent writing to the destination
-	 * <code>Writer(s)</code> in milliseconds.
+	 * Return the time spent writing to the destination <code>Writer(s)</code>
+	 * in milliseconds.
 	 * </p>
 	 * <p>
-	 * The returned array has one element for each <code>Writer</code>
-	 * passed in the constructor.
+	 * The returned array has one element for each <code>Writer</code> passed
+	 * in the constructor.
 	 * </p>
 	 * 
-	 * @return time spent writing on the destination
-	 *         <code>Writers</code>.
+	 * @return time spent writing on the destination <code>Writers</code>.
 	 */
 	public long[] getWriteTime() {
 		return this.writeTime;
@@ -184,23 +197,6 @@ public class TeeWriter extends Writer {
 				this.writeTime[i] += System.currentTimeMillis() - start;
 			}
 			this.size++;
-		}
-	}
-
-	private void checkDestinations(final Writer... destinations) {
-		if (destinations == null) {
-			throw new IllegalArgumentException(
-					"Destinations Writer can't be null");
-		}
-		if (destinations.length == 0) {
-			throw new IllegalArgumentException(
-					"At least one destination Writer must be specified");
-		}
-		for (final Writer destination : destinations) {
-			if (destination == null) {
-				throw new IllegalArgumentException(
-						"One of the Writers in the array is null");
-			}
 		}
 	}
 }

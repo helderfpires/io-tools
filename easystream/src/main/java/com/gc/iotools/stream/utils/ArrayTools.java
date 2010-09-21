@@ -45,6 +45,6 @@ public final class ArrayTools {
 	 * utility class, shouldn't be instantiated.
 	 */
 	private ArrayTools() {
-		//utility class, shouldn't be instantiated.
+		// utility class, shouldn't be instantiated.
 	}
 }
