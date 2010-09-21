@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.io.Reader;
 
 /**
- * A {@link java.io.Reader} wrapper that will read only a definite number of bytes from
- * the underlying stream.
+ * A {@link java.io.Reader} wrapper that will read only a definite number of
+ * bytes from the underlying stream.
  * 
  * @see java.io.Reader
  * @author dvd.smnt
@@ -48,8 +48,8 @@ public class SizeLimitReader extends Reader {
 
 	/**
 	 * <p>
-	 * Create a new <code>SizeLimitReader</code> from another stream
-	 * given a size limit.
+	 * Create a new <code>SizeLimitReader</code> from another stream given a
+	 * size limit.
 	 * </p>
 	 * <p>
 	 * Bytes are read from the underlying stream until size limit is reached.
@@ -65,7 +65,6 @@ public class SizeLimitReader extends Reader {
 		this.in = in;
 		this.maxSize = maxCharacterSize;
 	}
-
 
 	/**
 	 * <p>

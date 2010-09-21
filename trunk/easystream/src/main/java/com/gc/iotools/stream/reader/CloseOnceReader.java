@@ -15,8 +15,8 @@ import java.nio.CharBuffer;
  * <p>
  * Multiple invocation of the <code>close()</code> method will result in only
  * one invocation of the same method on the underlying stream. This is useful
- * with some buggy <code>Reader</code> that don't allow
- * <code>close()</code> to be called multiple times.
+ * with some buggy <code>Reader</code> that don't allow <code>close()</code>
+ * to be called multiple times.
  * </p>
  * 
  * @author dvd.smnt
@@ -37,7 +37,7 @@ public class CloseOnceReader<T extends Reader> extends Reader {
 	 *            original Reader
 	 */
 	public CloseOnceReader(final T source) {
-		if(source == null){
+		if (source == null) {
 			throw new IllegalArgumentException("Source reader can't be null");
 		}
 		this.source = source;

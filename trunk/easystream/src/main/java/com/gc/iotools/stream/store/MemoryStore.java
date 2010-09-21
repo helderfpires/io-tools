@@ -16,11 +16,13 @@ public class MemoryStore implements SeekableStore {
 
 	private long position = 0;
 
+	@Override
 	public void cleanup() {
 		this.buffer = new byte[0];
 		this.position = 0;
 	}
 
+	@Override
 	public int get(final byte[] bytes, final int offset, final int length) {
 		final int effectiveLength = (int) Math.min(length, this.buffer.length
 				- this.position);
@@ -44,15 +46,15 @@ public class MemoryStore implements SeekableStore {
 		return this.position;
 	}
 
+	@Override
 	public void put(final byte[] bytes, final int offset, final int length) {
 		final byte[] tmpBuffer = new byte[length + this.buffer.length];
 		System.arraycopy(this.buffer, 0, tmpBuffer, 0, this.buffer.length);
-		System
-				.arraycopy(bytes, offset, tmpBuffer, this.buffer.length,
-						length);
+		System.arraycopy(bytes, offset, tmpBuffer, this.buffer.length, length);
 		this.buffer = tmpBuffer;
 	}
 
+	@Override
 	public void seek(final long position) {
 		this.position = position;
 	}

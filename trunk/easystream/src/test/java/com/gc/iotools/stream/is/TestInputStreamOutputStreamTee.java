@@ -41,7 +41,7 @@ public class TestInputStreamOutputStreamTee {
 		final TeeInputStreamOutputStream teeStream = new TeeInputStreamOutputStream(
 				bis, true, bos);
 		teeStream.close();
-		for (OutputStream byteArrayOutputStream : bos) {
+		for (final OutputStream byteArrayOutputStream : bos) {
 			final byte[] result;
 			if (byteArrayOutputStream instanceof ByteArrayOutputStream) {
 				result = ((ByteArrayOutputStream) byteArrayOutputStream)
@@ -52,7 +52,7 @@ public class TestInputStreamOutputStreamTee {
 			}
 			assertArrayEquals("Arrays equal", reference, result);
 		}
-		long[] wtime = teeStream.getWriteTime();
+		final long[] wtime = teeStream.getWriteTime();
 		assertEquals("array length", 3, wtime.length);
 		assertTrue("Time stream 1 less 100 ms [" + wtime[0] + "]",
 				100 > wtime[0]);
@@ -70,8 +70,8 @@ public class TestInputStreamOutputStreamTee {
 		final byte[] readBytes = new byte[512];
 		Arrays.fill(readBytes, ((byte) 0));
 		teeStream.read(readBytes, 1, 256);
-		assertTrue("Array uguali", Arrays.equals(referenceBytes, baos
-				.toByteArray()));
+		assertTrue("Array uguali",
+				Arrays.equals(referenceBytes, baos.toByteArray()));
 	}
 
 	@org.junit.Test

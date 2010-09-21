@@ -9,11 +9,17 @@ import java.io.Reader;
 public class BigDocumentReader extends Reader {
 	private static final int MODULO = 256;
 	private long lenght = 0;
-	private long postion = 0;
 	private long markPos = 0;
+	private long postion = 0;
 
 	public BigDocumentReader(final long length) {
 		this.lenght = length;
+	}
+
+	@Override
+	public void close() throws IOException {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
@@ -32,16 +38,8 @@ public class BigDocumentReader extends Reader {
 	}
 
 	@Override
-	public synchronized void reset() {
-		this.postion = this.markPos;
-	}
-
-	public synchronized void resetToBeginning() {
-		this.postion = 0;
-	}
-
-	@Override
-	public int read(char[] cbuf, int off, int len) throws IOException {
+	public int read(final char[] cbuf, final int off, final int len)
+			throws IOException {
 
 		if (cbuf == null) {
 			throw new NullPointerException();
@@ -71,8 +69,11 @@ public class BigDocumentReader extends Reader {
 	}
 
 	@Override
-	public void close() throws IOException {
-		// TODO Auto-generated method stub
+	public synchronized void reset() {
+		this.postion = this.markPos;
+	}
 
+	public synchronized void resetToBeginning() {
+		this.postion = 0;
 	}
 }

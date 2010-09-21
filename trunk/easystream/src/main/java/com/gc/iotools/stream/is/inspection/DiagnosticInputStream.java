@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.bouncycastle.asn1.util.Dump;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +99,6 @@ public class DiagnosticInputStream<T extends InputStream> extends
 		DiagnosticInputStream.defaultLogDepth = defaultFrameDepth;
 	}
 
-	private boolean enableCapture = false;
 	private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 	private int closeCount = 0;
@@ -142,7 +140,6 @@ public class DiagnosticInputStream<T extends InputStream> extends
 		this.constructorTrace = LogUtils.getCaller(getClass(), logDepth);
 	}
 
-	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -152,22 +149,22 @@ public class DiagnosticInputStream<T extends InputStream> extends
 		return super.available();
 	}
 
-	public void clearInstanceWarnings() {
-		this.warnings.clear();
+	private void checkCloseInvoked(final String methodName) {
+		if (this.closeCount > 0) {
+			this.methodCalledAfterClose = true;
+			final String warning = "ALREADY_CLOSED: ["
+					+ methodName
+					+ "] called by ["
+					+ LogUtils.getCaller(DiagnosticInputStream.class,
+							this.logDepth) + "]";
+			this.warnings.add(warning);
+			LOGGER.warn(warning + "but the stream was already closed by ["
+					+ this.closeTrace + "]");
+		}
 	}
 
-	/**
-	 * <p>
-	 * Return the current captured bytes, if capture was enabled.
-	 * </p>
-	 * <p>
-	 * The capture buffer might be truncated if maxCapture is set.
-	 * </p>
-	 * @since 1.2.9
-	 * @return the current captured bytes.
-	 */
-	public byte[] getContent() {
-		return this.baos.toByteArray();
+	public void clearInstanceWarnings() {
+		this.warnings.clear();
 	}
 
 	/**
@@ -179,7 +176,7 @@ public class DiagnosticInputStream<T extends InputStream> extends
 			this.closeTrace = LogUtils.getCaller(DiagnosticInputStream.class,
 					this.logDepth);
 		} else {
-			String warning = "MULTIPLE_CLOSE : method "
+			final String warning = "MULTIPLE_CLOSE : method "
 					+ this.getClass().getSimpleName()
 					+ ".close() is being called the["
 					+ this.closeCount
@@ -210,7 +207,7 @@ public class DiagnosticInputStream<T extends InputStream> extends
 			if (this.warnings.size() > 0) {
 				final String statusString = getStatusMessage();
 				LOGGER.warn(statusString);
-				String methodName = getConstructorCallerMethod();
+				final String methodName = getConstructorCallerMethod();
 				STATIC_WARNINGS.add(methodName + " : " + statusString);
 			}
 		}
@@ -223,6 +220,27 @@ public class DiagnosticInputStream<T extends InputStream> extends
 	 */
 	public int getCloseCount() {
 		return this.closeCount;
+	}
+
+	private String getConstructorCallerMethod() {
+		return this.constructorTrace.substring(
+				this.constructorTrace.indexOf('.') + 1,
+				this.constructorTrace.indexOf(':'));
+	}
+
+	/**
+	 * <p>
+	 * Return the current captured bytes, if capture was enabled.
+	 * </p>
+	 * <p>
+	 * The capture buffer might be truncated if maxCapture is set.
+	 * </p>
+	 * 
+	 * @since 1.2.9
+	 * @return the current captured bytes.
+	 */
+	public byte[] getContent() {
+		return this.baos.toByteArray();
 	}
 
 	public String[] getInstanceWarnings() {
@@ -240,7 +258,7 @@ public class DiagnosticInputStream<T extends InputStream> extends
 	public String getStatusMessage() {
 		String result = null;
 		if (this.warnings.size() > 0) {
-			StringBuffer resultb = new StringBuffer(getClass()
+			final StringBuffer resultb = new StringBuffer(getClass()
 					.getSimpleName());
 			resultb.append(" constructed by [" + this.constructorTrace + "] ");
 			if (this.closeCount > 0) {
@@ -248,7 +266,7 @@ public class DiagnosticInputStream<T extends InputStream> extends
 						+ "] has warnings:");
 			}
 			boolean first = true;
-			for (String warning : this.warnings) {
+			for (final String warning : this.warnings) {
 				resultb.append(warning);
 				resultb.append(first ? "" : "-----------");
 				first = false;
@@ -343,25 +361,5 @@ public class DiagnosticInputStream<T extends InputStream> extends
 	public long skip(final long n) throws IOException {
 		checkCloseInvoked("skip");
 		return super.skip(n);
-	}
-
-	private void checkCloseInvoked(final String methodName) {
-		if (this.closeCount > 0) {
-			this.methodCalledAfterClose = true;
-			String warning = "ALREADY_CLOSED: ["
-					+ methodName
-					+ "] called by ["
-					+ LogUtils.getCaller(DiagnosticInputStream.class,
-							this.logDepth) + "]";
-			this.warnings.add(warning);
-			LOGGER.warn(warning + "but the stream was already closed by ["
-					+ this.closeTrace + "]");
-		}
-	}
-
-	private String getConstructorCallerMethod() {
-		return this.constructorTrace.substring(
-				this.constructorTrace.indexOf('.') + 1,
-				this.constructorTrace.indexOf(':'));
 	}
 }

@@ -12,19 +12,19 @@ public class StatsOutputStreamTest {
 
 	@Before
 	public void setUp() throws Exception {
-		//nothing to do
+		// nothing to do
 	}
 
 	@org.junit.Test
 	public void testSize() throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		StatsOutputStream stOs = new StatsOutputStream(baos);
-		byte[] reference = "test".getBytes();
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final StatsOutputStream stOs = new StatsOutputStream(baos);
+		final byte[] reference = "test".getBytes();
 		stOs.write(reference);
 		stOs.write(reference);
 		assertEquals("size read", reference.length * 2, stOs.getSize());
 		stOs.close();
-		assertArrayEquals("data read", ArrayUtils
-				.addAll(reference, reference), baos.toByteArray());
+		assertArrayEquals("data read",
+				ArrayUtils.addAll(reference, reference), baos.toByteArray());
 	}
 }

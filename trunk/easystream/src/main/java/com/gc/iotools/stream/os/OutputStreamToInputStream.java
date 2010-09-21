@@ -111,6 +111,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 			this.inputstream = istream;
 		}
 
+		@Override
 		public synchronized T call() throws Exception {
 			T processResult;
 			try {
@@ -320,19 +321,35 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 			throw new IllegalArgumentException(
 					"executor service can't be null");
 		}
-		String callerId = LogUtils.getCaller(getClass());
+		final String callerId = LogUtils.getCaller(getClass());
 		this.pipedOs = new PipedOutputStream();
 		final PipedInputStream pipedIS = new MyPipedInputStream(
 				pipeBufferSize);
 		try {
 			pipedIS.connect(this.pipedOs);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new IllegalStateException("Error during pipe creaton", e);
 		}
 		final DataConsumer executingProcess = new DataConsumer(pipedIS);
 		this.joinOnClose = joinOnClose;
 		LOG.debug("invoked by[{}] queued for start.", callerId);
 		this.writingResult = executorService.submit(executingProcess);
+	}
+
+	/**
+	 * <p>
+	 * This method is called just before the close method completes, and after
+	 * the eventual join with the internal thread.
+	 * </p>
+	 * <p>
+	 * It is an extension point designed for applications that need to perform
+	 * some operation when the <code>OutputStream</code> is closed.
+	 * </p>
+	 * 
+	 * @since 1.2.9
+	 */
+	protected void afterClose() {
+		// extension point;
 	}
 
 	/**
@@ -364,18 +381,29 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 
 	/**
 	 * <p>
-	 * This method is called just before the close method completes, and after
-	 * the eventual join with the internal thread.
+	 * This method has to be implemented to use this class. It allows to
+	 * retrieve the data written to the outer <code>OutputStream</code> from
+	 * the <code>InputStream</code> passed as a parameter.
 	 * </p>
 	 * <p>
-	 * It is an extension point designed for applications that need to perform
-	 * some operation when the <code>OutputStream</code> is closed.
+	 * Any exception eventually threw inside this method will be propagated to
+	 * the external <code>OutputStream</code>. When the next
+	 * {@linkplain #write(byte[])} operation is called an
+	 * <code>IOException</code> will be thrown and the original exception can
+	 * be accessed calling the getCause() method on the IOException. It will
+	 * also be available by calling the method {@link #getResults()}.
 	 * </p>
-	 * @since 1.2.9
+	 * 
+	 * @param istream
+	 *            The InputStream where the data can be retrieved.
+	 * @return Optionally returns a result of the elaboration.
+	 * @throws Exception
+	 *             If an <code>Exception</code> occurs during the elaboration
+	 *             it can be thrown. It will be propagated to the external
+	 *             <code>OutputStream</code> and will be available calling the
+	 *             method {@link #getResults()}.
 	 */
-	protected void afterClose() {
-		// extension point;
-	}
+	protected abstract T doRead(InputStream istream) throws Exception;
 
 	/**
 	 * {@inheritDoc}
@@ -425,6 +453,42 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 		return this.writingResult.get();
 	}
 
+	private void internalClose(final boolean join, final TimeUnit timeUnit,
+			final long timeout) throws IOException {
+		if (!this.closeCalled) {
+			this.closeCalled = true;
+			this.pipedOs.close();
+			if (join) {
+				// waiting for thread to finish..
+				try {
+					this.writingResult.get(timeout, timeUnit);
+				} catch (final ExecutionException e) {
+					final IOException e1 = new IOException(
+							"The doRead() threw exception. Use "
+									+ "getCause() for details.");
+					e1.initCause(e.getCause());
+					throw e1;
+				} catch (final InterruptedException e) {
+					final IOException e1 = new IOException(
+							"Waiting of the thread has been interrupted");
+					e1.initCause(e);
+					throw e1;
+				} catch (final TimeoutException e) {
+					if (!this.writingResult.isDone()) {
+						this.writingResult.cancel(true);
+					}
+					final IOException e1 = new IOException(
+							"Waiting for the internal "
+									+ "thread to finish took more than ["
+									+ timeout + "] " + timeUnit);
+					e1.initCause(e);
+					throw e1;
+				}
+			}
+			afterClose();
+		}
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -464,67 +528,5 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 			this.pipedOs.write(bytetowr);
 		}
 	}
-
-	private void internalClose(final boolean join, final TimeUnit timeUnit,
-			final long timeout) throws IOException {
-		if (!this.closeCalled) {
-			this.closeCalled = true;
-			this.pipedOs.close();
-			if (join) {
-				// waiting for thread to finish..
-				try {
-					this.writingResult.get(timeout, timeUnit);
-				} catch (final ExecutionException e) {
-					final IOException e1 = new IOException(
-							"The doRead() threw exception. Use "
-									+ "getCause() for details.");
-					e1.initCause(e.getCause());
-					throw e1;
-				} catch (final InterruptedException e) {
-					final IOException e1 = new IOException(
-							"Waiting of the thread has been interrupted");
-					e1.initCause(e);
-					throw e1;
-				} catch (final TimeoutException e) {
-					if (!this.writingResult.isDone()) {
-						this.writingResult.cancel(true);
-					}
-					final IOException e1 = new IOException(
-							"Waiting for the internal "
-									+ "thread to finish took more than ["
-									+ timeout + "] " + timeUnit);
-					e1.initCause(e);
-					throw e1;
-				}
-			}
-			afterClose();
-		}
-	}
-
-	/**
-	 * <p>
-	 * This method has to be implemented to use this class. It allows to
-	 * retrieve the data written to the outer <code>OutputStream</code> from
-	 * the <code>InputStream</code> passed as a parameter.
-	 * </p>
-	 * <p>
-	 * Any exception eventually threw inside this method will be propagated to
-	 * the external <code>OutputStream</code>. When the next
-	 * {@linkplain #write(byte[])} operation is called an
-	 * <code>IOException</code> will be thrown and the original exception can
-	 * be accessed calling the getCause() method on the IOException. It will
-	 * also be available by calling the method {@link #getResults()}.
-	 * </p>
-	 * 
-	 * @param istream
-	 *            The InputStream where the data can be retrieved.
-	 * @return Optionally returns a result of the elaboration.
-	 * @throws Exception
-	 *             If an <code>Exception</code> occurs during the elaboration
-	 *             it can be thrown. It will be propagated to the external
-	 *             <code>OutputStream</code> and will be available calling the
-	 *             method {@link #getResults()}.
-	 */
-	protected abstract T doRead(InputStream istream) throws Exception;
 
 }

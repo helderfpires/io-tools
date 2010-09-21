@@ -8,7 +8,6 @@ import java.io.OutputStream;
  * Slow OutputStream for test purposes
  * 
  * @author dvd.smnt
- * 
  */
 public class SlowOutputStream extends FilterOutputStream {
 
@@ -23,7 +22,7 @@ public class SlowOutputStream extends FilterOutputStream {
 	public void close() throws IOException {
 		try {
 			Thread.sleep(this.wait);
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			throw new IOException("Sleep interrupted", e);
 		}
 		if (super.out != null) {
@@ -35,7 +34,7 @@ public class SlowOutputStream extends FilterOutputStream {
 	public void flush() throws IOException {
 		try {
 			Thread.sleep(this.wait);
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			throw new IOException("Sleep interrupted", e);
 		}
 		if (super.out != null) {
@@ -43,11 +42,15 @@ public class SlowOutputStream extends FilterOutputStream {
 		}
 	}
 
+	public OutputStream getRawStream() {
+		return super.out;
+	}
+
 	@Override
 	public void write(final byte[] b) throws IOException {
 		try {
 			Thread.sleep(this.wait);
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			throw new IOException("Sleep interrupted", e);
 		}
 		if (super.out != null) {
@@ -60,7 +63,7 @@ public class SlowOutputStream extends FilterOutputStream {
 			throws IOException {
 		try {
 			Thread.sleep(this.wait);
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			throw new IOException("Sleep interrupted", e);
 		}
 		if (super.out != null) {
@@ -68,15 +71,11 @@ public class SlowOutputStream extends FilterOutputStream {
 		}
 	}
 
-	public OutputStream getRawStream() {
-		return super.out;
-	}
-
 	@Override
 	public void write(final int b) throws IOException {
 		try {
 			Thread.sleep(this.wait);
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			throw new IOException("Sleep interrupted", e);
 		}
 		if (super.out != null) {

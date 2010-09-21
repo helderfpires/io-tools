@@ -77,9 +77,9 @@ public class StatsReader extends Reader {
 
 	/**
 	 * <p>
-	 * Constructs an <code>SizeReaderReader</code>. When
-	 * {@linkplain #close()} is called the underlying stream will be closed.
-	 * No further read will be done.
+	 * Constructs an <code>SizeReaderReader</code>. When {@linkplain #close()}
+	 * is called the underlying stream will be closed. No further read will be
+	 * done.
 	 * </p>
 	 * 
 	 * @param source
@@ -100,8 +100,7 @@ public class StatsReader extends Reader {
 	 *            completely and the effective size of the inner stream is
 	 *            calculated.
 	 */
-	public StatsReader(final Reader istream,
-			final boolean fullReadOnClose) {
+	public StatsReader(final Reader istream, final boolean fullReadOnClose) {
 		this(istream, fullReadOnClose, false);
 	}
 
@@ -126,8 +125,8 @@ public class StatsReader extends Reader {
 	 *            written when the stream is closed or finalized.
 	 * @since 1.2.7
 	 */
-	public StatsReader(final Reader istream,
-			final boolean fullReadOnClose, final boolean automaticLog) {
+	public StatsReader(final Reader istream, final boolean fullReadOnClose,
+			final boolean automaticLog) {
 		this(istream, fullReadOnClose, automaticLog, null);
 	}
 
@@ -141,11 +140,11 @@ public class StatsReader extends Reader {
 	 * when the <code>StatsReader</code> is closed or finalized.
 	 * </p>
 	 * <p>
-	 * Indicates another <code>StatsReader</code> to chain with. The aim
-	 * is to test performances of a single <code>Reader</code> in a chain
-	 * of multiple <code>Readers</code>. You should put the
-	 * <code>Reader</code> to be tested between two
-	 * <code>StatsReader</code> and chain the two together.
+	 * Indicates another <code>StatsReader</code> to chain with. The aim is to
+	 * test performances of a single <code>Reader</code> in a chain of
+	 * multiple <code>Readers</code>. You should put the <code>Reader</code>
+	 * to be tested between two <code>StatsReader</code> and chain the two
+	 * together.
 	 * <p>
 	 * <code>
 	 *  Reader source = //source of data
@@ -154,10 +153,10 @@ public class StatsReader extends Reader {
 	 * 	StatsReader wrapperStis=new StatsReader(toBeTested, false, false, sourceStats);
 	 * </code>
 	 * <p>
-	 * This will allow to produce statistics of the single
-	 * <code>Reader</code> to be tested, in a way independent from the
-	 * source. Times spent will be the difference between the times from the
-	 * source and times on the final wrapper.
+	 * This will allow to produce statistics of the single <code>Reader</code>
+	 * to be tested, in a way independent from the source. Times spent will be
+	 * the difference between the times from the source and times on the final
+	 * wrapper.
 	 * </p>
 	 * 
 	 * @param istream
@@ -173,9 +172,8 @@ public class StatsReader extends Reader {
 	 *            The <code>Reader</code> to chain.
 	 * @since 1.3.0
 	 */
-	public StatsReader(final Reader istream,
-			final boolean fullReadOnClose, final boolean automaticLog,
-			final StatsReader chainStream) {
+	public StatsReader(final Reader istream, final boolean fullReadOnClose,
+			final boolean automaticLog, final StatsReader chainStream) {
 		if (istream == null) {
 			throw new IllegalArgumentException("Reader can't be null");
 		}
@@ -188,7 +186,23 @@ public class StatsReader extends Reader {
 
 	}
 
+	private void addToMap(final Map<String, BigInteger> map, final long value) {
+		if (!map.containsKey(this.callerId)) {
+			map.put(this.callerId, BigInteger.valueOf(value));
+		} else {
+			final BigInteger mvalue = map.get(this.callerId);
+			mvalue.add(BigInteger.valueOf(value));
+		}
+	}
 
+	private void addToMapL(final Map<String, Long> map, final long value) {
+		if (!map.containsKey(this.callerId)) {
+			map.put(this.callerId, value);
+		} else {
+			final long mvalue = map.get(this.callerId);
+			map.put(this.callerId, mvalue + value);
+		}
+	}
 
 	/**
 	 * Closes the inner stream. If <code>fullReadOnClose</code> was set in the
@@ -223,6 +237,14 @@ public class StatsReader extends Reader {
 		}
 	}
 
+	@Override
+	protected void finalize() throws Throwable {
+		if (this.automaticLog) {
+			logCurrentStatistics();
+		}
+		super.finalize();
+	}
+
 	/**
 	 * <p>
 	 * Returns the average bytes per read.
@@ -231,8 +253,7 @@ public class StatsReader extends Reader {
 	 * If this parameter is near 1 means that too many calls are made to read
 	 * the <code>Reader</code> bringing a loss of performances for large
 	 * amount of data. Access to this <code>Reader</code> should be made
-	 * trough a <code>BufferedReader</code> with a reasonable buffer
-	 * size.
+	 * trough a <code>BufferedReader</code> with a reasonable buffer size.
 	 * </p>
 	 * <p>
 	 * WARN: This measure is not accurate in case of mark and reset.
@@ -341,7 +362,8 @@ public class StatsReader extends Reader {
 	 * @return Long representing the number of calls to read() methods.
 	 */
 	public long getTotalNumberRead() {
-		BigInteger numberRead = StatsReader.totalRead.get(this.callerId);
+		final BigInteger numberRead = StatsReader.totalRead
+				.get(this.callerId);
 		return numberRead == null ? 0 : numberRead.longValue();
 	}
 
@@ -360,7 +382,7 @@ public class StatsReader extends Reader {
 		if (tu == null) {
 			throw new IllegalArgumentException("TimeUnit can't be null");
 		}
-		Long totalTime = StatsReader.totalTime.get(this.callerId);
+		final Long totalTime = StatsReader.totalTime.get(this.callerId);
 		final long timeMs = totalTime == null ? 0 : totalTime;
 		long convertedTotalTime = tu.convert(timeMs, TimeUnit.MILLISECONDS);
 		if (this.chainStream != null) {
@@ -368,6 +390,22 @@ public class StatsReader extends Reader {
 					- this.chainStream.getTotalTime(tu);
 		}
 		return convertedTotalTime;
+	}
+
+	private void internallogCurrentStatistics(
+			final boolean addNotClosedWarning) {
+		final StringBuffer message = new StringBuffer("Time spent[");
+		message.append(getTime());
+		message.append("]ms, bytes read [");
+		message.append(getSize());
+		message.append("] at [");
+		message.append(getBitRate());
+		message.append("].");
+		if (addNotClosedWarning) {
+			message.append("The stream is being finalized and "
+					+ "close() was not called.");
+		}
+		LOGGER.info(message.toString());
 	}
 
 	/**
@@ -492,48 +530,6 @@ public class StatsReader extends Reader {
 		this.time += timeElapsed;
 		addToMapL(totalTime, timeElapsed);
 		return skipSize;
-	}
-
-	private void addToMap(final Map<String, BigInteger> map, final long value) {
-		if (!map.containsKey(this.callerId)) {
-			map.put(this.callerId, BigInteger.valueOf(value));
-		} else {
-			BigInteger mvalue = map.get(this.callerId);
-			mvalue.add(BigInteger.valueOf(value));
-		}
-	}
-
-	private void addToMapL(final Map<String, Long> map, final long value) {
-		if (!map.containsKey(this.callerId)) {
-			map.put(this.callerId, value);
-		} else {
-			long mvalue = map.get(this.callerId);
-			map.put(this.callerId, mvalue + value);
-		}
-	}
-
-	private void internallogCurrentStatistics(
-			final boolean addNotClosedWarning) {
-		StringBuffer message = new StringBuffer("Time spent[");
-		message.append(getTime());
-		message.append("]ms, bytes read [");
-		message.append(getSize());
-		message.append("] at [");
-		message.append(getBitRate());
-		message.append("].");
-		if (addNotClosedWarning) {
-			message.append("The stream is being finalized and "
-					+ "close() was not called.");
-		}
-		LOGGER.info(message.toString());
-	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		if (this.automaticLog) {
-			logCurrentStatistics();
-		}
-		super.finalize();
 	}
 
 }

@@ -13,8 +13,8 @@ import java.nio.CharBuffer;
  * stream.
  * </p>
  * <p>
- * This class is typically used in cases where a <code>Reader</code> needs to be
- * passed to a component that wants to explicitly close the stream even if
+ * This class is typically used in cases where a <code>Reader</code> needs to
+ * be passed to a component that wants to explicitly close the stream even if
  * more input would still be available to other components.
  * </p>
  * 

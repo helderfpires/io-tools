@@ -18,28 +18,14 @@ import com.gc.iotools.stream.is.BigDocumentIstream;
 
 public class TestOutputStreamToInputStream {
 
-	/**
-	 * Benchmarks
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) throws Exception {
-		copy(1024, 1024);
-		System.out.println("-----------");
-		copy(1024 * 1024, 1024);
-		copy(1024 * 1024 * 1024, 1024);
-		copy(1024 * 1024, 32768);
-		copy(1024 * 1024 * 1024, 32768);
-	}
-
-	private static void copy(long fileLength, final int bufSize)
+	private static void copy(final long fileLength, final int bufSize)
 			throws Exception {
-		long startTime = System.currentTimeMillis();
+		final long startTime = System.currentTimeMillis();
 		OutputStreamToInputStream.setDefaultPipeSize(bufSize);
 		final OutputStreamToInputStream<Void> osisA = new OutputStreamToInputStream<Void>(
 				true, ExecutionModel.THREAD_PER_INSTANCE) {
 			@Override
-			protected Void doRead(InputStream istream) throws Exception {
+			protected Void doRead(final InputStream istream) throws Exception {
 				copyLarge(istream, new NullOutputStream(), bufSize);
 				return null;
 			}
@@ -52,9 +38,9 @@ public class TestOutputStreamToInputStream {
 				+ " time:" + (System.currentTimeMillis() - startTime));
 	}
 
-	private static long copyLarge(InputStream input, OutputStream output,
-			int bsize) throws IOException {
-		byte[] buffer = new byte[bsize * 2];
+	private static long copyLarge(final InputStream input,
+			final OutputStream output, final int bsize) throws IOException {
+		final byte[] buffer = new byte[bsize * 2];
 		long count = 0;
 		int n = 0;
 		while (-1 != (n = input.read(buffer))) {
@@ -62,6 +48,42 @@ public class TestOutputStreamToInputStream {
 			count += n;
 		}
 		return count;
+	}
+
+	/**
+	 * Benchmarks
+	 * 
+	 * @param args
+	 */
+	public static void main(final String[] args) throws Exception {
+		copy(1024, 1024);
+		System.out.println("-----------");
+		copy(1024 * 1024, 1024);
+		copy(1024 * 1024 * 1024, 1024);
+		copy(1024 * 1024, 32768);
+		copy(1024 * 1024 * 1024, 32768);
+	}
+
+	@org.junit.Test
+	public void testIncompleteRead() throws Exception {
+		final OutputStreamToInputStream<String> oStream2IStream = new OutputStreamToInputStream<String>(
+				true, ExecutionModel.SINGLE_THREAD) {
+			@Override
+			protected String doRead(final InputStream istream) {
+				return "end";
+			}
+		};
+
+		final byte[] test = new byte[32768];
+		try {
+			oStream2IStream.write(test);
+		} finally {
+			// don't miss the close (or a thread would not terminate
+			// correctly).
+			oStream2IStream.close();
+		}
+		assertEquals("Results are returned", "end",
+				oStream2IStream.getResults());
 	}
 
 	@org.junit.Test
@@ -105,7 +127,7 @@ public class TestOutputStreamToInputStream {
 				throw new IllegalStateException("testException");
 			}
 		};
-		byte[] test = new byte[32768];
+		final byte[] test = new byte[32768];
 		osisA.write(test);
 		try {
 			osisA.write(test);
@@ -116,27 +138,6 @@ public class TestOutputStreamToInputStream {
 		}
 		Thread.sleep(600);
 		assertEquals("Thread count", 0, es.getActiveCount());
-	}
-
-	@org.junit.Test
-	public void testIncompleteRead() throws Exception {
-		final OutputStreamToInputStream<String> oStream2IStream = new OutputStreamToInputStream<String>(
-				true, ExecutionModel.SINGLE_THREAD) {
-			@Override
-			protected String doRead(final InputStream istream) {
-				return "end";
-			}
-		};
-
-		final byte[] test = new byte[32768];
-		try {
-			oStream2IStream.write(test);
-		} finally {
-			// don't miss the close (or a thread would not terminate correctly).
-			oStream2IStream.close();
-		}
-		assertEquals("Results are returned", "end", oStream2IStream
-				.getResults());
 	}
 
 	@org.junit.Test
@@ -156,7 +157,8 @@ public class TestOutputStreamToInputStream {
 		try {
 			oStream2IStream.write(testString.getBytes());
 		} finally {
-			// don't miss the close (or a thread would not terminate correctly).
+			// don't miss the close (or a thread would not terminate
+			// correctly).
 			oStream2IStream.close();
 		}
 		assertEquals("Results are returned", "test was processed.",
