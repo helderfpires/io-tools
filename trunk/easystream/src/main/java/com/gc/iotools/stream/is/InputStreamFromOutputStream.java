@@ -359,7 +359,23 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 					throw e1;
 				}
 			}
+			afterClose();
 		}
+	}
+
+	/**
+	 * <p>
+	 * This method is called just before the {@link #close()} method
+	 * completes, and after the eventual join with the internal thread.
+	 * </p>
+	 * <p>
+	 * It is an extension point designed for applications that need to perform
+	 * some operation when the <code>InputStream</code> is closed.
+	 * </p>
+	 * @since 1.2.9
+	 */
+	protected void afterClose() {
+		// extension point;
 	}
 
 	/**
@@ -397,7 +413,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 			final Throwable cause = e.getCause();
 			if (cause instanceof Exception) {
 				throw (Exception) cause;
-			} 
+			}
 			throw e;
 		}
 		return result;

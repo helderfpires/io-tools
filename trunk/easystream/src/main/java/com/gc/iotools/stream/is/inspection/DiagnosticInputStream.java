@@ -1,4 +1,5 @@
 package com.gc.iotools.stream.is.inspection;
+
 /*
  * Copyright (c) 2008,2010 Davide Simonetti. This source code is released
  * under the BSD License.
@@ -9,6 +10,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.bouncycastle.asn1.util.Dump;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,6 +100,9 @@ public class DiagnosticInputStream<T extends InputStream> extends
 		DiagnosticInputStream.defaultLogDepth = defaultFrameDepth;
 	}
 
+	private boolean enableCapture = false;
+	private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
 	private int closeCount = 0;
 	private String closeTrace;
 	private final String constructorTrace;
@@ -136,6 +142,7 @@ public class DiagnosticInputStream<T extends InputStream> extends
 		this.constructorTrace = LogUtils.getCaller(getClass(), logDepth);
 	}
 
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -147,6 +154,20 @@ public class DiagnosticInputStream<T extends InputStream> extends
 
 	public void clearInstanceWarnings() {
 		this.warnings.clear();
+	}
+
+	/**
+	 * <p>
+	 * Return the current captured bytes, if capture was enabled.
+	 * </p>
+	 * <p>
+	 * The capture buffer might be truncated if maxCapture is set.
+	 * </p>
+	 * @since 1.2.9
+	 * @return the current captured bytes.
+	 */
+	public byte[] getContent() {
+		return this.baos.toByteArray();
 	}
 
 	/**
@@ -221,9 +242,7 @@ public class DiagnosticInputStream<T extends InputStream> extends
 		if (this.warnings.size() > 0) {
 			StringBuffer resultb = new StringBuffer(getClass()
 					.getSimpleName());
-			resultb
-					.append(" constructed by [" + this.constructorTrace
-							+ "] ");
+			resultb.append(" constructed by [" + this.constructorTrace + "] ");
 			if (this.closeCount > 0) {
 				resultb.append("closed by: [" + this.closeTrace
 						+ "] has warnings:");
@@ -341,7 +360,8 @@ public class DiagnosticInputStream<T extends InputStream> extends
 	}
 
 	private String getConstructorCallerMethod() {
-		return this.constructorTrace.substring(this.constructorTrace
-				.indexOf('.') + 1, this.constructorTrace.indexOf(':'));
+		return this.constructorTrace.substring(
+				this.constructorTrace.indexOf('.') + 1,
+				this.constructorTrace.indexOf(':'));
 	}
 }

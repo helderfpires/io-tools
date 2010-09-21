@@ -363,6 +363,21 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	}
 
 	/**
+	 * <p>
+	 * This method is called just before the close method completes, and after
+	 * the eventual join with the internal thread.
+	 * </p>
+	 * <p>
+	 * It is an extension point designed for applications that need to perform
+	 * some operation when the <code>OutputStream</code> is closed.
+	 * </p>
+	 * @since 1.2.9
+	 */
+	protected void afterClose() {
+		// extension point;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -482,6 +497,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 					throw e1;
 				}
 			}
+			afterClose();
 		}
 	}
 

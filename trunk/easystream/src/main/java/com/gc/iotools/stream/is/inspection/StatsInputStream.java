@@ -347,8 +347,8 @@ public class StatsInputStream extends InputStream {
 	 * @return Long representing the number of calls to read() methods.
 	 */
 	public long getTotalNumberRead() {
-		BigInteger numberRead = StatsInputStream.totalRead.get(this.callerId);
-		return numberRead == null ? 0 : numberRead.longValue();
+		BigInteger totalReadBytes = StatsInputStream.totalRead.get(this.callerId);
+		return (totalReadBytes == null) ? 0 : totalReadBytes.longValue();
 	}
 
 	/**
@@ -366,8 +366,8 @@ public class StatsInputStream extends InputStream {
 		if (tu == null) {
 			throw new IllegalArgumentException("TimeUnit can't be null");
 		}
-		Long totalTime = StatsInputStream.totalTime.get(this.callerId);
-		final long timeMs = totalTime == null ? 0 : totalTime;
+		Long totalTimeLocal = StatsInputStream.totalTime.get(this.callerId);
+		final long timeMs = (totalTimeLocal == null) ? 0 : totalTimeLocal;
 		long convertedTotalTime = tu.convert(timeMs, TimeUnit.MILLISECONDS);
 		if (this.chainStream != null) {
 			convertedTotalTime = convertedTotalTime
