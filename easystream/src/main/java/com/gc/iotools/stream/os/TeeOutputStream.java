@@ -34,19 +34,20 @@ import java.io.OutputStream;
  */
 public class TeeOutputStream extends OutputStream {
 
-	private long size = 0;
-	private final long[] writeTime;
-
 	/**
 	 * <code>True</code> when {@link #close()} is invoked. Prevents data from
 	 * being written to the destination <code>OutputStream(s)</code> after
 	 * {@link #close()} has been invoked.
 	 */
 	protected boolean closeCalled = false;
+	private boolean copyEnabled = true;
 	/**
 	 * The destination <code>OutputStream(s)</code> where data is written.
 	 */
 	protected final OutputStream[] destinations;
+
+	private long size = 0;
+	private final long[] writeTime;
 
 	/**
 	 * <p>
@@ -69,6 +70,23 @@ public class TeeOutputStream extends OutputStream {
 		this.destinations = destinations;
 	}
 
+	private void checkDestinations(final OutputStream... dests) {
+		if (dests == null) {
+			throw new IllegalArgumentException(
+					"Destinations OutputStream can't be null");
+		}
+		if (dests.length == 0) {
+			throw new IllegalArgumentException(
+					"At least one destination OutputStream must be specified");
+		}
+		for (final OutputStream destination : dests) {
+			if (destination == null) {
+				throw new IllegalArgumentException(
+						"One of the outputstreams in the array is null");
+			}
+		}
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -83,6 +101,24 @@ public class TeeOutputStream extends OutputStream {
 				this.writeTime[i] += System.currentTimeMillis() - start;
 			}
 		}
+	}
+
+	private boolean doCopy() {
+		return (!this.closeCalled) && this.copyEnabled;
+	}
+
+	/**
+	 * <p>
+	 * Allow to switch off the copy to the underlying streams. The copy is
+	 * enabled by default. Setting the parameter to false will disable the
+	 * copy.
+	 * </p>
+	 * 
+	 * @param enabled
+	 *            whether to copy or not the bytes to the underlying stream.
+	 */
+	public final void enableCopy(final boolean enabled) {
+		this.copyEnabled = enabled;
 	}
 
 	/**
@@ -139,7 +175,7 @@ public class TeeOutputStream extends OutputStream {
 		if (b == null) {
 			throw new NullPointerException("Array of bytes can't be null");
 		}
-		if (!this.closeCalled) {
+		if (doCopy()) {
 			for (int i = 0; i < this.destinations.length; i++) {
 				final OutputStream stream = this.destinations[i];
 				final long start = System.currentTimeMillis();
@@ -159,7 +195,7 @@ public class TeeOutputStream extends OutputStream {
 		if (b == null) {
 			throw new NullPointerException("Array of bytes can't be null");
 		}
-		if (!this.closeCalled) {
+		if (doCopy()) {
 			for (int i = 0; i < this.destinations.length; i++) {
 				final OutputStream stream = this.destinations[i];
 				final long start = System.currentTimeMillis();
@@ -175,7 +211,7 @@ public class TeeOutputStream extends OutputStream {
 	 */
 	@Override
 	public void write(final int b) throws IOException {
-		if (!this.closeCalled) {
+		if (doCopy()) {
 			for (int i = 0; i < this.destinations.length; i++) {
 				final OutputStream stream = this.destinations[i];
 				final long start = System.currentTimeMillis();
@@ -187,20 +223,14 @@ public class TeeOutputStream extends OutputStream {
 		}
 	}
 
-	private void checkDestinations(final OutputStream... destinations) {
-		if (destinations == null) {
-			throw new IllegalArgumentException(
-					"Destinations OutputStream can't be null");
-		}
-		if (destinations.length == 0) {
-			throw new IllegalArgumentException(
-					"At least one destination OutputStream must be specified");
-		}
-		for (final OutputStream destination : destinations) {
-			if (destination == null) {
-				throw new IllegalArgumentException(
-						"One of the outputstreams in the array is null");
-			}
-		}
+	/**
+	 * <p>
+	 * Returns the <code>OutputStream</code>(s) passed in the constructor.
+	 * </p>
+	 * @since 1.2.9
+	 * @return Array of OutputStream passed in the constructor.
+	 */
+	public final OutputStream[] getDestinationStreams() {
+		return destinations;
 	}
 }

@@ -379,5 +379,16 @@ public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 		this.source.reset();
 		this.sourcePosition = this.markPosition;
 	}
+	
+	/**
+	 * <p>
+	 * Returns the <code>OutputStream</code>(s) passed in the constructor.
+	 * </p>
+	 * @since 1.2.9
+	 * @return Array of OutputStream passed in the constructor.
+	 */
+	public final OutputStream[] getDestinationStreams() {
+		return destinations;
+	}
 
 }
