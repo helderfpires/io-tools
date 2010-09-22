@@ -1,4 +1,4 @@
-package com.gc.iotools.stream.os;
+package com.gc.iotools.stream.os.inspection;
 
 /*
  * Copyright (c) 2008,2010 Davide Simonetti. This source code is released
