@@ -1,4 +1,4 @@
-package com.gc.iotools.stream.os;
+package com.gc.iotools.stream.os.inspection;
 
 import static org.junit.Assert.*;
 
@@ -13,7 +13,7 @@ public class OutputStreamDumperTest {
 	@Test
 	public void testDisable() throws Exception {
 		final ByteArrayOutputStream destination1 = new ByteArrayOutputStream();
-		final OutputStreamDumper dumper = new OutputStreamDumper(destination1);
+		final OutputStreamDumper<ByteArrayOutputStream> dumper = new OutputStreamDumper<ByteArrayOutputStream>(destination1);
 		dumper.write("test ".getBytes());
 		dumper.enableDump(false);
 		dumper.write("1 ".getBytes());
@@ -30,7 +30,7 @@ public class OutputStreamDumperTest {
 		final Random random = new Random();
 		random.nextBytes(buffer);
 		final ByteArrayOutputStream destination = new ByteArrayOutputStream();
-		final OutputStreamDumper dumper = new OutputStreamDumper(destination,
+		final OutputStreamDumper<ByteArrayOutputStream> dumper = new OutputStreamDumper<ByteArrayOutputStream>(destination,
 				512);
 		dumper.write(buffer);
 		dumper.enableDump(true);
@@ -47,7 +47,7 @@ public class OutputStreamDumperTest {
 	public void testStandardDump() throws Exception {
 		final byte[] test = "test".getBytes();
 		final ByteArrayOutputStream destination1 = new ByteArrayOutputStream();
-		final OutputStreamDumper dump = new OutputStreamDumper(destination1);
+		final OutputStreamDumper<ByteArrayOutputStream> dump = new OutputStreamDumper<ByteArrayOutputStream>(destination1);
 		dump.write(test);
 		assertArrayEquals("the two arrays are equals", test,
 				destination1.toByteArray());
