@@ -2,7 +2,6 @@ package com.gc.iotools.stream.reader;
 
 import static org.junit.Assert.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -12,12 +11,10 @@ import java.util.Arrays;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullWriter;
 
-import com.gc.iotools.stream.is.BigDocumentIstream;
-import com.gc.iotools.stream.is.TeeInputStreamOutputStream;
 import com.gc.iotools.stream.utils.SlowWriter;
 
 public class TestReaderWriterTee {
-	
+
 	/*
 	 * Disable the copy on the Writer(s).
 	 */
@@ -28,7 +25,7 @@ public class TestReaderWriterTee {
 		final TeeReaderWriter teeStream = new TeeReaderWriter(
 				new StringReader(reference), wrappedWriter);
 		// read first 5 characters
-		char[] cbuf = new char[5];
+		final char[] cbuf = new char[5];
 		teeStream.read(cbuf);
 		assertEquals("first 5 char", "12345", new String(cbuf));
 		// disable copy
@@ -40,11 +37,10 @@ public class TestReaderWriterTee {
 		teeStream.enableCopy(true);
 		teeStream.close();
 		final String innerContent = wrappedWriter.toString();
-		//innerContent should not contain characters 6-10
+		// innerContent should not contain characters 6-10
 		assertEquals("Content dumped", "12345abcde", innerContent);
 	}
 
-	
 	@org.junit.Test
 	public void testMarkAndReset() throws Exception {
 		final BigDocumentReader bis = new BigDocumentReader(131072);

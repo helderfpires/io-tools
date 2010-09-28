@@ -40,14 +40,14 @@ public class TeeWriter extends Writer {
 	 * {@link #close()} has been invoked.
 	 */
 	protected boolean closeCalled = false;
+	private final boolean[] copyEnabled;
+
 	/**
 	 * The destination <code>Writer(s)</code> where data is written.
 	 */
 	protected final Writer[] destinations;
-
 	private long size = 0;
 	private final long[] writeTime;
-	private final boolean[] copyEnabled;
 
 	/**
 	 * <p>
@@ -125,21 +125,6 @@ public class TeeWriter extends Writer {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void flush() throws IOException {
-		if (!this.closeCalled) {
-			for (int i = 0; i < this.destinations.length; i++) {
-				final Writer stream = this.destinations[i];
-				final long start = System.currentTimeMillis();
-				stream.flush();
-				this.writeTime[i] += System.currentTimeMillis() - start;
-			}
-		}
-	}
-
-	/**
 	 * <p>
 	 * Allow to switch off the copy to the underlying streams, selectively
 	 * enabling or disabling copy on some specific stream.
@@ -168,6 +153,21 @@ public class TeeWriter extends Writer {
 		}
 		for (int i = 0; i < enable.length; i++) {
 			this.copyEnabled[i] = enable[i];
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void flush() throws IOException {
+		if (!this.closeCalled) {
+			for (int i = 0; i < this.destinations.length; i++) {
+				final Writer stream = this.destinations[i];
+				final long start = System.currentTimeMillis();
+				stream.flush();
+				this.writeTime[i] += System.currentTimeMillis() - start;
+			}
 		}
 	}
 

@@ -1,8 +1,6 @@
 package com.gc.iotools.stream.os;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,6 +9,32 @@ import java.io.InputStream;
 import org.junit.Test;
 
 public class TeeOutputStreamTest {
+
+	/*
+	 * Test the enableCopy(boolean) method disabling the copy for some data.
+	 */
+	@Test
+	public void testEnableCopy() throws Exception {
+		final ByteArrayOutputStream destination1 = new ByteArrayOutputStream();
+		final ByteArrayOutputStream destination2 = new ByteArrayOutputStream();
+
+		final TeeOutputStream tee = new TeeOutputStream(destination1,
+				destination2);
+		tee.write("test ".getBytes());
+		// disable copy for all streams
+		tee.enableCopy(false);
+		tee.write("notwritten".getBytes());
+		tee.enableCopy(true);
+		tee.write("writtenAgain".getBytes());
+
+		final byte[] reference = "test writtenAgain".getBytes();
+
+		assertArrayEquals("the two arrays are equals", reference,
+				destination1.toByteArray());
+		assertArrayEquals("reference stream 2", reference,
+				destination2.toByteArray());
+		assertTrue("byte count", reference.length < tee.getSize());
+	}
 
 	/*
 	 * Test the enableCopy(boolean[]) method disabling the copy of some data
@@ -45,32 +69,6 @@ public class TeeOutputStreamTest {
 				destination2.toByteArray());
 		// all the bytes written are counted
 		assertEquals("byte count", reference2.length, tee.getSize());
-	}
-
-	/*
-	 * Test the enableCopy(boolean) method disabling the copy for some data.
-	 */
-	@Test
-	public void testEnableCopy() throws Exception {
-		final ByteArrayOutputStream destination1 = new ByteArrayOutputStream();
-		final ByteArrayOutputStream destination2 = new ByteArrayOutputStream();
-
-		final TeeOutputStream tee = new TeeOutputStream(destination1,
-				destination2);
-		tee.write("test ".getBytes());
-		// disable copy for all streams
-		tee.enableCopy(false);
-		tee.write("notwritten".getBytes());
-		tee.enableCopy(true);
-		tee.write("writtenAgain".getBytes());
-
-		final byte[] reference = "test writtenAgain".getBytes();
-
-		assertArrayEquals("the two arrays are equals", reference,
-				destination1.toByteArray());
-		assertArrayEquals("reference stream 2", reference,
-				destination2.toByteArray());
-		assertTrue("byte count", reference.length< tee.getSize());
 	}
 
 	/*
