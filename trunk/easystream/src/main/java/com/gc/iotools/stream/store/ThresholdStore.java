@@ -12,6 +12,8 @@ import java.io.RandomAccessFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gc.iotools.stream.utils.LogUtils;
+
 /**
  * Store that puts data in memory until threshold size is reach. At that point
  * data is written to the disk.
@@ -30,16 +32,19 @@ public class ThresholdStore implements SeekableStore {
 	private final MemoryStore ms = new MemoryStore();
 	private long position = 0;
 	private long size = 0;
+	private final String instantiationPath;
 
 	private final int treshold;
 
 	public ThresholdStore(final int treshold) {
 		this.treshold = treshold;
+		this.instantiationPath = LogUtils.getCaller(ThresholdStore.class, 5);
 	}
 
 	public ThresholdStore(final int treshold, final File file) {
 		this.treshold = treshold;
 		this.fileStorage = file;
+		this.instantiationPath = LogUtils.getCaller(ThresholdStore.class, 5);
 	}
 
 	@Override
@@ -73,7 +78,8 @@ public class ThresholdStore implements SeekableStore {
 						+ this.fileStorage.getName()
 						+ "] was not deleted. It "
 						+ "is possible to continue but some"
-						+ " resources are not released.");
+						+ " resources are not released. Instantiation path ["
+						+ this.instantiationPath + "]");
 			}
 		}
 	}

@@ -2,6 +2,7 @@ package com.gc.iotools.stream.reader;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -11,9 +12,39 @@ import java.util.Arrays;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullWriter;
 
+import com.gc.iotools.stream.is.BigDocumentIstream;
+import com.gc.iotools.stream.is.TeeInputStreamOutputStream;
 import com.gc.iotools.stream.utils.SlowWriter;
 
 public class TestReaderWriterTee {
+	
+	/*
+	 * Disable the copy on the Writer(s).
+	 */
+	@org.junit.Test
+	public void testEnableCopy() throws Exception {
+		final String reference = "1234567890abcde";
+		final StringWriter wrappedWriter = new StringWriter();
+		final TeeReaderWriter teeStream = new TeeReaderWriter(
+				new StringReader(reference), wrappedWriter);
+		// read first 5 characters
+		char[] cbuf = new char[5];
+		teeStream.read(cbuf);
+		assertEquals("first 5 char", "12345", new String(cbuf));
+		// disable copy
+		teeStream.enableCopy(false);
+		// read other 5 char with copy disabled
+		teeStream.read(cbuf);
+		assertEquals("5-10 char", "67890", new String(cbuf));
+		// enable copy again
+		teeStream.enableCopy(true);
+		teeStream.close();
+		final String innerContent = wrappedWriter.toString();
+		//innerContent should not contain characters 6-10
+		assertEquals("Content dumped", "12345abcde", innerContent);
+	}
+
+	
 	@org.junit.Test
 	public void testMarkAndReset() throws Exception {
 		final BigDocumentReader bis = new BigDocumentReader(131072);
@@ -27,7 +58,7 @@ public class TestReaderWriterTee {
 		teeStream.reset();
 		teeStream.close();
 		final String result = osString.toString();
-		assertEquals("Arrays equal", reference, result);
+		assertEquals("Arrays are equal", reference, result);
 	}
 
 	@org.junit.Test
@@ -72,7 +103,7 @@ public class TestReaderWriterTee {
 		referenceBuffer[1] = '1';
 		referenceBuffer[2] = '2';
 		referenceBuffer[3] = '3';
-		assertArrayEquals("Stringhe uguali", referenceBuffer, readBuffer);
+		assertArrayEquals("Strings are equal", referenceBuffer, readBuffer);
 	}
 
 	@org.junit.Test
@@ -94,6 +125,6 @@ public class TestReaderWriterTee {
 		final Reader teeStream = new TeeReaderWriter(reader, osString);
 		teeStream.close();
 		final String result = osString.toString();
-		assertEquals("Arrays equal", testBytes, result);
+		assertEquals("Strings are equal", testBytes, result);
 	}
 }

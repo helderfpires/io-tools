@@ -24,7 +24,7 @@ public class TestGuessInputStream extends JUnit4Mockery {
 		final InputStream istream = TestGuessInputStream.class
 				.getResourceAsStream("/testFiles/test_pdf.pdf.b64");
 		final byte[] reference = IOUtils.toByteArray(istream);
-
+		
 		final InputStream istream2 = TestGuessInputStream.class
 				.getResourceAsStream("/testFiles/test_pdf.pdf.b64");
 		final GuessInputStream gis = GuessInputStream.getInstance(istream2,
@@ -36,6 +36,7 @@ public class TestGuessInputStream extends JUnit4Mockery {
 		assertEquals("Detected formats", 2, gis.getFormats().length);
 		assertArrayEquals("Formats", new FormatEnum[] { FormatEnum.BASE64,
 				FormatEnum.PDF }, gis.getFormats());
+		gis.close();
 	}
 
 	@org.junit.Test
@@ -54,6 +55,7 @@ public class TestGuessInputStream extends JUnit4Mockery {
 				.toByteArray(gis2)));
 		// assertTrue("inputstream is wrapped",
 		// gis2 instanceof GuessInputStreamWrapper);
+		gis2.close();
 	}
 
 	@org.junit.Test
@@ -70,7 +72,7 @@ public class TestGuessInputStream extends JUnit4Mockery {
 		assertTrue("Bytes read are same", Arrays.equals(reference, IOUtils
 				.toByteArray(gis)));
 		assertEquals("Detected formats", 1, gis.getFormats().length);
-
+		gis.close();
 	}
 
 	@org.junit.Test
@@ -87,6 +89,7 @@ public class TestGuessInputStream extends JUnit4Mockery {
 		assertTrue("Bytes read are same", Arrays.equals(reference, IOUtils
 				.toByteArray(gis)));
 		assertEquals("Detected formats", 1, gis.getFormats().length);
+		gis.close();
 	}
 
 	@org.junit.Test
@@ -100,6 +103,7 @@ public class TestGuessInputStream extends JUnit4Mockery {
 		assertEquals("Format detected", FormatEnum.XML, gis.getFormat());
 		assertTrue("Bytes read are same", Arrays.equals(reference, IOUtils
 				.toByteArray(gis)));
+		gis.close();
 	}
 
 	@org.junit.Test
@@ -120,6 +124,7 @@ public class TestGuessInputStream extends JUnit4Mockery {
 		} catch (IllegalStateException e) {
 			//EVERYTHING OK
 		}
+		gis.close();
 	}
 
 	@org.junit.Test
@@ -147,6 +152,7 @@ public class TestGuessInputStream extends JUnit4Mockery {
 				.getFormats());
 		byte[] bytes = IOUtils.toByteArray(gis);
 		assertArrayEquals("Content ", reference, bytes);
+		gis.close();
 	}
 
 	@org.junit.Test
@@ -187,6 +193,7 @@ public class TestGuessInputStream extends JUnit4Mockery {
 				new FormatEnum[] { FormatEnum.AVI, FormatEnum.BASE64 },
 				new DetectionLibrary[] { detect1, detect2 }, null);
 		assertEquals("Format ", FormatEnum.UNKNOWN, gis.getFormat());
+		gis.close();
 	}
 
 	@org.junit.Test
@@ -209,5 +216,6 @@ public class TestGuessInputStream extends JUnit4Mockery {
 				new FormatEnum[] { FormatEnum.BASE64 },
 				new DetectionLibrary[] { detect1 }, null);
 		assertEquals("Format ", FormatEnum.UNKNOWN, gis.getFormat());
+		gis.close();
 	}
 }
