@@ -1,7 +1,6 @@
 package com.gc.iotools.stream.writer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -10,6 +9,30 @@ import java.io.StringWriter;
 import org.junit.Test;
 
 public class TeeWriterTest {
+
+	/*
+	 * Test the enableCopy(boolean) method disabling the copy for some data.
+	 */
+	@Test
+	public void testEnableCopy() throws Exception {
+		final StringWriter destination1 = new StringWriter();
+		final StringWriter destination2 = new StringWriter();
+
+		final TeeWriter tee = new TeeWriter(destination1, destination2);
+		tee.write("test ");
+		// disable copy for all streams
+		tee.enableCopy(false);
+		tee.write("notwritten");
+		tee.enableCopy(true);
+		tee.write("writtenAgain");
+
+		final String reference = "test writtenAgain";
+
+		assertEquals("the two arrays are equals", reference,
+				destination1.toString());
+		assertEquals("reference stream 2", reference, destination2.toString());
+		assertTrue("byte count", reference.length() < tee.getSize());
+	}
 
 	/*
 	 * Test the enableCopy(boolean[]) method disabling the copy of some data
@@ -42,30 +65,6 @@ public class TeeWriterTest {
 				destination2.toString());
 		// all the bytes written are counted
 		assertEquals("byte count", reference2.length(), tee.getSize());
-	}
-
-	/*
-	 * Test the enableCopy(boolean) method disabling the copy for some data.
-	 */
-	@Test
-	public void testEnableCopy() throws Exception {
-		final StringWriter destination1 = new StringWriter();
-		final StringWriter destination2 = new StringWriter();
-
-		final TeeWriter tee = new TeeWriter(destination1, destination2);
-		tee.write("test ");
-		// disable copy for all streams
-		tee.enableCopy(false);
-		tee.write("notwritten");
-		tee.enableCopy(true);
-		tee.write("writtenAgain");
-
-		final String reference = "test writtenAgain";
-
-		assertEquals("the two arrays are equals", reference,
-				destination1.toString());
-		assertEquals("reference stream 2", reference, destination2.toString());
-		assertTrue("byte count", reference.length() < tee.getSize());
 	}
 
 	/*

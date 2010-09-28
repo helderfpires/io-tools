@@ -66,13 +66,14 @@ public class TeeReaderWriter extends Reader {
 	 */
 	protected final boolean closeStreams;
 
+	protected final boolean[] copyEnabled;
+
 	private long destinationPosition = 0;
 
 	/**
 	 * The destination <code>Writer</code>s where data is written.
 	 */
 	protected final Writer[] destinations;
-
 	private long markPosition = 0;
 	private long readTime = 0;
 	/**
@@ -81,7 +82,6 @@ public class TeeReaderWriter extends Reader {
 	protected final Reader source;
 	private long sourcePosition = 0;
 	private final long[] writeTime;
-	protected final boolean[] copyEnabled;
 
 	/**
 	 * <p>
@@ -367,7 +367,7 @@ public class TeeReaderWriter extends Reader {
 			this.sourcePosition++;
 			if (this.sourcePosition > this.destinationPosition) {
 				for (int i = 0; i < this.destinations.length; i++) {
-					if (copyEnabled[i]) {
+					if (this.copyEnabled[i]) {
 						final long start = System.currentTimeMillis();
 						this.destinations[i].write(result);
 						getWriteTime()[i] += System.currentTimeMillis()
@@ -392,7 +392,7 @@ public class TeeReaderWriter extends Reader {
 				final int newLen = (int) (this.sourcePosition + result - this.destinationPosition);
 				final int newOff = off + (result - newLen);
 				for (int i = 0; i < this.destinations.length; i++) {
-					if (copyEnabled[i]) {
+					if (this.copyEnabled[i]) {
 						final long start = System.currentTimeMillis();
 						this.destinations[i].write(b, newOff, newLen);
 						getWriteTime()[i] += System.currentTimeMillis()

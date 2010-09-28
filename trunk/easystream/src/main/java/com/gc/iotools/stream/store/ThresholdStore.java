@@ -29,10 +29,10 @@ public class ThresholdStore implements SeekableStore {
 
 	private RandomAccessFile fileAccess;
 	private File fileStorage;
+	private final String instantiationPath;
 	private final MemoryStore ms = new MemoryStore();
 	private long position = 0;
 	private long size = 0;
-	private final String instantiationPath;
 
 	private final int treshold;
 
