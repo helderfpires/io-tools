@@ -1,19 +1,27 @@
 package com.gc.iotools.stream.is;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 
+import com.gc.iotools.stream.reader.TeeReaderWriter;
 import com.gc.iotools.stream.utils.SlowOutputStream;
 
 public class TestInputStreamOutputStreamTee {
+	/*
+	 * Test a mark and reset case.
+	 */
 	@org.junit.Test
 	public void testMarkAndReset() throws Exception {
 		final BigDocumentIstream bis = new BigDocumentIstream(131072);
@@ -28,6 +36,33 @@ public class TestInputStreamOutputStreamTee {
 		teeStream.close();
 		final byte[] result = bos.toByteArray();
 		assertArrayEquals("Arrays equal", reference, result);
+	}
+
+	/*
+	 * Disable the copy on the OutputStream(s).
+	 */
+	@org.junit.Test
+	public void testEnableCopy() throws Exception {
+		final BigDocumentIstream bis = new BigDocumentIstream(1024);
+		final byte[] reference = IOUtils.toByteArray(bis);
+		bis.resetToBeginning();
+		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		final TeeInputStreamOutputStream teeStream = new TeeInputStreamOutputStream(bis, bos);
+		//read first 5 bytes
+		teeStream.read(new byte[5]);
+		//disable copy
+		teeStream.enableCopy(false);
+		//read 25 bytes
+		teeStream.read(new byte[24]);
+		//enable copy again
+		teeStream.enableCopy(true);
+		teeStream.close();
+		final byte[] result = bos.toByteArray();
+		//result should be an array of bytes with range from [0-4][24-1024]
+		byte[] reference1=new byte[1000];
+		System.arraycopy(reference, 0, reference1, 0, 5);
+		System.arraycopy(reference, 29, reference1, 5, 995);
+		assertArrayEquals("Arrays equal", reference1, result);
 	}
 
 	@org.junit.Test
@@ -74,27 +109,37 @@ public class TestInputStreamOutputStreamTee {
 				Arrays.equals(referenceBytes, baos.toByteArray()));
 	}
 
+	/*
+	 * Test standard use case, no frills. Data are read from the InputStream
+	 * and they're copied on the destination stream
+	 */
 	@org.junit.Test
 	public void testReadWrite() throws Exception {
 		final byte[] testBytes = "testString".getBytes();
 		final InputStream istream = new ByteArrayInputStream(testBytes);
-		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		final ByteArrayOutputStream destination = new ByteArrayOutputStream();
 		final InputStream teeStream = new TeeInputStreamOutputStream(istream,
-				bos);
+				destination);
 		IOUtils.copy(teeStream, new NullOutputStream());
 		teeStream.close();
-		bos.toByteArray();
+		assertArrayEquals("array are equals", testBytes,
+				destination.toByteArray());
 	}
 
+	/*
+	 * Method close() is invoked before the data is read from the InputStream
+	 * the data is still copied to the OutputStream(s)
+	 */
 	@org.junit.Test
 	public void testSuddenClose() throws Exception {
-		final byte[] testBytes = "testString".getBytes();
-		final InputStream istream = new ByteArrayInputStream(testBytes);
+		final byte[] referenceBytes = "testString".getBytes();
+		final InputStream istream = new ByteArrayInputStream(referenceBytes);
 		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		final InputStream teeStream = new TeeInputStreamOutputStream(istream,
 				bos);
+		// close but no data read from the istream
 		teeStream.close();
 		final byte[] result = bos.toByteArray();
-		assertArrayEquals("Arrays equal", testBytes, result);
+		assertArrayEquals("Arrays equal", referenceBytes, result);
 	}
 }

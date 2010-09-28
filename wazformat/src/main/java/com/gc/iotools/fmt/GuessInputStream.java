@@ -1,8 +1,8 @@
 package com.gc.iotools.fmt;
 
 /*
- * Copyright (c) 2008, 2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008, 2009 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,13 +25,13 @@ import com.gc.iotools.fmt.decoders.Pkcs7Decoder;
 import com.gc.iotools.fmt.detect.droid.DroidDetectorImpl;
 import com.gc.iotools.fmt.detect.wzf.StreamDetectorImpl;
 import com.gc.iotools.stream.is.RandomAccessInputStream;
+import com.gc.iotools.stream.utils.LogUtils;
 
 /**
  * <p>
- * InputStream that wraps the original InputStream and guess the format. If you
- * want to use the wazformat library
+ * InputStream that wraps the original InputStream and guess the format. If
+ * you want to use the wazformat library
  * </p>
- * 
  * To support a new format:
  * <ul>
  * <li>implement a new DetectorModule. The metod parse(bytes[]) should return
@@ -40,12 +40,12 @@ import com.gc.iotools.stream.is.RandomAccessInputStream;
  * <li>Either register it statically in GuessFormatInputStream with the method
  * addDetector or pass an instance in the constructor.</li>
  * </ul>
- * 
  */
 public class GuessInputStream extends InputStream {
 	public static final Collection<Decoder> DEFAULT_DECODERS = new HashSet<Decoder>();
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(GuessInputStream.class);
+
 	static {
 		DEFAULT_DECODERS.add(new Base64Decoder());
 		DEFAULT_DECODERS.add(new GzipDecoder());
@@ -95,17 +95,17 @@ public class GuessInputStream extends InputStream {
 					droidSignatureFile, null);
 			detectionLibraries.add(stream);
 		}
-		return getInstance(istream, null, detectionLibraries
-				.toArray(new DetectionLibrary[0]), DEFAULT_DECODERS
-				.toArray(new Decoder[0]));
+		return getInstance(istream, null,
+				detectionLibraries.toArray(new DetectionLibrary[0]),
+				DEFAULT_DECODERS.toArray(new Decoder[0]));
 	}
 
 	// private static final Loggerger LOGGER = LoggerFactoryger
 	// .getLoggerger(GuessFormatInputStream.class);
 
 	/**
-	 * This method creates an instance of the GuessInputStream. It checks if the
-	 * InputStream is already an instance of GuessInputStream and do
+	 * This method creates an instance of the GuessInputStream. It checks if
+	 * the InputStream is already an instance of GuessInputStream and do
 	 * optimizations if possible.
 	 * 
 	 * @param source
@@ -118,9 +118,9 @@ public class GuessInputStream extends InputStream {
 		final Collection<DetectionLibrary> detectionLibraries = new ArrayList<DetectionLibrary>();
 		detectionLibraries.add(new StreamDetectorImpl());
 		detectionLibraries.add(new DroidDetectorImpl());
-		return getInstance(source, enabledFormats, detectionLibraries
-				.toArray(new DetectionLibrary[0]), DEFAULT_DECODERS
-				.toArray(new Decoder[0]));
+		return getInstance(source, enabledFormats,
+				detectionLibraries.toArray(new DetectionLibrary[0]),
+				DEFAULT_DECODERS.toArray(new Decoder[0]));
 	}
 
 	public static GuessInputStream getInstance(final InputStream stream,
@@ -170,6 +170,8 @@ public class GuessInputStream extends InputStream {
 
 	private boolean decode = false;
 
+	private final String instantiationPath;
+
 	protected GuessInputStream(final FormatEnum[] enabledFormats,
 			final ResettableStreamRASAdapter baseStream,
 			final DetectionStrategy decodedStream) {
@@ -177,6 +179,8 @@ public class GuessInputStream extends InputStream {
 				.asList(enabledFormats));
 		this.baseStream = baseStream;
 		this.detectionStrategy = decodedStream;
+		this.instantiationPath = LogUtils
+				.getCaller(GuessInputStream.class, 3);
 	}
 
 	/**
@@ -193,8 +197,8 @@ public class GuessInputStream extends InputStream {
 	 * 
 	 * @param formatEnum
 	 *            the format to check if it can be detected.
-	 * @return <code>true</code> if this stream can detect the format passed as
-	 *         argument.
+	 * @return <code>true</code> if this stream can detect the format passed
+	 *         as argument.
 	 */
 	public final boolean canDetect(final FormatEnum formatEnum) {
 		if (formatEnum == null) {
@@ -243,7 +247,9 @@ public class GuessInputStream extends InputStream {
 			LOGGER.warn(this.getClass().getSimpleName()
 					+ " is being finalized but close() method has "
 					+ "not been called. Please ensure the "
-					+ "stream is correctly " + "closed before finalization.");
+					+ "stream is correctly "
+					+ "closed before finalization. Instantiation path ["
+					+ this.instantiationPath + "]");
 			this.baseStream.close();
 		}
 	}
@@ -253,10 +259,10 @@ public class GuessInputStream extends InputStream {
 	 * unchanged. Default: <b>false</b>.
 	 * <ul>
 	 * <li><b>true</b>: if a decoder is found for the internal data the data
-	 * read from the external <code>InputStream</code> is filtered through this
-	 * decoder. This also applies for recursive decoding.</li>
-	 * <li><b>false</b>: the data read from <code>GuessInputStream</code> is the
-	 * copy of the original <code>InputStream</code></li>
+	 * read from the external <code>InputStream</code> is filtered through
+	 * this decoder. This also applies for recursive decoding.</li>
+	 * <li><b>false</b>: the data read from <code>GuessInputStream</code> is
+	 * the copy of the original <code>InputStream</code></li>
 	 * </ul>
 	 * 
 	 * @param decode
@@ -283,21 +289,23 @@ public class GuessInputStream extends InputStream {
 	 * @return the array of eventually identified formats or
 	 *         {@linkplain FormatEnum#UNKNOWN} if no format recognized.
 	 * @throws IOException
-	 *             threw if some error happens reading from the internal stream.
+	 *             threw if some error happens reading from the internal
+	 *             stream.
 	 */
 	public FormatId[] getDetectedFormatsId() throws IOException {
 		return this.detectionStrategy.getFormats();
 	}
 
 	/**
-	 * Get the result of the detection as a {@link FormatEnum}. It is a shortcut
-	 * for <code>getDetectedFormatsId()[0].format</code>.
+	 * Get the result of the detection as a {@link FormatEnum}. It is a
+	 * shortcut for <code>getDetectedFormatsId()[0].format</code>.
 	 * 
 	 * @see #getDetectedFormatsId()
 	 * @return the eventually identified format or
 	 *         {@linkplain FormatEnum#UNKNOWN} if no format recognized.
 	 * @throws IOException
-	 *             threw if some error happens reading from the internal stream.
+	 *             threw if some error happens reading from the internal
+	 *             stream.
 	 */
 	public final FormatEnum getFormat() throws IOException {
 		return getFormatId().format;
@@ -355,8 +363,8 @@ public class GuessInputStream extends InputStream {
 	/**
 	 * <p>
 	 * Set the maximum number of recursive identification allowed. 1 for no
-	 * recursion (single level detection). It also represent the maximum size of
-	 * the array returned by {@link #getDetectedFormatsId()}.
+	 * recursion (single level detection). It also represent the maximum size
+	 * of the array returned by {@link #getDetectedFormatsId()}.
 	 * </p>
 	 * <p>
 	 * It can be set multiple times if no read() is invoked between the
@@ -367,8 +375,8 @@ public class GuessInputStream extends InputStream {
 	 * </p>
 	 * 
 	 * @param level
-	 *            Integer >= 1 indicating the number of recursive identification
-	 *            steps.
+	 *            Integer >= 1 indicating the number of recursive
+	 *            identification steps.
 	 */
 	public void setIdentificationDepth(final int level) {
 		if (InputStreamStatusEnum.READING_DATA.equals(this.status)) {

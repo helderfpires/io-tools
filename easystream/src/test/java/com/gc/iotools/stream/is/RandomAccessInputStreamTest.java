@@ -97,6 +97,7 @@ public class RandomAccessInputStreamTest {
 							+ "] len[" + len + "]", reference1, read);
 				}
 			}
+			ris.close();
 		}
 	}
 
@@ -115,6 +116,7 @@ public class RandomAccessInputStreamTest {
 		ris.seek(pos);
 		assertEquals("last byte", reference[pos], (byte) ris.read());
 		assertEquals("eof", -1, ris.read());
+		ris.close();
 	}
 
 	@Test
@@ -139,6 +141,7 @@ public class RandomAccessInputStreamTest {
 			assertEquals("byte at pos [" + i + "]", r1, (byte) read);
 		}
 		assertEquals("eof", -1, ris.read());
+		ris.close();
 	}
 
 	@Test
@@ -162,6 +165,7 @@ public class RandomAccessInputStreamTest {
 		} catch (final IOException e) {
 			// ok here
 		}
+		ris.close();
 	}
 
 	@Test
@@ -181,6 +185,7 @@ public class RandomAccessInputStreamTest {
 		final byte[] test2 = IOUtils.toByteArray(ris);
 		assertArrayEquals("skip and reset read",
 				ArrayUtils.subarray(reference, 5, reference.length), test2);
+		ris.close();
 	}
 
 }

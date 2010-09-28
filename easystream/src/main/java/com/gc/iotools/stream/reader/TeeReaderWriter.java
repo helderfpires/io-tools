@@ -7,6 +7,7 @@ package com.gc.iotools.stream.reader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Arrays;
 
 import com.gc.iotools.stream.base.EasyStreamConstants;
 
@@ -68,15 +69,19 @@ public class TeeReaderWriter extends Reader {
 	private long destinationPosition = 0;
 
 	/**
-	 * The destination <code>Writer</code> where data is written.
+	 * The destination <code>Writer</code>s where data is written.
 	 */
 	protected final Writer[] destinations;
 
 	private long markPosition = 0;
 	private long readTime = 0;
-	private final Reader source;
+	/**
+	 * The source <code>Reader</code> where the data comes from.
+	 */
+	protected final Reader source;
 	private long sourcePosition = 0;
 	private final long[] writeTime;
+	protected final boolean[] copyEnabled;
 
 	/**
 	 * <p>
@@ -121,6 +126,8 @@ public class TeeReaderWriter extends Reader {
 		this.writeTime = new long[destinations.length];
 		this.destinations = destinations;
 		this.closeStreams = closeStreams;
+		this.copyEnabled = new boolean[destinations.length];
+		Arrays.fill(this.copyEnabled, true);
 	}
 
 	/**
@@ -219,6 +226,59 @@ public class TeeReaderWriter extends Reader {
 
 	/**
 	 * <p>
+	 * Allow to switch off the copy to the underlying
+	 * <code>OutputStream</code>s. Setting the parameter to false will disable
+	 * the copy to all the underlying streams at once.
+	 * </p>
+	 * <p>
+	 * If you need more fine grained control you should use
+	 * {@link #enableCopy(boolean[])} .
+	 * </p>
+	 * 
+	 * @since 1.2.9
+	 * @param enable
+	 *            whether to copy or not the bytes to the underlying stream.
+	 */
+	public final void enableCopy(final boolean enable) {
+		Arrays.fill(this.copyEnabled, enable);
+	}
+
+	/**
+	 * <p>
+	 * Allow to switch off the copy to the underlying
+	 * <code>OutputStream</code>s, selectively enabling or disabling copy to
+	 * some specific stream.
+	 * </p>
+	 * <p>
+	 * The copy is enabled by default. Each element in the array correspond to
+	 * an <code>OutputStream</code> passed in the constructor. If the
+	 * correspondent element in the array passed as a parameter is set to
+	 * <code>true</code> the copy will be enabled. It can be invoked multiple
+	 * times.
+	 * </p>
+	 * 
+	 * @since 1.2.9
+	 * @param enable
+	 *            whether to copy or not the bytes to the underlying
+	 *            <code>OutputStream</code>s.
+	 */
+	public final void enableCopy(final boolean[] enable) {
+		if (enable == null) {
+			throw new IllegalArgumentException("Enable array can't be null");
+		}
+		if (enable.length != this.copyEnabled.length) {
+			throw new IllegalArgumentException("Enable array must be of "
+					+ "the same size of the Writer array passed "
+					+ "in the constructor. Array size [" + enable.length
+					+ "] streams [" + this.copyEnabled.length + "]");
+		}
+		for (int i = 0; i < enable.length; i++) {
+			this.copyEnabled[i] = enable[i];
+		}
+	}
+
+	/**
+	 * <p>
 	 * Returns the number of milliseconds spent reading from the
 	 * <code>source</code> <code>Reader</code>.
 	 * </p>
@@ -307,9 +367,12 @@ public class TeeReaderWriter extends Reader {
 			this.sourcePosition++;
 			if (this.sourcePosition > this.destinationPosition) {
 				for (int i = 0; i < this.destinations.length; i++) {
-					final long start = System.currentTimeMillis();
-					this.destinations[i].write(result);
-					getWriteTime()[i] += System.currentTimeMillis() - start;
+					if (copyEnabled[i]) {
+						final long start = System.currentTimeMillis();
+						this.destinations[i].write(result);
+						getWriteTime()[i] += System.currentTimeMillis()
+								- start;
+					}
 				}
 				this.destinationPosition++;
 			}
@@ -329,9 +392,12 @@ public class TeeReaderWriter extends Reader {
 				final int newLen = (int) (this.sourcePosition + result - this.destinationPosition);
 				final int newOff = off + (result - newLen);
 				for (int i = 0; i < this.destinations.length; i++) {
-					final long start = System.currentTimeMillis();
-					this.destinations[i].write(b, newOff, newLen);
-					getWriteTime()[i] += System.currentTimeMillis() - start;
+					if (copyEnabled[i]) {
+						final long start = System.currentTimeMillis();
+						this.destinations[i].write(b, newOff, newLen);
+						getWriteTime()[i] += System.currentTimeMillis()
+								- start;
+					}
 				}
 				this.destinationPosition += newLen;
 			}
