@@ -3,7 +3,7 @@
 
 = Index of Easystream features =
 
-== [ConvertOutputStreamInputStream Conversion Classes] ==
+== [OutputStreamToInputStream Conversion Classes] ==
  * byte oriented : data written to an `OutputStream` can be read from an `InputStream`
  * character oriented : data written to a `Writer` can be read from a `Reader`
 
