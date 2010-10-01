@@ -1,6 +1,6 @@
 #summary Convert an OutputStream into an InputStream
 
-= Convert `OutputStream` to an `InputStream` =
+= Convert `OutputStream` into an `InputStream` or a `Writer` into a `Reader` =
 
 If are programming using java streams, sometimes you'll find yourself in a situation in which a method creates data and writes them into an `OutputStream` and you need to use them in another method that expects to read the data from an `InputStream`.
 
@@ -58,6 +58,7 @@ istream.close();
 //if streams where not correctly closed this might fail (return false)
 tempFile.delete();
 }}}
+
 == Pipes ==
 The two ends (`PipedInputStream` and `PipedOutputStream`) must be in two different `Threads`.
 
@@ -93,6 +94,8 @@ There is also the other way round of this example:
 //put your code that writes data to the outputstream here.
 putDataOnOutputStream(out);
 }}}
+Here is a good discussion on the problems you might run into:
+http://www.coderanch.com/t/499592/Streams/java/PipedOUtputStream-PipedInputStream
 
 == Circular Buffers ==
 There is a well known library that uses this method. In fact it doesn't have many advantages compared to pipes (still need to handle two threads instantiation/execution) like in previous example.
