@@ -4,7 +4,7 @@
 = Byte Oriented I/O =
 
 == Convert `OutputStream` to an `InputStream` ==
-Here i'm assuming you know it's not an easy problem, and you already are prepared to go for the hard way because the easy solutions doesn't fit your needs for performance and memory usage. If you came here at first and you don't understand why this is so complicated you can have a look at this [ConvertOutputStreamInputStream preamble], while if you are interested in character `I/O` (`Readers` and `Writers`) you should proceed [Character_IO to the next section].
+Here i'm assuming you know it's not an easy problem, and you already are prepared to go for the hard way because the easy solutions doesn't fit your needs for performance and memory usage. If you came here at first and you don't understand why this is so complicated you can have a look at this [ConvertOutputStreamInputStream preamble].
 
 === !InputStreamFromOutputStream ===
 
