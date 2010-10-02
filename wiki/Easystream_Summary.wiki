@@ -3,19 +3,19 @@
 
 = Index of Easystream features =
 
-== [OutputStreamToInputStream Conversion Classes] ==
+== [OutputStreamToInputStreamExamples Conversion Classes] ==
  * byte oriented : data written to an `OutputStream` can be read from an `InputStream`
  * character oriented : data written to a `Writer` can be read from a `Reader`
 
-== [Tees Tee classes] ==
+== [TeeExamples Tee classes] ==
  * byte oriented : 
  * character oriented :
  
 
-== [StreamDiagnostic Diagnostic utilities] ==
+== [StreamDiagnosticExamples Diagnostic utilities] ==
 Help to determine if a stream is closed correctly, and no method is called after close. Useful for debugging purposes.
 
-== [StreamStatistics Statistics] ==
+== [StreamStatisticsExamples Statistics] ==
 Calculate some statistics on a stream: amount of data read or written, average bit rate.
 
-== Miscellaneous ==
+== [MiscellaneousExamples Miscellaneous] ==
