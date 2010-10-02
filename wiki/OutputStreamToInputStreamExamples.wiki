@@ -86,3 +86,10 @@ This class propagates the `Exception` from the internal `doRead()` to the extern
 For further information see the [http://jsignature.sourceforge.net/io-tools/easystream/apidocs/com/gc/iotools/stream/os/OutputStreamToInputStream.html api javadoc].
 
 = Character Oriented I/O =
+
+== Convert `Writer` into a `Reader` ==
+
+
+=== !ReaderFromWriter ===
+
+=== !WriterToReader ===
