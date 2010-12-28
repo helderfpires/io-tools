@@ -26,6 +26,12 @@ Main features are:
 		<system>GoogleIssues</system>
 		<url>http://code.google.com/p/io-tools/issues/list</url>
 	</issueManagement>
+	<distributionManagement>
+		<site>
+			<id>jtools.heliohost</id>
+			<url>ftp://ftp.jtools.heliohost.org/easystream</url>
+		</site>
+	</distributionManagement>
 	<dependencies>
 		<dependency>
 			<groupId>commons-collections</groupId>
@@ -64,7 +70,6 @@ Main features are:
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<inherited>true</inherited>
 				<configuration>
 					<encoding>US-ASCII</encoding>
 					<fork>true</fork>
@@ -97,30 +102,7 @@ Main features are:
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.5</version>
 			</plugin>
 		</plugins>
 	</reporting>
-	<!-- profiles>
-		<profile>
-			<id>central</id>
-			<activation>
-				<property>
-					<name>central</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<properties>
-				<central>true</central>
-			</properties>
-			<distributionManagement>
-				<repository>
-					<uniqueVersion>false</uniqueVersion>
-					<id>jsignature.sourceforge.net</id>
-					<name>JSignature Repository</name>
-					<url>scp://shell.sourceforge.net/home/groups/j/js/jsignature/htdocs/maven2</url>
-				</repository>
-			</distributionManagement>
-		</profile>
-	</profiles -->
 </project>

@@ -1,7 +1,7 @@
 package com.gc.iotools.stream.utils;
 
 /*
- * Copyright (c) 2008,2010 Davide Simonetti. This source code is released
+ * Copyright (c) 2008,2011 Davide Simonetti. This source code is released
  * under the BSD License.
  */
 import java.io.IOException;

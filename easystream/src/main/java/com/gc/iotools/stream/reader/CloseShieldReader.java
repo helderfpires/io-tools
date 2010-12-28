@@ -1,5 +1,8 @@
 package com.gc.iotools.stream.reader;
-
+/*
+ * Copyright (c) 2008,2011 Davide Simonetti. This source code is released
+ * under the BSD License.
+ */
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.CharBuffer;
