@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.sf.jsignature.io-tools</groupId>
 	<artifactId>wazformat</artifactId>
-    <version>1.2.10-SNAPSHOT</version>
+	<version>1.2.10-SNAPSHOT</version>
 	<parent>
 		<groupId>net.sf.jsignature.io-tools</groupId>
 		<artifactId>io-tools</artifactId>
@@ -14,6 +15,12 @@
 	<description>Format identification utilities</description>
 	<url>http://code.google.com/p/io-tools/</url>
 	<inceptionYear>2008</inceptionYear>
+	<distributionManagement>
+		<site>
+			<id>jtools.heliohost</id>
+			<url>ftp://ftp.jtools.heliohost.org/wazformat</url>
+		</site>
+	</distributionManagement>
 	<issueManagement>
 		<system>GoogleIssues</system>
 		<url>http://code.google.com/p/io-tools/issues/list</url>
@@ -24,6 +31,11 @@
 			<id>dvd.smnt</id>
 			<email>dvd.smnt@gmail.com</email>
 		</developer>
+		<developer>
+			<name>Gabriele Contini</name>
+			<id>gcontini</id>
+			<email>contini.mailing@gmail.com</email>
+		</developer>
 	</developers>
 	<licenses>
 		<license>
@@ -32,10 +44,8 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-	<!--
-		scm>
-		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk/wazformat</connection>
-		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk/wazformat</developerConnection>
+	<!-- scm> <connection>scm:svn:http://io-tools.googlecode.com/svn/trunk/wazformat</connection> 
+		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk/wazformat</developerConnection> 
 		</scm -->
 	<dependencies>
 		<dependency>
@@ -53,11 +63,11 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>bouncycastle</groupId>
+			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>bouncycastle</groupId>
+			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcmail-jdk15</artifactId>
 		</dependency>
 		<dependency>
@@ -80,9 +90,8 @@
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 		</dependency>
-		<!--
-			dependency> <groupId>net.sf.mime-util</groupId>
-			<artifactId>mime-util</artifactId> </dependency -->
+		<!-- dependency> <groupId>net.sf.mime-util</groupId> <artifactId>mime-util</artifactId> 
+			</dependency -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -96,6 +105,12 @@
 	<build>
 		<plugins>
 			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
 			</plugin>
 			<plugin>
@@ -104,8 +119,6 @@
 				<configuration>
 					<encoding>US-ASCII</encoding>
 					<fork>true</fork>
-					<source>1.5</source>
-					<target>1.5</target>
 					<meminitial>128m</meminitial>
 					<maxmem>512m</maxmem>
 					<optimize>true</optimize>
@@ -117,26 +130,12 @@
 			</plugin>
 		</plugins>
 	</build>
-	<!-- profiles>
-		<profile>
-			<id>central</id>
-			<activation>
-				<property>
-					<name>central</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<properties>
-				<central>true</central>
-			</properties>
-			<distributionManagement>
-				<repository>
-					<uniqueVersion>false</uniqueVersion>
-					<id>jsignature.sourceforge.net</id>
-					<name>JSignature Repository</name>
-					<url>scp://shell.sourceforge.net/home/groups/j/js/jsignature/htdocs/maven2</url>
-				</repository>
-			</distributionManagement>
-		</profile>
-	</profiles-->
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>

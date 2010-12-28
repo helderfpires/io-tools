@@ -1,7 +1,11 @@
-#Tue Feb 17 06:36:46 CET 2009
+#Mon Dec 27 09:11:06 CET 2010
+encoding//src/main/java=US-ASCII
 org.eclipse.jdt.core.compiler.debug.localVariable=generate
 org.eclipse.jdt.core.compiler.compliance=1.5
 org.eclipse.jdt.core.compiler.codegen.unusedLocal=preserve
+encoding//src/main/resources=US-ASCII
+encoding//src/test/resources=US-ASCII
+encoding//src/test/java=US-ASCII
 org.eclipse.jdt.core.compiler.debug.sourceFile=generate
 org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.5
 org.eclipse.jdt.core.compiler.problem.enumIdentifier=warning

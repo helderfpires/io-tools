@@ -1,6 +1,6 @@
 <projectDescription>
   <name>wazformat</name>
-  <comment>Format identification utilities</comment>
+  <comment>Format identification utilities. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
   <projects/>
   <buildSpec>
     <buildCommand>

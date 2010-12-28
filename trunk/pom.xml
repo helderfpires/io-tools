@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>pom</packaging>
 	<groupId>net.sf.jsignature.io-tools</groupId>
@@ -37,13 +38,14 @@
 	</licenses>
 	<distributionManagement>
 		<site>
-			<id>jsignature.sourceforge.net</id>
-			<url>scp://shell.sourceforge.net/home/groups/j/js/jsignature/htdocs/io-tools</url>
+			<id>jtools.heliohost</id>
+			<url>ftp://ftp.jtools.heliohost.org</url>
 		</site>
 	</distributionManagement>
 	<modules>
 		<module>easystream</module>
 		<module>wazformat</module>
+		<module>distribution</module>
 	</modules>
 	<dependencies>
 		<dependency>
@@ -74,12 +76,12 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>[1.5.6,)</version>
+				<version>1.6.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-simple</artifactId>
-				<version>[1.5.6,)</version>
+				<version>1.6.1</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
@@ -91,25 +93,25 @@
 			<dependency>
 				<groupId>commons-lang</groupId>
 				<artifactId>commons-lang</artifactId>
-				<version>[2.4,)</version>
+				<version>2.5</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
-				<groupId>bouncycastle</groupId>
+				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcprov-jdk15</artifactId>
-				<version>140</version>
+				<version>1.45</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
-				<groupId>bouncycastle</groupId>
+				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcmail-jdk15</artifactId>
-				<version>140</version>
+				<version>1.45</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.ant</groupId>
 				<artifactId>ant</artifactId>
-				<version>[1.7.0,)</version>
+				<version>1.8.1</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
@@ -121,7 +123,7 @@
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
-				<version>[1.4,)</version>
+				<version>2.0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-codec</groupId>
@@ -210,6 +212,10 @@
 					</configuration>
 				</plugin>
 				<plugin>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>2.1.2</version>
+				</plugin>
+				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>2.7</version>
@@ -234,6 +240,18 @@
 				<!-- plugin> <artifactId>maven-source-plugin</artifactId> <executions> 
 					<execution> <id>attach-sources</id> <goals> <goal>jar</goal> </goals> </execution> 
 					</executions> </plugin -->
+				<plugin>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>2.2</version>
+					<configuration>
+						<tarLongFileMode>gnu</tarLongFileMode>
+						<descriptors>
+							<descriptor>${basedir}/src/assemble/assembly.xml</descriptor>
+						</descriptors>
+						<attach>false</attach>
+						<finalName>io-tools-${project.version}</finalName>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -265,16 +283,7 @@
 					<outputEncoding>UTF-8</outputEncoding>
 				</configuration>
 			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2-beta-4</version>
-				<configuration>
-					<tarLongFileMode>gnu</tarLongFileMode>
-					<descriptors>
-						<descriptor>${basedir}/assembly.xml</descriptor>
-					</descriptors>
-				</configuration>
-			</plugin>
+
 		</plugins>
 		<extensions>
 			<extension> <!--to publish on sourceforge -->
@@ -336,16 +345,21 @@
 			<!-- plugin> <artifactId>maven-checkstyle-plugin</artifactId> <configuration> 
 				<configLocation>src/config/checks.xml</configLocation> </configuration> </plugin -->
 			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.7.1</version>
 			</plugin>
 			<plugin>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.3.1</version>
 			</plugin>
 		</plugins>
 	</reporting>
 	<profiles>
 		<profile>
 			<id>java.net</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
 			<distributionManagement>
 				<repository>
 					<id>java.net-maven2-repository</id>
@@ -378,6 +392,7 @@
 						<plugin>
 							<groupId>org.jboss.maven.plugins</groupId>
 							<artifactId>maven-jboss-retro-plugin</artifactId>
+							<version>1.0-beta-3</version>
 							<configuration>
 								<weaveClassifier>jboss-retro</weaveClassifier>
 								<weaverClass>org.jboss.weaver.retro.WeaverRetroJdk14</weaverClass>
@@ -434,7 +449,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<inherited>true</inherited>
+						<version>1.1</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
