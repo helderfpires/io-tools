@@ -13,12 +13,12 @@
 	<packaging>jar</packaging>
 	<name>WaZFormat</name>
 	<description>Format identification utilities</description>
-	<url>http://code.google.com/p/io-tools/</url>
+	<url>http://code.google.com/p/io-tools/source/browse/www/wazformat/</url>
 	<inceptionYear>2008</inceptionYear>
 	<distributionManagement>
 		<site>
-			<id>jtools.heliohost</id>
-			<url>ftp://ftp.jtools.heliohost.org/wazformat</url>
+			<id>googlecode.svn</id>
+			<url>scm:svn:https://io-tools.googlecode.com/svn/www/easystream</url>
 		</site>
 	</distributionManagement>
 	<issueManagement>
@@ -130,12 +130,12 @@
 			</plugin>
 		</plugins>
 	</build>
-	<reporting>
+	<!-- reporting>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 			</plugin>
 		</plugins>
-	</reporting>
+	</reporting -->
 </project>
