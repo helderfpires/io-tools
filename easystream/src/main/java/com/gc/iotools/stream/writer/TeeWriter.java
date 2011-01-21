@@ -17,20 +17,21 @@ import java.util.Arrays;
  * <p>
  * Usage:
  * </p>
- * 
+ *
  * <pre>
  * 	 InputStream source=... //some data to be read.
  *   StringWriter destination1= new StringWriter();
  *   StringWriter destination2= new StringWriter();
- *   
+ *
  *   TeeWriter tee =  new TeeWriter(destination1,destination2);
  *   org.apache.commons.io.IOUtils.copy(source,tee);
  *   tee.close();
  *   //at this point both destination1 and destination2 contains the same characters.
  * </pre>
- * 
+ *
  * @author dvd.smnt
  * @since 1.2.7
+ * @version $Id: $
  */
 public class TeeWriter extends Writer {
 
@@ -58,7 +59,7 @@ public class TeeWriter extends Writer {
 	 * This constructor allow to specify multiple <code>Writer</code> to which
 	 * the data will be copied.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.4
 	 * @param destinations
 	 *            Data written to this<code>Writer</code> are copied to all
@@ -89,9 +90,7 @@ public class TeeWriter extends Writer {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void close() throws IOException {
 		if (!this.closeCalled) {
@@ -115,7 +114,7 @@ public class TeeWriter extends Writer {
 	 * If you need more fine grained control you should use
 	 * {@link #enableCopy(boolean[])} .
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.9
 	 * @param enable
 	 *            whether to copy or not the bytes to the underlying stream.
@@ -136,7 +135,7 @@ public class TeeWriter extends Writer {
 	 * <code>true</code> the copy will be enabled.It can be invoked multiple
 	 * times.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.9
 	 * @param enable
 	 *            whether to copy or not the bytes to the underlying stream.
@@ -156,9 +155,7 @@ public class TeeWriter extends Writer {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void flush() throws IOException {
 		if (!this.closeCalled) {
@@ -176,7 +173,7 @@ public class TeeWriter extends Writer {
 	 * This method returns the size in bytes of the data written to this
 	 * Writer. It can be used to collect statistics on the write operations.
 	 * </p>
-	 * 
+	 *
 	 * @return size in bytes of the data written to the <code>Writers</code>.
 	 */
 	public final long getSize() {
@@ -192,16 +189,14 @@ public class TeeWriter extends Writer {
 	 * The returned array has one element for each <code>Writer</code> passed
 	 * in the constructor.
 	 * </p>
-	 * 
+	 *
 	 * @return time spent writing on the destination <code>Writers</code>.
 	 */
 	public long[] getWriteTime() {
 		return this.writeTime;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void write(final char[] b) throws IOException {
 		if (b == null) {
@@ -220,9 +215,7 @@ public class TeeWriter extends Writer {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void write(final char[] b, final int off, final int len)
 			throws IOException {
@@ -242,9 +235,7 @@ public class TeeWriter extends Writer {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void write(final int b) throws IOException {
 		if (!this.closeCalled) {

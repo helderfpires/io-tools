@@ -17,9 +17,10 @@ import com.gc.iotools.stream.utils.LogUtils;
 /**
  * Store that puts data in memory until threshold size is reach. At that point
  * data is written to the disk.
- * 
+ *
  * @author dvd.smnt
  * @since 1.2.0
+ * @version $Id: $
  */
 public class ThresholdStore implements SeekableStore {
 	private static final int BUF_SIZE = 8192;
@@ -36,17 +37,29 @@ public class ThresholdStore implements SeekableStore {
 
 	private final int treshold;
 
+	/**
+	 * <p>Constructor for ThresholdStore.</p>
+	 *
+	 * @param treshold a int.
+	 */
 	public ThresholdStore(final int treshold) {
 		this.treshold = treshold;
 		this.instantiationPath = LogUtils.getCaller(ThresholdStore.class, 5);
 	}
 
+	/**
+	 * <p>Constructor for ThresholdStore.</p>
+	 *
+	 * @param treshold a int.
+	 * @param file a {@link java.io.File} object.
+	 */
 	public ThresholdStore(final int treshold, final File file) {
 		this.treshold = treshold;
 		this.fileStorage = file;
 		this.instantiationPath = LogUtils.getCaller(ThresholdStore.class, 5);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void cleanup() {
 		this.size = 0;
@@ -85,6 +98,8 @@ public class ThresholdStore implements SeekableStore {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Clean up the temporary files eventually open.
 	 */
 	@Override
@@ -92,6 +107,7 @@ public class ThresholdStore implements SeekableStore {
 		cleanup();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int get(final byte[] bytes, final int offset, final int length)
 			throws IOException {
@@ -108,14 +124,25 @@ public class ThresholdStore implements SeekableStore {
 		return result;
 	}
 
+	/**
+	 * <p>Getter for the field <code>size</code>.</p>
+	 *
+	 * @return a long.
+	 */
 	public long getSize() {
 		return this.size;
 	}
 
+	/**
+	 * <p>Getter for the field <code>treshold</code>.</p>
+	 *
+	 * @return a int.
+	 */
 	public int getTreshold() {
 		return this.treshold;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void put(final byte[] bytes, final int offset, final int length)
 			throws IOException {
@@ -151,13 +178,7 @@ public class ThresholdStore implements SeekableStore {
 		this.size += length;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @throws IOException
-	 *             is thrown if some (disk) error happens or a seek over the
-	 *             buffer length is requested.
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void seek(final long position) throws IOException {
 		// if already in place do nothing.
@@ -180,11 +201,18 @@ public class ThresholdStore implements SeekableStore {
 		}
 	}
 
+	/**
+	 * <p>Setter for the field <code>position</code>.</p>
+	 *
+	 * @param position a long.
+	 */
 	public void setPosition(final long position) {
 		this.position = position;
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Provides a String representation of the state of the Store for
 	 * debugging purposes.
 	 */

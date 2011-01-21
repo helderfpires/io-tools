@@ -18,20 +18,21 @@ import java.util.Arrays;
  * <p>
  * Usage:
  * </p>
- * 
+ *
  * <pre>
  * 	 InputStream source=... //some data to be read.
  *   ByteArrayOutputStream destination1= new ByteArrayOutputStream();
  *   ByteArrayOutputStream destination2= new ByteArrayOutputStream();
- *   
+ *
  *   TeeOutputStream tee =  new TeeOutputStream(destination1,destination2);
  *   org.apache.commons.io.IOUtils.copy(source,tee);
  *   tee.close();
  *   //at this point both destination1 and destination2 contains the same bytes.
  * </pre>
- * 
+ *
  * @author dvd.smnt
  * @since 1.2.4
+ * @version $Id: $
  */
 public class TeeOutputStream extends OutputStream {
 
@@ -59,7 +60,7 @@ public class TeeOutputStream extends OutputStream {
 	 * This constructor allow to specify multiple <code>OutputStream</code> to
 	 * which the data will be copied.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.4
 	 * @param destinations
 	 *            Data written to this <code>OutputStream</code> are copied to
@@ -90,9 +91,7 @@ public class TeeOutputStream extends OutputStream {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void close() throws IOException {
 		if (!this.closeCalled) {
@@ -116,7 +115,7 @@ public class TeeOutputStream extends OutputStream {
 	 * If you need more fine grained control you should use
 	 * {@link #enableCopy(boolean[])} .
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.8
 	 * @param enable
 	 *            whether to copy or not the bytes to the underlying stream.
@@ -137,7 +136,7 @@ public class TeeOutputStream extends OutputStream {
 	 * <code>true</code> the copy will be enabled.It can be invoked multiple
 	 * times.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.9
 	 * @param enable
 	 *            whether to copy or not the bytes to the underlying stream.
@@ -157,9 +156,7 @@ public class TeeOutputStream extends OutputStream {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void flush() throws IOException {
 		if (!this.closeCalled) {
@@ -176,7 +173,7 @@ public class TeeOutputStream extends OutputStream {
 	 * <p>
 	 * Returns the <code>OutputStream</code>(s) passed in the constructor.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.9
 	 * @return Array of OutputStream passed in the constructor.
 	 */
@@ -190,7 +187,7 @@ public class TeeOutputStream extends OutputStream {
 	 * OutputStream. It can be used to collect statistics on the write
 	 * operations.
 	 * </p>
-	 * 
+	 *
 	 * @return size in bytes of the data written to the
 	 *         <code>OutputStreams</code>.
 	 */
@@ -207,7 +204,7 @@ public class TeeOutputStream extends OutputStream {
 	 * The returned array has one element for each <code>OutputStream</code>
 	 * passed in the constructor.
 	 * </p>
-	 * 
+	 *
 	 * @return time spent writing on the destination
 	 *         <code>OutputStreams</code>.
 	 */
@@ -215,9 +212,7 @@ public class TeeOutputStream extends OutputStream {
 		return this.writeTime;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void write(final byte[] b) throws IOException {
 		if (b == null) {
@@ -238,9 +233,7 @@ public class TeeOutputStream extends OutputStream {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void write(final byte[] b, final int off, final int len)
 			throws IOException {
@@ -262,9 +255,7 @@ public class TeeOutputStream extends OutputStream {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void write(final int b) throws IOException {
 		if (!this.closeCalled) {
@@ -279,7 +270,7 @@ public class TeeOutputStream extends OutputStream {
 			}
 			this.size++;
 		} else {
-			throw new IOException("Stream already closed.");
+			throw new IOException("Attempt to write to a closed stream.");
 		}
 	}
 }

@@ -56,12 +56,12 @@ import com.gc.iotools.stream.utils.LogUtils;
  * &#064;org.junit.Test
  * public void testWarnDoubleClose() throws Exception {
  *  InputStream myTestData = ....
- *  DiagnosticInputStream&lt;InputStream&gt; diagIs = 
+ *  DiagnosticInputStream&lt;InputStream&gt; diagIs =
  *  	    new DiagnosticInputStream&lt;InputStream&gt;(myTestData);
  *  //The class and the method under test
  *  MyClassUnderTest.myMethodUnderTest(diagIs);
  *  final String[] instanceWarnings = diagIs.getInstanceWarnings();
- *  assertTrue(&quot;No problems&quot; + diagIs.getStatusMessage(), 
+ *  assertTrue(&quot;No problems&quot; + diagIs.getStatusMessage(),
  * 			instanceWarnings.length == 0);
  * }
  * </pre>
@@ -77,7 +77,8 @@ import com.gc.iotools.stream.utils.LogUtils;
  * @since 1.2.6
  * @author dvd.msnt
  * @param <T>
- *            Type of the wrapped (contained)<code>InputStream</code>.
+ *            Type of the wrapped (contained) <code>InputStream</code>.
+ * @version $Id: 1 $
  */
 public class DiagnosticInputStream<T extends InputStream> extends
 		FilterInputStream {
@@ -87,14 +88,36 @@ public class DiagnosticInputStream<T extends InputStream> extends
 
 	private static final Collection<String> STATIC_WARNINGS = new ArrayList<String>();
 
+	/**
+	 * <p>
+	 * Returns an array of descriptions of finalization errors. For instance
+	 * when the stream is finalized but it was not closed.
+	 * </p>
+	 * 
+	 * @return Description of finalization erros as an array of
+	 *         {@link java.lang.String} objects.
+	 */
 	public static String[] getFinalizationErrors() {
 		return STATIC_WARNINGS.toArray(new String[STATIC_WARNINGS.size()]);
 	}
 
+	/**
+	 * <p>
+	 * resetFinalizationErrors
+	 * </p>
+	 */
 	public static void resetFinalizationErrors() {
 		STATIC_WARNINGS.clear();
 	}
 
+	/**
+	 * <p>
+	 * Setter for the field <code>defaultLogDepth</code>.
+	 * </p>
+	 * 
+	 * @param defaultFrameDepth
+	 *            a int.
+	 */
 	public static void setDefaultLogDepth(final int defaultFrameDepth) {
 		DiagnosticInputStream.defaultLogDepth = defaultFrameDepth;
 	}
@@ -112,6 +135,10 @@ public class DiagnosticInputStream<T extends InputStream> extends
 	private final Collection<String> warnings = new ArrayList<String>();
 
 	/**
+	 * <p>
+	 * Constructor for DiagnosticInputStream.
+	 * </p>
+	 * 
 	 * @param in
 	 *            the source InputStream.
 	 */
@@ -120,6 +147,10 @@ public class DiagnosticInputStream<T extends InputStream> extends
 	}
 
 	/**
+	 * <p>
+	 * Constructor for DiagnosticInputStream.
+	 * </p>
+	 * 
 	 * @param inputStream
 	 *            the source InputStream
 	 * @param logDepth
@@ -140,9 +171,7 @@ public class DiagnosticInputStream<T extends InputStream> extends
 		this.constructorTrace = LogUtils.getCaller(getClass(), logDepth);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int available() throws IOException {
 		checkCloseInvoked("available");
@@ -163,13 +192,16 @@ public class DiagnosticInputStream<T extends InputStream> extends
 		}
 	}
 
+	/**
+	 * <p>
+	 * clearInstanceWarnings
+	 * </p>
+	 */
 	public void clearInstanceWarnings() {
 		this.warnings.clear();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void close() throws IOException {
 		if (this.closeCount == 0) {
@@ -191,6 +223,7 @@ public class DiagnosticInputStream<T extends InputStream> extends
 		super.close();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void finalize() throws Throwable {
 		if (this.closeCount == 0) {
@@ -243,6 +276,13 @@ public class DiagnosticInputStream<T extends InputStream> extends
 		return this.baos.toByteArray();
 	}
 
+	/**
+	 * <p>
+	 * getInstanceWarnings
+	 * </p>
+	 * 
+	 * @return an array of {@link java.lang.String} objects.
+	 */
 	public String[] getInstanceWarnings() {
 		return this.warnings.toArray(new String[this.warnings.size()]);
 	}
@@ -295,49 +335,46 @@ public class DiagnosticInputStream<T extends InputStream> extends
 		return result;
 	}
 
+	/**
+	 * <p>
+	 * isMethodCalledAfterClose
+	 * </p>
+	 * 
+	 * @return a boolean.
+	 */
 	public boolean isMethodCalledAfterClose() {
 		return this.methodCalledAfterClose;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public synchronized void mark(final int readlimit) {
 		checkCloseInvoked("mark");
 		super.mark(readlimit);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean markSupported() {
 		checkCloseInvoked("markSupported");
 		return super.markSupported();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int read() throws IOException {
 		checkCloseInvoked("read()");
 		return super.read();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int read(final byte[] b) throws IOException {
 		checkCloseInvoked("read(byte[])");
 		return super.read(b);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int read(final byte[] b, final int off, final int len)
 			throws IOException {
@@ -345,18 +382,14 @@ public class DiagnosticInputStream<T extends InputStream> extends
 		return super.read(b, off, len);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public synchronized void reset() throws IOException {
 		checkCloseInvoked("reset");
 		super.reset();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public long skip(final long n) throws IOException {
 		checkCloseInvoked("skip");

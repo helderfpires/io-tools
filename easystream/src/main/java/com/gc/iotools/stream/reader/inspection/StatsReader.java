@@ -42,7 +42,7 @@ import com.gc.iotools.stream.utils.StreamUtils;
  * <p>
  * Usage:
  * </p>
- * 
+ *
  * <pre>
  * StatsReader srReader = new StatsReader(originalStream);
  * //performs all the application operation on stream
@@ -50,9 +50,10 @@ import com.gc.iotools.stream.utils.StreamUtils;
  * srReader.close();
  * long size = srReader.getSize();
  * </pre>
- * 
+ *
  * @author dvd.smnt
  * @since 1.2.7
+ * @version $Id: $
  */
 public class StatsReader extends Reader {
 
@@ -81,7 +82,7 @@ public class StatsReader extends Reader {
 	 * is called the underlying stream will be closed. No further read will be
 	 * done.
 	 * </p>
-	 * 
+	 *
 	 * @param source
 	 *            Stream whose statistics must be calculated.
 	 */
@@ -92,7 +93,7 @@ public class StatsReader extends Reader {
 	/**
 	 * Constructs an <code>SizeReaderReader</code> and allow to specify
 	 * actions to do on close.
-	 * 
+	 *
 	 * @param istream
 	 *            Stream whose bytes must be counted.
 	 * @param fullReadOnClose
@@ -113,7 +114,7 @@ public class StatsReader extends Reader {
 	 * If automaticLog is <code>true</code> the statistics will be written
 	 * when the <code>StatsReader</code> is closed or finalized.
 	 * </p>
-	 * 
+	 *
 	 * @param istream
 	 *            Stream whose bytes must be counted.
 	 * @param fullReadOnClose
@@ -158,7 +159,7 @@ public class StatsReader extends Reader {
 	 * the difference between the times from the source and times on the final
 	 * wrapper.
 	 * </p>
-	 * 
+	 *
 	 * @param istream
 	 *            Stream whose bytes must be counted.
 	 * @param fullReadOnClose
@@ -205,9 +206,10 @@ public class StatsReader extends Reader {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Closes the inner stream. If <code>fullReadOnClose</code> was set in the
 	 * constructor it also count all the bytes of the underlying stream.
-	 * 
 	 * @see Reader#close()
 	 * @exception IOException
 	 *                if an I/O error occurs reading the whole content of the
@@ -237,6 +239,7 @@ public class StatsReader extends Reader {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void finalize() throws Throwable {
 		if (this.automaticLog) {
@@ -258,7 +261,7 @@ public class StatsReader extends Reader {
 	 * <p>
 	 * WARN: This measure is not accurate in case of mark and reset.
 	 * </p>
-	 * 
+	 *
 	 * @return The average bytes per read().
 	 */
 	public float getAverageBytePerRead() {
@@ -267,7 +270,7 @@ public class StatsReader extends Reader {
 
 	/**
 	 * Returns the reading bit rate in KB per second of this single instance.
-	 * 
+	 *
 	 * @return The KB/Sec bitRate of the stream.
 	 */
 	public float getBitRate() {
@@ -277,7 +280,7 @@ public class StatsReader extends Reader {
 
 	/**
 	 * Returns the reading bit rate formatted with a convenient unit.
-	 * 
+	 *
 	 * @return The bitRate of the stream.
 	 */
 	public String getBitRateString() {
@@ -288,7 +291,7 @@ public class StatsReader extends Reader {
 	 * Number of calls to <code>int read()</code> ,
 	 * <code>int read(byte[])</code> and <code>int read(byte[],int,int)</code>
 	 * methods.
-	 * 
+	 *
 	 * @return Long representing the number of calls to read() methods.
 	 */
 	public long getNumberRead() {
@@ -309,7 +312,7 @@ public class StatsReader extends Reader {
 	 * {@linkplain #reset()} is not taken in account, until the
 	 * <code>mark</code> position is reached again.
 	 * </p>
-	 * 
+	 *
 	 * @return bytes read until now or the total length of the stream if
 	 *         close() was called.
 	 */
@@ -322,7 +325,7 @@ public class StatsReader extends Reader {
 	 * Returns the time (in milliseconds) spent until now waiting for reading
 	 * from the internal <code>Reader</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return time spent in waiting in milliseconds.
 	 */
 	public long getTime() {
@@ -338,7 +341,7 @@ public class StatsReader extends Reader {
 	 * Returns the time spent until now waiting for the internal stream to
 	 * respond.
 	 * </p>
-	 * 
+	 *
 	 * @param tu
 	 *            Unit to measure the time.
 	 * @return time spent in waiting.
@@ -358,7 +361,7 @@ public class StatsReader extends Reader {
 	 * Total count of calls to <code>int read()</code>,
 	 * <code>int read(byte[])</code> and <code>int read(byte[],int,int)</code>
 	 * methods, made by this instance over the subsequent calls.
-	 * 
+	 *
 	 * @return Long representing the number of calls to read() methods.
 	 */
 	public long getTotalNumberRead() {
@@ -373,7 +376,7 @@ public class StatsReader extends Reader {
 	 * reading from the internal <code>Reader</code> by the instances
 	 * (identified by their constructor position).
 	 * </p>
-	 * 
+	 *
 	 * @param tu
 	 *            Unit to measure the time.
 	 * @return time spent in waiting.
@@ -411,7 +414,7 @@ public class StatsReader extends Reader {
 	/**
 	 * Returns the behavior of the close method. If true when close is invoked
 	 * a full read of the stream will be performed.
-	 * 
+	 *
 	 * @return Whether a full read will be performed on the invocation of
 	 *         {@linkplain #close()} method.
 	 */
@@ -426,9 +429,7 @@ public class StatsReader extends Reader {
 		internallogCurrentStatistics(false);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void mark(final int readlimit) throws IOException {
 		final long start = System.currentTimeMillis();
@@ -439,17 +440,13 @@ public class StatsReader extends Reader {
 		addToMapL(totalTime, timeElapsed);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean markSupported() {
 		return this.innerStream.markSupported();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int read() throws IOException {
 		final long start = System.currentTimeMillis();
@@ -466,9 +463,7 @@ public class StatsReader extends Reader {
 		return read;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int read(final char[] b) throws IOException {
 		final long start = System.currentTimeMillis();
@@ -485,9 +480,7 @@ public class StatsReader extends Reader {
 		return read;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int read(final char[] chars, final int off, final int len)
 			throws IOException {
@@ -505,9 +498,7 @@ public class StatsReader extends Reader {
 		return read;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void reset() throws IOException {
 		final long start = System.currentTimeMillis();
@@ -518,9 +509,7 @@ public class StatsReader extends Reader {
 		addToMapL(totalTime, timeElapsed);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public long skip(final long n) throws IOException {
 		final long start = System.currentTimeMillis();

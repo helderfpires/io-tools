@@ -27,23 +27,25 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
  * <p>
  * Usage:
  * </p>
- * 
+ *
  * <pre>
  * 	 InputStream source=... //some data to be read.
  *   OutputStream destination1= new ByteArrayOutputStream();
- *   
+ *
  *   OutputStreamStreamDumper dumper = new OutputStreamStreamDumper(destination1);
  *   org.apache.commons.io.IOUtils.copy(source, dumper);
  *   dumper.close();
  *   byte[] data= dumper.getData();
  *   //at this point both destination1 and destination2 contains the same bytes.
  * </pre>
- * 
+ *
  * @author dvd.smnt
  * @since 1.2.9
+ * @version $Id: $
  */
 public class OutputStreamDumper<T extends OutputStream> extends
 		FilterOutputStream {
+	/** Constant <code>INDEFINITE_SIZE=-1L</code> */
 	public static final long INDEFINITE_SIZE = -1L;
 
 	private final ByteArrayOutputStream dataDumpStream = new ByteArrayOutputStream();
@@ -51,18 +53,29 @@ public class OutputStreamDumper<T extends OutputStream> extends
 	private boolean dumpEnabled = true;
 	private final long maxDumpSize;
 
+	/**
+	 * <p>Constructor for OutputStreamDumper.</p>
+	 *
+	 * @param sink 
+	 * 		the underlying stream that must be dumped.
+	 */
 	public OutputStreamDumper(final T sink) {
 		this(sink, -1);
 	}
 
-	public OutputStreamDumper(final T out, final long maxDumpSize) {
-		super(out);
+	/**
+	 * <p>Constructor for OutputStreamDumper.</p>
+	 *
+	 * @param sink 
+	 * 		the underlying stream that must be dumped.
+	 * @param maxDumpSize the maximum size of the dump.
+	 */
+	public OutputStreamDumper(final T sink, final long maxDumpSize) {
+		super(sink);
 		this.maxDumpSize = maxDumpSize;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void close() throws IOException {
 		super.close();
@@ -73,9 +86,8 @@ public class OutputStreamDumper<T extends OutputStream> extends
 	 * Allow to switch off the copy to the internal byte array. The copy is
 	 * enabled by default.
 	 * </p>
-	 * 
-	 * @param enabled
-	 *            whether to dump or not the bytes to the byte array.
+	 *
+	 * @param enable a boolean.
 	 */
 	public void enableDump(final boolean enable) {
 		this.dumpEnabled = enable;
@@ -89,7 +101,7 @@ public class OutputStreamDumper<T extends OutputStream> extends
 	 * <code>maxDumpSize</code> was not reach and data dump was not disabled
 	 * (calling <code>enableDump(false)</code>).
 	 * </p>
-	 * 
+	 *
 	 * @return the data that was written until now to the OutputStream
 	 */
 	public final byte[] getData() {
@@ -101,7 +113,7 @@ public class OutputStreamDumper<T extends OutputStream> extends
 	 * Returns the wrapped (original) <code>OutputStream</code> passed in the
 	 * constructor.
 	 * </p>
-	 * 
+	 *
 	 * @return The original <code>OutputStream</code> passed in the
 	 *         constructor
 	 */
@@ -121,9 +133,7 @@ public class OutputStreamDumper<T extends OutputStream> extends
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void write(final byte[] b, final int off, final int len)
 			throws IOException {
@@ -141,9 +151,7 @@ public class OutputStreamDumper<T extends OutputStream> extends
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void write(final int b) throws IOException {
 		super.write(b);

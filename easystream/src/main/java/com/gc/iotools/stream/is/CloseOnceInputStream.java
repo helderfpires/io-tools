@@ -21,11 +21,12 @@ import java.io.InputStream;
  * with some buggy <code>InputStream</code> that don't allow
  * <code>close()</code> to be called multiple times.
  * </p>
- * 
+ *
  * @author dvd.smnt
  * @since 1.2.6
  * @param <T>
  *            Type of the InputStream passed in the constructor.
+ * @version $Id: $
  */
 public class CloseOnceInputStream<T extends InputStream> extends
 		FilterInputStream {
@@ -34,7 +35,7 @@ public class CloseOnceInputStream<T extends InputStream> extends
 	/**
 	 * Construct a <code>CloseOnceInputStream</code> that forwards the calls
 	 * to the source InputStream passed in the constructor.
-	 * 
+	 *
 	 * @param source
 	 *            original InputStream
 	 */
@@ -43,14 +44,12 @@ public class CloseOnceInputStream<T extends InputStream> extends
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * Multiple invocation of this method will result in only one invocation
 	 * of the <code>close()</code> on the underlying stream.
 	 * </p>
-	 * 
-	 * @throws IOException
-	 *             Exception thrown if some error happens into the underlying
-	 *             stream.
 	 */
 	@Override
 	public void close() throws IOException {
@@ -62,8 +61,8 @@ public class CloseOnceInputStream<T extends InputStream> extends
 
 	/**
 	 * Returns the number of time that close was called.
-	 * 
-	 * @see com.gc.iotools.stream.is.inspection.DiagnosticInputStream.java
+	 *
+	 * @see com.gc.iotools.stream.is.inspection.DiagnosticInputStream
 	 * @return Number of times that close was called
 	 */
 	public int getCloseCount() {
@@ -75,7 +74,7 @@ public class CloseOnceInputStream<T extends InputStream> extends
 	 * Returns the wrapped (original) <code>InputStream</code> passed in the
 	 * constructor.
 	 * </p>
-	 * 
+	 *
 	 * @return The original <code>InputStream</code> passed in the constructor
 	 */
 	public T getWrappedInputStream() {

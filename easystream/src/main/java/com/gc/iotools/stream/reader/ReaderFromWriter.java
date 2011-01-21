@@ -37,21 +37,21 @@ import com.gc.iotools.stream.utils.LogUtils;
  * <code>ReaderFromWriter</code> class (whose ancestor is
  * <code>java.io.Reader</code> ).
  * </p>
- * 
+ *
  * <pre>
  * final String dataId=//id of some data.
- * final ReaderFromWriter&lt;String&gt; rfw 
+ * final ReaderFromWriter&lt;String&gt; rfw
  *                          = new ReaderFromWriter&lt;String&gt;() {
  *   &#064;Override
  *   public String produce(final Writer dataSink) throws Exception {
  *      //call your application function who produces the data here
- *      //WARNING: we're in another thread here, so this method shouldn't 
+ *      //WARNING: we're in another thread here, so this method shouldn't
  *      //write any class field or make assumptions on the state of the class.
  *      return produceMydata(dataId,dataSink)
  *   }
  * };
  *  try {
- *    //now you can read from the Reader the data that was written to the 
+ *    //now you can read from the Reader the data that was written to the
  *    //dataSink Writer
  *     char[] read=IOUtils.toCharArray(rfw);
  *     //Use data here
@@ -69,7 +69,7 @@ import com.gc.iotools.stream.utils.LogUtils;
  * allocating the internal thread or even specify the
  * {@linkplain ExecutorService} for thread execution.
  * </p>
- * 
+ *
  * @param <T>
  *            Optional result returned by the function
  *            {@linkplain #produce(Writer)} after the data has been written.
@@ -77,6 +77,7 @@ import com.gc.iotools.stream.utils.LogUtils;
  * @see ExecutionModel
  * @author dvd.smnt
  * @since 1.2.7
+ * @version $Id: $
  */
 public abstract class ReaderFromWriter<T> extends Reader {
 	/**
@@ -164,7 +165,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	/**
 	 * This method can be used for debugging purposes to get a list of the
 	 * currently active threads.
-	 * 
+	 *
 	 * @return Array containing names of the threads currently active.
 	 */
 	public static final String[] getActiveThreadNames() {
@@ -179,7 +180,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	/**
 	 * Set the size for the pipe circular buffer for the newly created
 	 * <code>ReaderFromWriter</code>. Default is 4096 bytes.
-	 * 
+	 *
 	 * @since 1.2.7
 	 * @param defaultPipeSize
 	 *            the default pipe buffer size in bytes.
@@ -199,7 +200,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 * It creates a <code>ReaderFromWriter</code> with a THREAD_PER_INSTANCE
 	 * thread strategy.
 	 * </p>
-	 * 
+	 *
 	 * @see ExecutionModel#THREAD_PER_INSTANCE
 	 */
 	public ReaderFromWriter() {
@@ -214,7 +215,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 * <p>
 	 * This class executes the produce method in a thread created internally.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.7
 	 * @see ExecutionModel
 	 * @param executionModel
@@ -234,7 +235,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 * ExecutorService that will execute the {@linkplain #produce(Writer)}
 	 * method.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.7
 	 * @see ExecutorService
 	 * @param executor
@@ -258,7 +259,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 * <p>
 	 * Using this method the default size is ignored.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.7
 	 * @see ExecutorService
 	 * @param executor
@@ -296,7 +297,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 * <p>
 	 * This class executes the produce method in a thread created internally.
 	 * </p>
-	 * 
+	 *
 	 * @see ExecutionModel
 	 * @param executionModel
 	 *            Defines how the internal thread is allocated.
@@ -311,7 +312,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 * ExecutorService that will execute the {@linkplain #produce(Writer)}
 	 * method.
 	 * </p>
-	 * 
+	 *
 	 * @see ExecutorService
 	 * @param executor
 	 *            Defines the ExecutorService that will allocate the the
@@ -337,9 +338,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public final void close() throws IOException {
 		if (!this.closeCalled) {
@@ -369,14 +368,14 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 * This method must be called after the method {@linkplain #close()},
 	 * otherwise an IllegalStateException is thrown.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.7
 	 * @return Object that was returned by the {@linkplain #produce(Writer)}
 	 *         method.
-	 * @throws Exception
+	 * @throws java.lang.Exception
 	 *             If the {@linkplain #produce(Writer)} method threw an
-	 *             Exception this method will throw again the same exception.
-	 * @throws IllegalStateException
+	 *             java.lang.Exception this method will throw again the same exception.
+	 * @throws java.lang.IllegalStateException
 	 *             If the {@linkplain #close()} method hasn't been called yet.
 	 */
 	public T getResult() throws Exception {
@@ -412,22 +411,20 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 * The right way to set a field variable is to return a value in the
 	 * <code>produce</code>and retrieve it in the getResult().
 	 * </p>
-	 * 
+	 *
 	 * @return The implementing class can use this to return a result of data
 	 *         production. The result will be available through the method
 	 *         {@linkplain #getResult()}.
 	 * @param sink
 	 *            the implementing class should write its data to this stream.
-	 * @throws Exception
+	 * @throws java.lang.Exception
 	 *             the exception eventually thrown by the implementing class
 	 *             is returned by the {@linkplain #read()} methods.
 	 * @see #getResult()
 	 */
 	protected abstract T produce(final Writer sink) throws Exception;
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public final int read() throws IOException {
 		final int result = this.pipedReader.read();
@@ -437,9 +434,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public final int read(final char[] b, final int off, final int len)
 			throws IOException {

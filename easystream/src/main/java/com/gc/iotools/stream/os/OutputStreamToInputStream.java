@@ -67,21 +67,21 @@ import com.gc.iotools.stream.utils.LogUtils;
  * </p>
  * <code>
  * <pre>
- * OutputStreamToInputStream&lt;String&gt; oStream2IStream = 
+ * OutputStreamToInputStream&lt;String&gt; oStream2IStream =
  * new OutputStreamToInputStream&lt;String&gt;() {
  * 	protected String doRead(final InputStream istream) throws Exception {
  * 		// Users of this class should place all the code that need to read data
- *      // from the InputStream in this method. Data available through the 
- *      // InputStream passed as a parameter is the data that is written to the 
- * 		// OutputStream oStream2IStream through its write method.  
+ *      // from the InputStream in this method. Data available through the
+ *      // InputStream passed as a parameter is the data that is written to the
+ * 		// OutputStream oStream2IStream through its write method.
  * 		final String result = IOUtils.toString(istream);
  * 		return result + &quot; was processed.&quot;;
  * 	}
  * };
  * try {
  * 	// some data is written to the OutputStream, will be passed to the method
- * 	// doRead(InputStream i) above and after close() is called the results 
- * 	// will be available through the getResults() method.  
+ * 	// doRead(InputStream i) above and after close() is called the results
+ * 	// will be available through the getResults() method.
  * 	oStream2IStream.write(&quot;test&quot;.getBytes());
  * } finally {
  * 	// don't miss the close (or a thread would not terminate correctly).
@@ -90,12 +90,13 @@ import com.gc.iotools.stream.utils.LogUtils;
  * String result = oStream2IStream.getResults();
  * //result now contains the string &quot;test was processed.&quot;
  * </pre></code>
- * 
+ *
  * @param <T>
  *            Type returned by the method {@link #getResults()} after the
  *            thread has finished.
  * @since 1.0
  * @author dvd.smnt
+ * @version $Id: $
  */
 public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	/**
@@ -186,11 +187,10 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * Will be removed in the 1.3 release. Use
 	 * {@link #setDefaultPipeSize(int)} instead.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.0
 	 * @param defaultPipeSize
 	 *            The default pipe buffer size in bytes.
-	 * @deprecated
 	 * @see #setDefaultPipeSize(int)
 	 */
 	@Deprecated
@@ -202,12 +202,11 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * Set the size for the pipe circular buffer. This setting has effect for
 	 * the newly created <code>OutputStreamToInputStream</code>. Default is
 	 * 4096 bytes.
-	 * 
+	 *
 	 * @since 1.2.3
 	 * @param defaultPipeSize
 	 *            The default pipe buffer size in bytes.
 	 */
-
 	public static void setDefaultPipeSize(final int defaultPipeSize) {
 		OutputStreamToInputStream.defaultPipeSize = defaultPipeSize;
 	}
@@ -229,8 +228,8 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * When the {@linkplain #close()} method is called this class wait for the
 	 * internal thread to terminate.
 	 * </p>
-	 * 
-	 * @throws IllegalStateException
+	 *
+	 * @throws java.lang.IllegalStateException
 	 *             Exception thrown if pipe can't be created.
 	 */
 	public OutputStreamToInputStream() {
@@ -248,14 +247,14 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * <code>close()</code> method is invoked this class will wait for the
 	 * internal thread to terminate.
 	 * </p>
-	 * 
+	 *
 	 * @see ExecutionModel
 	 * @param joinOnClose
 	 *            if <code>true</code> the internal thread will be joined when
 	 *            close is invoked.
 	 * @param executionModel
 	 *            The strategy for allocating threads.
-	 * @throws IllegalStateException
+	 * @throws java.lang.IllegalStateException
 	 *             Exception thrown if pipe can't be created.
 	 */
 	public OutputStreamToInputStream(final boolean joinOnClose,
@@ -274,14 +273,14 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * <code>close()</code> method is invoked this class will wait for the
 	 * internal thread to terminate.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.6
 	 * @param joinOnClose
 	 *            if <code>true</code> the internal thread will be joined when
 	 *            close is invoked.
 	 * @param executorService
 	 *            Service for executing the internal thread.
-	 * @throws IllegalStateException
+	 * @throws java.lang.IllegalStateException
 	 *             Exception thrown if pipe can't be created.
 	 */
 	public OutputStreamToInputStream(final boolean joinOnClose,
@@ -303,7 +302,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * <p>
 	 * It also let the user specify the size of the pipe buffer to allocate.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.6
 	 * @param joinOnClose
 	 *            if <code>true</code> the internal thread will be joined when
@@ -312,7 +311,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 *            Service for executing the internal thread.
 	 * @param pipeBufferSize
 	 *            The size of the pipe buffer to allocate.
-	 * @throws IllegalStateException
+	 * @throws java.lang.IllegalStateException
 	 *             Exception thrown if pipe can't be created.
 	 */
 	public OutputStreamToInputStream(final boolean joinOnClose,
@@ -345,16 +344,14 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * It is an extension point designed for applications that need to perform
 	 * some operation when the <code>OutputStream</code> is closed.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.9
 	 */
 	protected void afterClose() {
 		// extension point;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public final void close() throws IOException {
 		internalClose(this.joinOnClose, TimeUnit.MILLISECONDS,
@@ -364,12 +361,12 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	/**
 	 * When this method is called the internal thread is always waited for
 	 * completion.
-	 * 
+	 *
 	 * @param timeout
 	 *            maximum time to wait for the internal thread to finish.
 	 * @param tu
 	 *            Time unit for the timeout.
-	 * @throws IOException
+	 * @throws java.io.IOException
 	 *             Threw if some problem (timeout or internal exception)
 	 *             occurs. see the <code>getCause()</code> method for the
 	 *             explanation.
@@ -393,21 +390,19 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * be accessed calling the getCause() method on the IOException. It will
 	 * also be available by calling the method {@link #getResults()}.
 	 * </p>
-	 * 
+	 *
 	 * @param istream
 	 *            The InputStream where the data can be retrieved.
 	 * @return Optionally returns a result of the elaboration.
-	 * @throws Exception
-	 *             If an <code>Exception</code> occurs during the elaboration
+	 * @throws java.lang.Exception
+	 *             If an <code>java.lang.Exception</code> occurs during the elaboration
 	 *             it can be thrown. It will be propagated to the external
 	 *             <code>OutputStream</code> and will be available calling the
 	 *             method {@link #getResults()}.
 	 */
 	protected abstract T doRead(InputStream istream) throws Exception;
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public final void flush() throws IOException {
 		if (this.abort) {
@@ -432,17 +427,20 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * It must be called after the method {@link #close()} otherwise a
 	 * <code>IllegalStateException</code> is thrown.
 	 * </p>
-	 * 
+	 *
 	 * @exception InterruptedException
 	 *                Thrown when the thread is interrupted.
 	 * @exception ExecutionException
 	 *                Thrown if the method {@linkplain #doRead(InputStream)}
 	 *                threw an Exception. The <code>getCause()</code> returns
 	 *                the original Exception.
-	 * @throws IllegalStateException
+	 * @throws java.lang.IllegalStateException
 	 *             When it is called before the method {@link #close()} has
 	 *             been called.
 	 * @return the object returned from the doRead() method.
+	 * @throws InterruptedException if the thread is interrupted.
+	 * @throws ExecutionException if the internal method launched an exception.
+	 * @throws IllegalStateException if {@link #close()} was not called before.
 	 */
 	public final T getResults() throws InterruptedException,
 			ExecutionException {
@@ -489,9 +487,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public final void write(final byte[] bytes) throws IOException {
 		if (this.abort) {
@@ -502,9 +498,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public final void write(final byte[] bytes, final int offset,
 			final int length) throws IOException {
@@ -516,9 +510,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public final void write(final int bytetowr) throws IOException {
 		if (this.abort) {

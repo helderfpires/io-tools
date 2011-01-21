@@ -21,11 +21,12 @@ import java.nio.CharBuffer;
  * with some buggy <code>Reader</code> that don't allow <code>close()</code>
  * to be called multiple times.
  * </p>
- * 
+ *
  * @author dvd.smnt
  * @since 1.2.7
  * @param <T>
  *            Type of the Reader passed in the constructor.
+ * @version $Id: $
  */
 public class CloseOnceReader<T extends Reader> extends Reader {
 	private int closeCount = 0;
@@ -35,7 +36,7 @@ public class CloseOnceReader<T extends Reader> extends Reader {
 	/**
 	 * Construct a <code>CloseOnceReader</code> that forwards the calls to the
 	 * source Reader passed in the constructor.
-	 * 
+	 *
 	 * @param source
 	 *            original Reader
 	 */
@@ -47,14 +48,12 @@ public class CloseOnceReader<T extends Reader> extends Reader {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * Multiple invocation of this method will result in only one invocation
 	 * of the <code>close()</code> on the underlying stream.
 	 * </p>
-	 * 
-	 * @throws IOException
-	 *             Exception thrown if some error happens into the underlying
-	 *             stream.
 	 */
 	@Override
 	public void close() throws IOException {
@@ -66,8 +65,7 @@ public class CloseOnceReader<T extends Reader> extends Reader {
 
 	/**
 	 * Returns the number of time that close was called.
-	 * 
-	 * @see com.gc.iotools.stream.is.inspection.DiagnosticReader.java
+	 *
 	 * @return Number of times that close was called
 	 */
 	public int getCloseCount() {
@@ -79,7 +77,7 @@ public class CloseOnceReader<T extends Reader> extends Reader {
 	 * Returns the wrapped (original) <code>Reader</code> passed in the
 	 * constructor.
 	 * </p>
-	 * 
+	 *
 	 * @return The original <code>Reader</code> passed in the constructor
 	 */
 	public T getWrappedReader() {
@@ -88,52 +86,62 @@ public class CloseOnceReader<T extends Reader> extends Reader {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void mark(final int readAheadLimit) throws IOException {
 		this.source.mark(readAheadLimit);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean markSupported() {
 		return this.source.markSupported();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int read() throws IOException {
 		return this.source.read();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int read(final char[] cbuf) throws IOException {
 		return this.source.read(cbuf);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int read(final char[] cbuf, final int off, final int len)
 			throws IOException {
 		return this.source.read(cbuf, off, len);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int read(final CharBuffer target) throws IOException {
 		return this.source.read(target);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean ready() throws IOException {
 		return this.source.ready();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void reset() throws IOException {
 		this.source.reset();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public long skip(final long n) throws IOException {
 		return this.source.skip(n);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return this.source.toString();

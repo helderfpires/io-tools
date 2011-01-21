@@ -10,13 +10,11 @@ package com.gc.iotools.stream.base;
  * This class enumerates the policies for instantiating <code>Threads</code>
  * in classes of EasyStream library that needs of them.
  * </p>
- * 
+ *
  * @author dvd.smnt
  * @since 1.0
- * @see #com
- * @see #com
+ * @version $Id: 1$
  */
-
 public enum ExecutionModel {
 	/**
 	 * <p>

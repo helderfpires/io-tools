@@ -6,20 +6,37 @@ package com.gc.iotools.stream.store;
  */
 import java.io.IOException;
 
+/**
+ * <p>OnOffStore class.</p>
+ *
+ * @author gcontini
+ * @version $Id: $
+ */
 public class OnOffStore implements SeekableStore {
 	private boolean canEnable = true;
 	private boolean enabled = true;
 	private final SeekableStore store;
 
+	/**
+	 * <p>Constructor for OnOffStore.</p>
+	 *
+	 * @param store a {@link com.gc.iotools.stream.store.SeekableStore} object.
+	 */
 	public OnOffStore(final SeekableStore store) {
 		this.store = store;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void cleanup() {
 		this.store.cleanup();
 	}
 
+	/**
+	 * <p>enable</p>
+	 *
+	 * @param enable a boolean.
+	 */
 	public void enable(final boolean enable) {
 		if (enable != this.enabled) {
 			if (enable) {
@@ -34,6 +51,7 @@ public class OnOffStore implements SeekableStore {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int get(final byte[] bytes, final int offset, final int length)
 			throws IOException {
@@ -45,6 +63,7 @@ public class OnOffStore implements SeekableStore {
 		return num;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void put(final byte[] bytes, final int offset, final int length)
 			throws IOException {
@@ -55,6 +74,7 @@ public class OnOffStore implements SeekableStore {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void seek(final long position) throws IOException {
 		this.store.seek(position);

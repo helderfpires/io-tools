@@ -19,11 +19,12 @@ import java.io.Writer;
  * be passed to a component that wants to explicitly close the stream even if
  * other components still want to write data on it.
  * </p>
- * 
+ *
  * @author dvd.smnt
  * @since 1.2.8
  * @param <T>
  *            Type of the Writer passed in the constructor.
+ * @version $Id: $
  */
 public class CloseShieldWriter<T extends Writer> extends Writer {
 	private int closeCount = 0;
@@ -33,9 +34,10 @@ public class CloseShieldWriter<T extends Writer> extends Writer {
 	/**
 	 * Construct a <code>CloseShieldWriter</code> that forwards the calls to
 	 * the source Writer passed in the constructor.
-	 * 
+	 *
 	 * @param source
 	 *            original Writer
+	 * @param <T> a T object.
 	 */
 	public CloseShieldWriter(final T source) {
 		if (source == null) {
@@ -44,25 +46,19 @@ public class CloseShieldWriter<T extends Writer> extends Writer {
 		this.source = source;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public Writer append(final char c) throws IOException {
 		return this.source.append(c);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public Writer append(final CharSequence csq) throws IOException {
 		return this.source.append(csq);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public Writer append(final CharSequence csq, final int start,
 			final int end) throws IOException {
@@ -70,23 +66,19 @@ public class CloseShieldWriter<T extends Writer> extends Writer {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * Multiple invocation of this method will result in only one invocation
 	 * of the <code>close()</code> on the underlying stream.
 	 * </p>
-	 * 
-	 * @throws IOException
-	 *             Exception thrown if some error happens into the underlying
-	 *             stream.
 	 */
 	@Override
 	public void close() throws IOException {
 		this.closeCount++;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void flush() throws IOException {
 		this.source.flush();
@@ -94,7 +86,7 @@ public class CloseShieldWriter<T extends Writer> extends Writer {
 
 	/**
 	 * Returns the number of time that close was called.
-	 * 
+	 *
 	 * @return Number of times that close was called
 	 */
 	public int getCloseCount() {
@@ -106,7 +98,7 @@ public class CloseShieldWriter<T extends Writer> extends Writer {
 	 * Returns the wrapped (original) <code>Writer</code> passed in the
 	 * constructor.
 	 * </p>
-	 * 
+	 *
 	 * @return The original <code>Writer</code> passed in the constructor
 	 */
 	public T getWrappedWriter() {
@@ -115,47 +107,38 @@ public class CloseShieldWriter<T extends Writer> extends Writer {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return this.source.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void write(final char[] cbuf) throws IOException {
 		this.source.write(cbuf);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void write(final char[] cbuf, final int off, final int len)
 			throws IOException {
 		this.source.write(cbuf, off, len);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void write(final int c) throws IOException {
 		this.source.write(c);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void write(final String str) throws IOException {
 		this.source.write(str);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void write(final String str, final int off, final int len)
 			throws IOException {

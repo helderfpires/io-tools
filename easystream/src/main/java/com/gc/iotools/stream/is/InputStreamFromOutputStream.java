@@ -38,21 +38,21 @@ import com.gc.iotools.stream.utils.LogUtils;
  * <code>InputStreamFromOutputStream</code> class (whose ancestor is
  * <code>java.io.InputStream</code> ).
  * </p>
- * 
+ *
  * <pre>
  * final String dataId=//id of some data.
- * final InputStreamFromOutputStream&lt;String&gt; isos 
+ * final InputStreamFromOutputStream&lt;String&gt; isos
  *                          = new InputStreamFromOutputStream&lt;String&gt;() {
  *   &#064;Override
  *   public String produce(final OutputStream dataSink) throws Exception {
  *      //call your application function who produces the data here
- *      //WARNING: we're in another thread here, so this method shouldn't 
+ *      //WARNING: we're in another thread here, so this method shouldn't
  *      //write any class field or make assumptions on the state of the class.
  *      return produceMydata(dataId,dataSink)
  *   }
  * };
  *  try {
- *    //now you can read from the InputStream the data that was written to the 
+ *    //now you can read from the InputStream the data that was written to the
  *    //dataSink OutputStream
  *     byte[] read=IOUtils.toByteArray(isos);
  *     //Use data here
@@ -70,7 +70,7 @@ import com.gc.iotools.stream.utils.LogUtils;
  * allocating the internal thread or even specify the
  * {@linkplain ExecutorService} for thread execution.
  * </p>
- * 
+ *
  * @param <T>
  *            Optional result returned by the function
  *            {@linkplain #produce(OutputStream)} after the data has been
@@ -79,6 +79,7 @@ import com.gc.iotools.stream.utils.LogUtils;
  * @see ExecutionModel
  * @author dvd.smnt
  * @since 1.0
+ * @version $Id: $
  */
 public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	/**
@@ -170,7 +171,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	/**
 	 * This method can be used for debugging purposes to get a list of the
 	 * currently active threads.
-	 * 
+	 *
 	 * @return Array containing names of the threads currently active.
 	 */
 	public static final String[] getActiveThreadNames() {
@@ -186,8 +187,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * Set the size for the pipe circular buffer for the newly created
 	 * <code>InputStreamFromOutputStream</code>. Default is 4096 bytes. will
 	 * be removed in 1.3.0. Use setDefaultPipeSize instead.
-	 * 
-	 * @deprecated
+	 *
 	 * @since 1.2.0
 	 * @param defaultPipeSize
 	 *            the default pipe buffer size in bytes.
@@ -200,7 +200,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	/**
 	 * Set the size for the pipe circular buffer for the newly created
 	 * <code>InputStreamFromOutputStream</code>. Default is 4096 bytes.
-	 * 
+	 *
 	 * @since 1.2.2
 	 * @param defaultPipeSize
 	 *            the default pipe buffer size in bytes.
@@ -220,7 +220,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * It creates a <code>InputStreamFromOutputStream</code> with a
 	 * THREAD_PER_INSTANCE thread strategy.
 	 * </p>
-	 * 
+	 *
 	 * @see ExecutionModel#THREAD_PER_INSTANCE
 	 */
 	public InputStreamFromOutputStream() {
@@ -235,7 +235,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * <p>
 	 * This class executes the produce method in a thread created internally.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.2
 	 * @see ExecutionModel
 	 * @param executionModel
@@ -255,7 +255,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * specify the ExecutorService that will execute the
 	 * {@linkplain #produce(OutputStream)} method.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.2
 	 * @see ExecutorService
 	 * @param executor
@@ -279,7 +279,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * <p>
 	 * Using this method the default size is ignored.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.6
 	 * @see ExecutorService
 	 * @param executor
@@ -317,7 +317,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * <p>
 	 * This class executes the produce method in a thread created internally.
 	 * </p>
-	 * 
+	 *
 	 * @see ExecutionModel
 	 * @param executionModel
 	 *            Defines how the internal thread is allocated.
@@ -332,7 +332,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * specify the ExecutorService that will execute the
 	 * {@linkplain #produce(OutputStream)} method.
 	 * </p>
-	 * 
+	 *
 	 * @see ExecutorService
 	 * @param executor
 	 *            Defines the ExecutorService that will allocate the the
@@ -351,7 +351,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * It is an extension point designed for applications that need to perform
 	 * some operation when the <code>InputStream</code> is closed.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.9
 	 */
 	protected void afterClose() {
@@ -374,9 +374,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public final void close() throws IOException {
 		if (!this.closeCalled) {
@@ -407,14 +405,14 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * This method must be called after the method {@linkplain #close()},
 	 * otherwise an IllegalStateException is thrown.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.0
 	 * @return Object that was returned by the
 	 *         {@linkplain #produce(OutputStream)} method.
-	 * @throws Exception
+	 * @throws java.lang.Exception
 	 *             If the {@linkplain #produce(OutputStream)} method threw an
-	 *             Exception this method will throw again the same exception.
-	 * @throws IllegalStateException
+	 *             java.lang.Exception this method will throw again the same exception.
+	 * @throws java.lang.IllegalStateException
 	 *             If the {@linkplain #close()} method hasn't been called yet.
 	 */
 	public T getResult() throws Exception {
@@ -450,22 +448,20 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * The right way to set a field variable is to return a value in the
 	 * <code>produce</code>and retrieve it in the getResult().
 	 * </p>
-	 * 
+	 *
 	 * @return The implementing class can use this to return a result of data
 	 *         production. The result will be available through the method
 	 *         {@linkplain #getResult()}.
 	 * @param sink
 	 *            the implementing class should write its data to this stream.
-	 * @throws Exception
+	 * @throws java.lang.Exception
 	 *             the exception eventually thrown by the implementing class
 	 *             is returned by the {@linkplain #read()} methods.
 	 * @see #getResult()
 	 */
 	protected abstract T produce(final OutputStream sink) throws Exception;
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public final int read() throws IOException {
 		final int result = this.pipedIS.read();
@@ -475,9 +471,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public final int read(final byte[] b, final int off, final int len)
 			throws IOException {

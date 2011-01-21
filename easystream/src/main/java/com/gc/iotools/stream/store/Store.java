@@ -10,10 +10,11 @@ import java.io.IOException;
 /**
  * Represent a place where bytes are memorized. Used in streams that need to
  * remember the data who was read.
- * 
+ *
  * @author dvd.smnt
  * @since 1.2.0
  * @see com.gc.iotools.stream.is.RandomAccessInputStream
+ * @version $Id: $
  */
 public interface Store {
 	/**
@@ -23,7 +24,7 @@ public interface Store {
 
 	/**
 	 * gets <code>length</code> bytes from the store.
-	 * 
+	 *
 	 * @param bytes
 	 *            array where to put the data in.
 	 * @param offset
@@ -32,12 +33,20 @@ public interface Store {
 	 *            length of the bytes got from the store.
 	 * @return number of bytes effectively put in the array or -1 if the Store
 	 *         was empty.
-	 * @throws IOException
+	 * @throws java.io.IOException
 	 *             when an error occurs in the store, and data can't be
 	 *             retrieved.
 	 */
 	int get(byte[] bytes, int offset, int length) throws IOException;
 
+	/**
+	 * <p>put</p>
+	 *
+	 * @param bytes an array of byte.
+	 * @param offset a int.
+	 * @param length a int.
+	 * @throws java.io.IOException if any.
+	 */
 	void put(byte[] bytes, int offset, int length) throws IOException;
 
 }
