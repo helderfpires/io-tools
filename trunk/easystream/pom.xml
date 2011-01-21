@@ -20,7 +20,7 @@ Main features are:
 		<version>1.2.10-SNAPSHOT</version>
 	</parent>
 	<name>EasyStream</name>
-	<url>http://code.google.com/p/io-tools/easystream</url>
+	<url>http://code.google.com/p/io-tools/source/browse/www/easystream/</url>
 	<inceptionYear>2008</inceptionYear>
 	<issueManagement>
 		<system>GoogleIssues</system>
@@ -28,8 +28,8 @@ Main features are:
 	</issueManagement>
 	<distributionManagement>
 		<site>
-			<id>jtools.heliohost</id>
-			<url>ftp://ftp.jtools.heliohost.org/easystream</url>
+			<id>googlecode.svn</id>
+			<url>scm:svn:https://io-tools.googlecode.com/svn/www/easystream</url>
 		</site>
 	</distributionManagement>
 	<dependencies>
