@@ -11,9 +11,10 @@ import java.io.InputStream;
 /**
  * An input stream wrapper that will read only a definite number of bytes from
  * the underlying stream.
- * 
+ *
  * @author dvd.smnt
  * @since 1.2.0
+ * @version $Id: $
  */
 public class SizeLimitInputStream extends InputStream {
 
@@ -53,7 +54,7 @@ public class SizeLimitInputStream extends InputStream {
 	 * <p>
 	 * Bytes are read from the underlying stream until size limit is reached.
 	 * </p>
-	 * 
+	 *
 	 * @param in
 	 *            The underlying input stream from where the data is read.
 	 * @param maxSize
@@ -65,9 +66,7 @@ public class SizeLimitInputStream extends InputStream {
 		this.maxSize = maxSize;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int available() throws IOException {
 		return Math.min(this.in.available(), (int) getBytesLeft());
@@ -78,10 +77,6 @@ public class SizeLimitInputStream extends InputStream {
 	 * Close the underlying stream. Calling this method may make data on the
 	 * underlying stream unavailable.
 	 * </p> {@inheritDoc}
-	 * 
-	 * @throws IOException
-	 *             Exception is thrown when some IO error happens in the
-	 *             underlying stream.
 	 */
 	@Override
 	public void close() throws IOException {
@@ -95,7 +90,7 @@ public class SizeLimitInputStream extends InputStream {
 	/**
 	 * Get the maximum number of bytes left to read before the limit, set in
 	 * the constructor, is reached.
-	 * 
+	 *
 	 * @return The number of bytes that (at a maximum) are left to be taken
 	 *         from this stream.
 	 */
@@ -105,7 +100,7 @@ public class SizeLimitInputStream extends InputStream {
 
 	/**
 	 * Get the number of bytes actually read from this stream.
-	 * 
+	 *
 	 * @return number of bytes that have already been taken from this stream.
 	 */
 	public long getBytesRead() {
@@ -115,33 +110,27 @@ public class SizeLimitInputStream extends InputStream {
 	/**
 	 * Get the number of total bytes (including bytes already read) that can
 	 * be read from this stream (as set in the constructor).
-	 * 
+	 *
 	 * @return Maximum bytes that can be read until the size limit runs out
 	 */
 	public long getMaxSize() {
 		return this.maxSize;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void mark(final int readlimit) {
 		this.in.mark(readlimit);
 		this.markPosition = this.currentPosition;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean markSupported() {
 		return this.in.markSupported();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int read() throws IOException {
 		int result;
@@ -156,17 +145,13 @@ public class SizeLimitInputStream extends InputStream {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int read(final byte[] b) throws IOException {
 		return this.read(b, 0, b.length);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int read(final byte[] b, final int off, final int len)
 			throws IOException {
@@ -183,9 +168,7 @@ public class SizeLimitInputStream extends InputStream {
 		return bytesReaded;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void reset() throws IOException {
 		this.in.reset();
@@ -193,9 +176,7 @@ public class SizeLimitInputStream extends InputStream {
 		this.markPosition = 0;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public long skip(final long n) throws IOException {
 		long result;

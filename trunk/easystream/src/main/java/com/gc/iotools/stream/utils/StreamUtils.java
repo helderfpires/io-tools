@@ -12,9 +12,10 @@ import com.gc.iotools.stream.base.EasyStreamConstants;
 
 /**
  * General utilities for handling streams.
- * 
+ *
  * @author dvd.smnt
  * @since 1.0.9
+ * @version $Id: $
  */
 public final class StreamUtils {
 	private static final double ONE_THOUSAND = 1000D;
@@ -22,7 +23,7 @@ public final class StreamUtils {
 	/**
 	 * Returns a string representing the transfer rate. The unit is chosen
 	 * automatically to keep the size of the string small.
-	 * 
+	 *
 	 * @param bytes
 	 *            bytes transferred
 	 * @param milliseconds
@@ -59,7 +60,7 @@ public final class StreamUtils {
 	 * <p>
 	 * This utility ensures that either <code>size</code> bytes are read or
 	 * the end of the stream has been reached.
-	 * 
+	 *
 	 * @param source
 	 *            Stream from which the data is read.
 	 * @param size
@@ -71,6 +72,7 @@ public final class StreamUtils {
 	 *                than end of file, or if the input stream has been
 	 *                closed, or if some other I/O error occurs.
 	 * @since 1.0.9
+	 * @throws java.io.IOException if any.
 	 */
 	public static byte[] read(final InputStream source, final int size)
 			throws IOException {
@@ -97,7 +99,7 @@ public final class StreamUtils {
 	 * This utility ensures that either <code>len</code> bytes are read or the
 	 * end of the stream has been reached.
 	 * </p>
-	 * 
+	 *
 	 * @see InputStream#read(byte[] buf,int off, int len)
 	 * @param source
 	 *            Stream from which the data is read.
@@ -111,13 +113,13 @@ public final class StreamUtils {
 	 * @return the total number of bytes read into the buffer, or
 	 *         <code>-1</code> if there is no more data because the end of the
 	 *         stream has been reached.
-	 * @throws IOException
+	 * @throws java.io.IOException
 	 *             If the first byte cannot be read for any reason other than
 	 *             end of file, or if the input stream has been closed, or if
 	 *             some other I/O error occurs.
-	 * @throws NullPointerException
+	 * @throws java.lang.NullPointerException
 	 *             If <code>b</code> is <code>null</code>.
-	 * @throws IndexOutOfBoundsException
+	 * @throws java.lang.IndexOutOfBoundsException
 	 *             If <code>off</code> is negative, <code>len</code> is
 	 *             negative, or <code>len</code> is greater than
 	 *             <code>b.length - off</code>

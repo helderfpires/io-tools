@@ -30,7 +30,7 @@ import java.io.Writer;
  * <pre>
  * 	 Reader source=... //some data to be read.
  *   Writer destination1= new StringWriter();
- *   
+ *
  *   WriterDumper dumper = new WriterDumper(destination1);
  *   org.apache.commons.io.IOUtils.copy(source, dumper);
  *   dumper.close();
@@ -40,8 +40,10 @@ import java.io.Writer;
  * 
  * @author dvd.smnt
  * @since 1.2.9
+ * @version $Id: 1 $
  */
 public class WriterDumper<T extends Writer> extends FilterWriter {
+	/** Constant <code>INDEFINITE_SIZE=-1L</code> */
 	public static final long INDEFINITE_SIZE = -1L;
 
 	private long currentSize = 0;
@@ -50,18 +52,35 @@ public class WriterDumper<T extends Writer> extends FilterWriter {
 	private boolean dumpEnabled = true;
 	private final long maxDumpSize;
 
+	/**
+	 * <p>
+	 * Constructor for WriterDumper. Completely record the stream for an
+	 * indefinite size into memory.
+	 * </p>
+	 * 
+	 * @param sink
+	 *            the underlying stream that must be dumped.
+	 */
 	public WriterDumper(final T sink) {
 		this(sink, -1);
 	}
 
-	public WriterDumper(final T out, final long maxDumpSize) {
-		super(out);
+	/**
+	 * <p>
+	 * Constructor for WriterDumper.
+	 * </p>
+	 * 
+	 * @param sink
+	 *            the underlying stream that must be dumped.
+	 * @param maxDumpSize
+	 *            the maximum size of the dump.
+	 */
+	public WriterDumper(final T sink, final long maxDumpSize) {
+		super(sink);
 		this.maxDumpSize = maxDumpSize;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void close() throws IOException {
 		super.close();
@@ -73,8 +92,8 @@ public class WriterDumper<T extends Writer> extends FilterWriter {
 	 * is enabled by default.
 	 * </p>
 	 * 
-	 * @param enabled
-	 *            whether to dump or not the bytes to the character buffer.
+	 * @param enable
+	 *            a boolean.
 	 */
 	public void enableDump(final boolean enable) {
 		this.dumpEnabled = enable;
@@ -118,9 +137,7 @@ public class WriterDumper<T extends Writer> extends FilterWriter {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void write(final char[] b, final int off, final int len)
 			throws IOException {
@@ -138,9 +155,7 @@ public class WriterDumper<T extends Writer> extends FilterWriter {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void write(final int b) throws IOException {
 		super.write(b);

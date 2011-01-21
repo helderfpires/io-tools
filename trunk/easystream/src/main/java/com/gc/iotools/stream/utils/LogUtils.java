@@ -6,15 +6,16 @@ package com.gc.iotools.stream.utils;
 
 /**
  * Utilities for logging.
- * 
+ *
  * @author dvd.smnt
  * @since 1.0.9
+ * @version $Id: $
  */
 public final class LogUtils {
 	/**
 	 * Returns the caller of the class passed as an argument. Useful for
 	 * logging.
-	 * 
+	 *
 	 * @param clazz
 	 *            The current class
 	 * @return The class name up one level in the stack.
@@ -26,7 +27,7 @@ public final class LogUtils {
 	/**
 	 * Returns the caller stack of the class passed as an argument. Useful for
 	 * logging.
-	 * 
+	 *
 	 * @since 1.2.6
 	 * @param nframes
 	 *            Number of stack frames to log out.

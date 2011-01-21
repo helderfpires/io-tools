@@ -7,21 +7,24 @@ package com.gc.iotools.stream.store;
 
 /**
  * TODO: more efficient memory usage.
- * 
+ *
  * @author dvd.smnt
  * @since 1.2.0
+ * @version $Id: $
  */
 public class MemoryStore implements SeekableStore {
 	private byte[] buffer = new byte[0];
 
 	private long position = 0;
 
+	/** {@inheritDoc} */
 	@Override
 	public void cleanup() {
 		this.buffer = new byte[0];
 		this.position = 0;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int get(final byte[] bytes, final int offset, final int length) {
 		final int effectiveLength = (int) Math.min(length, this.buffer.length
@@ -42,10 +45,16 @@ public class MemoryStore implements SeekableStore {
 		return result;
 	}
 
+	/**
+	 * <p>Getter for the field <code>position</code>.</p>
+	 *
+	 * @return a long.
+	 */
 	public long getPosition() {
 		return this.position;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void put(final byte[] bytes, final int offset, final int length) {
 		final byte[] tmpBuffer = new byte[length + this.buffer.length];
@@ -54,12 +63,15 @@ public class MemoryStore implements SeekableStore {
 		this.buffer = tmpBuffer;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void seek(final long position) {
 		this.position = position;
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Provides a String representation of the state of the Store for
 	 * debugging purposes.
 	 */

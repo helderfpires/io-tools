@@ -28,9 +28,10 @@ import com.gc.iotools.stream.utils.StreamUtils;
  * other parts of the application), or after invoking the method
  * {@linkplain #close()} while partial statistics are available on the fly.
  * </p>
- * 
+ *
  * @author dvd.smnt
  * @since 1.2.6
+ * @version $Id: $
  */
 public class StatsOutputStream extends OutputStream {
 
@@ -42,7 +43,7 @@ public class StatsOutputStream extends OutputStream {
 	/**
 	 * Creates a new <code>SizeRecorderOutputStream</code> with the given
 	 * destination stream.
-	 * 
+	 *
 	 * @param destination
 	 *            Destination stream where data are written.
 	 */
@@ -50,9 +51,7 @@ public class StatsOutputStream extends OutputStream {
 		this.innerOs = destination;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void close() throws IOException {
 		if (!this.closeCalled) {
@@ -63,9 +62,7 @@ public class StatsOutputStream extends OutputStream {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void flush() throws IOException {
 		final long start = System.currentTimeMillis();
@@ -79,7 +76,7 @@ public class StatsOutputStream extends OutputStream {
 	 * a convenient unit. The unit will change trying to keep not more than 3
 	 * digits.
 	 * </p>
-	 * 
+	 *
 	 * @return The bitRate of the stream.
 	 * @since 1.2.2
 	 */
@@ -89,7 +86,7 @@ public class StatsOutputStream extends OutputStream {
 
 	/**
 	 * Returns the number of bytes written until now.
-	 * 
+	 *
 	 * @return return the number of bytes written until now.
 	 */
 	public long getSize() {
@@ -101,7 +98,7 @@ public class StatsOutputStream extends OutputStream {
 	 * Returns the time spent waiting for the internal stream to write the
 	 * data.
 	 * </p>
-	 * 
+	 *
 	 * @param tu
 	 *            Unit to measure the time.
 	 * @return time spent in waiting.
@@ -110,9 +107,7 @@ public class StatsOutputStream extends OutputStream {
 		return tu.convert(this.time, TimeUnit.MILLISECONDS);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void write(final byte[] b) throws IOException {
 		final long start = System.currentTimeMillis();
@@ -121,9 +116,7 @@ public class StatsOutputStream extends OutputStream {
 		this.size += b.length;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void write(final byte[] b, final int off, final int len)
 			throws IOException {
@@ -133,9 +126,7 @@ public class StatsOutputStream extends OutputStream {
 		this.size += len;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void write(final int b) throws IOException {
 		final long start = System.currentTimeMillis();

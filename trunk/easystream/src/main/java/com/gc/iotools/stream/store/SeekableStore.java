@@ -17,18 +17,19 @@ import java.io.IOException;
  * {@link #cleanup()} is invoked, in case a {@link #seek(long)} repositions on
  * pa previously read data.
  * </p>
- * 
+ *
  * @author dvd.smnt
  * @since 1.2.0
  * @see Store
+ * @version $Id: $
  */
 public interface SeekableStore extends Store {
 	/**
 	 * Reposition this <code>Store</code> on a previously read position.
-	 * 
+	 *
 	 * @param position
 	 *            position to read the data from.
-	 * @throws IOException
+	 * @throws java.io.IOException
 	 *             If some error in the internal store happens.
 	 * @throws EOFException
 	 *             If a <code>position</code> is greater than the actual Store

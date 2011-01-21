@@ -67,21 +67,21 @@ import com.gc.iotools.stream.utils.LogUtils;
  * </p>
  * <code>
  * <pre>
- * WriterToReader&lt;String&gt; oStream2IStream = 
+ * WriterToReader&lt;String&gt; oStream2IStream =
  * new WriterToReader&lt;String&gt;() {
  * 	protected String doRead(final Reader istream) throws Exception {
  * 		// Users of this class should place all the code that need to read data
- *      // from the Reader in this method. Data available through the 
- *      // Reader passed as a parameter is the data that is written to the 
- * 		// Writer oStream2IStream through its write method.  
+ *      // from the Reader in this method. Data available through the
+ *      // Reader passed as a parameter is the data that is written to the
+ * 		// Writer oStream2IStream through its write method.
  * 		final String result = IOUtils.toString(istream);
  * 		return result + &quot; was processed.&quot;;
  * 	}
  * };
  * try {
  * 	// some data is written to the Writer, will be passed to the method
- * 	// doRead(Reader i) above and after close() is called the results 
- * 	// will be available through the getResults() method.  
+ * 	// doRead(Reader i) above and after close() is called the results
+ * 	// will be available through the getResults() method.
  * 	oStream2IStream.write(&quot;test&quot;.getBytes());
  * } finally {
  * 	// don't miss the close (or a thread would not terminate correctly).
@@ -90,12 +90,13 @@ import com.gc.iotools.stream.utils.LogUtils;
  * String result = oStream2IStream.getResults();
  * //result now contains the string &quot;test was processed.&quot;
  * </pre></code>
- * 
+ *
  * @param <T>
  *            Type returned by the method {@link #getResults()} after the
  *            thread has finished.
  * @since 1.2.7
  * @author dvd.smnt
+ * @version $Id: 1 $
  */
 public abstract class WriterToReader<T> extends Writer {
 	/**
@@ -173,11 +174,10 @@ public abstract class WriterToReader<T> extends Writer {
 	 * Will be removed in the 1.3 release. Use
 	 * {@link #setDefaultPipeSize(int)} instead.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.0
 	 * @param defaultPipeSize
 	 *            The default pipe buffer size in bytes.
-	 * @deprecated
 	 * @see #setDefaultPipeSize(int)
 	 */
 	@Deprecated
@@ -188,12 +188,11 @@ public abstract class WriterToReader<T> extends Writer {
 	/**
 	 * Set the size for the pipe circular buffer. This setting has effect for
 	 * the newly created <code>WriterToReader</code>. Default is 4096 bytes.
-	 * 
+	 *
 	 * @since 1.2.3
 	 * @param defaultPipeSize
 	 *            The default pipe buffer size in bytes.
 	 */
-
 	public static void setDefaultPipeSize(final int defaultPipeSize) {
 		WriterToReader.defaultPipeSize = defaultPipeSize;
 	}
@@ -215,8 +214,8 @@ public abstract class WriterToReader<T> extends Writer {
 	 * When the {@linkplain #close()} method is called this class wait for the
 	 * internal thread to terminate.
 	 * </p>
-	 * 
-	 * @throws IllegalStateException
+	 *
+	 * @throws java.lang.IllegalStateException
 	 *             Exception thrown if pipe can't be created.
 	 */
 	public WriterToReader() {
@@ -234,14 +233,14 @@ public abstract class WriterToReader<T> extends Writer {
 	 * <code>close()</code> method is invoked this class will wait for the
 	 * internal thread to terminate.
 	 * </p>
-	 * 
+	 *
 	 * @see ExecutionModel
 	 * @param joinOnClose
 	 *            if <code>true</code> the internal thread will be joined when
 	 *            close is invoked.
 	 * @param executionModel
 	 *            The strategy for allocating threads.
-	 * @throws IllegalStateException
+	 * @throws java.lang.IllegalStateException
 	 *             Exception thrown if pipe can't be created.
 	 */
 	public WriterToReader(final boolean joinOnClose,
@@ -260,14 +259,14 @@ public abstract class WriterToReader<T> extends Writer {
 	 * <code>close()</code> method is invoked this class will wait for the
 	 * internal thread to terminate.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.6
 	 * @param joinOnClose
 	 *            if <code>true</code> the internal thread will be joined when
 	 *            close is invoked.
 	 * @param executorService
 	 *            Service for executing the internal thread.
-	 * @throws IllegalStateException
+	 * @throws java.lang.IllegalStateException
 	 *             Exception thrown if pipe can't be created.
 	 */
 	public WriterToReader(final boolean joinOnClose,
@@ -289,7 +288,7 @@ public abstract class WriterToReader<T> extends Writer {
 	 * <p>
 	 * It also let the user specify the size of the pipe buffer to allocate.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.6
 	 * @param joinOnClose
 	 *            if <code>true</code> the internal thread will be joined when
@@ -298,7 +297,7 @@ public abstract class WriterToReader<T> extends Writer {
 	 *            Service for executing the internal thread.
 	 * @param pipeBufferSize
 	 *            The size of the pipe buffer to allocate.
-	 * @throws IllegalStateException
+	 * @throws java.lang.IllegalStateException
 	 *             Exception thrown if pipe can't be created.
 	 */
 	public WriterToReader(final boolean joinOnClose,
@@ -321,9 +320,7 @@ public abstract class WriterToReader<T> extends Writer {
 		this.writingResult = executorService.submit(executingProcess);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public final void close() throws IOException {
 		internalClose(this.joinOnClose, TimeUnit.MILLISECONDS,
@@ -333,12 +330,12 @@ public abstract class WriterToReader<T> extends Writer {
 	/**
 	 * When this method is called the internal thread is always waited for
 	 * completion.
-	 * 
+	 *
 	 * @param timeout
 	 *            maximum time to wait for the internal thread to finish.
 	 * @param tu
 	 *            Time unit for the timeout.
-	 * @throws IOException
+	 * @throws java.io.IOException
 	 *             Threw if some problem (timeout or internal exception)
 	 *             occurs. see the <code>getCause()</code> method for the
 	 *             explanation.
@@ -357,26 +354,24 @@ public abstract class WriterToReader<T> extends Writer {
 	 * <p>
 	 * Any exception eventually threw inside this method will be propagated to
 	 * the external <code>Writer</code>. When the next
-	 * {@linkplain #write(byte[])} operation is called an
+	 * {@linkplain #write(char[])} operation is called an
 	 * <code>IOException</code> will be thrown and the original exception can
 	 * be accessed calling the getCause() method on the IOException. It will
 	 * also be available by calling the method {@link #getResults()}.
 	 * </p>
-	 * 
+	 *
 	 * @param istream
 	 *            The Reader where the data can be retrieved.
 	 * @return Optionally returns a result of the elaboration.
-	 * @throws Exception
-	 *             If an <code>Exception</code> occurs during the elaboration
+	 * @throws java.lang.Exception
+	 *             If an <code>java.lang.Exception</code> occurs during the elaboration
 	 *             it can be thrown. It will be propagated to the external
 	 *             <code>Writer</code> and will be available calling the
 	 *             method {@link #getResults()}.
 	 */
 	protected abstract T doRead(Reader istream) throws Exception;
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public final void flush() throws IOException {
 		if (this.abort) {
@@ -401,17 +396,20 @@ public abstract class WriterToReader<T> extends Writer {
 	 * It must be called after the method {@link #close()} otherwise a
 	 * <code>IllegalStateException</code> is thrown.
 	 * </p>
-	 * 
+	 *
 	 * @exception InterruptedException
 	 *                Thrown when the thread is interrupted.
 	 * @exception ExecutionException
 	 *                Thrown if the method {@linkplain #doRead(Reader)} threw
 	 *                an Exception. The <code>getCause()</code> returns the
 	 *                original Exception.
-	 * @throws IllegalStateException
+	 * @throws java.lang.IllegalStateException
 	 *             When it is called before the method {@link #close()} has
 	 *             been called.
 	 * @return the object returned from the doRead() method.
+	 * @throws InterruptedException if the running thread is interrupted.
+	 * @throws ExecutionException if the internal method launched an exception.
+	 * @throws IllegalStateException if {@link #close()} was not called before.
 	 */
 	public final T getResults() throws InterruptedException,
 			ExecutionException {
@@ -457,9 +455,7 @@ public abstract class WriterToReader<T> extends Writer {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public final void write(final char[] bytes) throws IOException {
 		if (this.abort) {
@@ -470,9 +466,7 @@ public abstract class WriterToReader<T> extends Writer {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public final void write(final char[] bytes, final int offset,
 			final int length) throws IOException {
@@ -484,9 +478,7 @@ public abstract class WriterToReader<T> extends Writer {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public final void write(final int chartowrite) throws IOException {
 		if (this.abort) {

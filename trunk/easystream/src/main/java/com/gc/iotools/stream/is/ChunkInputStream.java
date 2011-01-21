@@ -32,10 +32,10 @@ import com.gc.iotools.stream.utils.StreamUtils;
  * <p>
  * Example:
  * </p>
- * 
+ *
  * <pre>
  * InputStream is = new ByteArrayInputStream(&quot;aa start bbb stopfff&quot;.getBytes());
- * ChunckInputStream chunkIs = new ChunkInputStream(&quot;rt&quot;.getBytes(), 
+ * ChunckInputStream chunkIs = new ChunkInputStream(&quot;rt&quot;.getBytes(),
  * 		&quot;stop&quot;.getBytes(), is);
  * byte[] bytes = IOUtils.toByteArray(chunkIs);
  * //here bytes contains &quot; bbb &quot;
@@ -64,7 +64,7 @@ import com.gc.iotools.stream.utils.StreamUtils;
  * <p>
  * Example of <code>automaticFetch=false</code> mode:
  * </p>
- * 
+ *
  * <pre>
  * InputStream is = new ByteArrayInputStream(&quot;aa start bbb stopfff&quot;.getBytes());
  * ChunckInputStream chunkIs = new ChunkInputStream(is, &quot;rt&quot;
@@ -74,9 +74,10 @@ import com.gc.iotools.stream.utils.StreamUtils;
  * 	//here bytes contains &quot; bbb &quot;
  * }
  * </pre>
- * 
+ *
  * @author dvd.smnt
  * @since 1.0.8
+ * @version $Id: $
  */
 public final class ChunkInputStream extends InputStream {
 
@@ -94,7 +95,7 @@ public final class ChunkInputStream extends InputStream {
 
 	/**
 	 * Constructs a <code>ChunkInputStream</code>.
-	 * 
+	 *
 	 * @param src
 	 *            Source InputStream. Must not be <code>null</code>.
 	 * @param startMarker
@@ -120,7 +121,7 @@ public final class ChunkInputStream extends InputStream {
 	 * Gets an instance of the ChunkInputStream. If
 	 * <code>startMarker!=null</code> the operating mode is set to
 	 * <code>automaticFetch=true</code>
-	 * 
+	 *
 	 * @param src
 	 *            Source stream. Must not be <code>null</code>.
 	 * @param startMarker
@@ -186,10 +187,10 @@ public final class ChunkInputStream extends InputStream {
 	 * This method must be called if <code>automaticFetch=false</code> before
 	 * the stream can be used and each time an endMarker has been found to
 	 * proceed to next startMarker.
-	 * 
+	 *
 	 * @return <code>true</code> if another chunk is available,
 	 *         <code>false</code> otherwise.
-	 * @throws IOException
+	 * @throws java.io.IOException
 	 *             exception thrown if it is impossible to read from the inner
 	 *             stream for some unknown reason.
 	 */

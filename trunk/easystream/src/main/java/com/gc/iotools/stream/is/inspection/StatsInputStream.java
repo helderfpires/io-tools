@@ -42,7 +42,7 @@ import com.gc.iotools.stream.utils.StreamUtils;
  * <p>
  * Usage:
  * </p>
- * 
+ *
  * <pre>
  * StatsInputStream srIstream = new StatsInputStream(originalStream);
  * //performs all the application operation on stream
@@ -50,9 +50,10 @@ import com.gc.iotools.stream.utils.StreamUtils;
  * srIstream.close();
  * long size = srIstream.getSize();
  * </pre>
- * 
+ *
  * @author dvd.smnt
  * @since 1.2.1
+ * @version $Id: $
  */
 public class StatsInputStream extends InputStream {
 
@@ -81,7 +82,7 @@ public class StatsInputStream extends InputStream {
 	 * {@linkplain #close()} is called the underlying stream will be closed.
 	 * No further read will be done.
 	 * </p>
-	 * 
+	 *
 	 * @param source
 	 *            Stream whose statistics must be calculated.
 	 */
@@ -92,7 +93,7 @@ public class StatsInputStream extends InputStream {
 	/**
 	 * Constructs an <code>SizeReaderInputStream</code> and allow to specify
 	 * actions to do on close.
-	 * 
+	 *
 	 * @param istream
 	 *            Stream whose bytes must be counted.
 	 * @param fullReadOnClose
@@ -114,7 +115,7 @@ public class StatsInputStream extends InputStream {
 	 * If automaticLog is <code>true</code> the statistics will be written
 	 * when the <code>StatsInputStream</code> is closed or finalized.
 	 * </p>
-	 * 
+	 *
 	 * @param istream
 	 *            Stream whose bytes must be counted.
 	 * @param fullReadOnClose
@@ -159,7 +160,7 @@ public class StatsInputStream extends InputStream {
 	 * source. Times spent will be the difference between the times from the
 	 * source and times on the final wrapper.
 	 * </p>
-	 * 
+	 *
 	 * @param istream
 	 *            Stream whose bytes must be counted.
 	 * @param fullReadOnClose
@@ -206,18 +207,17 @@ public class StatsInputStream extends InputStream {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int available() throws IOException {
 		return this.innerStream.available();
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Closes the inner stream. If <code>fullReadOnClose</code> was set in the
 	 * constructor it also count all the bytes of the underlying stream.
-	 * 
 	 * @see InputStream#close()
 	 * @exception IOException
 	 *                if an I/O error occurs reading the whole content of the
@@ -247,6 +247,7 @@ public class StatsInputStream extends InputStream {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void finalize() throws Throwable {
 		if (this.automaticLog) {
@@ -269,7 +270,7 @@ public class StatsInputStream extends InputStream {
 	 * <p>
 	 * WARN: This measure is not accurate in case of mark and reset.
 	 * </p>
-	 * 
+	 *
 	 * @return The average bytes per read().
 	 */
 	public float getAverageBytePerRead() {
@@ -278,7 +279,7 @@ public class StatsInputStream extends InputStream {
 
 	/**
 	 * Returns the reading bit rate in KB per second of this single instance.
-	 * 
+	 *
 	 * @return The KB/Sec bitRate of the stream.
 	 */
 	public float getBitRate() {
@@ -288,7 +289,7 @@ public class StatsInputStream extends InputStream {
 
 	/**
 	 * Returns the reading bit rate formatted with a convenient unit.
-	 * 
+	 *
 	 * @return The bitRate of the stream.
 	 */
 	public String getBitRateString() {
@@ -299,7 +300,7 @@ public class StatsInputStream extends InputStream {
 	 * Number of calls to <code>int read()</code> ,
 	 * <code>int read(byte[])</code> and <code>int read(byte[],int,int)</code>
 	 * methods.
-	 * 
+	 *
 	 * @return Long representing the number of calls to read() methods.
 	 */
 	public long getNumberRead() {
@@ -320,7 +321,7 @@ public class StatsInputStream extends InputStream {
 	 * {@linkplain #reset()} is not taken in account, until the
 	 * <code>mark</code> position is reached again.
 	 * </p>
-	 * 
+	 *
 	 * @return bytes read until now or the total length of the stream if
 	 *         close() was called.
 	 */
@@ -333,7 +334,7 @@ public class StatsInputStream extends InputStream {
 	 * Returns the time (in milliseconds) spent until now waiting for reading
 	 * from the internal <code>InputStream</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return time spent in waiting in milliseconds.
 	 */
 	public long getTime() {
@@ -349,7 +350,7 @@ public class StatsInputStream extends InputStream {
 	 * Returns the time spent until now waiting for the internal stream to
 	 * respond.
 	 * </p>
-	 * 
+	 *
 	 * @param tu
 	 *            Unit to measure the time.
 	 * @return time spent in waiting.
@@ -369,7 +370,7 @@ public class StatsInputStream extends InputStream {
 	 * Total count of calls to <code>int read()</code>,
 	 * <code>int read(byte[])</code> and <code>int read(byte[],int,int)</code>
 	 * methods, made by this instance over the subsequent calls.
-	 * 
+	 *
 	 * @return Long representing the number of calls to read() methods.
 	 */
 	public long getTotalNumberRead() {
@@ -384,7 +385,7 @@ public class StatsInputStream extends InputStream {
 	 * reading from the internal <code>InputStream</code> by the instances
 	 * (identified by their constructor position).
 	 * </p>
-	 * 
+	 *
 	 * @param tu
 	 *            Unit to measure the time.
 	 * @return time spent in waiting.
@@ -423,7 +424,7 @@ public class StatsInputStream extends InputStream {
 	/**
 	 * Returns the behavior of the close method. If true when close is invoked
 	 * a full read of the stream will be performed.
-	 * 
+	 *
 	 * @return Whether a full read will be performed on the invocation of
 	 *         {@linkplain #close()} method.
 	 */
@@ -438,9 +439,7 @@ public class StatsInputStream extends InputStream {
 		internallogCurrentStatistics(false);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void mark(final int readlimit) {
 		final long start = System.currentTimeMillis();
@@ -451,17 +450,13 @@ public class StatsInputStream extends InputStream {
 		addToMapL(totalTime, timeElapsed);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean markSupported() {
 		return this.innerStream.markSupported();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int read() throws IOException {
 		final long start = System.currentTimeMillis();
@@ -478,9 +473,7 @@ public class StatsInputStream extends InputStream {
 		return read;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int read(final byte[] b) throws IOException {
 		final long start = System.currentTimeMillis();
@@ -497,9 +490,7 @@ public class StatsInputStream extends InputStream {
 		return read;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int read(final byte[] b, final int off, final int len)
 			throws IOException {
@@ -517,9 +508,7 @@ public class StatsInputStream extends InputStream {
 		return read;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void reset() throws IOException {
 		final long start = System.currentTimeMillis();
@@ -530,9 +519,7 @@ public class StatsInputStream extends InputStream {
 		addToMapL(totalTime, timeElapsed);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public long skip(final long n) throws IOException {
 		final long start = System.currentTimeMillis();

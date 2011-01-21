@@ -43,10 +43,11 @@ import com.gc.iotools.stream.store.ThresholdStore;
  * {@link BufferedInputStream} to improve performances (especially if
  * <code>int read()</code> method is called).
  * </p>
- * 
+ *
  * @author dvd.smnt
  * @see Store
  * @since 1.2.0
+ * @version $Id: $
  */
 public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	/**
@@ -73,6 +74,8 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	private Store store;
 
 	/**
+	 * <p>Constructor for RandomAccessInputStream.</p>
+	 *
 	 * @param source
 	 *            The underlying input stream.
 	 */
@@ -90,7 +93,7 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	 * When data read under threshold size <code>treshold</code> is kept into
 	 * memory. Over this size it is placed on disk.
 	 * </p>
-	 * 
+	 *
 	 * @see ThresholdStore
 	 * @param source
 	 *            The underlying input stream.
@@ -104,9 +107,11 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	}
 
 	/**
+	 * <p>Constructor for RandomAccessInputStream.</p>
+	 *
 	 * @param source
 	 *            The underlying input stream.
-	 * @param store
+	 * @param store a {@link com.gc.iotools.stream.store.SeekableStore} object.
 	 */
 	public RandomAccessInputStream(final InputStream source,
 			final SeekableStore store) {
@@ -117,9 +122,7 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 		this.store = store;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int available() throws IOException {
 		return (int) Math.min(this.sourcePosition
@@ -127,6 +130,7 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 				Integer.MAX_VALUE);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void closeOnce() throws IOException {
 		this.store.cleanup();
@@ -135,13 +139,14 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 
 	/**
 	 * Return the underlying store where the cache of data is kept.
-	 * 
+	 *
 	 * @return The underlying store that caches data.
 	 */
 	public Store getStore() {
 		return this.store;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected int innerRead(final byte[] b, final int off, final int len)
 			throws IOException {
@@ -184,6 +189,8 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * Marks the current position in this input stream. A subsequent call to
 	 * the {@linkplain #reset()} method repositions this stream at the last
@@ -202,11 +209,6 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	 * be invoked regardless on how many bytes have been read.</li>
 	 * </ul>
 	 * </p>
-	 * 
-	 * @param readLimit
-	 *            the maximum limit of bytes that can be read before the mark
-	 *            position becomes invalid. If negative allows
-	 *            <i>indefinite</i> marking (the mark never becomes invalid).
 	 * @see RandomAccessInputStream#reset()
 	 * @see java.io.InputStream#reset()
 	 */
@@ -217,11 +219,11 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Overrides the <code>markSupported()</code> method of the
 	 * <code>InputStream</code> class.
-	 * 
 	 * @see InputStream#markSupported();
-	 * @return Always returns <code>true</code> for this kind of stream.
 	 */
 	@Override
 	public boolean markSupported() {
@@ -229,6 +231,8 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * Repositions this stream to the position at the time the
 	 * <code>mark</code> method was last called on this input stream.
@@ -237,7 +241,6 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	 * After invoking <code>mark</code> it can be invoked multiple times and
 	 * it always reset the stream at the previously marked position.
 	 * </p>
-	 * 
 	 * @exception IOException
 	 *                if this stream has not been marked or if the mark has
 	 *                been invalidated.
@@ -258,6 +261,9 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 
 	/**
 	 * {@inheritDoc}.
+	 *
+	 * @param position a long.
+	 * @throws java.io.IOException if any.
 	 */
 	public void seek(final long position) throws IOException {
 		if (position < 0) {
@@ -287,15 +293,20 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 		}
 	}
 
+	/**
+	 * <p>Setter for the field <code>store</code>.</p>
+	 *
+	 * @param store a {@link com.gc.iotools.stream.store.Store} object.
+	 */
 	public void setStore(final Store store) {
 		this.store = store;
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Provides a String representation of the state of the stream for
 	 * debugging purposes.
-	 * 
-	 * @return String that represent the state.
 	 */
 	@Override
 	public String toString() {

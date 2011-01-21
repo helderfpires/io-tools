@@ -18,9 +18,10 @@ import java.io.InputStream;
  * <li>Keeps track of the position in the source stream over mark and reset.</li>
  * </ul>
  * </p>
- * 
+ *
  * @author dvd.smnt
  * @since 1.2.0
+ * @version $Id: $
  */
 public abstract class AbstractInputStreamWrapper extends InputStream {
 
@@ -28,6 +29,11 @@ public abstract class AbstractInputStreamWrapper extends InputStream {
 
 	protected final InputStream source;
 
+	/**
+	 * <p>Constructor for AbstractInputStreamWrapper.</p>
+	 *
+	 * @param the {@link java.io.InputStream} that is wrapped by this stream..
+	 */
 	protected AbstractInputStreamWrapper(final InputStream source) {
 		if (source == null) {
 			throw new IllegalArgumentException(
@@ -52,6 +58,7 @@ public abstract class AbstractInputStreamWrapper extends InputStream {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void close() throws IOException {
 		if (!this.closeCalled) {
@@ -60,11 +67,26 @@ public abstract class AbstractInputStreamWrapper extends InputStream {
 		}
 	}
 
+	/**
+	 * <p>closeOnce</p>
+	 *
+	 * @throws java.io.IOException if any error occurs reading the bytes.
+	 */
 	protected abstract void closeOnce() throws IOException;
 
+	/**
+	 * <p>innerRead</p>
+	 *
+	 * @param b an array of byte.
+	 * @param off a int.
+	 * @param len a int.
+	 * @return a int.
+	 * @throws java.io.IOException if any error occurs reading the bytes.
+	 */
 	protected abstract int innerRead(byte[] b, int off, int len)
 			throws IOException;
 
+	/** {@inheritDoc} */
 	@Override
 	public int read() throws IOException {
 		final byte[] buf = new byte[1];
@@ -73,6 +95,7 @@ public abstract class AbstractInputStreamWrapper extends InputStream {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public final int read(final byte[] b, final int off, final int len)
 			throws IOException {
@@ -84,6 +107,7 @@ public abstract class AbstractInputStreamWrapper extends InputStream {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public long skip(final long n) throws IOException {
 		if (n < 0) {

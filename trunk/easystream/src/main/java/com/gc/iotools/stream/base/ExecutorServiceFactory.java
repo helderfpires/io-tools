@@ -18,9 +18,10 @@ import java.util.concurrent.TimeUnit;
 /**
  * This class is responsible of instantiating the right executor given an
  * ExecutionModel.
- * 
+ *
  * @author Davide Simonetti
  * @since 1.0.2
+ * @version $Id: $
  */
 public final class ExecutorServiceFactory {
 
@@ -84,6 +85,12 @@ public final class ExecutorServiceFactory {
 	private static final ExecutorService SINGLE_EXECUTOR = Executors
 			.newSingleThreadExecutor();
 
+	/**
+	 * <p>Getter for the field <code>executor</code>.</p>
+	 *
+	 * @param tmodel a {@link com.gc.iotools.stream.base.ExecutionModel} object.
+	 * @return a {@link java.util.concurrent.ExecutorService} object.
+	 */
 	public static ExecutorService getExecutor(final ExecutionModel tmodel) {
 		final ExecutorService result;
 		switch (tmodel) {
@@ -109,7 +116,7 @@ public final class ExecutorServiceFactory {
 	 * Call this method to initialize the <code>ExecutorService</code> that is
 	 * used in <code>STATIC_THREAD_POOL</code> execution mode.
 	 * </p>
-	 * 
+	 *
 	 * @see ExecutionModel#STATIC_THREAD_POOL
 	 * @see #setDefaultThreadPoolExecutor(ExecutorService)
 	 */
@@ -127,7 +134,7 @@ public final class ExecutorServiceFactory {
 	 * It can also be used to initialize the class (for instance for use into
 	 * a web application).
 	 * </p>
-	 * 
+	 *
 	 * @param executor
 	 *            ExecutorService for the STATIC_THREAD_POOL model.
 	 */

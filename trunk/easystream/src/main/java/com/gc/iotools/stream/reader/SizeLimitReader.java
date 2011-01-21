@@ -11,10 +11,11 @@ import java.io.Reader;
 /**
  * A {@link java.io.Reader} wrapper that will read only a definite number of
  * bytes from the underlying stream.
- * 
+ *
  * @see java.io.Reader
  * @author dvd.smnt
  * @since 1.2.7
+ * @version $Id: $
  */
 public class SizeLimitReader extends Reader {
 
@@ -54,7 +55,7 @@ public class SizeLimitReader extends Reader {
 	 * <p>
 	 * Bytes are read from the underlying stream until size limit is reached.
 	 * </p>
-	 * 
+	 *
 	 * @param in
 	 *            The underlying input stream from where the data is read.
 	 * @param maxCharacterSize
@@ -71,10 +72,6 @@ public class SizeLimitReader extends Reader {
 	 * Close the underlying stream. Calling this method may make data on the
 	 * underlying stream unavailable.
 	 * </p> {@inheritDoc}
-	 * 
-	 * @throws IOException
-	 *             Exception is thrown when some IO error happens in the
-	 *             underlying stream.
 	 */
 	@Override
 	public void close() throws IOException {
@@ -88,7 +85,7 @@ public class SizeLimitReader extends Reader {
 	/**
 	 * Get the maximum number of bytes left to read before the limit, set in
 	 * the constructor, is reached.
-	 * 
+	 *
 	 * @return The number of bytes that (at a maximum) are left to be taken
 	 *         from this stream.
 	 */
@@ -98,7 +95,7 @@ public class SizeLimitReader extends Reader {
 
 	/**
 	 * Get the number of bytes actually read from this stream.
-	 * 
+	 *
 	 * @return number of bytes that have already been taken from this stream.
 	 */
 	public long getBytesRead() {
@@ -108,33 +105,27 @@ public class SizeLimitReader extends Reader {
 	/**
 	 * Get the number of total bytes (including bytes already read) that can
 	 * be read from this stream (as set in the constructor).
-	 * 
+	 *
 	 * @return Maximum bytes that can be read until the size limit runs out
 	 */
 	public long getMaxSize() {
 		return this.maxSize;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void mark(final int readlimit) throws IOException {
 		this.in.mark(readlimit);
 		this.markPosition = this.currentPosition;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean markSupported() {
 		return this.in.markSupported();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int read() throws IOException {
 		int result;
@@ -149,17 +140,13 @@ public class SizeLimitReader extends Reader {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int read(final char[] cbuf) throws IOException {
 		return this.read(cbuf, 0, cbuf.length);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int read(final char[] cbuf, final int off, final int len)
 			throws IOException {
@@ -176,9 +163,7 @@ public class SizeLimitReader extends Reader {
 		return bytesReaded;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void reset() throws IOException {
 		this.in.reset();
@@ -186,9 +171,7 @@ public class SizeLimitReader extends Reader {
 		this.markPosition = 0;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public long skip(final long n) throws IOException {
 		long result;

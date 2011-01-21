@@ -33,30 +33,31 @@ import com.gc.iotools.stream.base.EasyStreamConstants;
  * It also calculate some statistics on the read/write operations.
  * {@link #getWriteTime()} returns the time spent writing to the Writers,
  * {@link #getReadTime()} returns the time spent reading from the Reader and
- * {@link TeeReaderWriter#getWriteSize()} returns the amount of data written
+ * {@link #getWriteSize()} returns the amount of data written
  * to a single <code>Writer</code> until now.
  * </p>
  * <p>
  * Sample usage:
  * </p>
- * 
+ *
  * <pre>
  * 	 Reader source=... //some data to be read.
  *   StringWriter destination1= new StringWriter();
  *   StringWriter destination2= new StringWriter();
- *   
+ *
  *   TeeReaderWriter tee = new TeeReaderWriter(source,destination1);
  *   org.apache.commons.io.IOUtils.copy(tee,destination2);
  *   tee.close();
  *   //at this point both destination1 and destination2 contains the same bytes
- *   //in destination1 were put by TeeReaderWriter while in 
+ *   //in destination1 were put by TeeReaderWriter while in
  *   //destination2 they were copied by IOUtils.
  *   StringBuffer buffer=destination1.getBuffer();
  * </pre>
- * 
+ *
  * @see org.apache.commons.io.input.TeeReader
  * @author dvd.smnt
  * @since 1.2.7
+ * @version $Id: $
  */
 public class TeeReaderWriter extends Reader {
 
@@ -93,7 +94,7 @@ public class TeeReaderWriter extends Reader {
 	 * This constructor allow to specify multiple <code>Writer</code> to which
 	 * the data will be copied.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.7
 	 * @param source
 	 *            The underlying <code>Reader</code>
@@ -142,7 +143,7 @@ public class TeeReaderWriter extends Reader {
 	 * <code>destination</code> and the <code>source</code> and
 	 * <code>destination</code> streams are closed.
 	 * </p>
-	 * 
+	 *
 	 * @param source
 	 *            The underlying <code>Reader</code>
 	 * @param destination
@@ -157,7 +158,7 @@ public class TeeReaderWriter extends Reader {
 	 * Creates a <code>TeeReaderWriter</code> and saves its argument, the
 	 * input stream <code>source</code> and the output stream
 	 * <code>destination</code> for later use.
-	 * 
+	 *
 	 * @since 1.2.7
 	 * @param source
 	 *            The underlying <code>Reader</code>
@@ -176,6 +177,8 @@ public class TeeReaderWriter extends Reader {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * This method is called when the method {@link #close()} is invoked. It
 	 * copies all the data eventually remaining in the source
@@ -185,13 +188,9 @@ public class TeeReaderWriter extends Reader {
 	 * <p>
 	 * The standard behavior is to close both the underlying
 	 * <code>Reader</code> and <code>Writer(s)</code>. When the class was
-	 * constructed with the parameter {@link TeeReaderWriter#closeCalled
-	 * closeCalled} set to false the underlying streams must be closed
+	 * constructed with the parameter {@link #closeStreams} 
+	 * set to false the underlying streams must be closed
 	 * externally.
-	 * 
-	 * @throws IOException
-	 *             thrown when a IO problem occurs in reading or writing the
-	 *             data.
 	 * @see #close()
 	 */
 	@Override
@@ -234,7 +233,7 @@ public class TeeReaderWriter extends Reader {
 	 * If you need more fine grained control you should use
 	 * {@link #enableCopy(boolean[])} .
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.9
 	 * @param enable
 	 *            whether to copy or not the bytes to the underlying stream.
@@ -256,7 +255,7 @@ public class TeeReaderWriter extends Reader {
 	 * <code>true</code> the copy will be enabled. It can be invoked multiple
 	 * times.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2.9
 	 * @param enable
 	 *            whether to copy or not the bytes to the underlying
@@ -282,7 +281,7 @@ public class TeeReaderWriter extends Reader {
 	 * Returns the number of milliseconds spent reading from the
 	 * <code>source</code> <code>Reader</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return number of milliseconds spent reading from the
 	 *         <code>source</code> .
 	 * @since 1.2.7
@@ -301,7 +300,7 @@ public class TeeReaderWriter extends Reader {
 	 * on this {@linkplain TeeReaderWriter} and reflects only the number of
 	 * bytes written.
 	 * </p>
-	 * 
+	 *
 	 * @return number of bytes written until now to a single
 	 *         <code>destination</code>.
 	 * @since 1.2.7
@@ -319,7 +318,7 @@ public class TeeReaderWriter extends Reader {
 	 * The returned array has one element for each <code>Writer</code> passed
 	 * in the constructor.
 	 * </p>
-	 * 
+	 *
 	 * @return time spent writing on the destination <code>Writers</code>.
 	 */
 	public long[] getWriteTime() {
@@ -327,15 +326,13 @@ public class TeeReaderWriter extends Reader {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * Marks the current position in this input stream. A subsequent call to
 	 * the <code>reset</code> method repositions this stream at the last
 	 * marked position so that subsequent reads re-read the same bytes.
 	 * </p>
-	 * 
-	 * @param readLimit
-	 *            the maximum limit of bytes that can be read before the mark
-	 *            position becomes invalid.
 	 * @see #reset()
 	 * @see java.io.Reader#mark(int)
 	 * @since 1.2.7
@@ -346,17 +343,13 @@ public class TeeReaderWriter extends Reader {
 		this.markPosition = this.sourcePosition;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean markSupported() {
 		return this.source.markSupported();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int read() throws IOException {
 		final long startr = System.currentTimeMillis();
@@ -380,6 +373,7 @@ public class TeeReaderWriter extends Reader {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int read(final char[] b, final int off, final int len)
 			throws IOException {
@@ -407,6 +401,8 @@ public class TeeReaderWriter extends Reader {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * Repositions this stream to the position at the time the
 	 * <code>mark</code> method was last called on this input stream.
@@ -418,7 +414,6 @@ public class TeeReaderWriter extends Reader {
 	 * copied to the destination <code>Writer</code> reflects the data
 	 * contained in the source Reader (the one passed in the constructor).
 	 * </p>
-	 * 
 	 * @see #mark(int)
 	 * @see java.io.Reader#reset()
 	 * @exception IOException

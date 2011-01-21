@@ -7,14 +7,15 @@ package com.gc.iotools.stream.utils;
 
 /**
  * Miscellaneous utilities for Arrays, i haven't found anywhere.
- * 
+ *
  * @author dvd.smnt
  * @since 1.0.9
+ * @version $Id: $
  */
 public final class ArrayTools {
 	/**
 	 * Find the index of the contained array in the src array.
-	 * 
+	 *
 	 * @param src
 	 *            Source array.
 	 * @param contained
