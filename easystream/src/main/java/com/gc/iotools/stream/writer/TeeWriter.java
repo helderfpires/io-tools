@@ -31,7 +31,7 @@ import java.util.Arrays;
  *
  * @author dvd.smnt
  * @since 1.2.7
- * @version $Id: $
+ * @version $Id$
  */
 public class TeeWriter extends Writer {
 

@@ -60,7 +60,7 @@ import com.gc.iotools.stream.base.EasyStreamConstants;
  * @see org.apache.commons.io.input.TeeInputStream
  * @author dvd.smnt
  * @since 1.0.6
- * @version $Id: $
+ * @version $Id$
  */
 public class TeeInputStreamOutputStream extends AbstractInputStreamWrapper {
 

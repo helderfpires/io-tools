@@ -77,7 +77,7 @@ import com.gc.iotools.stream.utils.StreamUtils;
  *
  * @author dvd.smnt
  * @since 1.0.8
- * @version $Id: $
+ * @version $Id$
  */
 public final class ChunkInputStream extends InputStream {
 

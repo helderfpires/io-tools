@@ -39,7 +39,7 @@ import com.gc.iotools.stream.base.ExecutorServiceFactory;
  *
  * @author dvd.smnt
  * @since 1.2.6
- * @version $Id: $
+ * @version $Id$
  */
 public class ReadAheadInputStream extends InputStreamFromOutputStream<Void> {
 	private final InputStream source;

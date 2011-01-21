@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Davide Simonetti
  * @since 1.0.2
- * @version $Id: $
+ * @version $Id$
  */
 public final class ExecutorServiceFactory {
 

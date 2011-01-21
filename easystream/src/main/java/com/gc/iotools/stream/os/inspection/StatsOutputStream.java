@@ -31,7 +31,7 @@ import com.gc.iotools.stream.utils.StreamUtils;
  *
  * @author dvd.smnt
  * @since 1.2.6
- * @version $Id: $
+ * @version $Id$
  */
 public class StatsOutputStream extends OutputStream {
 

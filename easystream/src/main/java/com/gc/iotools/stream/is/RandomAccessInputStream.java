@@ -47,7 +47,7 @@ import com.gc.iotools.stream.store.ThresholdStore;
  * @author dvd.smnt
  * @see Store
  * @since 1.2.0
- * @version $Id: $
+ * @version $Id$
  */
 public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	/**

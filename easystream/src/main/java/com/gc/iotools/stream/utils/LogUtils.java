@@ -9,7 +9,7 @@ package com.gc.iotools.stream.utils;
  *
  * @author dvd.smnt
  * @since 1.0.9
- * @version $Id: $
+ * @version $Id$
  */
 public final class LogUtils {
 	/**

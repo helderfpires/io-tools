@@ -10,7 +10,7 @@ package com.gc.iotools.stream.store;
  *
  * @author dvd.smnt
  * @since 1.2.0
- * @version $Id: $
+ * @version $Id$
  */
 public class MemoryStore implements SeekableStore {
 	private byte[] buffer = new byte[0];

@@ -8,7 +8,7 @@ package com.gc.iotools.stream.base;
  * EasyStream constant values.
  *
  * @author gcontini
- * @version $Id: $
+ * @version $Id$
  */
 public final class EasyStreamConstants {
 	/**

@@ -10,7 +10,7 @@ import java.io.IOException;
  * <p>OnOffStore class.</p>
  *
  * @author gcontini
- * @version $Id: $
+ * @version $Id$
  */
 public class OnOffStore implements SeekableStore {
 	private boolean canEnable = true;

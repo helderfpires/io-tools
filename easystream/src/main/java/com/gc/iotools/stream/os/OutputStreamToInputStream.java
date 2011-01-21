@@ -96,7 +96,7 @@ import com.gc.iotools.stream.utils.LogUtils;
  *            thread has finished.
  * @since 1.0
  * @author dvd.smnt
- * @version $Id: $
+ * @version $Id$
  */
 public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	/**

@@ -79,7 +79,7 @@ import com.gc.iotools.stream.utils.LogUtils;
  * @see ExecutionModel
  * @author dvd.smnt
  * @since 1.0
- * @version $Id: $
+ * @version $Id$
  */
 public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	/**

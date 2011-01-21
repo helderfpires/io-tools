@@ -20,7 +20,7 @@ Main features are:
 		<version>1.2.10-SNAPSHOT</version>
 	</parent>
 	<name>EasyStream</name>
-	<url>http://code.google.com/p/io-tools/source/browse/www/easystream/</url>
+	<url>http://io-tools.googlecode.com/svn/www/easystream/</url>
 	<inceptionYear>2008</inceptionYear>
 	<issueManagement>
 		<system>GoogleIssues</system>

@@ -26,7 +26,7 @@ import java.io.InputStream;
  * @since 1.2.6
  * @param <T>
  *            Type of the InputStream passed in the constructor.
- * @version $Id: $
+ * @version $Id$
  */
 public class CloseOnceInputStream<T extends InputStream> extends
 		FilterInputStream {

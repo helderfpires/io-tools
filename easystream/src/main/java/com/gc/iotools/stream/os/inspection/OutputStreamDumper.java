@@ -41,7 +41,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
  *
  * @author dvd.smnt
  * @since 1.2.9
- * @version $Id: $
+ * @version $Id$
  */
 public class OutputStreamDumper<T extends OutputStream> extends
 		FilterOutputStream {

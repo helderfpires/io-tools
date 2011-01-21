@@ -96,7 +96,7 @@ import com.gc.iotools.stream.utils.LogUtils;
  *            thread has finished.
  * @since 1.2.7
  * @author dvd.smnt
- * @version $Id: 1 $
+ * @version $Id$
  */
 public abstract class WriterToReader<T> extends Writer {
 	/**

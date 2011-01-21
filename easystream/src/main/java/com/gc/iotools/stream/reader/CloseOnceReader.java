@@ -26,7 +26,7 @@ import java.nio.CharBuffer;
  * @since 1.2.7
  * @param <T>
  *            Type of the Reader passed in the constructor.
- * @version $Id: $
+ * @version $Id$
  */
 public class CloseOnceReader<T extends Reader> extends Reader {
 	private int closeCount = 0;
