@@ -77,7 +77,7 @@ import com.gc.iotools.stream.utils.LogUtils;
  * @see ExecutionModel
  * @author dvd.smnt
  * @since 1.2.7
- * @version $Id: $
+ * @version $Id$
  */
 public abstract class ReaderFromWriter<T> extends Reader {
 	/**

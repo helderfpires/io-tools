@@ -14,7 +14,7 @@ import java.io.IOException;
  * @author dvd.smnt
  * @since 1.2.0
  * @see com.gc.iotools.stream.is.RandomAccessInputStream
- * @version $Id: $
+ * @version $Id$
  */
 public interface Store {
 	/**

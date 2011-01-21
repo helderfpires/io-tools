@@ -15,7 +15,7 @@ import java.io.Reader;
  * @see java.io.Reader
  * @author dvd.smnt
  * @since 1.2.7
- * @version $Id: $
+ * @version $Id$
  */
 public class SizeLimitReader extends Reader {
 

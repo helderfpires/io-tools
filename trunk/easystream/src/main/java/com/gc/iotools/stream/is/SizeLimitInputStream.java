@@ -14,7 +14,7 @@ import java.io.InputStream;
  *
  * @author dvd.smnt
  * @since 1.2.0
- * @version $Id: $
+ * @version $Id$
  */
 public class SizeLimitInputStream extends InputStream {
 

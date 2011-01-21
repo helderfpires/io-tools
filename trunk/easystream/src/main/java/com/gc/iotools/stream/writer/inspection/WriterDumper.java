@@ -40,7 +40,7 @@ import java.io.Writer;
  * 
  * @author dvd.smnt
  * @since 1.2.9
- * @version $Id: 1 $
+ * @version $Id$
  */
 public class WriterDumper<T extends Writer> extends FilterWriter {
 	/** Constant <code>INDEFINITE_SIZE=-1L</code> */

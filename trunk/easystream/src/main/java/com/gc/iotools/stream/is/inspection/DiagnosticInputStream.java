@@ -78,7 +78,7 @@ import com.gc.iotools.stream.utils.LogUtils;
  * @author dvd.msnt
  * @param <T>
  *            Type of the wrapped (contained) <code>InputStream</code>.
- * @version $Id: 1 $
+ * @version $Id$
  */
 public class DiagnosticInputStream<T extends InputStream> extends
 		FilterInputStream {

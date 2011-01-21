@@ -20,7 +20,7 @@ import com.gc.iotools.stream.utils.LogUtils;
  *
  * @author dvd.smnt
  * @since 1.2.0
- * @version $Id: $
+ * @version $Id$
  */
 public class ThresholdStore implements SeekableStore {
 	private static final int BUF_SIZE = 8192;

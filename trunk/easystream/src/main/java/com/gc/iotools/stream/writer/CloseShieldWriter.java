@@ -24,7 +24,7 @@ import java.io.Writer;
  * @since 1.2.8
  * @param <T>
  *            Type of the Writer passed in the constructor.
- * @version $Id: $
+ * @version $Id$
  */
 public class CloseShieldWriter<T extends Writer> extends Writer {
 	private int closeCount = 0;

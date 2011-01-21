@@ -15,7 +15,7 @@ import com.gc.iotools.stream.base.EasyStreamConstants;
  *
  * @author dvd.smnt
  * @since 1.0.9
- * @version $Id: $
+ * @version $Id$
  */
 public final class StreamUtils {
 	private static final double ONE_THOUSAND = 1000D;

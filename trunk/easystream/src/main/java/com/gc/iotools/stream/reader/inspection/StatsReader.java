@@ -53,7 +53,7 @@ import com.gc.iotools.stream.utils.StreamUtils;
  *
  * @author dvd.smnt
  * @since 1.2.7
- * @version $Id: $
+ * @version $Id$
  */
 public class StatsReader extends Reader {
 

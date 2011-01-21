@@ -57,7 +57,7 @@ import com.gc.iotools.stream.base.EasyStreamConstants;
  * @see org.apache.commons.io.input.TeeReader
  * @author dvd.smnt
  * @since 1.2.7
- * @version $Id: $
+ * @version $Id$
  */
 public class TeeReaderWriter extends Reader {
 

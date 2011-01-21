@@ -32,7 +32,7 @@ import java.util.Arrays;
  *
  * @author dvd.smnt
  * @since 1.2.4
- * @version $Id: $
+ * @version $Id$
  */
 public class TeeOutputStream extends OutputStream {
 
