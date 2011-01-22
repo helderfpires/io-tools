@@ -1,0 +1,11 @@
+com.gc.iotools.stream.base
+com.gc.iotools.stream.is
+com.gc.iotools.stream.is.inspection
+com.gc.iotools.stream.os
+com.gc.iotools.stream.os.inspection
+com.gc.iotools.stream.reader
+com.gc.iotools.stream.reader.inspection
+com.gc.iotools.stream.store
+com.gc.iotools.stream.utils
+com.gc.iotools.stream.writer
+com.gc.iotools.stream.writer.inspection
