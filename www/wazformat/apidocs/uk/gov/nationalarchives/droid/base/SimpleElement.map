@@ -1,0 +1,14 @@
+<map id="G" name="G">
+<area shape="rect" id="c1924" href="../binFileReader/IdentificationFile.html" title="uk.gov.nationalarchives.droid.binFileReader.IdentificationFile" alt="" coords="15,113,131,138"/>
+<area shape="rect" id="c1926" href="./SimpleElement.html" title="uk.gov.nationalarchives.droid.base.SimpleElement" alt="" coords="780,17,889,42"/>
+<area shape="rect" id="c1928" href="./FileFormatHit.html" title="uk.gov.nationalarchives.droid.base.FileFormatHit" alt="" coords="175,113,275,138"/>
+<area shape="rect" id="c1929" href="../signatureFile/ByteSequence.html" title="uk.gov.nationalarchives.droid.signatureFile.ByteSequence" alt="" coords="319,113,425,138"/>
+<area shape="rect" id="c1930" href="../signatureFile/FileFormatCollection.html" title="uk.gov.nationalarchives.droid.signatureFile.FileFormatCollection" alt="" coords="469,113,611,138"/>
+<area shape="rect" id="c1931" href="../signatureFile/FileFormat.html" title="uk.gov.nationalarchives.droid.signatureFile.FileFormat" alt="" coords="656,113,739,138"/>
+<area shape="rect" id="c1932" href="../signatureFile/SubSequence.html" title="uk.gov.nationalarchives.droid.signatureFile.SubSequence" alt="" coords="784,113,885,138"/>
+<area shape="rect" id="c1934" href="../signatureFile/FFSignatureFile.html" title="uk.gov.nationalarchives.droid.signatureFile.FFSignatureFile" alt="" coords="930,113,1043,138"/>
+<area shape="rect" id="c1935" href="../signatureFile/SideFragment.html" title="uk.gov.nationalarchives.droid.signatureFile.SideFragment" alt="" coords="1088,113,1189,138"/>
+<area shape="rect" id="c1936" href="../signatureFile/Shift.html" title="uk.gov.nationalarchives.droid.signatureFile.Shift" alt="" coords="1236,113,1284,138"/>
+<area shape="rect" id="c1937" href="../signatureFile/InternalSignature.html" title="uk.gov.nationalarchives.droid.signatureFile.InternalSignature" alt="" coords="1330,113,1449,138"/>
+<area shape="rect" id="c1938" href="../signatureFile/InternalSignatureCollection.html" title="uk.gov.nationalarchives.droid.signatureFile.InternalSignatureCollection" alt="" coords="1493,113,1670,138"/>
+</map>

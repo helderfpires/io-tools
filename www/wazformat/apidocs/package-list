@@ -1,0 +1,10 @@
+com.gc.iotools.fmt
+com.gc.iotools.fmt.base
+com.gc.iotools.fmt.decoders
+com.gc.iotools.fmt.detect.droid
+com.gc.iotools.fmt.detect.wzf
+com.gc.iotools.fmt.detect.wzf.custom
+uk.gov.nationalarchives.droid.base
+uk.gov.nationalarchives.droid.binFileReader
+uk.gov.nationalarchives.droid.signatureFile
+uk.gov.nationalarchives.droid.xmlReader

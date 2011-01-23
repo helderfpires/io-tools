@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="c196" href="./DetectionLibrary.html" title="com.gc.iotools.fmt.base.DetectionLibrary" alt="" coords="38,11,154,53"/>
+<area shape="rect" id="c197" href="./AbstractFormatDetector.html" title="com.gc.iotools.fmt.base.AbstractFormatDetector" alt="" coords="15,118,177,143"/>
+<area shape="rect" id="c198" href="./Decoder.html" title="com.gc.iotools.fmt.base.Decoder" alt="" coords="199,11,284,53"/>
+<area shape="rect" id="c199" href="./TestUtils.html" title="com.gc.iotools.fmt.base.TestUtils" alt="" coords="329,19,402,45"/>
+<area shape="rect" id="c200" href="./FormatInfo.html" title="com.gc.iotools.fmt.base.FormatInfo" alt="" coords="446,19,530,45"/>
+<area shape="rect" id="c201" href="./FormatId.html" title="com.gc.iotools.fmt.base.FormatId" alt="" coords="574,19,647,45"/>
+<area shape="rect" id="c202" href="./FormatEnum.html" title="com.gc.iotools.fmt.base.FormatEnum" alt="" coords="692,19,788,45"/>
+<area shape="rect" id="c203" href="./ResettableInputStream.html" title="com.gc.iotools.fmt.base.ResettableInputStream" alt="" coords="833,19,988,45"/>
+</map>

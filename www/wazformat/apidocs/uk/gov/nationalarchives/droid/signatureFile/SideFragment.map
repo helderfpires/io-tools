@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="c2340" href="../base/SimpleElement.html" title="uk.gov.nationalarchives.droid.base.SimpleElement" alt="" coords="83,17,192,42"/>
+<area shape="rect" id="c2349" href="./SideFragment.html" title="uk.gov.nationalarchives.droid.signatureFile.SideFragment" alt="" coords="87,113,188,138"/>
+<area shape="rect" id="c2353" href="./LeftFragment.html" title="uk.gov.nationalarchives.droid.signatureFile.LeftFragment" alt="" coords="15,209,113,234"/>
+<area shape="rect" id="c2354" href="./RightFragment.html" title="uk.gov.nationalarchives.droid.signatureFile.RightFragment" alt="" coords="157,209,264,234"/>
+</map>

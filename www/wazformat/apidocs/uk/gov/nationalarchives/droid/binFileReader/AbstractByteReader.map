@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="c1689" href="./ByteReader.html" title="uk.gov.nationalarchives.droid.binFileReader.ByteReader" alt="" coords="157,11,246,53"/>
+<area shape="rect" id="c1690" href="./AbstractByteReader.html" title="uk.gov.nationalarchives.droid.binFileReader.AbstractByteReader" alt="" coords="132,118,271,143"/>
+<area shape="rect" id="c1691" href="./RandomAccessByteReader.html" title="uk.gov.nationalarchives.droid.binFileReader.RandomAccessByteReader" alt="" coords="15,214,198,239"/>
+<area shape="rect" id="c1692" href="./FileByteReader.html" title="uk.gov.nationalarchives.droid.binFileReader.FileByteReader" alt="" coords="242,214,353,239"/>
+</map>

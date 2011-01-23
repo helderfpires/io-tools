@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="c1064" href="../detect/droid/DroidDetectorImpl.html" title="com.gc.iotools.fmt.detect.droid.DroidDetectorImpl" alt="" coords="15,118,142,143"/>
+<area shape="rect" id="c1065" href="../detect/wzf/StreamDetectorImpl.html" title="com.gc.iotools.fmt.detect.wzf.StreamDetectorImpl" alt="" coords="186,118,323,143"/>
+<area shape="rect" id="c1076" href="./DetectionLibrary.html" title="com.gc.iotools.fmt.base.DetectionLibrary" alt="" coords="197,11,313,53"/>
+<area shape="rect" id="c1077" href="./AbstractFormatDetector.html" title="com.gc.iotools.fmt.base.AbstractFormatDetector" alt="" coords="367,118,529,143"/>
+</map>

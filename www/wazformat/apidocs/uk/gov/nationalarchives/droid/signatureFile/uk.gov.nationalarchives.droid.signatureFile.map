@@ -1,0 +1,14 @@
+<map id="G" name="G">
+<area shape="rect" id="c401" href="./ByteSequence.html" title="uk.gov.nationalarchives.droid.signatureFile.ByteSequence" alt="" coords="15,17,121,42"/>
+<area shape="rect" id="c402" href="./FileFormatCollection.html" title="uk.gov.nationalarchives.droid.signatureFile.FileFormatCollection" alt="" coords="165,17,307,42"/>
+<area shape="rect" id="c403" href="./FileFormat.html" title="uk.gov.nationalarchives.droid.signatureFile.FileFormat" alt="" coords="352,17,435,42"/>
+<area shape="rect" id="c404" href="./SubSequence.html" title="uk.gov.nationalarchives.droid.signatureFile.SubSequence" alt="" coords="480,17,581,42"/>
+<area shape="rect" id="c405" href="./ByteSeqSpecifier.html" title="uk.gov.nationalarchives.droid.signatureFile.ByteSeqSpecifier" alt="" coords="626,17,747,42"/>
+<area shape="rect" id="c406" href="./FFSignatureFile.html" title="uk.gov.nationalarchives.droid.signatureFile.FFSignatureFile" alt="" coords="791,17,905,42"/>
+<area shape="rect" id="c407" href="./SideFragment.html" title="uk.gov.nationalarchives.droid.signatureFile.SideFragment" alt="" coords="949,17,1051,42"/>
+<area shape="rect" id="c411" href="./LeftFragment.html" title="uk.gov.nationalarchives.droid.signatureFile.LeftFragment" alt="" coords="878,113,975,138"/>
+<area shape="rect" id="c412" href="./RightFragment.html" title="uk.gov.nationalarchives.droid.signatureFile.RightFragment" alt="" coords="1020,113,1127,138"/>
+<area shape="rect" id="c408" href="./Shift.html" title="uk.gov.nationalarchives.droid.signatureFile.Shift" alt="" coords="1097,17,1145,42"/>
+<area shape="rect" id="c409" href="./InternalSignature.html" title="uk.gov.nationalarchives.droid.signatureFile.InternalSignature" alt="" coords="1191,17,1310,42"/>
+<area shape="rect" id="c410" href="./InternalSignatureCollection.html" title="uk.gov.nationalarchives.droid.signatureFile.InternalSignatureCollection" alt="" coords="1354,17,1531,42"/>
+</map>
