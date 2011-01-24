@@ -89,7 +89,7 @@ For further information see the [http://io-tools.googlecode.com/svn/www/easystre
 
 Two main classes in this section: `StatsInputStream` and `StatsOutputStream`
 
-=== [http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/is/StatsInputStream.html StatsInputStream] ===
+=== [http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/is/inspection/StatsInputStream.html StatsInputStream] ===
 Gathers statistics of the !InputStream passed in the constructor. It can be used to: 
  * determine the size of the read data 
  * the time spent reading from the internal !InputStream.
@@ -104,7 +104,7 @@ long size = srIstream.getSize();
 String bitRate = srIstream.getBitRateString();
 }}}
 
-=== [http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/os/StatsOutputStream.html StatsOutputStream] ===
+=== [http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/os/inspection/StatsOutputStream.html StatsOutputStream] ===
 Gathers statistics of the !OutputStream passed in the constructor. It can be used to determine the number of bytes written or the time spent writing to the !OutputStream.
 {{{
 StatsOutputStream srStream = new StatsOutputStream(originalStream);
