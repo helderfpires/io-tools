@@ -58,7 +58,7 @@ final class DetectionStrategy {
 								.getDetectedFormats()));
 					}
 				} catch (final Exception e) {
-					LOG.warn("deterctor [" + detectionLibrary
+					LOG.debug("detector [" + detectionLibrary
 							+ "] threw exception", e);
 				}
 				stream.resetToBeginning();
