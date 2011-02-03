@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,28 +44,30 @@ import com.gc.iotools.stream.utils.LogUtils;
  * </ul>
  */
 public class GuessInputStream extends InputStream {
-	public static final Collection<Decoder> DEFAULT_DECODERS = new HashSet<Decoder>();
+	public static final Map<FormatEnum, Decoder> DEFAULT_DECODERS = new HashMap<FormatEnum, Decoder>();
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(GuessInputStream.class);
 
 	static {
-		DEFAULT_DECODERS.add(new Base64Decoder());
-		DEFAULT_DECODERS.add(new GzipDecoder());
-		DEFAULT_DECODERS.add(new Pkcs7Decoder());
+		DEFAULT_DECODERS.put(FormatEnum.BASE64, new Base64Decoder());
+		DEFAULT_DECODERS.put(FormatEnum.GZ,new GzipDecoder());
+		DEFAULT_DECODERS.put(FormatEnum.PKCS7,new Pkcs7Decoder());
 	}
 
 	public static void addDefaultDecoder(final Decoder decoder) {
 		if (decoder == null) {
 			throw new IllegalArgumentException("decoder is null");
 		}
-		DEFAULT_DECODERS.add(decoder);
+		DEFAULT_DECODERS.put(decoder.getFormat(), decoder);
 	}
 
 	public static void addDefaultDecoders(final Decoder[] decoders) {
 		if (decoders == null) {
 			throw new IllegalArgumentException("decoders array is null");
 		}
-		DEFAULT_DECODERS.addAll(Arrays.asList(decoders));
+		for (Decoder decoder : decoders) {
+			addDefaultDecoder(decoder);
+		}
 	}
 
 	/**
@@ -77,9 +81,30 @@ public class GuessInputStream extends InputStream {
 		return getInstance(source, FormatEnum.values());
 	}
 
+	/**
+	 * <p>
+	 * Constructs a new GuessInputStream given a source InputStream.
+	 * </p>
+	 * <p>
+	 * Allow customization and addition of detected formats.
+	 * </p>
+	 * 
+	 * @param istream
+	 *            the InputStream to be identified.
+	 * @param clazz
+	 *            An enum that extends FormatEnum, allowing to detect extra
+	 *            formats.
+	 * @param droidSignatureFile
+	 *            A configuration file for the droid detection library. If
+	 *            null droid won't be used.
+	 * @param streamConfigFile
+	 *            A configuration file for the internal detection library. If
+	 *            null the internal library won't be used.
+	 * @return
+	 */
 	public static GuessInputStream getInstance(final InputStream istream,
-			final Class<?> clazz, final String droidSignatureFile,
-			final String streamConfigFile) {
+			final Class<? extends FormatEnum> clazz,
+			final String droidSignatureFile, final String streamConfigFile) {
 		if ((droidSignatureFile == null) && (streamConfigFile == null)) {
 			throw new IllegalArgumentException(
 					"both configuration files are null.");
@@ -97,7 +122,7 @@ public class GuessInputStream extends InputStream {
 		}
 		return getInstance(istream, null,
 				detectionLibraries.toArray(new DetectionLibrary[0]),
-				DEFAULT_DECODERS.toArray(new Decoder[0]));
+				DEFAULT_DECODERS.values().toArray(new Decoder[0]));
 	}
 
 	// private static final Loggerger LOGGER = LoggerFactoryger
@@ -120,7 +145,7 @@ public class GuessInputStream extends InputStream {
 		detectionLibraries.add(new DroidDetectorImpl());
 		return getInstance(source, enabledFormats,
 				detectionLibraries.toArray(new DetectionLibrary[0]),
-				DEFAULT_DECODERS.toArray(new Decoder[0]));
+				DEFAULT_DECODERS.values().toArray(new Decoder[0]));
 	}
 
 	public static GuessInputStream getInstance(final InputStream stream,
