@@ -44,23 +44,23 @@ public class SubSequence extends SimpleElement {
 
 	static boolean showProgress = false;
 	private boolean bigEndian = true;
-	byte[] byteSequence;
+	private byte[] byteSequence;
 
-	List<LeftFragment> leftFragments = new ArrayList<LeftFragment>();
+	private List<LeftFragment> leftFragments = new ArrayList<LeftFragment>();
 
-	int maxSeqOffset = 0;
-	int minFragLength;
-	int minSeqOffset = 0;
-	List<List<SideFragment>> orderedLeftFragments = new ArrayList<List<SideFragment>>();
-	List<List<SideFragment>> orderedRightFragments = new ArrayList<List<SideFragment>>();
+	private int maxSeqOffset = 0;
+	private int minFragLength;
+	private int minSeqOffset = 0;
+	private List<List<SideFragment>> orderedLeftFragments = new ArrayList<List<SideFragment>>();
+	private List<List<SideFragment>> orderedRightFragments = new ArrayList<List<SideFragment>>();
 	private ByteSequence parentByteSequence;
 	private int parentSignature;
-	int position;
+	private int position;
 	private String reference;
-	List<RightFragment> rightFragments = new ArrayList<RightFragment>();
-	String sequence;
+	private List<RightFragment> rightFragments = new ArrayList<RightFragment>();
+	private String sequence;
 	// shiftFunction shift;
-	long[] shiftFunction = new long[256];
+	private long[] shiftFunction = new long[256];
 
 	/* setters */
 	public void addLeftFragment(final LeftFragment lf) {
@@ -486,7 +486,8 @@ public class SubSequence extends SimpleElement {
 		return this.parentByteSequence;
 	}
 
-	public SideFragment getFragment(final boolean leftFrag,
+// TODO from UCDetector: Change visibility of Method "SubSequence.getFragment(boolean,int,int)" to private
+	public SideFragment getFragment(final boolean leftFrag, // NO_UCD
 			final int thePosition, final int theIndex) {
 		if (leftFrag) {
 			return (SideFragment) ((ArrayList) this.orderedLeftFragments
@@ -558,7 +559,8 @@ public class SubSequence extends SimpleElement {
 		return this.minSeqOffset;
 	}
 
-	public int getNumAlternativeFragments(final boolean leftFrag,
+// TODO from UCDetector: Change visibility of Method "SubSequence.getNumAlternativeFragments(boolean,int)" to private
+	public int getNumAlternativeFragments(final boolean leftFrag, // NO_UCD
 			final int thePosition) {
 		if (leftFrag) {
 			return ((ArrayList) this.orderedLeftFragments
@@ -574,7 +576,8 @@ public class SubSequence extends SimpleElement {
 	}
 
 	/* getters */
-	public int getNumFragmentPositions(final boolean leftFrag) {
+// TODO from UCDetector: Change visibility of Method "SubSequence.getNumFragmentPositions(boolean)" to private
+	public int getNumFragmentPositions(final boolean leftFrag) { // NO_UCD
 		if (leftFrag) {
 			return this.orderedLeftFragments.size();
 		} else {
@@ -595,11 +598,13 @@ public class SubSequence extends SimpleElement {
 		return this.position;
 	}
 
-	public LeftFragment getRawLeftFragment(final int theIndex) {
+// TODO from UCDetector: Change visibility of Method "SubSequence.getRawLeftFragment(int)" to private
+	public LeftFragment getRawLeftFragment(final int theIndex) { // NO_UCD
 		return this.leftFragments.get(theIndex);
 	}
 
-	public RightFragment getRawRightFragment(final int theIndex) {
+// TODO from UCDetector: Change visibility of Method "SubSequence.getRawRightFragment(int)" to private
+	public RightFragment getRawRightFragment(final int theIndex) { // NO_UCD
 		return this.rightFragments.get(theIndex);
 	}
 
@@ -651,7 +656,7 @@ public class SubSequence extends SimpleElement {
 	 * @param bigEndian
 	 *            True iff our parent signature is big-endian
 	 */
-	public boolean isFoundAfterFileMarker(final ByteReader targetFile,
+	protected boolean isFoundAfterFileMarker(final ByteReader targetFile,
 			final boolean reverseOrder, final boolean bigEndian) {
 		boolean subSeqFound = false;
 		try {
@@ -813,7 +818,7 @@ public class SubSequence extends SimpleElement {
 	 * @param bigEndian
 	 *            True iff our parent signature is big-endian
 	 */
-	public boolean isFoundAtStartOfFile(final ByteReader targetFile,
+	protected boolean isFoundAtStartOfFile(final ByteReader targetFile,
 			final boolean reverseOrder, final boolean bigEndian) {
 
 		try {
@@ -1065,7 +1070,7 @@ public class SubSequence extends SimpleElement {
 	 * order this method must be after the signature file has been parsed and
 	 * before running any file identifications
 	 */
-	public void prepareSeqFragments() {
+	protected void prepareSeqFragments() {
 
 		/* Left fragments */
 		// Determine the number of fragment subsequences there are

@@ -44,7 +44,7 @@ public final class StreamDetectorImpl implements DetectionLibrary {
 		this("deflen.properties", FormatEnum.class);
 	}
 
-	public StreamDetectorImpl(final String confFile, final Class<?> enumclass) {
+	public StreamDetectorImpl(final String confFile, final Class<? extends FormatEnum> enumclass) {
 		final DefiniteModuleFactory dfmf = new DefiniteModuleFactory(
 				confFile, enumclass);
 		this.configuredModules = dfmf.getConfiguredModules();

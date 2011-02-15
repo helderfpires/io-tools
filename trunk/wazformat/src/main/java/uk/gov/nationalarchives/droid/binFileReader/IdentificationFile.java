@@ -148,7 +148,7 @@ public class IdentificationFile extends SimpleElement implements Comparable {
 	 * @param hit
 	 *            file format hit found
 	 */
-	public void addHit(final FileFormatHit hit) {
+	protected void addHit(final FileFormatHit hit) {
 		this.fileHits.add(hit);
 	}
 
@@ -229,7 +229,7 @@ public class IdentificationFile extends SimpleElement implements Comparable {
 	 * Returns a hit object associated with the file that has been run through
 	 * the identification process
 	 */
-	public FileFormatHit getHit(final int theIndex) {
+	protected FileFormatHit getHit(final int theIndex) {
 		return this.fileHits.get(theIndex);
 	}
 
@@ -275,7 +275,7 @@ public class IdentificationFile extends SimpleElement implements Comparable {
 	 * @param index
 	 *            position in hit list of file
 	 */
-	public void removeHit(final int index) {
+	protected void removeHit(final int index) {
 		this.fileHits.remove(index);
 	}
 
@@ -327,7 +327,7 @@ public class IdentificationFile extends SimpleElement implements Comparable {
 	/**
 	 * Sets the status to error during identification
 	 */
-	public void setErrorIdent() {
+	protected void setErrorIdent() {
 		this.myIDStatus = DroidConstants.FILE_CLASSIFICATION_ERROR;
 	}
 
@@ -354,21 +354,21 @@ public class IdentificationFile extends SimpleElement implements Comparable {
 	/**
 	 * Sets the status to not identified
 	 */
-	public void setNoIdent() {
+	protected void setNoIdent() {
 		this.myIDStatus = DroidConstants.FILE_CLASSIFICATION_NOHIT;
 	}
 
 	/**
 	 * Sets the file status to Postive
 	 */
-	public void setPositiveIdent() {
+	protected void setPositiveIdent() {
 		this.myIDStatus = DroidConstants.FILE_CLASSIFICATION_POSITIVE;
 	}
 
 	/**
 	 * Sets the file status to tentitive
 	 */
-	public void setTentativeIdent() {
+	protected void setTentativeIdent() {
 		this.myIDStatus = DroidConstants.FILE_CLASSIFICATION_TENTATIVE;
 	}
 

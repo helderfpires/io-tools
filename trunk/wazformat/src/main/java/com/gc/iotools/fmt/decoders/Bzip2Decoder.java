@@ -33,7 +33,7 @@ public class Bzip2Decoder implements Decoder {
 	 * {@inheritDoc}
 	 */
 	public FormatEnum getFormat() {
-		return FormatEnum.GZ;
+		return FormatEnum.BZIP2;
 	}
 
 }

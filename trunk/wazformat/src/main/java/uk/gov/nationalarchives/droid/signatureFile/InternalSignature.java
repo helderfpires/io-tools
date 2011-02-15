@@ -50,11 +50,11 @@ public class InternalSignature extends SimpleElement {
 		this.byteSequences.add(byteSequence);
 	}
 
-	public void addFileFormat(final FileFormat theFileFormat) {
+	protected void addFileFormat(final FileFormat theFileFormat) {
 		this.fileFormatList.add(theFileFormat);
 	}
 
-	public ByteSequence getByteSequence(final int theByteSeq) {
+	protected ByteSequence getByteSequence(final int theByteSeq) {
 		return (ByteSequence) getByteSequences().get(theByteSeq);
 	}
 
@@ -63,7 +63,7 @@ public class InternalSignature extends SimpleElement {
 		return this.byteSequences;
 	}
 
-	public FileFormat getFileFormat(final int theIndex) {
+	protected FileFormat getFileFormat(final int theIndex) {
 		return this.fileFormatList.get(theIndex);
 	}
 
@@ -89,7 +89,7 @@ public class InternalSignature extends SimpleElement {
 	 * @param targetFile
 	 *            the binary file to be identified
 	 */
-	public boolean isFileCompliant(final ByteReader targetFile) {
+	protected boolean isFileCompliant(final ByteReader targetFile) {
 		// initialise variable
 		boolean isCompliant = true;
 		// check each byte sequence in turn - stop as soon as one is found to
@@ -111,7 +111,7 @@ public class InternalSignature extends SimpleElement {
 	 * 
 	 * @param byteSequences
 	 */
-	public void resetByteSequences(final List<ByteSequence> byteSequences) {
+	protected void resetByteSequences(final List<ByteSequence> byteSequences) {
 		this.byteSequences = byteSequences;
 	}
 

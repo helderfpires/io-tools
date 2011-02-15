@@ -53,7 +53,7 @@ public class ByteSeqSpecifier {
 	 *            representation of the bytes specifier. This will be altered
 	 *            so that this initial portion is removed.
 	 */
-	public ByteSeqSpecifier(final StringBuffer asciiRep) throws Exception {
+	protected ByteSeqSpecifier(final StringBuffer asciiRep) throws Exception {
 		String specifier; // The string of characters defining the bytes
 		// specifier (excluding any square brackets)
 
@@ -143,7 +143,7 @@ public class ByteSeqSpecifier {
 	 *         byte sequence (here) to find out how minSeq and maxSeq should
 	 *         be interpreted.
 	 */
-	public boolean matchesByteSequence(final ByteReader file, long startPos,
+	protected boolean matchesByteSequence(final ByteReader file, long startPos,
 			int direction, final boolean bigEndian) {
 		try {
 			// We have to perform the comparison from big-end to little-end.

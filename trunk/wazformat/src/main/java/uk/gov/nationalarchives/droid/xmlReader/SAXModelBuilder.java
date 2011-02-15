@@ -60,20 +60,20 @@ import uk.gov.nationalarchives.droid.base.SimpleElement;
  * @version 4.0.0
  */
 public class SAXModelBuilder extends DefaultHandler {
-	Stack stack = new Stack();
-	SimpleElement element;
-	String myObjectPackage = "uk.gov.nationalarchives.droid.signatureFile";
+	private Stack<SimpleElement> stack = new Stack<SimpleElement>();
+	private SimpleElement element;
+	private String myObjectPackage = "uk.gov.nationalarchives.droid.signatureFile";
 	StringBuffer textBuffer;
-	String namespace = "";
-	boolean useNamespace = false;
-	boolean allowGlobalNamespace = true;
+	private String namespace = "";
+	private boolean useNamespace = false;
+	private boolean allowGlobalNamespace = true;
 
 	@Override
 	public void characters(final char[] ch, final int start, final int len) {
 		if (!this.stack.empty()) { // Ignore character data if we don't have an
 			// element to put it in.
 			final String text = new String(ch, start, len);
-			((SimpleElement) (this.stack.peek())).setText(text);
+			(this.stack.peek()).setText(text);
 		}
 	}
 
@@ -84,7 +84,7 @@ public class SAXModelBuilder extends DefaultHandler {
 		if (elementName == null) {
 			return;
 		}
-		this.element = (SimpleElement) this.stack.pop();
+		this.element = this.stack.pop();
 		this.element.completeElementContent();
 		if (!this.stack.empty()) {
 			try {

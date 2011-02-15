@@ -94,13 +94,13 @@
 			</dependency>
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
-				<artifactId>bcprov-jdk15</artifactId>
+				<artifactId>bcprov-jdk16</artifactId>
 				<version>1.45</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
-				<artifactId>bcmail-jdk15</artifactId>
+				<artifactId>bcmail-jdk16</artifactId>
 				<version>1.45</version>
 				<type>jar</type>
 			</dependency>
@@ -114,7 +114,6 @@
 				<groupId>stax</groupId>
 				<artifactId>stax</artifactId>
 				<version>1.2.0</version>
-				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>commons-io</groupId>

@@ -65,7 +65,7 @@ public class SideFragment extends SimpleElement {
 
 	}
 
-	public ByteSeqSpecifier getByteSeqSpecifier(final int index) {
+	protected ByteSeqSpecifier getByteSeqSpecifier(final int index) {
 		return (this.myByteSpecifierSequence.get(index));
 	}
 

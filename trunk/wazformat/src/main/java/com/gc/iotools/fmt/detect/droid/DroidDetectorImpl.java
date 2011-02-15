@@ -49,11 +49,11 @@ public class DroidDetectorImpl implements DetectionLibrary {
 	/**
 	 * Namespace for the xml file format signatures file.
 	 */
-	public static final String SIGNATURE_FILE_NS = "http://www.nationalarchives.gov.uk/pronom/SignatureFile";
+	private static final String SIGNATURE_FILE_NS = "http://www.nationalarchives.gov.uk/pronom/SignatureFile";
 	private static final String SIGNATURE_FILE = "DROID_SignatureFile_V18.xml";
 	private static final String MAPPING_FILE = "mapping.properties";
 
-	private final Class<?> formatEnumClass;
+	private final Class<? extends FormatEnum> formatEnumClass;
 	private static final Map<String, FFSignatureFile> CONF_MAP = new HashMap<String, FFSignatureFile>();
 	private final String configFile;
 
@@ -65,9 +65,9 @@ public class DroidDetectorImpl implements DetectionLibrary {
 		this(FormatEnum.class, SIGNATURE_FILE, MAPPING_FILE);
 	}
 
-	public DroidDetectorImpl(final Class<?> formatEnumClass,
+	public DroidDetectorImpl(final Class<? extends FormatEnum> formatEnumClass,
 			final String signatureFile, final String mappingFileStr) {
-		final Class<?> clazz = (formatEnumClass == null ? FormatEnum.class
+		final Class<? extends FormatEnum> clazz = (formatEnumClass == null ? FormatEnum.class
 				: formatEnumClass);
 		if (!(FormatEnum.class.isAssignableFrom(clazz))) {
 			throw new IllegalArgumentException(" [" + formatEnumClass

@@ -58,7 +58,8 @@ import uk.gov.nationalarchives.droid.base.FileFormatHit;
  * 
  * @author linb
  */
-public abstract class AbstractByteReader implements ByteReader {
+// TODO from UCDetector: Change visibility of Class "AbstractByteReader" to default - May cause compile errors!
+public abstract class AbstractByteReader implements ByteReader { // NO_UCD
 
 	/**
 	 * Creates a ByteReader object, and depending on the readFile setting, it

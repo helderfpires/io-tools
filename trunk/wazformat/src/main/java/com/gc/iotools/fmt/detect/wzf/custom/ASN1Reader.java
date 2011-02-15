@@ -13,7 +13,8 @@ import org.bouncycastle.asn1.DERObjectIdentifier;
  * @since 02/oct/08
  * @author dvd.smnt
  */
-public final class ASN1Reader {
+// TODO from UCDetector: Change visibility of Class "ASN1Reader" to default - May cause compile errors!
+public final class ASN1Reader { // NO_UCD
 	private static final int CONSTRUCTED = 32;
 	private static final int SEQUENCE = 16;
 
@@ -23,7 +24,7 @@ public final class ASN1Reader {
 
 	private InputStream istream = null;
 
-	public ASN1Reader(final InputStream istream) {
+	protected ASN1Reader(final InputStream istream) {
 		this.istream = istream;
 	}
 
@@ -35,7 +36,7 @@ public final class ASN1Reader {
 	 * @throws IOException
 	 * @throws FormatException
 	 */
-	public void check(final DERObjectIdentifier expectedObjIdentifier)
+	protected void check(final DERObjectIdentifier expectedObjIdentifier)
 			throws IOException, FormatException {
 		try {
 			readSequence(this.istream);

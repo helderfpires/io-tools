@@ -40,14 +40,14 @@ import com.gc.iotools.fmt.base.FormatId;
 
 public class DefiniteModuleFactory {
 	private static final String DEF_CONF = "deflen.properties";
-	private final Class<?> enumClazz;
+	private final Class<? extends FormatEnum> enumClazz;
 	private final DefiniteLengthModule[] modules;
 
 	DefiniteModuleFactory() {
 		this(DEF_CONF, FormatEnum.class);
 	}
 
-	DefiniteModuleFactory(final String confFile, final Class<?> enumClass) {
+	DefiniteModuleFactory(final String confFile, final Class<? extends FormatEnum> enumClass) {
 		this.enumClazz = (enumClass == null ? FormatEnum.class : enumClass);
 		final String confFile1 = (StringUtils.isBlank(confFile) ? DEF_CONF
 				: confFile);

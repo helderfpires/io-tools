@@ -44,14 +44,11 @@ import com.gc.iotools.fmt.detect.wzf.DefiniteLengthModule;
  * 
  * @author dvd.smnt
  */
-public class PKCS7Detector implements DefiniteLengthModule {
+public class PKCS7Detector implements DefiniteLengthModule { // NO_UCD
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(PKCS7Detector.class);
 
-	public PKCS7Detector() {
-
-	}
 
 	public boolean detect(final byte[] readBytes) {
 		final InputStream buffer = new ByteArrayInputStream(readBytes);
