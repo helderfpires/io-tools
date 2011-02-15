@@ -1,6 +1,6 @@
 package com.gc.iotools.fmt.detect.wzf.custom;
 
-class FormatException extends Exception {
+public class FormatException extends Exception {
 
 	/**
 	 * 
@@ -9,22 +9,15 @@ class FormatException extends Exception {
 
 	protected FormatException() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	protected FormatException(final String message) {
+	public FormatException(final String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
-	protected FormatException(final String message, final Throwable cause) {
+	public FormatException(final String message, final Throwable cause) {
 		super(message, cause);
-		// TODO Auto-generated constructor stub
 	}
 
-	protected FormatException(final Throwable cause) {
-		super(cause);
-		// TODO Auto-generated constructor stub
-	}
 
 }

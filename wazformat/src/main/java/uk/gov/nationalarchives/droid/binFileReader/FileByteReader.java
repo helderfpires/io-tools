@@ -64,13 +64,14 @@ import uk.gov.nationalarchives.droid.base.DroidConstants;
  * 
  * @author linb
  */
-public class FileByteReader extends AbstractByteReader {
+// TODO from UCDetector: Change visibility of Class "FileByteReader" to default - May cause compile errors!
+public class FileByteReader extends AbstractByteReader { // NO_UCD
 
 	private int randomFileBufferSize = DroidConstants.FILE_BUFFER_SIZE;
 
 	private boolean isRandomAccess = false;
 
-	protected byte[] fileBytes;
+	private byte[] fileBytes;
 	private long myNumBytes;
 
 	private long fileMarker;
@@ -94,7 +95,7 @@ public class FileByteReader extends AbstractByteReader {
 	 * @param readFile
 	 *            <code>true</code> if the file is to be read
 	 */
-	public FileByteReader(final IdentificationFile theIDFile,
+	protected FileByteReader(final IdentificationFile theIDFile,
 			final boolean readFile) {
 		this(theIDFile, readFile, theIDFile.getFilePath());
 	}

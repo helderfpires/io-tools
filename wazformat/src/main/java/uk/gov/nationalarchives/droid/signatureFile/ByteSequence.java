@@ -72,7 +72,7 @@ public class ByteSequence extends SimpleElement {
 
 	// public int getMaxOffset() { return MaxOffset; }
 
-	public SubSequence getSubSequence(final int theIndex) {
+	protected SubSequence getSubSequence(final int theIndex) {
 		return this.subSequences.get(theIndex);
 	}
 
@@ -102,7 +102,7 @@ public class ByteSequence extends SimpleElement {
 	 * @param targetFile
 	 *            The binary file to be identified
 	 */
-	public boolean isFileCompliant(final ByteReader targetFile) {
+	protected boolean isFileCompliant(final ByteReader targetFile) {
 		// System.out.println("Looking at new byte sequence with reference "+Reference);
 		// initialise variables and start with the file marker at the
 		// beginning

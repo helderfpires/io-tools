@@ -21,7 +21,7 @@ import uk.gov.nationalarchives.droid.base.SimpleElement;
  * @version 4.0.0
  */
 public class FileFormat extends SimpleElement {
-	List<String> extensions = new ArrayList<String>();
+	private List<String> extensions = new ArrayList<String>();
 	List<Integer> hasPriorityOver = new ArrayList<Integer>();
 	int identifier;
 	List<Integer> internalSigIDs = new ArrayList<Integer>();
@@ -30,11 +30,12 @@ public class FileFormat extends SimpleElement {
 	String PUID;
 	String version;
 
-	public String getExtension(final int theIndex) {
+// TODO from UCDetector: Change visibility of Method "FileFormat.getExtension(int)" to private
+	public String getExtension(final int theIndex) { // NO_UCD
 		return this.extensions.get(theIndex);
 	}
 
-	public int getHasPriorityOver(final int theIndex) {
+	protected int getHasPriorityOver(final int theIndex) {
 		return this.hasPriorityOver.get(theIndex);
 	}
 

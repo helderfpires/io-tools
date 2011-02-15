@@ -1,9 +1,10 @@
 package com.gc.iotools.fmt.base;
 
 /*
- * Copyright (c) 2008,2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008,2011 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
+
 import java.util.List;
 
 import org.apache.commons.lang.enums.Enum;
@@ -11,10 +12,9 @@ import org.apache.commons.lang.enums.ValuedEnum;
 
 /**
  * Enum of detected formats. Some format is "simple", some other is just a way
- * of encoding another kind of content.
- * 
- * If a user need to support a new format he must extend this class. It can't be
- * a Java 5 enum because (AFAIK) they can't be extended.
+ * of encoding another kind of content. If a user need to support a new format
+ * he must extend this class. It can't be a Java 5 enum because (AFAIK) they
+ * can't be extended.
  * <table>
  * <thead>
  * <tr>
@@ -62,8 +62,8 @@ import org.apache.commons.lang.enums.ValuedEnum;
  * <tr>
  * <td>BZIP2</td>
  * <td>This enum describes the
- * {@link <a href="http://en.wikipedia.org/wiki/Bzip2">BZIP2</a>}compressed file
- * format.</td>
+ * {@link <a href="http://en.wikipedia.org/wiki/Bzip2">BZIP2</a>}compressed
+ * file format.</td>
  * <td></td>
  * </tr>
  * <tr>
@@ -160,6 +160,12 @@ import org.apache.commons.lang.enums.ValuedEnum;
  * <tr>
  * <td>CLASS</td>
  * <td>Java Compiled Object Code</td>
+ * <td></td>
+ * </tr>
+ * <tr>
+ * <td>M7M</td>
+ * <td>M7M this enum describes a document signed and timestamped with Dike.
+ * It's a proprietary format used by Infocert digital signature software.</td>
  * <td></td>
  * </tr>
  * <tr>
@@ -323,6 +329,12 @@ import org.apache.commons.lang.enums.ValuedEnum;
  * <td>3, 4, 5, 6</td>
  * </tr>
  * <tr>
+ * <td>TSD</td>
+ * <td>This enum describes an RFC 5544 compliant TimeStampedData structure.</td>
+ * <td></td>
+ * </tr>
+ * <tr>
+ * <tr>
  * <td>WRL</td>
  * <td>Virtual Reality Modeling Language</td>
  * <td>1.0, 97</td>
@@ -411,22 +423,22 @@ public class FormatEnum extends ValuedEnum {
 	public static final FormatEnum AVI = new FormatEnum("AVI", AVI_INT);
 
 	/**
-	 * Constant integer for enum : BINARY_INTERCHANGE_FILE_FORMAT_BIFF_WORKBOOK
-	 * .
+	 * Constant integer for enum :
+	 * BINARY_INTERCHANGE_FILE_FORMAT_BIFF_WORKBOOK .
 	 */
 	public static final int BINARY_INTERCHANGE_FILE_FORMAT_BIFF_WORKBOOK_INT = 685;
 	/**
-	 * Enum : BINARY_INTERCHANGE_FILE_FORMAT_BIFF_WORKBOOK : this enum describes
-	 * format Binary Interchange File Format (BIFF) Workbook. Supported versions
-	 * :4W, 5, 7, 8, 8X
+	 * Enum : BINARY_INTERCHANGE_FILE_FORMAT_BIFF_WORKBOOK : this enum
+	 * describes format Binary Interchange File Format (BIFF) Workbook.
+	 * Supported versions :4W, 5, 7, 8, 8X
 	 */
 	public static final FormatEnum BINARY_INTERCHANGE_FILE_FORMAT_BIFF_WORKBOOK = new FormatEnum(
 			"BINARY_INTERCHANGE_FILE_FORMAT_BIFF_WORKBOOK",
 			BINARY_INTERCHANGE_FILE_FORMAT_BIFF_WORKBOOK_INT);
 
 	/**
-	 * Constant integer for enum : BINARY_INTERCHANGE_FILE_FORMAT_BIFF_WORKSHEET
-	 * .
+	 * Constant integer for enum :
+	 * BINARY_INTERCHANGE_FILE_FORMAT_BIFF_WORKSHEET .
 	 */
 	public static final int BINARY_INTERCHANGE_FILE_FORMAT_BIFF_WORKSHEET_INT = 680;
 	/**
@@ -465,8 +477,8 @@ public class FormatEnum extends ValuedEnum {
 	public static final int BZIP2_INT = 102;
 	/**
 	 * Enum : BZIP2 : this enum describes the
-	 * {@link <a href="http://en.wikipedia.org/wiki/Bzip2">BZIP2</a>} compressed
-	 * file format.
+	 * {@link <a href="http://en.wikipedia.org/wiki/Bzip2">BZIP2</a>}
+	 * compressed file format.
 	 */
 	public static final FormatEnum BZIP2 = new FormatEnum("BZIP2", BZIP2_INT);
 	/**
@@ -504,10 +516,10 @@ public class FormatEnum extends ValuedEnum {
 	 */
 	public static final int DRAWING_INTERCHANGE_FILE_FORMAT_ASCII_INT = 766;
 	/**
-	 * Enum : DRAWING_INTERCHANGE_FILE_FORMAT_ASCII : this enum describes format
-	 * Drawing Interchange File Format (ASCII). Supported versions :1.0, 1.2,
-	 * 1.3, 1.4, 2.0, 2.1, 2.2, 2.5, 2.6, R9, R10, R11/12, R13, R14, 2000-2002,
-	 * 2004-2005, Generic
+	 * Enum : DRAWING_INTERCHANGE_FILE_FORMAT_ASCII : this enum describes
+	 * format Drawing Interchange File Format (ASCII). Supported versions
+	 * :1.0, 1.2, 1.3, 1.4, 2.0, 2.1, 2.2, 2.5, 2.6, R9, R10, R11/12, R13,
+	 * R14, 2000-2002, 2004-2005, Generic
 	 */
 	public static final FormatEnum DRAWING_INTERCHANGE_FILE_FORMAT_ASCII = new FormatEnum(
 			"DRAWING_INTERCHANGE_FILE_FORMAT_ASCII",
@@ -519,8 +531,8 @@ public class FormatEnum extends ValuedEnum {
 	public static final int DRAWING_INTERCHANGE_FILE_FORMAT_BINARY_INT = 744;
 	/**
 	 * Enum : DRAWING_INTERCHANGE_FILE_FORMAT_BINARY : this enum describes
-	 * format Drawing Interchange File Format (Binary). Supported versions :R10,
-	 * R11/12, R13, R14, 2000-2002, 2004-2005
+	 * format Drawing Interchange File Format (Binary). Supported versions
+	 * :R10, R11/12, R13, R14, 2000-2002, 2004-2005
 	 */
 	public static final FormatEnum DRAWING_INTERCHANGE_FILE_FORMAT_BINARY = new FormatEnum(
 			"DRAWING_INTERCHANGE_FILE_FORMAT_BINARY",
@@ -585,8 +597,9 @@ public class FormatEnum extends ValuedEnum {
 	 */
 	public static final int EXCHANGEABLE_IMAGE_FILE_FORMAT_AUDIO_INT = 750;
 	/**
-	 * Enum : EXCHANGEABLE_IMAGE_FILE_FORMAT_AUDIO : this enum describes format
-	 * Exchangeable Image File Format (Audio). Supported versions :2.1, 2.2, 2.0
+	 * Enum : EXCHANGEABLE_IMAGE_FILE_FORMAT_AUDIO : this enum describes
+	 * format Exchangeable Image File Format (Audio). Supported versions :2.1,
+	 * 2.2, 2.0
 	 */
 	public static final FormatEnum EXCHANGEABLE_IMAGE_FILE_FORMAT_AUDIO = new FormatEnum(
 			"EXCHANGEABLE_IMAGE_FILE_FORMAT_AUDIO",
@@ -606,13 +619,14 @@ public class FormatEnum extends ValuedEnum {
 			EXCHANGEABLE_IMAGE_FILE_FORMAT_COMPRESSED_INT);
 
 	/**
-	 * Constant integer for enum : EXCHANGEABLE_IMAGE_FILE_FORMAT_UNCOMPRESSED .
+	 * Constant integer for enum : EXCHANGEABLE_IMAGE_FILE_FORMAT_UNCOMPRESSED
+	 * .
 	 */
 	public static final int EXCHANGEABLE_IMAGE_FILE_FORMAT_UNCOMPRESSED_INT = 752;
 	/**
-	 * Enum : EXCHANGEABLE_IMAGE_FILE_FORMAT_UNCOMPRESSED : this enum describes
-	 * format Exchangeable Image File Format (Uncompressed). Supported versions
-	 * :2.2, 2.1, 2.0
+	 * Enum : EXCHANGEABLE_IMAGE_FILE_FORMAT_UNCOMPRESSED : this enum
+	 * describes format Exchangeable Image File Format (Uncompressed).
+	 * Supported versions :2.2, 2.1, 2.0
 	 */
 	public static final FormatEnum EXCHANGEABLE_IMAGE_FILE_FORMAT_UNCOMPRESSED = new FormatEnum(
 			"EXCHANGEABLE_IMAGE_FILE_FORMAT_UNCOMPRESSED",
@@ -643,7 +657,8 @@ public class FormatEnum extends ValuedEnum {
 	 */
 	public static final int FITS_INT = 657;
 	/**
-	 * Enum : FITS : this enum describes format Flexible Image Transport System.
+	 * Enum : FITS : this enum describes format Flexible Image Transport
+	 * System.
 	 */
 	public static final FormatEnum FITS = new FormatEnum("FITS", FITS_INT);
 
@@ -730,8 +745,8 @@ public class FormatEnum extends ValuedEnum {
 	 */
 	public static final int MSG_INT = 822;
 	/**
-	 * Enum : MSG : this enum describes format Microsoft Outlook Email Message.
-	 * Supported versions :97-2003
+	 * Enum : MSG : this enum describes format Microsoft Outlook Email
+	 * Message. Supported versions :97-2003
 	 */
 	public static final FormatEnum MSG = new FormatEnum("MSG", MSG_INT);
 
@@ -740,7 +755,8 @@ public class FormatEnum extends ValuedEnum {
 	 */
 	public static final int MS_DOS_EXECUTABLE_INT = 774;
 	/**
-	 * Enum : MS_DOS_EXECUTABLE : this enum describes format MS-DOS Executable.
+	 * Enum : MS_DOS_EXECUTABLE : this enum describes format MS-DOS
+	 * Executable.
 	 */
 	public static final FormatEnum MS_DOS_EXECUTABLE = new FormatEnum(
 			"MS_DOS_EXECUTABLE", MS_DOS_EXECUTABLE_INT);
@@ -780,8 +796,8 @@ public class FormatEnum extends ValuedEnum {
 	 */
 	public static final int ODP_INT = 781;
 	/**
-	 * Enum : ODP : this enum describes format OpenDocument Presentation Format.
-	 * Supported versions :1.0
+	 * Enum : ODP : this enum describes format OpenDocument Presentation
+	 * Format. Supported versions :1.0
 	 */
 	public static final FormatEnum ODP = new FormatEnum("ODP", ODP_INT);
 
@@ -790,8 +806,8 @@ public class FormatEnum extends ValuedEnum {
 	 */
 	public static final int ODS_INT = 780;
 	/**
-	 * Enum : ODS : this enum describes format OpenDocument Spreadsheet Format.
-	 * Supported versions :1.0
+	 * Enum : ODS : this enum describes format OpenDocument Spreadsheet
+	 * Format. Supported versions :1.0
 	 */
 	public static final FormatEnum ODS = new FormatEnum("ODS", ODS_INT);
 
@@ -833,8 +849,8 @@ public class FormatEnum extends ValuedEnum {
 	 */
 	public static final int PCX_INT = 625;
 	/**
-	 * Enum : PCX : this enum describes format PCX. Supported versions :0, 2, 3,
-	 * 4, 5
+	 * Enum : PCX : this enum describes format PCX. Supported versions :0, 2,
+	 * 3, 4, 5
 	 */
 	public static final FormatEnum PCX = new FormatEnum("PCX", PCX_INT);
 
@@ -922,8 +938,8 @@ public class FormatEnum extends ValuedEnum {
 	 */
 	public static final int STILL_PICTURE_INTERCHANGE_FILE_FORMAT_INT = 671;
 	/**
-	 * Enum : STILL_PICTURE_INTERCHANGE_FILE_FORMAT : this enum describes format
-	 * Still Picture Interchange File Format. Supported versions :1.0
+	 * Enum : STILL_PICTURE_INTERCHANGE_FILE_FORMAT : this enum describes
+	 * format Still Picture Interchange File Format. Supported versions :1.0
 	 */
 	public static final FormatEnum STILL_PICTURE_INTERCHANGE_FILE_FORMAT = new FormatEnum(
 			"STILL_PICTURE_INTERCHANGE_FILE_FORMAT",
@@ -1111,6 +1127,11 @@ public class FormatEnum extends ValuedEnum {
 			BASE64_INT);
 
 	public static final int M7M_INT = 300;
+	/**
+	 * Enum : M7M this enum describes a document signed and timestamped with
+	 * Dike. It's a proprietary format used by Infocert digital signature
+	 * software.
+	 */
 	public static final FormatEnum M7M = new FormatEnum("M7M", M7M_INT);
 
 	public static final int PEM_INT = 600;
@@ -1118,13 +1139,27 @@ public class FormatEnum extends ValuedEnum {
 	public static final int PKCS7_INT = 700;
 	public static final FormatEnum PKCS7 = new FormatEnum("PKCS7", PKCS7_INT);
 	public static final int TIMESTAMP_INT = 800;
+	/**
+	 * Enum : TIMESTAMP this enum describes an RFC 3161 compliant timestamp
+	 * response.
+	 */
 	public static final FormatEnum TIMESTAMP = new FormatEnum("TIMESTAMP",
 			TIMESTAMP_INT);
+	public final static int TSD_INT = 805;
+	/**
+	 * Enum : TSD this enum describes an RFC 5544 compliant TimeStampedData
+	 * structure.
+	 */
+	public static final FormatEnum TSD = new FormatEnum("TSD", TSD_INT);
 	public static final int UNKNOWN_INT = 900;
+	/**
+	 * This enum describes an unknown file format.
+	 */
 	public static final FormatEnum UNKNOWN = new FormatEnum("UNKNOWN",
 			UNKNOWN_INT);
 
-	public static FormatEnum getEnum(final Class clazz, final String name) {
+	public static FormatEnum getEnum(final Class<? extends FormatEnum> clazz,
+			final String name) {
 		return (FormatEnum) Enum.getEnum(clazz, name);
 	}
 
