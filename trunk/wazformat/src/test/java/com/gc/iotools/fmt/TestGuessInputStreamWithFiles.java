@@ -1,6 +1,7 @@
 package com.gc.iotools.fmt;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -25,7 +26,7 @@ public class TestGuessInputStreamWithFiles {
 			final String[] extensions) throws Exception {
 		URL url = TestDroidDetector.class.getResource("/testFiles");
 		final String path = url.getPath();
-		@SuppressWarnings("unchecked")
+		//@SuppressWarnings("unchecked")
 		Iterator<File> fiter = FileUtils.iterateFiles(new File(path),
 				extensions, false);
 		assertTrue("at least one file", fiter.hasNext());
@@ -65,6 +66,10 @@ public class TestGuessInputStreamWithFiles {
 		checkDetector(FormatEnum.DOC, new String[] { "doc" });
 	}
 
+	@org.junit.Test
+	public void testTsdDetector() throws Exception {
+		checkDetector(FormatEnum.TSD, new String[] { "tsd" });
+	}
 	@org.junit.Test
 	public void testGifDetectorModule() throws Exception {
 		checkDetector(FormatEnum.GIF, new String[] { "gif" });
