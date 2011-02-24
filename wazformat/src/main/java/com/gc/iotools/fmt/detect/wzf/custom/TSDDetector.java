@@ -3,7 +3,8 @@ package com.gc.iotools.fmt.detect.wzf.custom;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,10 +29,7 @@ public class TSDDetector implements DefiniteLengthModule {
 		boolean result = false;
 		try {
 			final ASN1Reader pkcsHdrRead = new ASN1Reader(buffer);
-			//TODO use the proper OID when BouncyCastle 1.46 will be released
-			final DERObjectIdentifier tsdOID = new DERObjectIdentifier(
-					"1.2.840.113549.1.9.16.1.31");
-			pkcsHdrRead.check(tsdOID);
+			pkcsHdrRead.check(PKCSObjectIdentifiers.id_ct_timestampedData);
 			result = true;
 		} catch (final Exception e) {
 			LOGGER.debug("TSD not recognized. Exception: [" + e.getMessage()

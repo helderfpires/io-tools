@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 
@@ -36,7 +37,7 @@ public final class ASN1Reader { // NO_UCD
 	 * @throws IOException
 	 * @throws FormatException
 	 */
-	protected void check(final DERObjectIdentifier expectedObjIdentifier)
+	protected void check(final ASN1ObjectIdentifier expectedObjIdentifier)
 			throws IOException, FormatException {
 		try {
 			readSequence(this.istream);
@@ -141,7 +142,7 @@ public final class ASN1Reader { // NO_UCD
 	}
 
 	private void readTagID(final InputStream is,
-			final DERObjectIdentifier expectedIdentifier) throws IOException,
+			final ASN1ObjectIdentifier expectedIdentifier) throws IOException,
 			FormatException {
 		final ASN1InputStream asn1Stream = new ASN1InputStream(is);
 		final DERObject doi = asn1Stream.readObject();

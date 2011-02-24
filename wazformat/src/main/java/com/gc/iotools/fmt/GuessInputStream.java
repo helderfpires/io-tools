@@ -25,6 +25,7 @@ import com.gc.iotools.fmt.decoders.Base64Decoder;
 import com.gc.iotools.fmt.decoders.Bzip2Decoder;
 import com.gc.iotools.fmt.decoders.GzipDecoder;
 import com.gc.iotools.fmt.decoders.Pkcs7Decoder;
+import com.gc.iotools.fmt.decoders.TSDDecoder;
 import com.gc.iotools.fmt.detect.droid.DroidDetectorImpl;
 import com.gc.iotools.fmt.detect.wzf.StreamDetectorImpl;
 import com.gc.iotools.stream.is.RandomAccessInputStream;
@@ -54,6 +55,7 @@ public class GuessInputStream extends InputStream {
 		DEFAULT_DECODERS.put(FormatEnum.BZIP2, new Bzip2Decoder());
 		DEFAULT_DECODERS.put(FormatEnum.GZ,new GzipDecoder());
 		DEFAULT_DECODERS.put(FormatEnum.PKCS7,new Pkcs7Decoder());
+		DEFAULT_DECODERS.put(FormatEnum.TSD,new TSDDecoder());
 	}
 
 	public static void addDefaultDecoder(final Decoder decoder) {
