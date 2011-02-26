@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
+  <wb-module deploy-name="io-tools">
+        <wb-resource deploy-path="/" source-path="/easystream/src/main/java"/>
+        <wb-resource deploy-path="/" source-path="/easystream/src/test/java"/>
+        <wb-resource deploy-path="/" source-path="/easystream/src/test/resources"/>
+        <wb-resource deploy-path="/" source-path="/wazformat/src/main/java"/>
+        <wb-resource deploy-path="/" source-path="/wazformat/src/test/java"/>
+        <wb-resource deploy-path="/" source-path="/wazformat/src/test/resources"/>
+  </wb-module>
+</project-modules>
