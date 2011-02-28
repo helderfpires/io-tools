@@ -12,12 +12,12 @@
 	<packaging>jar</packaging>
 	<name>WaZFormat</name>
 	<description>Format identification utilities</description>
-	<url>http://code.google.com/p/io-tools/source/browse/www/wazformat/</url>
+	<url>http://code.google.com/p/io-tools/source/browse/www/io-tools/wazformat/</url>
 	<inceptionYear>2008</inceptionYear>
 	<distributionManagement>
 		<site>
 			<id>googlecode.svn</id>
-			<url>scm:svn:https://io-tools.googlecode.com/svn/www/easystream</url>
+			<url>scm:svn:https://io-tools.googlecode.com/svn/www/io-tools/wazformat</url>
 		</site>
 	</distributionManagement>
 	<issueManagement>

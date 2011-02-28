@@ -7,6 +7,7 @@
 	<name>IO-Toools</name>
 	<inceptionYear>2008</inceptionYear>
 	<description>IO-tools utilites for stream and format detection</description>
+	<url>http://code.google.com/p/io-tools/source/browse/www/io-tools</url>
 	<scm>
 		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk</connection>
 		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk</developerConnection>
