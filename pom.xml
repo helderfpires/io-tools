@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>pom</packaging>
 	<groupId>net.sf.jsignature.io-tools</groupId>
@@ -48,7 +49,6 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>[4.8.2,)</version>
-			<type>jar</type>
 			<!-- scope provided for javadoc plugin -->
 			<scope>provided</scope>
 		</dependency>
@@ -59,14 +59,12 @@
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>4.8.2</version>
-				<type>jar</type>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.jmock</groupId>
 				<artifactId>jmock-junit4</artifactId>
 				<version>2.5.1</version>
-				<type>jar</type>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
@@ -84,36 +82,38 @@
 				<groupId>commons-collections</groupId>
 				<artifactId>commons-collections</artifactId>
 				<version>3.2.1</version>
-				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>commons-lang</groupId>
 				<artifactId>commons-lang</artifactId>
 				<version>2.5</version>
-				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcprov-jdk16</artifactId>
 				<version>1.46</version>
-				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcmail-jdk16</artifactId>
 				<version>1.46</version>
-				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.ant</groupId>
 				<artifactId>ant</artifactId>
 				<version>1.8.1</version>
-				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>stax</groupId>
 				<artifactId>stax</artifactId>
 				<version>1.2.0</version>
+			</dependency>
+			<dependency>
+				<groupId>stax</groupId>
+				<artifactId>stax-api</artifactId>
+				<version>1.0.1</version>
+				<!-- provided by 1.6 jvm -->
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>commons-io</groupId>
@@ -126,7 +126,7 @@
 				<version>1.4</version>
 			</dependency>
 			<!-- dependency> <groupId>net.sf.mime-util</groupId> <artifactId>mime-util</artifactId> 
-				<version>1.2</version> <type>jar</type> </dependency -->
+				<version>1.2</version> </dependency -->
 		</dependencies>
 	</dependencyManagement>
 	<build>
