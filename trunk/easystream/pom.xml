@@ -20,7 +20,7 @@ Main features are:
 		<version>1.2.11-SNAPSHOT</version>
 	</parent>
 	<name>EasyStream</name>
-	<url>http://io-tools.googlecode.com/svn/www/easystream/</url>
+	<url>http://io-tools.googlecode.com/svn/www/io-tools/easystream/</url>
 	<inceptionYear>2008</inceptionYear>
 	<issueManagement>
 		<system>GoogleIssues</system>
@@ -29,7 +29,7 @@ Main features are:
 	<distributionManagement>
 		<site>
 			<id>googlecode.svn</id>
-			<url>scm:svn:https://io-tools.googlecode.com/svn/www/easystream</url>
+			<url>scm:svn:https://io-tools.googlecode.com/svn/www/io-tools/easystream</url>
 		</site>
 	</distributionManagement>
 	<dependencies>
