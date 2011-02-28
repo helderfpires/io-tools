@@ -71,7 +71,7 @@ public final class XmlModule implements DefiniteLengthModule {
 	private static final int XML_GUESS_SIZE = 8192;
 
 	public boolean detect(final byte[] readBytes) {
-		final XMLInputFactory factory = XMLInputFactory.newInstance(
+		final XMLInputFactory factory = XMLInputFactory.newFactory(
 				MXParserFactory.class.getName(), XmlModule.class
 						.getClassLoader());
 		factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
