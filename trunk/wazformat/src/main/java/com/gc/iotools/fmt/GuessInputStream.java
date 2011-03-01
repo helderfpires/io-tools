@@ -51,27 +51,45 @@ public class GuessInputStream extends InputStream {
 			.getLogger(GuessInputStream.class);
 
 	static {
-		DEFAULT_DECODERS.put(FormatEnum.BASE64, new Base64Decoder());
-		DEFAULT_DECODERS.put(FormatEnum.BZIP2, new Bzip2Decoder());
-		DEFAULT_DECODERS.put(FormatEnum.GZ,new GzipDecoder());
-		DEFAULT_DECODERS.put(FormatEnum.PKCS7,new Pkcs7Decoder());
-		DEFAULT_DECODERS.put(FormatEnum.TSD,new TSDDecoder());
+		synchronized (DEFAULT_DECODERS) {
+			DEFAULT_DECODERS.put(FormatEnum.BASE64, new Base64Decoder());
+			DEFAULT_DECODERS.put(FormatEnum.BZIP2, new Bzip2Decoder());
+			DEFAULT_DECODERS.put(FormatEnum.GZ, new GzipDecoder());
+			DEFAULT_DECODERS.put(FormatEnum.PKCS7, new Pkcs7Decoder());
+			DEFAULT_DECODERS.put(FormatEnum.TSD, new TSDDecoder());
+		}
 	}
 
 	public static void addDefaultDecoder(final Decoder decoder) {
 		if (decoder == null) {
 			throw new IllegalArgumentException("decoder is null");
 		}
-		DEFAULT_DECODERS.put(decoder.getFormat(), decoder);
+		synchronized (DEFAULT_DECODERS) {
+			DEFAULT_DECODERS.put(decoder.getFormat(), decoder);
+		}
 	}
 
 	public static void addDefaultDecoders(final Decoder[] decoders) {
 		if (decoders == null) {
 			throw new IllegalArgumentException("decoders array is null");
 		}
-		for (Decoder decoder : decoders) {
+		for (final Decoder decoder : decoders) {
 			addDefaultDecoder(decoder);
 		}
+	}
+
+	private static FormatEnum[] getEffectiveFormats(
+			final FormatEnum[] enabledFormats,
+			final DetectionLibrary[] detectors) {
+		final Collection<FormatEnum> formats = new ArrayList<FormatEnum>();
+		for (final DetectionLibrary detectionLibrary : detectors) {
+			formats.addAll(Arrays.asList(detectionLibrary
+					.getDetectedFormats()));
+		}
+		final FormatEnum[] allFormats = formats.toArray(new FormatEnum[0]);
+		final FormatEnum[] effectiveFormats = (enabledFormats == null ? allFormats
+				: enabledFormats);
+		return effectiveFormats;
 	}
 
 	/**
@@ -84,6 +102,9 @@ public class GuessInputStream extends InputStream {
 	public static GuessInputStream getInstance(final InputStream source) {
 		return getInstance(source, FormatEnum.values());
 	}
+
+	// private static final Loggerger LOGGER = LoggerFactoryger
+	// .getLoggerger(GuessFormatInputStream.class);
 
 	/**
 	 * <p>
@@ -124,13 +145,14 @@ public class GuessInputStream extends InputStream {
 					droidSignatureFile, null);
 			detectionLibraries.add(stream);
 		}
-		return getInstance(istream, null,
-				detectionLibraries.toArray(new DetectionLibrary[0]),
-				DEFAULT_DECODERS.values().toArray(new Decoder[0]));
+		final DetectionLibrary[] detectionLibrariesArray = detectionLibraries
+				.toArray(new DetectionLibrary[detectionLibraries.size()]);
+		final Decoder[] decoders;
+		synchronized (DEFAULT_DECODERS) {
+			decoders = DEFAULT_DECODERS.values().toArray(new Decoder[0]);
+		}
+		return getInstance(istream, null, detectionLibrariesArray, decoders);
 	}
-
-	// private static final Loggerger LOGGER = LoggerFactoryger
-	// .getLoggerger(GuessFormatInputStream.class);
 
 	/**
 	 * This method creates an instance of the GuessInputStream. It checks if
@@ -147,9 +169,12 @@ public class GuessInputStream extends InputStream {
 		final Collection<DetectionLibrary> detectionLibraries = new ArrayList<DetectionLibrary>();
 		detectionLibraries.add(new StreamDetectorImpl());
 		detectionLibraries.add(new DroidDetectorImpl());
+		final Decoder[] decoders;
+		synchronized (DEFAULT_DECODERS) {
+			decoders = DEFAULT_DECODERS.values().toArray(new Decoder[0]);
+		}
 		return getInstance(source, enabledFormats,
-				detectionLibraries.toArray(new DetectionLibrary[0]),
-				DEFAULT_DECODERS.values().toArray(new Decoder[0]));
+				detectionLibraries.toArray(new DetectionLibrary[0]), decoders);
 	}
 
 	public static GuessInputStream getInstance(final InputStream stream,
@@ -158,8 +183,8 @@ public class GuessInputStream extends InputStream {
 		if (stream == null) {
 			throw new IllegalArgumentException("Parameter stream==null");
 		}
-		FormatEnum[] effectiveFormats = getEffectiveFormats(enabledFormats,
-				detectors);
+		final FormatEnum[] effectiveFormats = getEffectiveFormats(
+				enabledFormats, detectors);
 		GuessInputStream result;
 		ResettableStreamRASAdapter ris;
 		if (stream instanceof GuessInputStream) {
@@ -175,31 +200,17 @@ public class GuessInputStream extends InputStream {
 		return result;
 	}
 
-	private static FormatEnum[] getEffectiveFormats(
-			final FormatEnum[] enabledFormats,
-			final DetectionLibrary[] detectors) {
-		Collection<FormatEnum> formats = new ArrayList<FormatEnum>();
-		for (DetectionLibrary detectionLibrary : detectors) {
-			formats.addAll(Arrays.asList(detectionLibrary
-					.getDetectedFormats()));
-		}
-		final FormatEnum[] allFormats = formats.toArray(new FormatEnum[0]);
-		FormatEnum[] effectiveFormats = (enabledFormats == null ? allFormats
-				: enabledFormats);
-		return effectiveFormats;
-	}
-
 	private final ResettableStreamRASAdapter baseStream;
+
+	private boolean decode = false;
 
 	private final DetectionStrategy detectionStrategy;
 
 	private final Collection<FormatEnum> enabledFormats;
 
-	private InputStreamStatusEnum status = InputStreamStatusEnum.NOT_INITIALIZED;
-
-	private boolean decode = false;
-
 	private final String instantiationPath;
+
+	private InputStreamStatusEnum status = InputStreamStatusEnum.NOT_INITIALIZED;
 
 	protected GuessInputStream(final FormatEnum[] enabledFormats,
 			final ResettableStreamRASAdapter baseStream,
@@ -268,22 +279,6 @@ public class GuessInputStream extends InputStream {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void finalize() throws Throwable {
-		if (!this.baseStream.isCloseCalled()) {
-			LOGGER.warn(this.getClass().getSimpleName()
-					+ " is being finalized but close() method has "
-					+ "not been called. Please ensure the "
-					+ "stream is correctly "
-					+ "closed before finalization. Instantiation path ["
-					+ this.instantiationPath + "]");
-			this.baseStream.close();
-		}
-	}
-
-	/**
 	 * Define if the content of the internal stream must be decoded or left
 	 * unchanged. Default: <b>false</b>.
 	 * <ul>
@@ -308,6 +303,22 @@ public class GuessInputStream extends InputStream {
 					+ "] decoding wanted[" + decode + "]");
 		}
 		this.decode = decode;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void finalize() throws Throwable {
+		if (!this.baseStream.isCloseCalled()) {
+			LOGGER.warn(this.getClass().getSimpleName()
+					+ " is being finalized but close() method has "
+					+ "not been called. Please ensure the "
+					+ "stream is correctly "
+					+ "closed before finalization. Instantiation path ["
+					+ this.instantiationPath + "]");
+			this.baseStream.close();
+		}
 	}
 
 	/**
@@ -351,6 +362,11 @@ public class GuessInputStream extends InputStream {
 			result.add(formatId.format);
 		}
 		return result.toArray(new FormatEnum[0]);
+	}
+
+	private InputStream getStream() throws IOException {
+		return (this.decode ? this.detectionStrategy.getStream()
+				: this.baseStream);
 	}
 
 	/**
@@ -428,10 +444,5 @@ public class GuessInputStream extends InputStream {
 	public long skip(final long n) throws IOException {
 		this.status = InputStreamStatusEnum.READING_DATA;
 		return getStream().skip(n);
-	}
-
-	private InputStream getStream() throws IOException {
-		return (this.decode ? this.detectionStrategy.getStream()
-				: this.baseStream);
 	}
 }
