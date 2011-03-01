@@ -86,8 +86,13 @@ public class TestOutputStreamToInputStream {
 				oStream2IStream.getResults());
 	}
 
+	/**
+	 * Tests the timeout of the close method
+	 * 
+	 * @throws Exception
+	 */
 	@org.junit.Test
-	public void testLong() throws Exception {
+	public void testCloseTimeout() throws Exception {
 		final ThreadPoolExecutor es = (ThreadPoolExecutor) Executors
 				.newFixedThreadPool(1);
 		final OutputStreamToInputStream<String> osisA = new OutputStreamToInputStream<String>(
@@ -114,6 +119,7 @@ public class TestOutputStreamToInputStream {
 		assertEquals("Active Threads", 0, es.getActiveCount());
 	}
 
+	
 	@org.junit.Test
 	public void testReadException() throws Exception {
 		final ThreadPoolExecutor es = (ThreadPoolExecutor) Executors
