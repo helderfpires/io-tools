@@ -17,10 +17,11 @@ import com.gc.iotools.stream.utils.LogUtils;
 /**
  * Store that puts data in memory until threshold size is reach. At that point
  * data is written to the disk.
- *
+ * 
  * @author dvd.smnt
  * @since 1.2.0
- * @version $Id$
+ * @version $Id: ThresholdStore.java 463 2011-01-21 23:54:17Z
+ *          dvd.smnt@gmail.com $
  */
 public class ThresholdStore implements SeekableStore {
 	private static final int BUF_SIZE = 8192;
@@ -38,9 +39,12 @@ public class ThresholdStore implements SeekableStore {
 	private final int treshold;
 
 	/**
-	 * <p>Constructor for ThresholdStore.</p>
-	 *
-	 * @param treshold a int.
+	 * <p>
+	 * Constructor for ThresholdStore.
+	 * </p>
+	 * 
+	 * @param treshold
+	 *            a int.
 	 */
 	public ThresholdStore(final int treshold) {
 		this.treshold = treshold;
@@ -48,10 +52,14 @@ public class ThresholdStore implements SeekableStore {
 	}
 
 	/**
-	 * <p>Constructor for ThresholdStore.</p>
-	 *
-	 * @param treshold a int.
-	 * @param file a {@link java.io.File} object.
+	 * <p>
+	 * Constructor for ThresholdStore.
+	 * </p>
+	 * 
+	 * @param treshold
+	 *            a int.
+	 * @param file
+	 *            a {@link java.io.File} object.
 	 */
 	public ThresholdStore(final int treshold, final File file) {
 		this.treshold = treshold;
@@ -98,9 +106,7 @@ public class ThresholdStore implements SeekableStore {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 *
-	 * Clean up the temporary files eventually open.
+	 * {@inheritDoc} Clean up the temporary files eventually open.
 	 */
 	@Override
 	protected void finalize() throws Throwable {
@@ -125,8 +131,10 @@ public class ThresholdStore implements SeekableStore {
 	}
 
 	/**
-	 * <p>Getter for the field <code>size</code>.</p>
-	 *
+	 * <p>
+	 * Getter for the field <code>size</code>.
+	 * </p>
+	 * 
 	 * @return a long.
 	 */
 	public long getSize() {
@@ -134,8 +142,10 @@ public class ThresholdStore implements SeekableStore {
 	}
 
 	/**
-	 * <p>Getter for the field <code>treshold</code>.</p>
-	 *
+	 * <p>
+	 * Getter for the field <code>treshold</code>.
+	 * </p>
+	 * 
 	 * @return a int.
 	 */
 	public int getTreshold() {
@@ -164,7 +174,6 @@ public class ThresholdStore implements SeekableStore {
 				int len;
 				while ((len = this.ms.get(buffer, 0, buffer.length)) > 0) {
 					this.fileAccess.write(buffer, 0, len);
-
 				}
 				this.ms.cleanup();
 			} else {
@@ -202,19 +211,20 @@ public class ThresholdStore implements SeekableStore {
 	}
 
 	/**
-	 * <p>Setter for the field <code>position</code>.</p>
-	 *
-	 * @param position a long.
+	 * <p>
+	 * Setter for the field <code>position</code>.
+	 * </p>
+	 * 
+	 * @param position
+	 *            a long.
 	 */
 	public void setPosition(final long position) {
 		this.position = position;
 	}
 
 	/**
-	 * {@inheritDoc}
-	 *
-	 * Provides a String representation of the state of the Store for
-	 * debugging purposes.
+	 * {@inheritDoc} Provides a String representation of the state of the
+	 * Store for debugging purposes.
 	 */
 	@Override
 	public String toString() {
