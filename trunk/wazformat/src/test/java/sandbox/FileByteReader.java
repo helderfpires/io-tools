@@ -1,45 +1,22 @@
 /*
- * c The National Archives 2005-2006.  All rights reserved.
- * See Licence.txt for full licence details.
- *
- * Developed by:
- * Tessella Support Services plc
- * 3 Vineyard Chambers
- * Abingdon, OX14 3PX
- * United Kingdom
- * http://www.tessella.com
- *
- * Tessella/NPD/4826
- * PRONOM 5a
- *
- * $Id: FileByteReader.java,v 1.8 2006/03/13 15:15:28 linb Exp $
- *
- * $Logger: FileByteReader.java,v $
- * Revision 1.8  2006/03/13 15:15:28  linb
- * Changed copyright holder from Crown Copyright to The National Archives.
- * Added reference to licence.txt
- * Changed dates to 2005-2006
- *
- * Revision 1.7  2006/02/09 15:34:10  linb
- * Updates to javadoc and code following the code review
- *
- * Revision 1.5  2006/02/09 15:31:23  linb
- * Updates to javadoc and code following the code review
- *
- * Revision 1.5  2006/02/09 13:17:42  linb
- * Changed StreamByteReader to InputStreamByteReader
- * Refactored common code from UrlByteReader and InputStreamByteReader into new class StreamByteReader, from which they both inherit
- * Updated javadoc
- *
- * Revision 1.4  2006/02/09 12:14:16  linb
- * Changed some javadoc to allow it to be created cleanly
- *
- * Revision 1.3  2006/02/08 08:56:35  linb
- * - Added header comments
- *
+ * c The National Archives 2005-2006. All rights reserved. See Licence.txt for
+ * full licence details. Developed by: Tessella Support Services plc 3
+ * Vineyard Chambers Abingdon, OX14 3PX United Kingdom http://www.tessella.com
+ * Tessella/NPD/4826 PRONOM 5a $Id: FileByteReader.java,v 1.8 2006/03/13
+ * 15:15:28 linb Exp $ $Logger: FileByteReader.java,v $ Revision 1.8
+ * 2006/03/13 15:15:28 linb Changed copyright holder from Crown Copyright to
+ * The National Archives. Added reference to licence.txt Changed dates to
+ * 2005-2006 Revision 1.7 2006/02/09 15:34:10 linb Updates to javadoc and code
+ * following the code review Revision 1.5 2006/02/09 15:31:23 linb Updates to
+ * javadoc and code following the code review Revision 1.5 2006/02/09 13:17:42
+ * linb Changed StreamByteReader to InputStreamByteReader Refactored common
+ * code from UrlByteReader and InputStreamByteReader into new class
+ * StreamByteReader, from which they both inherit Updated javadoc Revision 1.4
+ * 2006/02/09 12:14:16 linb Changed some javadoc to allow it to be created
+ * cleanly Revision 1.3 2006/02/08 08:56:35 linb - Added header comments
  */
 
-package uk.gov.nationalarchives.droid.binFileReader;
+package sandbox;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -49,39 +26,42 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import uk.gov.nationalarchives.droid.base.DroidConstants;
+import uk.gov.nationalarchives.droid.binFileReader.AbstractByteReader;
+import uk.gov.nationalarchives.droid.binFileReader.IdentificationFile;
 
 /**
- * The <code>FileByteReader</code> class is a <code>ByteReader</code> that reads
- * its data from a file.
+ * The <code>FileByteReader</code> class is a <code>ByteReader</code> that
+ * reads its data from a file.
  * <p/>
- * FIXME: the decision whether use randomAccess mode or buffered mode is done on
- * an OutOfMemory basis... while should be done on a fixed threshold.
+ * FIXME: the decision whether use randomAccess mode or buffered mode is done
+ * on an OutOfMemory basis... while should be done on a fixed threshold.
  * <p>
- * This class can have two files associated with it: The file represented by it
- * (its <code>IdentificationFile</code>) and a (possibly different) backing
+ * This class can have two files associated with it: The file represented by
+ * it (its <code>IdentificationFile</code>) and a (possibly different) backing
  * file. The purpose of this separation is so that this object can represent a
  * URL that has been downloaded or an InputStream that has been saved to disk.
  * 
  * @author linb
  */
-// TODO from UCDetector: Change visibility of Class "FileByteReader" to default - May cause compile errors!
-public class FileByteReader extends AbstractByteReader { // NO_UCD
-
-	private int randomFileBufferSize = DroidConstants.FILE_BUFFER_SIZE;
-
-	private boolean isRandomAccess = false;
-
-	private byte[] fileBytes;
-	private long myNumBytes;
-
-	private long fileMarker;
-	private RandomAccessFile myRandomAccessFile;
-	private long myRAFoffset = 0L;
+// TODO from UCDetector: Change visibility of Class "FileByteReader" to
+// default - May cause compile errors!
+public class FileByteReader extends AbstractByteReader {
 
 	private static final int MIN_RAF_BUFFER_SIZE = 65536;
+
 	private static final int RAF_BUFFER_REDUCTION_FACTOR = 4;
 
 	private final File file;
+	private byte[] fileBytes;
+
+	private long fileMarker;
+	private boolean isRandomAccess = false;
+	private long myNumBytes;
+
+	private long myRAFoffset = 0L;
+	private RandomAccessFile myRandomAccessFile;
+
+	private int randomFileBufferSize = DroidConstants.FILE_BUFFER_SIZE;
 
 	/**
 	 * Creates a new instance of FileByteReader
@@ -95,7 +75,7 @@ public class FileByteReader extends AbstractByteReader { // NO_UCD
 	 * @param readFile
 	 *            <code>true</code> if the file is to be read
 	 */
-	protected FileByteReader(final IdentificationFile theIDFile,
+	public FileByteReader(final IdentificationFile theIDFile,
 			final boolean readFile) {
 		this(theIDFile, readFile, theIDFile.getFilePath());
 	}
@@ -106,9 +86,9 @@ public class FileByteReader extends AbstractByteReader { // NO_UCD
 	 * <p>
 	 * This constructor can set the <code>IdentificationFile</code> to a
 	 * different file than the actual file used. For example, if
-	 * <code>theIDFile</code> is a URL or stream, and is too big to be buffered
-	 * in memory, it could be written to a temporary file. This file would then
-	 * be used as a backing file to store the data.
+	 * <code>theIDFile</code> is a URL or stream, and is too big to be
+	 * buffered in memory, it could be written to a temporary file. This file
+	 * would then be used as a backing file to store the data.
 	 * 
 	 * @param theIDFile
 	 *            the file represented by this object
@@ -117,7 +97,7 @@ public class FileByteReader extends AbstractByteReader { // NO_UCD
 	 * @param filePath
 	 *            the backing file (containing the data)
 	 */
-	FileByteReader(final IdentificationFile theIDFile,
+	public FileByteReader(final IdentificationFile theIDFile,
 			final boolean readFile, final String filePath) {
 		super(theIDFile);
 		this.file = new File(filePath);
@@ -127,9 +107,6 @@ public class FileByteReader extends AbstractByteReader { // NO_UCD
 
 	}
 
-	public byte[] getbuffer() {
-		return this.fileBytes;
-	}
 
 	/**
 	 * Get a byte from file
@@ -138,6 +115,7 @@ public class FileByteReader extends AbstractByteReader { // NO_UCD
 	 *            position of required byte in the file
 	 * @return the byte at position <code>fileIndex</code> in the file
 	 */
+	@Override
 	public byte getByte(final long fileIndex) {
 
 		byte theByte = 0;
@@ -153,10 +131,10 @@ public class FileByteReader extends AbstractByteReader { // NO_UCD
 					// Create a new buffer:
 					/*
 					 * //When a new buffer is created, the requesting file
-					 * position is //taken to be the middle of the buffer. This
-					 * is so that it will //perform equally well whether the
-					 * file is being examined from //start to end or from end to
-					 * start myRAFoffset = fileIndex - (myRAFbuffer/2);
+					 * position is //taken to be the middle of the buffer.
+					 * This is so that it will //perform equally well whether
+					 * the file is being examined from //start to end or from
+					 * end to start myRAFoffset = fileIndex - (myRAFbuffer/2);
 					 * if(myRAFoffset<0L) { myRAFoffset = 0L; }
 					 * System.out.println("    re-read file buffer");
 					 * myRandomAccessFile.seek(myRAFoffset);
@@ -200,6 +178,7 @@ public class FileByteReader extends AbstractByteReader { // NO_UCD
 	 * 
 	 * @return the current position of the file marker
 	 */
+	@Override
 	public long getFileMarker() {
 		return this.fileMarker;
 	}
@@ -211,6 +190,7 @@ public class FileByteReader extends AbstractByteReader { // NO_UCD
 	/**
 	 * Returns the number of bytes in the file
 	 */
+	@Override
 	public long getNumBytes() {
 		return this.myNumBytes;
 	}
@@ -221,28 +201,6 @@ public class FileByteReader extends AbstractByteReader { // NO_UCD
 
 	public boolean isRandomAccess() {
 		return this.isRandomAccess;
-	}
-
-	/**
-	 * Position the file marker at a given byte position.
-	 * <p/>
-	 * <p>
-	 * The file marker is used to record how far through the file the byte
-	 * sequence matching algorithm has got.
-	 * 
-	 * @param markerPosition
-	 *            The byte number in the file at which to position the marker
-	 */
-	public void setFileMarker(final long markerPosition) {
-		if ((markerPosition < -1L) || (markerPosition > getNumBytes())) {
-			throw new IllegalArgumentException(
-					"  Unable to place a fileMarker at byte "
-							+ Long.toString(markerPosition) + " in file "
-							+ this.myIDFile.getFilePath() + " (size = "
-							+ Long.toString(getNumBytes()) + " bytes)");
-		} else {
-			this.fileMarker = markerPosition;
-		}
 	}
 
 	/**
@@ -364,6 +322,29 @@ public class FileByteReader extends AbstractByteReader { // NO_UCD
 						+ e2.toString());
 			}
 
+		}
+	}
+
+	/**
+	 * Position the file marker at a given byte position.
+	 * <p/>
+	 * <p>
+	 * The file marker is used to record how far through the file the byte
+	 * sequence matching algorithm has got.
+	 * 
+	 * @param markerPosition
+	 *            The byte number in the file at which to position the marker
+	 */
+	@Override
+	public void setFileMarker(final long markerPosition) {
+		if ((markerPosition < -1L) || (markerPosition > getNumBytes())) {
+			throw new IllegalArgumentException(
+					"  Unable to place a fileMarker at byte "
+							+ Long.toString(markerPosition) + " in file "
+							+ this.myIDFile.getFilePath() + " (size = "
+							+ Long.toString(getNumBytes()) + " bytes)");
+		} else {
+			this.fileMarker = markerPosition;
 		}
 	}
 }

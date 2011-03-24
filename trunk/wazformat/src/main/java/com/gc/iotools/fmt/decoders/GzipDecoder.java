@@ -23,6 +23,7 @@ public class GzipDecoder implements Decoder {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public InputStream decode(final InputStream istream) throws IOException {
 		final InputStream decoded = new GZIPInputStream(istream);
 		return decoded;
@@ -31,6 +32,7 @@ public class GzipDecoder implements Decoder {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public FormatEnum getFormat() {
 		return FormatEnum.GZ;
 	}

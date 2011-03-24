@@ -93,11 +93,13 @@ public class TestGuessInputStreamWithFiles {
 		GuessInputStream gis = GuessInputStream.getInstance(istream);
 		assertEquals("file format [" + fileName + "]", FormatEnum.PKCS7,
 				gis.getFormat());
+		gis.close();
 		fileName = "/testFiles/ietf.p7m";
 		istream = TestDroidDetector.class.getResourceAsStream(fileName);
 		gis = GuessInputStream.getInstance(istream);
 		assertEquals("file format [" + fileName + "]", FormatEnum.PKCS7,
 				gis.getFormat());
+		gis.close();
 
 	}
 
@@ -123,10 +125,10 @@ public class TestGuessInputStreamWithFiles {
 		final GuessInputStream gis = GuessInputStream.getInstance(is);
 		assertEquals("file format ", FormatEnum.UNKNOWN, gis.getFormat());
 		assertEquals("Read empty", -1, gis.read());
+		gis.close();
 	}
 
-	//@org.junit.Test
-	//FIXME temporary commented for release
+	@org.junit.Test
 	public void testBase64Doc() throws Exception {
 		// final InputStream is1 = TestDroidDetector.class
 		// .getResourceAsStream("/testFiles/canto_8parte.doc.b64");

@@ -24,6 +24,7 @@ public class Bzip2Decoder implements Decoder {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public InputStream decode(final InputStream istream) throws IOException {
 		final InputStream decoded = new CBZip2InputStream(istream);
 		return decoded;
@@ -32,6 +33,7 @@ public class Bzip2Decoder implements Decoder {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public FormatEnum getFormat() {
 		return FormatEnum.BZIP2;
 	}

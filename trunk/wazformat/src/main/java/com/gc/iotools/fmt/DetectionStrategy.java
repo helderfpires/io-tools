@@ -1,14 +1,15 @@
 package com.gc.iotools.fmt;
 
 /*
- * Copyright (c) 2008, 2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008, 2009 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -19,13 +20,14 @@ import com.gc.iotools.fmt.base.DetectionLibrary;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
 import com.gc.iotools.fmt.base.ResettableInputStream;
+import com.gc.iotools.fmt.decoders.CompositeDecoder;
 import com.gc.iotools.fmt.detect.droid.DroidDetectorImpl;
 
 final class DetectionStrategy {
 
 	private class IdentificationResult {
-		final ResettableInputStream resettableIs;
 		final FormatId[] formats;
+		final ResettableInputStream resettableIs;
 
 		IdentificationResult(final ResettableInputStream resettableIs,
 				final FormatId[] formats) {
@@ -42,6 +44,7 @@ final class DetectionStrategy {
 			final ResettableInputStream stream,
 			final DetectionLibrary[] detectors,
 			final FormatEnum[] enabledFormats) throws IOException {
+
 		FormatId detected = new FormatId(FormatEnum.UNKNOWN, null);
 		final Collection<FormatEnum> toDetect = new ArrayList<FormatEnum>(
 				Arrays.asList(enabledFormats));
@@ -52,8 +55,8 @@ final class DetectionStrategy {
 				final DetectionLibrary detectionLibrary = detectors[i];
 				try {
 					if (isDetectorNeeded(detectionLibrary, toDetect)) {
-						detected = detectionLibrary.detect(toDetect
-								.toArray(new FormatEnum[0]), stream);
+						detected = detectionLibrary.detect(
+								toDetect.toArray(new FormatEnum[0]), stream);
 						toDetect.removeAll(Arrays.asList(detectionLibrary
 								.getDetectedFormats()));
 					}
@@ -89,9 +92,9 @@ final class DetectionStrategy {
 	}
 
 	private final Decoder[] decoders;
+	private final DetectionLibrary[] detectionLibraries;
 	private FormatEnum[] enabledFormats;
 	private final ResettableStreamRASAdapter internalStream;
-	private final DetectionLibrary[] detectionLibraries;
 	// recursion disabled by default
 	private int maxRecursion = 0;
 	private IdentificationResult result;
@@ -105,6 +108,31 @@ final class DetectionStrategy {
 		this.enabledFormats = enabledFormats;
 	}
 
+	private void checkInitialized() throws IOException {
+		if (this.result == null) {
+			this.result = identify();
+		}
+	}
+
+	private Decoder getDecoder(final List<FormatId> formats,
+			final Map<FormatEnum, Decoder> decMap) {
+		final Decoder decoder;
+		if (formats.size() > 1) {
+			final Collection<Decoder> decoderColl = new ArrayList<Decoder>();
+			for (final FormatId formatId1 : formats) {
+				final FormatEnum format = formatId1.format;
+				final Decoder decoder1 = decMap.get(format);
+				decoderColl.add(decoder1);
+			}
+			decoder = new CompositeDecoder(
+					decoderColl.toArray(new Decoder[0]));
+		} else {
+			final FormatEnum format = formats.get(0).format;
+			decoder = decMap.get(format);
+		}
+		return decoder;
+	}
+
 	public FormatId[] getFormats() throws IOException {
 		checkInitialized();
 		return this.result.formats;
@@ -113,6 +141,34 @@ final class DetectionStrategy {
 	public ResettableInputStream getStream() throws IOException {
 		checkInitialized();
 		return this.result.resettableIs;
+	}
+
+	private IdentificationResult identify() throws IOException {
+		final List<FormatId> formats = new ArrayList<FormatId>();
+		final Map<FormatEnum, Decoder> decMap = getDecodersMap(this.decoders);
+		FormatId curFormat;
+		this.internalStream.enable(true);
+		ResettableInputStream currentStream = this.internalStream;
+		int recursionLevel = 0;
+		do {
+			curFormat = detectFormatStream(currentStream,
+					this.detectionLibraries, this.enabledFormats);
+			if ((recursionLevel == 0)
+					|| !FormatEnum.UNKNOWN.equals(curFormat)) {
+				formats.add(curFormat);
+			}
+			if (!FormatEnum.UNKNOWN.equals(curFormat.format)
+					&& decMap.containsKey(curFormat.format)) {
+				final Decoder decoder = getDecoder(formats, decMap);
+				currentStream = new ResettableStreamWrapper(
+						this.internalStream, decoder);
+			}
+			recursionLevel++;
+		} while (decMap.containsKey(curFormat.format)
+				&& (recursionLevel <= this.maxRecursion));
+		this.internalStream.enable(false);
+		return new IdentificationResult(currentStream,
+				formats.toArray(new FormatId[formats.size()]));
 	}
 
 	public void setEnabledFormats(final FormatEnum[] enabledFormats) {
@@ -125,39 +181,5 @@ final class DetectionStrategy {
 			this.result = null;
 		}
 		this.maxRecursion = maxRecursion;
-	}
-
-	private void checkInitialized() throws IOException {
-		if (this.result == null) {
-			this.result = identify();
-		}
-	}
-
-	private IdentificationResult identify() throws IOException {
-		final Collection<FormatId> formats = new ArrayList<FormatId>();
-		final Map<FormatEnum, Decoder> decMap = getDecodersMap(this.decoders);
-		FormatId curFormat;
-		this.internalStream.enable(true);
-		ResettableInputStream currentStream = this.internalStream;
-		int recursionLevel = 0;
-		do {
-			curFormat = detectFormatStream(currentStream,
-					this.detectionLibraries, this.enabledFormats);
-			if (!FormatEnum.UNKNOWN.equals(curFormat.format)
-					&& decMap.containsKey(curFormat.format)) {
-				final Decoder decoder = decMap.get(curFormat.format);
-				currentStream = new ResettableStreamWrapper(currentStream,
-						decoder);
-			}
-			if ((recursionLevel == 0)
-					|| !FormatEnum.UNKNOWN.equals(curFormat)) {
-				formats.add(curFormat);
-			}
-			recursionLevel++;
-		} while (decMap.containsKey(curFormat.format)
-				&& (recursionLevel <= this.maxRecursion));
-		this.internalStream.enable(false);
-		return new IdentificationResult(currentStream, formats
-				.toArray(new FormatId[formats.size()]));
 	}
 }

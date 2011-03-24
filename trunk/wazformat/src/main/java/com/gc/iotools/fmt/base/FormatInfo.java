@@ -1,26 +1,23 @@
 package com.gc.iotools.fmt.base;
 
 /*
- * Copyright (c) 2008,2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008,2009 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 
 public final class FormatInfo {
 
+	private final String description;
+
 	private final FormatId formatId;
 
 	private final String[] mimeType;
-
-	private final String[] extensions;
-
-	private final String description;
 
 	public FormatInfo(final FormatId formatId, final String[] mimeType,
 			final String[] extensions, final String description) {
 		this.formatId = formatId;
 		this.mimeType = mimeType;
 		this.description = description;
-		this.extensions = extensions;
 	}
 
 	public String getDescription() {

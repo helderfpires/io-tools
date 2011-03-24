@@ -1,36 +1,15 @@
 /*
- * The National Archives 2005-2006.  All rights reserved.
- * See Licence.txt for full licence details.
- *
- * Developed by:
- * Tessella Support Services plc
- * 3 Vineyard Chambers
- * Abingdon, OX14 3PX
- * United Kingdom
- * http://www.tessella.com
- *
- * Tessella/NPD/4305
- * PRONOM 4
- *
- * $Id: FileFormatHit.java,v 1.4 2006/03/13 15:15:25 linb Exp $
- * 
- * $Logger: FileFormatHit.java,v $
- * Revision 1.4  2006/03/13 15:15:25  linb
- * Changed copyright holder from Crown Copyright to The National Archives.
- * Added reference to licence.txt
- * Changed dates to 2005-2006
- *
- * Revision 1.3  2006/02/08 08:56:35  linb
- * - Added header comments
- *
- *
- * *$History: FileFormatHit.java $
- *
- * *****************  Version 4  *****************
- * User: Walm         Date: 5/04/05    Time: 18:08
- * Updated in $/PRONOM4/FFIT_SOURCE
- * review headers
- *
+ * The National Archives 2005-2006. All rights reserved. See Licence.txt for
+ * full licence details. Developed by: Tessella Support Services plc 3
+ * Vineyard Chambers Abingdon, OX14 3PX United Kingdom http://www.tessella.com
+ * Tessella/NPD/4305 PRONOM 4 $Id: FileFormatHit.java,v 1.4 2006/03/13
+ * 15:15:25 linb Exp $ $Logger: FileFormatHit.java,v $ Revision 1.4 2006/03/13
+ * 15:15:25 linb Changed copyright holder from Crown Copyright to The National
+ * Archives. Added reference to licence.txt Changed dates to 2005-2006
+ * Revision 1.3 2006/02/08 08:56:35 linb - Added header comments *$History:
+ * FileFormatHit.java $ ***************** Version 4 ***************** User:
+ * Walm Date: 5/04/05 Time: 18:08 Updated in $/PRONOM4/FFIT_SOURCE review
+ * headers
  */
 
 package uk.gov.nationalarchives.droid.base;
@@ -44,9 +23,9 @@ import uk.gov.nationalarchives.droid.signatureFile.FileFormat;
  * @version 4.0.0
  */
 public class FileFormatHit extends SimpleElement {
-	String myHitWarning = "";
-	int myHitType;
 	FileFormat myHitFileFormat;
+	int myHitType;
+	String myHitWarning = "";
 
 	public FileFormatHit() {
 	}
@@ -147,8 +126,9 @@ public class FileFormatHit extends SimpleElement {
 	}
 
 	/**
-	 * For positive hits, this returns true if hit is Specific or returns false
-	 * if hit is Generic. Meaningless for Tentative hits. (though returns false)
+	 * For positive hits, this returns true if hit is Specific or returns
+	 * false if hit is Generic. Meaningless for Tentative hits. (though
+	 * returns false)
 	 */
 	public boolean isSpecific() {
 		if (this.myHitType == DroidConstants.HIT_TYPE_POSITIVE_SPECIFIC) {

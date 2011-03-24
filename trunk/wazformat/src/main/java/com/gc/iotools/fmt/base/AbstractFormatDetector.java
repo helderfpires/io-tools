@@ -1,13 +1,13 @@
 package com.gc.iotools.fmt.base;
 
 /*
- * Copyright (c) 2008, 2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008, 2009 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 
 public abstract class AbstractFormatDetector implements DetectionLibrary {
-	private final int detectLenght;
 	private final FormatEnum detectedFormat;
+	private final int detectLenght;
 
 	protected AbstractFormatDetector(final int detectLenght,
 			final FormatEnum detectedFormat) {

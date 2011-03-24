@@ -40,6 +40,24 @@ public class TestGuessInputStream extends JUnit4Mockery {
 	}
 
 	@org.junit.Test
+	public void testRecursion3NoDecode() throws IOException {
+		final InputStream istream = TestGuessInputStream.class
+				.getResourceAsStream("/testFiles/documento.pdf.p7m.b64");
+		final byte[] reference = IOUtils.toByteArray(istream);
+
+		final GuessInputStream gis = GuessInputStream.getInstance(new ByteArrayInputStream(reference));				
+		gis.setIdentificationDepth(15);
+		gis.decode(false);
+		assertEquals("Format detected", FormatEnum.BASE64, gis.getFormat());
+		assertTrue("Bytes read are same", Arrays.equals(reference, IOUtils
+				.toByteArray(gis)));
+		//assertEquals("Detected formats", 3, gis.getFormats().length);
+		assertArrayEquals("Formats", new FormatEnum[] { FormatEnum.BASE64, FormatEnum.PKCS7,
+				FormatEnum.PDF }, gis.getFormats());
+		gis.close();
+	}
+	
+	@org.junit.Test
 	public void testDoubleWrap() throws IOException {
 		final InputStream istream = new ByteArrayInputStream(
 				"<xml>this is xml</xml>".getBytes());
@@ -218,4 +236,6 @@ public class TestGuessInputStream extends JUnit4Mockery {
 		assertEquals("Format ", FormatEnum.UNKNOWN, gis.getFormat());
 		gis.close();
 	}
+
+
 }

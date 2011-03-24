@@ -4,7 +4,6 @@ package com.gc.iotools.fmt.decoders;
  * Copyright (c) 2008, 2009 Davide Simonetti. This source code is released
  * under the BSD License.
  */
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -27,6 +26,7 @@ public class Pkcs7Decoder implements Decoder {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public InputStream decode(final InputStream istream) throws IOException {
 		CMSSignedDataParser sdp;
 		try {
@@ -38,12 +38,13 @@ public class Pkcs7Decoder implements Decoder {
 			throw e1;
 		}
 		final CMSTypedStream ts = sdp.getSignedContent();
-		return new BufferedInputStream(ts.getContentStream());
+		return ts.getContentStream();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public FormatEnum getFormat() {
 		return FormatEnum.PKCS7;
 	}

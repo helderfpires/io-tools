@@ -4,8 +4,6 @@ package com.gc.iotools.fmt.detect.droid;
  * Copyright (c) 2008, 2009 Davide Simonetti. This source code is released
  * under the BSD License.
  */
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -19,7 +17,6 @@ import java.util.Properties;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +62,8 @@ public class DroidDetectorImpl implements DetectionLibrary {
 		this(FormatEnum.class, SIGNATURE_FILE, MAPPING_FILE);
 	}
 
-	public DroidDetectorImpl(final Class<? extends FormatEnum> formatEnumClass,
+	public DroidDetectorImpl(
+			final Class<? extends FormatEnum> formatEnumClass,
 			final String signatureFile, final String mappingFileStr) {
 		final Class<? extends FormatEnum> clazz = (formatEnumClass == null ? FormatEnum.class
 				: formatEnumClass);
@@ -112,13 +110,15 @@ public class DroidDetectorImpl implements DetectionLibrary {
 	public FormatId detect(final FormatEnum[] enabledFormats,
 			final ResettableInputStream stream) throws IOException {
 		final IdentificationFile idFile = new IdentificationFile("-");
-		File file = File.createTempFile("io-tools-doc", ".doc");
-		FileOutputStream fos = new FileOutputStream(file);
-		IOUtils.copy(stream, fos);
-		fos.close();
-		//System.out.println("Data written to [" + file.getName() + "]");
+//		File file = File.createTempFile("io-tools-doc", ".doc");
+//		FileOutputStream fos = new FileOutputStream(file);
+//		IOUtils.copy(stream, fos);
+//		fos.close();
+		// System.out.println("Data written to [" + file.getName() + "]");
 		stream.resetToBeginning();
 		final ByteReader testFile = new RandomAccessByteReader(idFile, stream);
+//		FileByteReader testFile = new FileByteReader(new IdentificationFile(
+//				file.getAbsolutePath()), true, file.getAbsolutePath());
 		final FFSignatureFile fsigfile = CONF_MAP.get(this.configFile);
 		FFSignatureFile reduced = reduceDetectedSequences(fsigfile,
 				enabledFormats);
@@ -151,8 +151,8 @@ public class DroidDetectorImpl implements DetectionLibrary {
 			FormatEnum[] enabled) {
 		Collection<FileFormat> fformats = new ArrayList<FileFormat>();
 		Collection<InternalSignature> intSigs = new ArrayList<InternalSignature>();
-		Collection<FormatEnum> enabledColl = new ArrayList<FormatEnum>(Arrays
-				.asList(enabled));
+		Collection<FormatEnum> enabledColl = new ArrayList<FormatEnum>(
+				Arrays.asList(enabled));
 		Map<Integer, InternalSignature> internalSignatureMap = new HashMap<Integer, InternalSignature>();
 
 		for (int i = 0; i < fsig.getNumInternalSignatures(); i++) {

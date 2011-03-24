@@ -4,7 +4,6 @@ package com.gc.iotools.fmt;
  * Copyright (c) 2008, 2009 Davide Simonetti. This source code is released
  * under the BSD License.
  */
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -15,12 +14,12 @@ import com.gc.iotools.stream.store.Store;
 import com.gc.iotools.stream.store.ThresholdStore;
 
 public class ResettableStreamRASAdapter extends ResettableInputStream {
-	private BufferedInputStream bis;
-	private final RandomAccessInputStream ras;
 	private boolean closeCalled = false;
+	// private BufferedInputStream bis;
+	private final RandomAccessInputStream ras;
 
 	public ResettableStreamRASAdapter(final InputStream source) {
-		final ThresholdStore ts = new ThresholdStore(128 * 1024);
+		final ThresholdStore ts = new ThresholdStore(64 * 1024);
 		final OnOffStore os = new OnOffStore(ts);
 		this.ras = new RandomAccessInputStream(source, os);
 		// this.bis = new BufferedInputStream(ras);
@@ -33,10 +32,10 @@ public class ResettableStreamRASAdapter extends ResettableInputStream {
 
 	@Override
 	public void close() throws IOException {
-		if (!closeCalled) {
-			closeCalled = true;
+		if (!this.closeCalled) {
+			this.closeCalled = true;
 			this.ras.close();
-			this.bis = null;
+			// this.bis = null;
 		}
 	}
 
