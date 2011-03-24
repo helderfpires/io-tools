@@ -1,44 +1,21 @@
 /*
- * The National Archives 2005-2006.  All rights reserved.
- * See Licence.txt for full licence details.
- *
- * Developed by:
- * Tessella Support Services plc
- * 3 Vineyard Chambers
- * Abingdon, OX14 3PX
- * United Kingdom
- * http://www.tessella.com
- *
- * Tessella/NPD/4305
- * PRONOM 4
- *
- * $History: messageDisplay.java $
- * 
- * *****************  Version 7  *****************
- * User: Walm         Date: 26/04/05   Time: 17:29
- * Updated in $/PRONOM4/FFIT_SOURCE
- * allow different messages in GUI and on command line
- * 
- * *****************  Version 6  *****************
- * User: Mals         Date: 19/04/05   Time: 9:36
- * Updated in $/PRONOM4/FFIT_SOURCE
- * Tessella Ref: NPD/4305/PR/IM/2005APR18/09:51:03 Issue 36
- * +Changed extension warning to text in email from A.Brown (Tessella Ref:
- * NPD/4305/CL/CSC/2005FEB17/16:34:13)
- * 
- * +Changed any reference of uk to DROID
- * 
- * *****************  Version 5  *****************
- * User: Walm         Date: 4/04/05    Time: 17:44
- * Updated in $/PRONOM4/FFIT_SOURCE
- * code for responding to missing signature file on startup
- * 
- * *****************  Version 4  *****************
- * User: Walm         Date: 29/03/05   Time: 17:02
- * Updated in $/PRONOM4/FFIT_SOURCE
- * Display messages in the GUI if one has been defined
- *
- * Created on 21 February 2005, 14:47
+ * The National Archives 2005-2006. All rights reserved. See Licence.txt for
+ * full licence details. Developed by: Tessella Support Services plc 3
+ * Vineyard Chambers Abingdon, OX14 3PX United Kingdom http://www.tessella.com
+ * Tessella/NPD/4305 PRONOM 4 $History: messageDisplay.java $
+ * ***************** Version 7 ***************** User: Walm Date: 26/04/05
+ * Time: 17:29 Updated in $/PRONOM4/FFIT_SOURCE allow different messages in
+ * GUI and on command line ***************** Version 6 ***************** User:
+ * Mals Date: 19/04/05 Time: 9:36 Updated in $/PRONOM4/FFIT_SOURCE Tessella
+ * Ref: NPD/4305/PR/IM/2005APR18/09:51:03 Issue 36 +Changed extension warning
+ * to text in email from A.Brown (Tessella Ref:
+ * NPD/4305/CL/CSC/2005FEB17/16:34:13) +Changed any reference of uk to DROID
+ * ***************** Version 5 ***************** User: Walm Date: 4/04/05
+ * Time: 17:44 Updated in $/PRONOM4/FFIT_SOURCE code for responding to missing
+ * signature file on startup ***************** Version 4 *****************
+ * User: Walm Date: 29/03/05 Time: 17:02 Updated in $/PRONOM4/FFIT_SOURCE
+ * Display messages in the GUI if one has been defined Created on 21 February
+ * 2005, 14:47
  */
 
 package uk.gov.nationalarchives.droid.base;
@@ -54,12 +31,12 @@ import org.slf4j.LoggerFactory;
  */
 public final class MessageDisplay {
 	public static String FILEEXTENSIONWARNING = "Possible file extension mismatch";
-	public static String POSITIVEIDENTIFICATIONSTATUS = "Positively identified";
-	public static String TENTATIVEIDENTIFICATIONSTATUS = "Tentatively identified";
-	public static String UNIDENTIFIEDSTATUS = "Unable to identify";
-
 	private static final Logger LOG = LoggerFactory
 			.getLogger(MessageDisplay.class);
+	public static String POSITIVEIDENTIFICATIONSTATUS = "Positively identified";
+	public static String TENTATIVEIDENTIFICATIONSTATUS = "Tentatively identified";
+
+	public static String UNIDENTIFIEDSTATUS = "Unable to identify";
 
 	/**
 	 * Displays a fatal error and then exits

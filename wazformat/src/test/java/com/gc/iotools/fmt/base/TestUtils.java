@@ -1,8 +1,8 @@
 package com.gc.iotools.fmt.base;
 
 /*
- * Copyright (c) 2008,2009 Davide Simonetti.
- * This source code is released under the BSD License.
+ * Copyright (c) 2008,2009 Davide Simonetti. This source code is released
+ * under the BSD License.
  */
 import java.io.File;
 import java.io.FileInputStream;

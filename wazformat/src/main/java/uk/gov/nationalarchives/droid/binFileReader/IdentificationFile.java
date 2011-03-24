@@ -1,96 +1,42 @@
 /*
- * c The National Archives 2005-2006.  All rights reserved.
- * See Licence.txt for full licence details.
- *
- * Developed by:
- * Tessella Support Services plc
- * 3 Vineyard Chambers
- * Abingdon, OX14 3PX
- * United Kingdom
- * http://www.tessella.com
- *
- * Tessella/NPD/4305
- * PRONOM 4
- *
- * $Id: IdentificationFile.java,v 1.9 2006/03/13 15:15:25 linb Exp $
- * 
- * $Logger: IdentificationFile.java,v $
- * Revision 1.9  2006/03/13 15:15:25  linb
- * Changed copyright holder from Crown Copyright to The National Archives.
- * Added reference to licence.txt
- * Changed dates to 2005-2006
- *
- * Revision 1.8  2006/02/09 15:31:23  linb
- * Updates to javadoc and code following the code review
- *
- * Revision 1.7  2006/02/09 13:17:41  linb
- * Changed StreamByteReader to InputStreamByteReader
- * Refactored common code from UrlByteReader and InputStreamByteReader into new class StreamByteReader, from which they both inherit
- * Updated javadoc
- *
- * Revision 1.6  2006/02/09 12:14:15  linb
- * Changed some javadoc to allow it to be created cleanly
- *
- * Revision 1.5  2006/02/08 11:45:48  linb
- * - add support for streams
- *
- * Revision 1.4  2006/02/08 08:56:35  linb
- * - Added header comments
- *
- *
- *$History: IdentificationFile.java $
- * 
- * *****************  Version 10  *****************
- * User: Walm         Date: 5/04/05    Time: 18:08
- * Updated in $/PRONOM4/FFIT_SOURCE
- * review headers
- * 
- * *****************  Version 9  *****************
- * User: Walm         Date: 29/03/05   Time: 11:11
- * Updated in $/PRONOM4/FFIT_SOURCE
- * Read in hit results from a file collection file
- *
- * *****************  Version 8  *****************
- * User: Walm         Date: 24/03/05   Time: 11:17
- * Updated in $/PRONOM4/FFIT_SOURCE
- * add Text versions of file classifications
- *
- * *****************  Version 7  *****************
- * User: Walm         Date: 15/03/05   Time: 15:31
- * Updated in $/PRONOM4/FFIT_SOURCE
- * initialise identification warning
- *
- * *****************  Version 6  *****************
- * User: Walm         Date: 15/03/05   Time: 14:40
- * Updated in $/PRONOM4/FFIT_SOURCE
- * File classifications are now integer constants defined in
- * AnalysisController
- *
- * *****************  Version 5  *****************
- * User: Mals         Date: 14/03/05   Time: 18:09
- * Updated in $/PRONOM4/FFIT_SOURCE
- * return null identification status
- *
- * *****************  Version 4  *****************
- * User: Mals         Date: 14/03/05   Time: 15:07
- * Updated in $/PRONOM4/FFIT_SOURCE
- * Added positive ,tentitive and unidentified status setters
- *
- * *****************  Version 3  *****************
- * User: Mals         Date: 14/03/05   Time: 14:00
- * Updated in $/PRONOM4/FFIT_SOURCE
- * Changed location of FileFormatHit
- *
- * *****************  Version 2  *****************
- * User: Mals         Date: 11/03/05   Time: 12:20
- * Updated in $/PRONOM4/FFIT_SOURCE
- * Added setters
- *
- * *****************  Version 1  *****************
- * User: Mals         Date: 11/03/05   Time: 11:54
- * Created in $/PRONOM4/FFIT_SOURCE
- * Reprsents an analysed or to be analysed file
- *
+ * c The National Archives 2005-2006. All rights reserved. See Licence.txt for
+ * full licence details. Developed by: Tessella Support Services plc 3
+ * Vineyard Chambers Abingdon, OX14 3PX United Kingdom http://www.tessella.com
+ * Tessella/NPD/4305 PRONOM 4 $Id: IdentificationFile.java,v 1.9 2006/03/13
+ * 15:15:25 linb Exp $ $Logger: IdentificationFile.java,v $ Revision 1.9
+ * 2006/03/13 15:15:25 linb Changed copyright holder from Crown Copyright to
+ * The National Archives. Added reference to licence.txt Changed dates to
+ * 2005-2006 Revision 1.8 2006/02/09 15:31:23 linb Updates to javadoc and code
+ * following the code review Revision 1.7 2006/02/09 13:17:41 linb Changed
+ * StreamByteReader to InputStreamByteReader Refactored common code from
+ * UrlByteReader and InputStreamByteReader into new class StreamByteReader,
+ * from which they both inherit Updated javadoc Revision 1.6 2006/02/09
+ * 12:14:15 linb Changed some javadoc to allow it to be created cleanly
+ * Revision 1.5 2006/02/08 11:45:48 linb - add support for streams Revision
+ * 1.4 2006/02/08 08:56:35 linb - Added header comments$History:
+ * IdentificationFile.java $ ***************** Version 10 *****************
+ * User: Walm Date: 5/04/05 Time: 18:08 Updated in $/PRONOM4/FFIT_SOURCE
+ * review headers ***************** Version 9 ***************** User: Walm
+ * Date: 29/03/05 Time: 11:11 Updated in $/PRONOM4/FFIT_SOURCE Read in hit
+ * results from a file collection file ***************** Version 8
+ * ***************** User: Walm Date: 24/03/05 Time: 11:17 Updated in
+ * $/PRONOM4/FFIT_SOURCE add Text versions of file classifications
+ * ***************** Version 7 ***************** User: Walm Date: 15/03/05
+ * Time: 15:31 Updated in $/PRONOM4/FFIT_SOURCE initialise identification
+ * warning ***************** Version 6 ***************** User: Walm Date:
+ * 15/03/05 Time: 14:40 Updated in $/PRONOM4/FFIT_SOURCE File classifications
+ * are now integer constants defined in AnalysisController *****************
+ * Version 5 ***************** User: Mals Date: 14/03/05 Time: 18:09 Updated
+ * in $/PRONOM4/FFIT_SOURCE return null identification status
+ * ***************** Version 4 ***************** User: Mals Date: 14/03/05
+ * Time: 15:07 Updated in $/PRONOM4/FFIT_SOURCE Added positive ,tentitive and
+ * unidentified status setters ***************** Version 3 *****************
+ * User: Mals Date: 14/03/05 Time: 14:00 Updated in $/PRONOM4/FFIT_SOURCE
+ * Changed location of FileFormatHit ***************** Version 2
+ * ***************** User: Mals Date: 11/03/05 Time: 12:20 Updated in
+ * $/PRONOM4/FFIT_SOURCE Added setters ***************** Version 1
+ * ***************** User: Mals Date: 11/03/05 Time: 11:54 Created in
+ * $/PRONOM4/FFIT_SOURCE Reprsents an analysed or to be analysed file
  */
 
 package uk.gov.nationalarchives.droid.binFileReader;
@@ -111,10 +57,10 @@ import uk.gov.nationalarchives.droid.base.SimpleElement;
  */
 public class IdentificationFile extends SimpleElement implements Comparable {
 
-	private String identificationWarning = "";
-	private int myIDStatus = DroidConstants.FILE_CLASSIFICATION_NOTCLASSIFIED;
 	private final java.util.List<FileFormatHit> fileHits = new java.util.ArrayList<FileFormatHit>();
 	private String filePath;
+	private String identificationWarning = "";
+	private int myIDStatus = DroidConstants.FILE_CLASSIFICATION_NOTCLASSIFIED;
 
 	public IdentificationFile() {
 	}
@@ -152,6 +98,7 @@ public class IdentificationFile extends SimpleElement implements Comparable {
 		this.fileHits.add(hit);
 	}
 
+	@Override
 	public int compareTo(final Object otherIDFile) {
 		// This object always smaller if path not set
 		if ((this.filePath == null) || (this.filePath.length() == 0)) {
@@ -169,9 +116,8 @@ public class IdentificationFile extends SimpleElement implements Comparable {
 	public boolean equals(final Object otherIDFile) {
 		if (otherIDFile instanceof IdentificationFile) {
 			return this.filePath.toLowerCase()
-					.equals(
-							((IdentificationFile) otherIDFile).filePath
-									.toLowerCase());
+					.equals(((IdentificationFile) otherIDFile).filePath
+							.toLowerCase());
 		} else {
 			return false;
 		}
@@ -248,7 +194,8 @@ public class IdentificationFile extends SimpleElement implements Comparable {
 	}
 
 	/**
-	 * Use hashCode of filePath if set, as we wish to enforce this to be unique
+	 * Use hashCode of filePath if set, as we wish to enforce this to be
+	 * unique
 	 */
 	@Override
 	public int hashCode() {

@@ -3,34 +3,26 @@ package uk.gov.nationalarchives.droid.binFileReader;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
+
 import com.gc.iotools.fmt.base.ResettableInputStream;
+import com.gc.iotools.stream.is.SizeLimitInputStream;
 
 /**
- * TODO a 2K buffer at beginning and end of the file will improve
- * performances.
- * 
  * @author dvd.smt
  */
 public final class RandomAccessByteReader extends AbstractByteReader {
 
-	private static long getSize(final InputStream stream) throws IOException {
-		long curPos = 0;
-		int readLen = 0;
-		final byte[] buf = new byte[8192];
-		while (readLen >= 0) {
-			readLen = stream.read(buf, 0, buf.length);
-			if (readLen > 0) {
-				curPos += readLen;
-			}
-		}
-		return curPos;
-	}
+	private static final int BUFFER_MAX_SIZE = 1024 * 64;
 
-	private final ResettableInputStream ras;
-	private long position = 0;
-	private final long len;
+	private byte[] buffer = new byte[BUFFER_MAX_SIZE];
 
+	private long bufferStartOffset = 0;
 	private long fileMarker = 0;
+
+	private final long len;
+	private long position = 0;
+	private final ResettableInputStream ras;
 
 	public RandomAccessByteReader(final IdentificationFile theIDFile,
 			final ResettableInputStream stream) throws IOException {
@@ -40,62 +32,85 @@ public final class RandomAccessByteReader extends AbstractByteReader {
 		this.ras.resetToBeginning();
 	}
 
-	public void close() throws IOException {
-		this.ras.close();
-	}
-
-	public byte[] getbuffer() {
-		return null;
-	}
-
+	@Override
 	public byte getByte(final long fileIndex) {
-		if (fileIndex > this.len) {
+		if (fileIndex >= this.len) {
 			throw new ArrayIndexOutOfBoundsException("Read position["
 					+ fileIndex + "] is above EOF");
 		}
 		byte result;
-		try {
-			seek(fileIndex);
-			final int res = this.ras.read();
-			if (res < 0) {
-				throw new ArrayIndexOutOfBoundsException("Read position["
-						+ fileIndex + "] is above EOF");
-			} else {
-				result = (byte) res;
-				this.position++;
+		if (this.bufferStartOffset <= fileIndex
+				&& fileIndex < (this.bufferStartOffset + this.buffer.length)) {
+			result = this.buffer[(int) (fileIndex - this.bufferStartOffset)];
+		} else {
+			try {
+				final long startIndex = Math.max(0, fileIndex
+						- (BUFFER_MAX_SIZE / 2));
+				seek(startIndex);
+				this.bufferStartOffset = startIndex;
+				this.buffer = IOUtils.toByteArray(new SizeLimitInputStream(
+						this.ras, BUFFER_MAX_SIZE));
+				this.position = startIndex + this.buffer.length;
+				result = this.buffer[(int) (fileIndex - this.bufferStartOffset)];
+			} catch (final IOException e) {
+				throw new IllegalStateException("Read position[" + fileIndex
+						+ "] had exception.", e);
 			}
-		} catch (final IOException e) {
-			throw new IllegalStateException("Read position[" + fileIndex
-					+ "] had exception.", e);
-
 		}
 		return result;
 	}
 
+	@Override
 	public long getFileMarker() {
 		return this.fileMarker;
 	}
 
+	@Override
 	public long getNumBytes() {
 		return this.len;
 	}
 
-	public void setFileMarker(final long markerPosition) {
-		this.fileMarker = markerPosition;
+	private long getSize(final InputStream stream) throws IOException {
+		long curPos = 0;
+		int readLen = 0;
+		final byte[] buf = new byte[8192];
+		while (readLen >= 0) {
+			readLen = stream.read(buf, 0, buf.length);
+			if (curPos < this.buffer.length && readLen >= 0) {
+				System.arraycopy(buf, 0, this.buffer, (int) curPos,
+						Math.min(readLen, this.buffer.length - (int) curPos));
+			}
+			if (readLen > 0) {
+				curPos += readLen;
+			}
+		}
+		if (curPos <= this.buffer.length) {
+			final byte[] result = new byte[(int) curPos];
+			System.arraycopy(this.buffer, 0, result, 0, (int) curPos);
+			this.buffer = result;
+		}
+		return curPos;
 	}
 
 	private void seek(final long fileIndex) throws IOException {
 		if (fileIndex > this.position) {
-			this.ras.skip(fileIndex - this.position);
+			final long skip = this.ras.skip(fileIndex - this.position);
+			if (skip != fileIndex - this.position) {
+				throw new ArrayIndexOutOfBoundsException();
+			}
 		} else if (fileIndex < this.position) {
 			this.ras.resetToBeginning();
 			if (fileIndex > 0) {
-				long l = this.ras.skip(fileIndex);
+				final long l = this.ras.skip(fileIndex);
 				if (l != fileIndex) {
 					throw new IOException();
 				}
 			}
 		}
-		this.position = fileIndex;
+	}
+
+	@Override
+	public void setFileMarker(final long markerPosition) {
+		this.fileMarker = markerPosition;
 	}
 }

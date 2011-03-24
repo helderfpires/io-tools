@@ -7,8 +7,11 @@ package com.gc.iotools.fmt;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
+
 import com.gc.iotools.fmt.base.Decoder;
 import com.gc.iotools.fmt.base.ResettableInputStream;
+import com.gc.iotools.stream.is.SizeLimitInputStream;
 
 /**
  * Helps in mark and reset of decoded streams. Mark and reset are done on
@@ -32,6 +35,19 @@ public class ResettableStreamWrapper extends ResettableInputStream {
 		this.baseStream = originalStream;
 		// this.decodedStream = decodedStream;
 		this.decoder = decoder;
+	}
+
+	private void checkInitialized() throws IOException {
+		if (this.decodedStream == null) {
+			this.baseStream.resetToBeginning();
+			this.decodedStream = this.decoder.decode(this.baseStream);
+		}
+	}
+
+	@Override
+	public void close() throws IOException {
+		// this.baseStream.close();
+		this.decodedStream = null;
 	}
 
 	@Override
@@ -68,19 +84,6 @@ public class ResettableStreamWrapper extends ResettableInputStream {
 	public long skip(final long size) throws IOException {
 		checkInitialized();
 		return this.decodedStream.skip(size);
-	}
-
-	private void checkInitialized() throws IOException {
-		if (this.decodedStream == null) {
-			this.baseStream.resetToBeginning();
-			this.decodedStream = this.decoder.decode(this.baseStream);
-		}
-	}
-
-	@Override
-	public void close() throws IOException {
-		this.baseStream.close();
-		this.decodedStream = null;
 	}
 
 }

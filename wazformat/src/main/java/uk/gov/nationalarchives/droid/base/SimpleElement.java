@@ -1,19 +1,8 @@
 /*
- * c The National Archives 2005-2006.  All rights reserved.
- * See Licence.txt for full licence details.
- *
- * Developed by:
- * Tessella Support Services plc
- * 3 Vineyard Chambers
- * Abingdon, OX14 3PX
- * United Kingdom
- * http://www.tessella.com
- *
- * Tessella/NPD/4305
- * PRONOM 4
- *
- * SimpleElement.java
- *
+ * c The National Archives 2005-2006. All rights reserved. See Licence.txt for
+ * full licence details. Developed by: Tessella Support Services plc 3
+ * Vineyard Chambers Abingdon, OX14 3PX United Kingdom http://www.tessella.com
+ * Tessella/NPD/4305 PRONOM 4 SimpleElement.java
  */
 package uk.gov.nationalarchives.droid.base;
 

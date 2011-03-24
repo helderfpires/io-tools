@@ -1,39 +1,18 @@
 /*
- * The National Archives 2005-2006.  All rights reserved.
- * See Licence.txt for full licence details.
- *
- * Developed by:
- * Tessella Support Services plc
- * 3 Vineyard Chambers
- * Abingdon, OX14 3PX
- * United Kingdom
- * http://www.tessella.com
- *
- * Tessella/NPD/4826
- * PRONOM 5a
- *
- * $Id: ByteReader.java,v 1.6 2006/03/13 15:15:28 linb Exp $
- *
- * $Log: ByteReader.java,v $
- * Revision 1.6  2006/03/13 15:15:28  linb
+ * The National Archives 2005-2006. All rights reserved. See Licence.txt for
+ * full licence details. Developed by: Tessella Support Services plc 3
+ * Vineyard Chambers Abingdon, OX14 3PX United Kingdom http://www.tessella.com
+ * Tessella/NPD/4826 PRONOM 5a $Id: ByteReader.java,v 1.6 2006/03/13 15:15:28
+ * linb Exp $ $Log: ByteReader.java,v $ Revision 1.6 2006/03/13 15:15:28 linb
  * Changed copyright holder from Crown Copyright to The National Archives.
- * Added reference to licence.txt
- * Changed dates to 2005-2006
- *
- * Revision 1.5  2006/02/09 13:17:41  linb
- * Changed StreamByteReader to InputStreamByteReader
- * Refactored common code from UrlByteReader and InputStreamByteReader into new class StreamByteReader, from which they both inherit
- * Updated javadoc
- *
- * Revision 1.4  2006/02/09 12:14:16  linb
- * Changed some javadoc to allow it to be created cleanly
- *
- * Revision 1.3  2006/02/08 12:51:53  linb
- * Added javadoc comments for file.
- *
- * Revision 1.2  2006/02/08 08:56:35  linb
- * - Added header comments
- *
+ * Added reference to licence.txt Changed dates to 2005-2006 Revision 1.5
+ * 2006/02/09 13:17:41 linb Changed StreamByteReader to InputStreamByteReader
+ * Refactored common code from UrlByteReader and InputStreamByteReader into
+ * new class StreamByteReader, from which they both inherit Updated javadoc
+ * Revision 1.4 2006/02/09 12:14:16 linb Changed some javadoc to allow it to
+ * be created cleanly Revision 1.3 2006/02/08 12:51:53 linb Added javadoc
+ * comments for file. Revision 1.2 2006/02/08 08:56:35 linb - Added header
+ * comments
  */
 package uk.gov.nationalarchives.droid.binFileReader;
 
@@ -56,7 +35,7 @@ public interface ByteReader {
 	 */
 	public void addHit(FileFormatHit theHit);
 
-	public byte[] getbuffer();
+
 
 	/**
 	 * Get a byte from file
@@ -160,10 +139,5 @@ public interface ByteReader {
 	 * Set identification status to Positive
 	 */
 	public void setPositiveIdent();
-
-	/**
-	 * Set identification status to Tentative
-	 */
-	public void setTentativeIdent();
 
 }
