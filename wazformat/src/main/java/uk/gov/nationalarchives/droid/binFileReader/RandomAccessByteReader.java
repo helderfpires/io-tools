@@ -3,19 +3,16 @@ package uk.gov.nationalarchives.droid.binFileReader;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.io.IOUtils;
-
 import com.gc.iotools.fmt.base.ResettableInputStream;
-import com.gc.iotools.stream.is.SizeLimitInputStream;
 
 /**
  * @author dvd.smt
  */
 public final class RandomAccessByteReader extends AbstractByteReader {
 
-	private static final int BUFFER_MAX_SIZE = 1024 * 64;
+	private static final int BUFFER_MAX_SIZE = 4096;
 
-	private byte[] buffer = new byte[BUFFER_MAX_SIZE];
+	private final byte[] buffer = new byte[BUFFER_MAX_SIZE];
 
 	private long bufferStartOffset = 0;
 	private long fileMarker = 0;
@@ -30,6 +27,7 @@ public final class RandomAccessByteReader extends AbstractByteReader {
 		this.ras = stream;
 		this.len = getSize(stream);
 		this.ras.resetToBeginning();
+		this.position = 0;
 	}
 
 	@Override
@@ -46,11 +44,21 @@ public final class RandomAccessByteReader extends AbstractByteReader {
 			try {
 				final long startIndex = Math.max(0, fileIndex
 						- (BUFFER_MAX_SIZE / 2));
-				seek(startIndex);
+				if (this.position > startIndex
+						&& this.position < (startIndex + BUFFER_MAX_SIZE)) {
+					// some part of the buffer was already read.
+					final int copyLen = (int) (this.position - startIndex);
+					System.arraycopy(this.buffer,
+							(int) (startIndex - this.bufferStartOffset),
+							this.buffer, 0, copyLen);
+					final int read = readLenBytes(copyLen);
+					this.position += read;
+				} else {
+					seek(startIndex);
+					final int read = readLenBytes(0);
+					this.position = startIndex + read;
+				}
 				this.bufferStartOffset = startIndex;
-				this.buffer = IOUtils.toByteArray(new SizeLimitInputStream(
-						this.ras, BUFFER_MAX_SIZE));
-				this.position = startIndex + this.buffer.length;
 				result = this.buffer[(int) (fileIndex - this.bufferStartOffset)];
 			} catch (final IOException e) {
 				throw new IllegalStateException("Read position[" + fileIndex
@@ -84,12 +92,22 @@ public final class RandomAccessByteReader extends AbstractByteReader {
 				curPos += readLen;
 			}
 		}
-		if (curPos <= this.buffer.length) {
-			final byte[] result = new byte[(int) curPos];
-			System.arraycopy(this.buffer, 0, result, 0, (int) curPos);
-			this.buffer = result;
-		}
 		return curPos;
+	}
+
+	public int readLenBytes(final int copyLen) throws IOException {
+		int read = 0;
+		final int len = (this.buffer.length - copyLen);
+		while (len - read > 0) {
+			final int n = this.ras.read(this.buffer, copyLen + read, len
+					- read);
+			if (n >= 0) {
+				read += n;
+			} else {
+				break;
+			}
+		}
+		return read;
 	}
 
 	private void seek(final long fileIndex) throws IOException {
