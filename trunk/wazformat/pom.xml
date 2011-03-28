@@ -89,6 +89,10 @@
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>net.iharder</groupId>
+			<artifactId>base64</artifactId>
+		</dependency>
 		<!-- dependency> <groupId>net.sf.mime-util</groupId> <artifactId>mime-util</artifactId> 
 			</dependency -->
 		<dependency>
@@ -99,6 +103,10 @@
 		<dependency>
 			<groupId>org.jmock</groupId>
 			<artifactId>jmock-junit4</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
