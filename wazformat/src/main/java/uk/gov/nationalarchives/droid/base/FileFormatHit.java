@@ -14,6 +14,9 @@
 
 package uk.gov.nationalarchives.droid.base;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.gov.nationalarchives.droid.signatureFile.FileFormat;
 
 /**
@@ -26,6 +29,8 @@ public class FileFormatHit extends SimpleElement {
 	FileFormat myHitFileFormat;
 	int myHitType;
 	String myHitWarning = "";
+	private static final Logger LOG = LoggerFactory
+			.getLogger(FileFormatHit.class);
 
 	public FileFormatHit() {
 	}
@@ -160,7 +165,9 @@ public class FileFormatHit extends SimpleElement {
 		} else if (theName.equals("HitWarning")) {
 			setIdentificationWarning(theValue);
 		} else {
-			MessageDisplay.unknownAttributeWarning(theName, getElementName());
+			final String theCMDMessage = "WARNING: Unknown XML attribute "
+					+ theName + " found for " + getElementName() + " ";
+			LOG.warn(theCMDMessage);
 		}
 	}
 
@@ -228,7 +235,7 @@ public class FileFormatHit extends SimpleElement {
 				.equals(DroidConstants.HIT_TYPE_POSITIVE_GENERIC_OR_SPECIFIC_TEXT)) {
 			this.myHitType = DroidConstants.HIT_TYPE_POSITIVE_GENERIC_OR_SPECIFIC;
 		} else {
-			MessageDisplay.generalWarning("Unknown hit status listed: "
+			LOG.warn("Unknown hit status listed: "
 					+ value);
 		}
 	}

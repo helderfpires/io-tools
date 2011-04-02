@@ -38,7 +38,7 @@ import com.gc.iotools.stream.utils.LogUtils;
  * <code>InputStreamFromOutputStream</code> class (whose ancestor is
  * <code>java.io.InputStream</code> ).
  * </p>
- *
+ * 
  * <pre>
  * final String dataId=//id of some data.
  * final InputStreamFromOutputStream&lt;String&gt; isos
@@ -70,7 +70,7 @@ import com.gc.iotools.stream.utils.LogUtils;
  * allocating the internal thread or even specify the
  * {@linkplain ExecutorService} for thread execution.
  * </p>
- *
+ * 
  * @param <T>
  *            Optional result returned by the function
  *            {@linkplain #produce(OutputStream)} after the data has been
@@ -79,9 +79,8 @@ import com.gc.iotools.stream.utils.LogUtils;
  * @see ExecutionModel
  * @author dvd.smnt
  * @since 1.0
- * @version $Id$
  */
-public abstract class InputStreamFromOutputStream<T> extends InputStream {
+public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 	/**
 	 * This inner class run in another thread and calls the
 	 * {@link #produce(OutputStream)} method.
@@ -145,16 +144,6 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	}
 
 	/**
-	 * Extends PipedInputStream to allow set the default buffer size.
-	 */
-	private final class MyPipedInputStream extends PipedInputStream {
-
-		MyPipedInputStream(final int bufferSize) {
-			super.buffer = new byte[bufferSize];
-		}
-	}
-
-	/**
 	 * Collection for debugging purpose containing names of threads (name is
 	 * calculated from the instantiation line. See <code>getCaller()</code>.
 	 */
@@ -171,7 +160,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	/**
 	 * This method can be used for debugging purposes to get a list of the
 	 * currently active threads.
-	 *
+	 * 
 	 * @return Array containing names of the threads currently active.
 	 */
 	public static final String[] getActiveThreadNames() {
@@ -183,24 +172,12 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 		return result;
 	}
 
-	/**
-	 * Set the size for the pipe circular buffer for the newly created
-	 * <code>InputStreamFromOutputStream</code>. Default is 4096 bytes. will
-	 * be removed in 1.3.0. Use setDefaultPipeSize instead.
-	 *
-	 * @since 1.2.0
-	 * @param defaultPipeSize
-	 *            the default pipe buffer size in bytes.
-	 */
-	@Deprecated
-	public static void setDefaultBufferSize(final int defaultPipeSize) {
-		InputStreamFromOutputStream.defaultPipeSize = defaultPipeSize;
-	}
+
 
 	/**
 	 * Set the size for the pipe circular buffer for the newly created
 	 * <code>InputStreamFromOutputStream</code>. Default is 4096 bytes.
-	 *
+	 * 
 	 * @since 1.2.2
 	 * @param defaultPipeSize
 	 *            the default pipe buffer size in bytes.
@@ -213,14 +190,13 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	private final Future<T> futureResult;
 	private final boolean joinOnClose;
 
-	private final PipedInputStream pipedIS;
 
 	/**
 	 * <p>
 	 * It creates a <code>InputStreamFromOutputStream</code> with a
 	 * THREAD_PER_INSTANCE thread strategy.
 	 * </p>
-	 *
+	 * 
 	 * @see ExecutionModel#THREAD_PER_INSTANCE
 	 */
 	public InputStreamFromOutputStream() {
@@ -235,7 +211,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * <p>
 	 * This class executes the produce method in a thread created internally.
 	 * </p>
-	 *
+	 * 
 	 * @since 1.2.2
 	 * @see ExecutionModel
 	 * @param executionModel
@@ -255,7 +231,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * specify the ExecutorService that will execute the
 	 * {@linkplain #produce(OutputStream)} method.
 	 * </p>
-	 *
+	 * 
 	 * @since 1.2.2
 	 * @see ExecutorService
 	 * @param executor
@@ -279,7 +255,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * <p>
 	 * Using this method the default size is ignored.
 	 * </p>
-	 *
+	 * 
 	 * @since 1.2.6
 	 * @see ExecutorService
 	 * @param executor
@@ -293,12 +269,12 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 */
 	public InputStreamFromOutputStream(final boolean joinOnClose,
 			final ExecutorService executor, final int pipeBufferSize) {
+		super(pipeBufferSize);
 		final String callerId = LogUtils.getCaller(this.getClass());
 		this.joinOnClose = joinOnClose;
 		PipedOutputStream pipedOS = null;
 		try {
-			this.pipedIS = new MyPipedInputStream(pipeBufferSize);
-			pipedOS = new PipedOutputStream(this.pipedIS);
+			pipedOS = new PipedOutputStream(this);
 		} catch (final IOException e) {
 			throw new RuntimeException("Error during pipe creaton", e);
 		}
@@ -317,7 +293,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * <p>
 	 * This class executes the produce method in a thread created internally.
 	 * </p>
-	 *
+	 * 
 	 * @see ExecutionModel
 	 * @param executionModel
 	 *            Defines how the internal thread is allocated.
@@ -332,7 +308,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * specify the ExecutorService that will execute the
 	 * {@linkplain #produce(OutputStream)} method.
 	 * </p>
-	 *
+	 * 
 	 * @see ExecutorService
 	 * @param executor
 	 *            Defines the ExecutorService that will allocate the the
@@ -351,10 +327,13 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * It is an extension point designed for applications that need to perform
 	 * some operation when the <code>InputStream</code> is closed.
 	 * </p>
-	 *
+	 * 
 	 * @since 1.2.9
+	 * @throws IOException
+	 *             threw when the subclass wants to communicate an exception
+	 *             during close.
 	 */
-	protected void afterClose() {
+	protected void afterClose() throws IOException {
 		// extension point;
 	}
 
@@ -379,7 +358,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	public final void close() throws IOException {
 		if (!this.closeCalled) {
 			this.closeCalled = true;
-			this.pipedIS.close();
+			super.close();
 			if (this.joinOnClose) {
 				try {
 					getResult();
@@ -405,13 +384,14 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * This method must be called after the method {@linkplain #close()},
 	 * otherwise an IllegalStateException is thrown.
 	 * </p>
-	 *
+	 * 
 	 * @since 1.2.0
 	 * @return Object that was returned by the
 	 *         {@linkplain #produce(OutputStream)} method.
 	 * @throws java.lang.Exception
 	 *             If the {@linkplain #produce(OutputStream)} method threw an
-	 *             java.lang.Exception this method will throw again the same exception.
+	 *             java.lang.Exception this method will throw again the same
+	 *             exception.
 	 * @throws java.lang.IllegalStateException
 	 *             If the {@linkplain #close()} method hasn't been called yet.
 	 */
@@ -448,7 +428,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	 * The right way to set a field variable is to return a value in the
 	 * <code>produce</code>and retrieve it in the getResult().
 	 * </p>
-	 *
+	 * 
 	 * @return The implementing class can use this to return a result of data
 	 *         production. The result will be available through the method
 	 *         {@linkplain #getResult()}.
@@ -464,7 +444,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	/** {@inheritDoc} */
 	@Override
 	public final int read() throws IOException {
-		final int result = this.pipedIS.read();
+		final int result = super.read();
 		if (result < 0) {
 			checkException();
 		}
@@ -475,7 +455,7 @@ public abstract class InputStreamFromOutputStream<T> extends InputStream {
 	@Override
 	public final int read(final byte[] b, final int off, final int len)
 			throws IOException {
-		final int result = this.pipedIS.read(b, off, len);
+		final int result = super.read(b, off, len);
 		if (result < 0) {
 			checkException();
 		}

@@ -143,8 +143,8 @@ public class ByteSeqSpecifier {
 	 *         byte sequence (here) to find out how minSeq and maxSeq should
 	 *         be interpreted.
 	 */
-	protected boolean matchesByteSequence(final ByteReader file, long startPos,
-			int direction, final boolean bigEndian) {
+	protected boolean matchesByteSequence(final ByteReader file,
+			long startPos, int direction, final boolean bigEndian) {
 		try {
 			// We have to perform the comparison from big-end to little-end.
 			// Consequently, if we're reading

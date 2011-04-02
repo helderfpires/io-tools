@@ -33,9 +33,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.gov.nationalarchives.droid.base.DroidConstants;
 import uk.gov.nationalarchives.droid.base.FileFormatHit;
-import uk.gov.nationalarchives.droid.base.MessageDisplay;
 import uk.gov.nationalarchives.droid.base.SimpleElement;
 import uk.gov.nationalarchives.droid.binFileReader.ByteReader;
 
@@ -46,7 +48,8 @@ import uk.gov.nationalarchives.droid.binFileReader.ByteReader;
  * @version 4.0.0
  */
 public class FFSignatureFile extends SimpleElement {
-
+	private static final Logger LOG = LoggerFactory
+			.getLogger(FFSignatureFile.class);
 	private String dateCreated = "";
 	private FileFormatCollection fFcollection;
 	private InternalSignatureCollection intSigs;
@@ -281,7 +284,9 @@ public class FFSignatureFile extends SimpleElement {
 		} else if (name.equals("DateCreated")) {
 			setDateCreated(value);
 		} else {
-			MessageDisplay.unknownAttributeWarning(name, getElementName());
+			final String theCMDMessage = "WARNING: Unknown XML attribute "
+					+ name + " found for " + getElementName() + " ";
+			LOG.warn(theCMDMessage);
 		}
 	}
 

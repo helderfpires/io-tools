@@ -21,7 +21,9 @@ package uk.gov.nationalarchives.droid.signatureFile;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.gov.nationalarchives.droid.base.MessageDisplay;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.gov.nationalarchives.droid.base.SimpleElement;
 import uk.gov.nationalarchives.droid.binFileReader.ByteReader;
 
@@ -32,15 +34,16 @@ import uk.gov.nationalarchives.droid.binFileReader.ByteReader;
  * @version 4.0.0
  */
 public class ByteSequence extends SimpleElement {
-
-	boolean bigEndian = true; // Assume a signature is big-endian unless we
+	private static final Logger LOG = LoggerFactory
+			.getLogger(ByteSequence.class);
+	private boolean bigEndian = true; // Assume a signature is big-endian unless we
 								// are
 	// told to the contrary.
-	int indirectOffsetLength = 0;
-	int indirectOffsetLocation = 0;
-	int parentSignature;
-	String reference = "";
-	List<SubSequence> subSequences = new ArrayList<SubSequence>();
+	private int indirectOffsetLength = 0;
+	private int indirectOffsetLocation = 0;
+	private int parentSignature;
+	private String reference = "";
+	private List<SubSequence> subSequences = new ArrayList<SubSequence>();
 
 	// int MaxOffset = 0;
 
@@ -152,7 +155,9 @@ public class ByteSequence extends SimpleElement {
 		} else if (name.equals("IndirectOffsetLocation")) {
 			setIndirectOffsetLocation(value);
 		} else {
-			MessageDisplay.unknownAttributeWarning(name, getElementName());
+			final String theCMDMessage = "WARNING: Unknown XML attribute "
+					+ name + " found for " + getElementName() + " ";
+			LOG.warn(theCMDMessage);
 		}
 	}
 

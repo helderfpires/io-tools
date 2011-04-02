@@ -41,9 +41,11 @@
 
 package uk.gov.nationalarchives.droid.binFileReader;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.gov.nationalarchives.droid.base.DroidConstants;
 import uk.gov.nationalarchives.droid.base.FileFormatHit;
-import uk.gov.nationalarchives.droid.base.MessageDisplay;
 import uk.gov.nationalarchives.droid.base.SimpleElement;
 
 /**
@@ -56,7 +58,8 @@ import uk.gov.nationalarchives.droid.base.SimpleElement;
  * @version V1.R0.M.0, 11-Mar-2005
  */
 public class IdentificationFile extends SimpleElement implements Comparable {
-
+	private static final Logger LOG = LoggerFactory
+	.getLogger(IdentificationFile.class);
 	private final java.util.List<FileFormatHit> fileHits = new java.util.ArrayList<FileFormatHit>();
 	private String filePath;
 	private String identificationWarning = "";
@@ -259,7 +262,7 @@ public class IdentificationFile extends SimpleElement implements Comparable {
 					.equals(DroidConstants.FILE_CLASSIFICATION_NOTCLASSIFIED_TEXT)) {
 				this.myIDStatus = DroidConstants.FILE_CLASSIFICATION_NOTCLASSIFIED;
 			} else {
-				MessageDisplay.generalWarning("Unknown file status listed: <"
+				LOG.warn("Unknown file status listed: <"
 						+ theValue + "> is not the same as <"
 						+ DroidConstants.FILE_CLASSIFICATION_POSITIVE_TEXT
 						+ ">");
@@ -267,7 +270,9 @@ public class IdentificationFile extends SimpleElement implements Comparable {
 		} else if (theName.equals("Warning")) {
 			setWarning(theValue);
 		} else {
-			MessageDisplay.unknownAttributeWarning(theName, getElementName());
+			final String theCMDMessage = "WARNING: Unknown XML attribute "
+					+ theName + " found for " + getElementName() + " ";
+			LOG.warn(theCMDMessage);
 		}
 	}
 

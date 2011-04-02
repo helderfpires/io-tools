@@ -11,7 +11,9 @@
  */
 package uk.gov.nationalarchives.droid.signatureFile;
 
-import uk.gov.nationalarchives.droid.base.MessageDisplay;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.gov.nationalarchives.droid.base.SimpleElement;
 
 /**
@@ -21,8 +23,9 @@ import uk.gov.nationalarchives.droid.base.SimpleElement;
  * @version 4.0.0
  */
 public class Shift extends SimpleElement {
-	int myShiftByte = 999;
-	long myShiftValue;
+	private static final Logger LOG = LoggerFactory.getLogger(Shift.class);
+	private int myShiftByte = 999;
+	private long myShiftValue;
 
 	/**
 	 * Set the shift distance when the end of element tag is reached. This
@@ -35,9 +38,8 @@ public class Shift extends SimpleElement {
 		try {
 			this.myShiftValue = Long.parseLong(theElementValue);
 		} catch (final Exception e) {
-			MessageDisplay
-					.generalWarning("The following non-numerical shift distance was found in the signature file: "
-							+ theElementValue);
+			LOG.warn("The following non-numerical shift distance was found in the signature file: "
+					+ theElementValue);
 			this.myShiftValue = 1;
 		}
 
@@ -68,7 +70,9 @@ public class Shift extends SimpleElement {
 			} catch (final Exception e) {
 			}
 		} else {
-			MessageDisplay.unknownAttributeWarning(theName, getElementName());
+			final String theCMDMessage = "WARNING: Unknown XML attribute "
+					+ theName + " found for " + getElementName() + " ";
+			LOG.warn(theCMDMessage);
 		}
 	}
 }
