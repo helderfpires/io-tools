@@ -20,7 +20,6 @@
 
 package uk.gov.nationalarchives.droid.binFileReader;
 
-import sandbox.FileByteReader;
 import uk.gov.nationalarchives.droid.base.FileFormatHit;
 
 /**
@@ -35,36 +34,6 @@ import uk.gov.nationalarchives.droid.base.FileFormatHit;
 // default - May cause compile errors!
 public abstract class AbstractByteReader implements ByteReader { // NO_UCD
 
-	/**
-	 * Creates a ByteReader object, and depending on the readFile setting, it
-	 * may or may not read in the binary file specified
-	 * 
-	 * @param theIDFile
-	 *            The file to be read in
-	 */
-	public static ByteReader newByteReader(final IdentificationFile theIDFile) {
-		return newByteReader(theIDFile, true);
-	}
-
-	/**
-	 * Static constructor for a ByteReader object, and depending on the
-	 * readFile setting, it may or may not read in the binary file specified.
-	 * <p/>
-	 * This may create a FileByteReader, UrlByteReader or
-	 * InputStreamByteReader, depending on the the nature of the
-	 * IdentificationFile passed in.
-	 * 
-	 * @param theIDFile
-	 *            The file to be read in
-	 * @param readFile
-	 *            Flag specifying whether file should be read in or not
-	 */
-	public static ByteReader newByteReader(
-			final IdentificationFile theIDFile, final boolean readFile) {
-
-		return new FileByteReader(theIDFile, readFile);
-
-	}
 
 	/**
 	 * The file represented by this object

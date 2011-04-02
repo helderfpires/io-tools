@@ -1,6 +1,8 @@
 package com.gc.iotools.stream.os;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,11 +14,51 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
+import org.junit.Test;
 
 import com.gc.iotools.stream.base.ExecutionModel;
 import com.gc.iotools.stream.is.BigDocumentIstream;
 
 public class TestOutputStreamToInputStream {
+
+	private class MyOsIs extends OutputStreamToInputStream<String>{
+		private String variableToInitialize="notInitialized";
+		
+		public MyOsIs(boolean startImmediately) {
+			super(startImmediately);
+			try {
+				//some lengthly operation
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			this.variableToInitialize = "initialized";
+		}
+
+		@Override
+		protected String doRead(InputStream istream) throws Exception {
+			return variableToInitialize;
+		}
+		
+	}
+	/**
+	 * Tests that the constructor completes before the produce is called.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testExplicitSubclassing() throws Exception {
+		//standard case: produce is called after constructor end.
+		OutputStreamToInputStream<String> isOs = new MyOsIs(false);
+		isOs.close();
+		assertEquals("method produce was called before "
+				+ "the constructor end.", "initialized", isOs.getResult());
+		//optimised case for anonymous subclassing: produce is called before constructor end.
+		OutputStreamToInputStream<String> isOs2 = new MyOsIs(true);
+		isOs2.close();
+		assertEquals("method produce was called before "
+				+ "the constructor end.", "notInitialized", isOs2.getResult());
+	}
 
 	private static void copy(final long fileLength, final int bufSize)
 			throws Exception {
@@ -83,7 +125,7 @@ public class TestOutputStreamToInputStream {
 			oStream2IStream.close();
 		}
 		assertEquals("Results are returned", "end",
-				oStream2IStream.getResults());
+				oStream2IStream.getResult());
 	}
 
 	/**
@@ -168,7 +210,7 @@ public class TestOutputStreamToInputStream {
 			oStream2IStream.close();
 		}
 		assertEquals("Results are returned", "test was processed.",
-				oStream2IStream.getResults());
+				oStream2IStream.getResult());
 	}
 
 }

@@ -6,6 +6,9 @@
  */
 package uk.gov.nationalarchives.droid.base;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * holds the basic details of an element read from an XML file
  * 
@@ -14,7 +17,8 @@ package uk.gov.nationalarchives.droid.base;
  */
 public class SimpleElement {
 	String myText = "";
-
+	private static final Logger LOG = LoggerFactory
+	.getLogger(SimpleElement.class);
 	/**
 	 * method to be overridden in cases where the element content needs to be
 	 * specified only when the end of element tag is reached
@@ -34,7 +38,9 @@ public class SimpleElement {
 	}
 
 	public void setAttributeValue(final String name, final String value) {
-		MessageDisplay.unknownAttributeWarning(name, getElementName());
+		final String theCMDMessage = "WARNING: Unknown XML attribute "
+				+ name + " found for " + getElementName() + " ";
+		LOG.warn(theCMDMessage);
 	}
 
 	/* setters */

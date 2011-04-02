@@ -6,7 +6,6 @@ package com.gc.iotools.stream.os;
  */
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.concurrent.Callable;
@@ -58,7 +57,7 @@ import com.gc.iotools.stream.utils.LogUtils;
  * <code>write</code> operation.
  * </p>
  * <p>
- * The method {@link #getResults()} suspend the outer thread and wait for the
+ * The method {@link #getResult()} suspend the outer thread and wait for the
  * read from the internal stream is over. It returns when the
  * <code>doRead()</code> terminates and has produced its result.
  * </p>
@@ -73,8 +72,10 @@ import com.gc.iotools.stream.utils.LogUtils;
  * 		// Users of this class should place all the code that need to read data
  *      // from the InputStream in this method. Data available through the
  *      // InputStream passed as a parameter is the data that is written to the
- * 		// OutputStream oStream2IStream through its write method.
+ * 		// OutputStream oStream2IStream through its write() methods.
  * 		final String result = IOUtils.toString(istream);
+ *      //"result" is here only for example of how returning data to the external OutputStream. 
+ *      //Real implementations might return "null" if they doesn't need to return a value.
  * 		return result + &quot; was processed.&quot;;
  * 	}
  * };
@@ -87,18 +88,17 @@ import com.gc.iotools.stream.utils.LogUtils;
  * 	// don't miss the close (or a thread would not terminate correctly).
  * 	oStream2IStream.close();
  * }
- * String result = oStream2IStream.getResults();
+ * String result = oStream2IStream.getResult();
  * //result now contains the string &quot;test was processed.&quot;
  * </pre></code>
- *
+ * 
  * @param <T>
  *            Type returned by the method {@link #getResults()} after the
  *            thread has finished.
  * @since 1.0
  * @author dvd.smnt
- * @version $Id$
  */
-public abstract class OutputStreamToInputStream<T> extends OutputStream {
+public abstract class OutputStreamToInputStream<T> extends PipedOutputStream {
 	/**
 	 * This class executes in the second thread.
 	 * 
@@ -106,26 +106,20 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 */
 	private final class DataConsumer implements Callable<T> {
 
-		private final InputStream inputstream;
-
-		DataConsumer(final InputStream istream) {
-			this.inputstream = istream;
-		}
-
 		@Override
 		public synchronized T call() throws Exception {
 			T processResult;
 			try {
 				// avoid the internal class close the stream.
 				final CloseShieldInputStream istream = new CloseShieldInputStream(
-						this.inputstream);
+						OutputStreamToInputStream.this.inputstream);
 				processResult = doRead(istream);
 			} catch (final Exception e) {
 				OutputStreamToInputStream.this.abort = true;
 				throw e;
 			} finally {
 				emptyInputStream();
-				this.inputstream.close();
+				OutputStreamToInputStream.this.inputstream.close();
 			}
 			return processResult;
 		}
@@ -133,7 +127,8 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 		private void emptyInputStream() {
 			try {
 				final byte[] buffer = new byte[EasyStreamConstants.SKIP_BUFFER_SIZE];
-				while (this.inputstream.read(buffer) >= 0) {
+				while (OutputStreamToInputStream.this.inputstream
+						.read(buffer) >= 0) {
 					;
 					// empty block: just throw bytes away
 				}
@@ -178,31 +173,10 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 			.getLogger(OutputStreamToInputStream.class);
 
 	/**
-	 * <p>
 	 * Set the size for the pipe circular buffer. This setting has effect for
 	 * the newly created <code>OutputStreamToInputStream</code>. Default is
 	 * 4096 bytes.
-	 * </p>
-	 * <p>
-	 * Will be removed in the 1.3 release. Use
-	 * {@link #setDefaultPipeSize(int)} instead.
-	 * </p>
-	 *
-	 * @since 1.2.0
-	 * @param defaultPipeSize
-	 *            The default pipe buffer size in bytes.
-	 * @see #setDefaultPipeSize(int)
-	 */
-	@Deprecated
-	public static void setDefaultBufferSize(final int defaultPipeSize) {
-		OutputStreamToInputStream.defaultPipeSize = defaultPipeSize;
-	}
-
-	/**
-	 * Set the size for the pipe circular buffer. This setting has effect for
-	 * the newly created <code>OutputStreamToInputStream</code>. Default is
-	 * 4096 bytes.
-	 *
+	 * 
 	 * @since 1.2.3
 	 * @param defaultPipeSize
 	 *            The default pipe buffer size in bytes.
@@ -213,9 +187,10 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 
 	private boolean abort = false;
 	private boolean closeCalled = false;
+	private final ExecutorService executorService;
+	private final InputStream inputstream;
 	private final boolean joinOnClose;
-	private final PipedOutputStream pipedOs;
-	private final Future<T> writingResult;
+	private Future<T> writingResult = null;
 
 	/**
 	 * <p>
@@ -228,12 +203,101 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * When the {@linkplain #close()} method is called this class wait for the
 	 * internal thread to terminate.
 	 * </p>
-	 *
+	 * 
 	 * @throws java.lang.IllegalStateException
 	 *             Exception thrown if pipe can't be created.
 	 */
 	public OutputStreamToInputStream() {
 		this(true, ExecutionModel.THREAD_PER_INSTANCE);
+	}
+
+	/**
+	 * <p>
+	 * Creates a new <code>OutputStreamToInputStream</code>. It uses the
+	 * default {@link ExecutionModel#THREAD_PER_INSTANCE} thread instantiation
+	 * strategy. This means that a new thread is created for every instance of
+	 * <code>OutputStreamToInputStream</code>.
+	 * </p>
+	 * <p>
+	 * If <code>startImmediately</code> is <code>true</code> the internal
+	 * thread will start before the constructor completes. This is the best
+	 * way if you're doing anonymous subclassing. While if you do explicit
+	 * sublcassing you should set this parameter to false to allow the
+	 * constructor of the superclass to complete before the threads are
+	 * started.
+	 * </p>
+	 * <p>
+	 * When the {@linkplain #close()} method is called this class wait for the
+	 * internal thread to terminate.
+	 * </p>
+	 * 
+	 * @since 1.2.13
+	 * @throws java.lang.IllegalStateException
+	 *             Exception thrown if pipe can't be created.
+	 */
+	public OutputStreamToInputStream(final boolean startImmediately) {
+		this(startImmediately, true, ExecutorServiceFactory
+				.getExecutor(ExecutionModel.THREAD_PER_INSTANCE),
+				defaultPipeSize);
+	}
+
+	/**
+	 * <p>
+	 * Creates a new <code>OutputStreamToInputStream</code>. It let the user
+	 * specify the thread instantiation service and what will happen upon the
+	 * invocation of <code>close()</code> method.
+	 * </p>
+	 * <p>
+	 * If <code>startImmediately</code> is <code>true</code> the internal
+	 * thread will start before the constructor completes. This is the best
+	 * way if you're doing anonymous subclassing. While if you do explicit
+	 * sublcassing you should set this parameter to false to allow the
+	 * constructor of the superclass to complete before the threads are
+	 * started.
+	 * </p>
+	 * If <code>joinOnClose</code> is <code>true</code> when the
+	 * <code>close()</code> method is invoked this class will wait for the
+	 * internal thread to terminate. </p>
+	 * <p>
+	 * It also let the user specify the size of the pipe buffer to allocate.
+	 * </p>
+	 * 
+	 * @since 1.2.13
+	 * @param startImmediately
+	 *            if <code>true</code> the internal thread will start
+	 *            immediately after this constructor completes.
+	 * @param joinOnClose
+	 *            if <code>true</code> the internal thread will be joined when
+	 *            close is invoked.
+	 * @param executorService
+	 *            Service for executing the internal thread.
+	 * @param pipeBufferSize
+	 *            The size of the pipe buffer to allocate.
+	 * @throws java.lang.IllegalStateException
+	 *             Exception thrown if pipe can't be created.
+	 */
+	public OutputStreamToInputStream(final boolean startImmediately,
+			final boolean joinOnClose, final ExecutorService executorService,
+			final int pipeBufferSize) {
+		if (executorService == null) {
+			throw new IllegalArgumentException(
+					"executor service can't be null");
+		}
+		final String callerId = LogUtils.getCaller(getClass());
+		final PipedInputStream pipedIS = new MyPipedInputStream(
+				pipeBufferSize);
+		try {
+			pipedIS.connect(this);
+		} catch (final IOException e) {
+			throw new IllegalStateException("Error during pipe creaton", e);
+		}
+		this.joinOnClose = joinOnClose;
+		this.inputstream = pipedIS;
+		this.executorService = executorService;
+		LOG.debug("invoked by[{}] queued for start.", callerId);
+		if (startImmediately) {
+			initializeIfNecessary();
+		}
 	}
 
 	/**
@@ -247,7 +311,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * <code>close()</code> method is invoked this class will wait for the
 	 * internal thread to terminate.
 	 * </p>
-	 *
+	 * 
 	 * @see ExecutionModel
 	 * @param joinOnClose
 	 *            if <code>true</code> the internal thread will be joined when
@@ -273,7 +337,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * <code>close()</code> method is invoked this class will wait for the
 	 * internal thread to terminate.
 	 * </p>
-	 *
+	 * 
 	 * @since 1.2.6
 	 * @param joinOnClose
 	 *            if <code>true</code> the internal thread will be joined when
@@ -302,7 +366,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * <p>
 	 * It also let the user specify the size of the pipe buffer to allocate.
 	 * </p>
-	 *
+	 * 
 	 * @since 1.2.6
 	 * @param joinOnClose
 	 *            if <code>true</code> the internal thread will be joined when
@@ -316,23 +380,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 */
 	public OutputStreamToInputStream(final boolean joinOnClose,
 			final ExecutorService executorService, final int pipeBufferSize) {
-		if (executorService == null) {
-			throw new IllegalArgumentException(
-					"executor service can't be null");
-		}
-		final String callerId = LogUtils.getCaller(getClass());
-		this.pipedOs = new PipedOutputStream();
-		final PipedInputStream pipedIS = new MyPipedInputStream(
-				pipeBufferSize);
-		try {
-			pipedIS.connect(this.pipedOs);
-		} catch (final IOException e) {
-			throw new IllegalStateException("Error during pipe creaton", e);
-		}
-		final DataConsumer executingProcess = new DataConsumer(pipedIS);
-		this.joinOnClose = joinOnClose;
-		LOG.debug("invoked by[{}] queued for start.", callerId);
-		this.writingResult = executorService.submit(executingProcess);
+		this(false, joinOnClose, executorService, pipeBufferSize);
 	}
 
 	/**
@@ -344,10 +392,13 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * It is an extension point designed for applications that need to perform
 	 * some operation when the <code>OutputStream</code> is closed.
 	 * </p>
-	 *
+	 * 
 	 * @since 1.2.9
+	 * @throws IOException
+	 *             threw when the extension point wants to launch an
+	 *             exception.
 	 */
-	protected void afterClose() {
+	protected void afterClose() throws IOException {
 		// extension point;
 	}
 
@@ -361,7 +412,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	/**
 	 * When this method is called the internal thread is always waited for
 	 * completion.
-	 *
+	 * 
 	 * @param timeout
 	 *            maximum time to wait for the internal thread to finish.
 	 * @param tu
@@ -390,26 +441,27 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * be accessed calling the getCause() method on the IOException. It will
 	 * also be available by calling the method {@link #getResults()}.
 	 * </p>
-	 *
+	 * 
 	 * @param istream
 	 *            The InputStream where the data can be retrieved.
 	 * @return Optionally returns a result of the elaboration.
 	 * @throws java.lang.Exception
-	 *             If an <code>java.lang.Exception</code> occurs during the elaboration
-	 *             it can be thrown. It will be propagated to the external
-	 *             <code>OutputStream</code> and will be available calling the
-	 *             method {@link #getResults()}.
+	 *             If an <code>java.lang.Exception</code> occurs during the
+	 *             elaboration it can be thrown. It will be propagated to the
+	 *             external <code>OutputStream</code> and will be available
+	 *             calling the method {@link #getResults()}.
 	 */
 	protected abstract T doRead(InputStream istream) throws Exception;
 
 	/** {@inheritDoc} */
 	@Override
 	public final void flush() throws IOException {
+		initializeIfNecessary();
 		if (this.abort) {
 			// internal thread is already aborting. wait for short time.
 			internalClose(true, TimeUnit.SECONDS, 1);
 		} else {
-			this.pipedOs.flush();
+			super.flush();
 		}
 	}
 
@@ -427,7 +479,7 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 * It must be called after the method {@link #close()} otherwise a
 	 * <code>IllegalStateException</code> is thrown.
 	 * </p>
-	 *
+	 * 
 	 * @exception InterruptedException
 	 *                Thrown when the thread is interrupted.
 	 * @exception ExecutionException
@@ -438,12 +490,16 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	 *             When it is called before the method {@link #close()} has
 	 *             been called.
 	 * @return the object returned from the doRead() method.
-	 * @throws InterruptedException if the thread is interrupted.
-	 * @throws ExecutionException if the internal method launched an exception.
-	 * @throws IllegalStateException if {@link #close()} was not called before.
+	 * @throws InterruptedException
+	 *             if the thread is interrupted.
+	 * @throws ExecutionException
+	 *             if the internal method launched an exception.
+	 * @throws IllegalStateException
+	 *             if {@link #close()} was not called before.
 	 */
-	public final T getResults() throws InterruptedException,
+	public final T getResult() throws InterruptedException,
 			ExecutionException {
+		initializeIfNecessary();
 		if (!this.closeCalled) {
 			throw new IllegalStateException("Method close() must be called"
 					+ " before getResults");
@@ -451,11 +507,32 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 		return this.writingResult.get();
 	}
 
+	/**
+	 * @see #getResult()
+	 * @return
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	@Deprecated
+	public final T getResults() throws InterruptedException,
+			ExecutionException {
+		return this.getResult();
+	}
+
+	private void initializeIfNecessary() {
+		if (this.writingResult == null) {
+			final DataConsumer executingProcess = new DataConsumer();
+			this.writingResult = this.executorService
+					.submit(executingProcess);
+		}
+	}
+
 	private void internalClose(final boolean join, final TimeUnit timeUnit,
 			final long timeout) throws IOException {
 		if (!this.closeCalled) {
+			initializeIfNecessary();
 			this.closeCalled = true;
-			this.pipedOs.close();
+			super.close();
 			if (join) {
 				// waiting for thread to finish..
 				try {
@@ -490,11 +567,12 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	/** {@inheritDoc} */
 	@Override
 	public final void write(final byte[] bytes) throws IOException {
+		initializeIfNecessary();
 		if (this.abort) {
 			// internal thread is already aborting. wait for short time.
 			internalClose(true, TimeUnit.SECONDS, 1);
 		} else {
-			this.pipedOs.write(bytes);
+			super.write(bytes);
 		}
 	}
 
@@ -502,23 +580,24 @@ public abstract class OutputStreamToInputStream<T> extends OutputStream {
 	@Override
 	public final void write(final byte[] bytes, final int offset,
 			final int length) throws IOException {
+		initializeIfNecessary();
 		if (this.abort) {
 			// internal thread is already aborting. wait for short time.
 			internalClose(true, TimeUnit.SECONDS, 1);
 		} else {
-			this.pipedOs.write(bytes, offset, length);
+			super.write(bytes, offset, length);
 		}
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public final void write(final int bytetowr) throws IOException {
+		initializeIfNecessary();
 		if (this.abort) {
 			// internal thread is already aborting. wait for short time.
 			internalClose(true, TimeUnit.SECONDS, 1);
 		} else {
-			this.pipedOs.write(bytetowr);
+			super.write(bytetowr);
 		}
 	}
-
 }

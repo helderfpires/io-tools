@@ -47,11 +47,12 @@ package uk.gov.nationalarchives.droid.xmlReader;
 import java.lang.reflect.Method;
 import java.util.Stack;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import uk.gov.nationalarchives.droid.base.MessageDisplay;
 import uk.gov.nationalarchives.droid.base.SimpleElement;
 
 /**
@@ -67,6 +68,8 @@ public class SAXModelBuilder extends DefaultHandler {
 	private String namespace = "";
 	private boolean useNamespace = false;
 	private boolean allowGlobalNamespace = true;
+	private static final Logger LOG = LoggerFactory
+	.getLogger(SAXModelBuilder.class);
 
 	@Override
 	public void characters(final char[] ch, final int start, final int len) {
@@ -219,7 +222,7 @@ public class SAXModelBuilder extends DefaultHandler {
 			}
 			method.invoke(target, value);
 		} catch (final NoSuchMethodException e) {
-			MessageDisplay.unknownElementWarning(name, ((SimpleElement) target)
+			LOG.error("unknown element {} {}",name, ((SimpleElement) target)
 					.getElementName());
 		} catch (final Exception e) {
 			throw new SAXException(e);

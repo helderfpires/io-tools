@@ -29,7 +29,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import uk.gov.nationalarchives.droid.base.MessageDisplay;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.gov.nationalarchives.droid.base.SimpleElement;
 import uk.gov.nationalarchives.droid.binFileReader.ByteReader;
 
@@ -41,7 +43,8 @@ import uk.gov.nationalarchives.droid.binFileReader.ByteReader;
  * @version 4.0.0
  */
 public class SubSequence extends SimpleElement {
-
+	private static final Logger LOG = LoggerFactory
+			.getLogger(SubSequence.class);
 	static boolean showProgress = false;
 	private boolean bigEndian = true;
 	private byte[] byteSequence;
@@ -51,8 +54,8 @@ public class SubSequence extends SimpleElement {
 	private int maxSeqOffset = 0;
 	private int minFragLength;
 	private int minSeqOffset = 0;
-	private List<List<SideFragment>> orderedLeftFragments = new ArrayList<List<SideFragment>>();
-	private List<List<SideFragment>> orderedRightFragments = new ArrayList<List<SideFragment>>();
+	private final List<List<SideFragment>> orderedLeftFragments = new ArrayList<List<SideFragment>>();
+	private final List<List<SideFragment>> orderedRightFragments = new ArrayList<List<SideFragment>>();
 	private ByteSequence parentByteSequence;
 	private int parentSignature;
 	private int position;
@@ -60,7 +63,7 @@ public class SubSequence extends SimpleElement {
 	private List<RightFragment> rightFragments = new ArrayList<RightFragment>();
 	private String sequence;
 	// shiftFunction shift;
-	private long[] shiftFunction = new long[256];
+	private final long[] shiftFunction = new long[256];
 
 	/* setters */
 	public void addLeftFragment(final LeftFragment lf) {
@@ -486,7 +489,8 @@ public class SubSequence extends SimpleElement {
 		return this.parentByteSequence;
 	}
 
-// TODO from UCDetector: Change visibility of Method "SubSequence.getFragment(boolean,int,int)" to private
+	// TODO from UCDetector: Change visibility of Method
+	// "SubSequence.getFragment(boolean,int,int)" to private
 	public SideFragment getFragment(final boolean leftFrag, // NO_UCD
 			final int thePosition, final int theIndex) {
 		if (leftFrag) {
@@ -559,7 +563,8 @@ public class SubSequence extends SimpleElement {
 		return this.minSeqOffset;
 	}
 
-// TODO from UCDetector: Change visibility of Method "SubSequence.getNumAlternativeFragments(boolean,int)" to private
+	// TODO from UCDetector: Change visibility of Method
+	// "SubSequence.getNumAlternativeFragments(boolean,int)" to private
 	public int getNumAlternativeFragments(final boolean leftFrag, // NO_UCD
 			final int thePosition) {
 		if (leftFrag) {
@@ -576,7 +581,8 @@ public class SubSequence extends SimpleElement {
 	}
 
 	/* getters */
-// TODO from UCDetector: Change visibility of Method "SubSequence.getNumFragmentPositions(boolean)" to private
+	// TODO from UCDetector: Change visibility of Method
+	// "SubSequence.getNumFragmentPositions(boolean)" to private
 	public int getNumFragmentPositions(final boolean leftFrag) { // NO_UCD
 		if (leftFrag) {
 			return this.orderedLeftFragments.size();
@@ -598,12 +604,14 @@ public class SubSequence extends SimpleElement {
 		return this.position;
 	}
 
-// TODO from UCDetector: Change visibility of Method "SubSequence.getRawLeftFragment(int)" to private
+	// TODO from UCDetector: Change visibility of Method
+	// "SubSequence.getRawLeftFragment(int)" to private
 	public LeftFragment getRawLeftFragment(final int theIndex) { // NO_UCD
 		return this.leftFragments.get(theIndex);
 	}
 
-// TODO from UCDetector: Change visibility of Method "SubSequence.getRawRightFragment(int)" to private
+	// TODO from UCDetector: Change visibility of Method
+	// "SubSequence.getRawRightFragment(int)" to private
 	public RightFragment getRawRightFragment(final int theIndex) { // NO_UCD
 		return this.rightFragments.get(theIndex);
 	}
@@ -1141,7 +1149,9 @@ public class SubSequence extends SimpleElement {
 		} else if (name.equals("MinFragLength")) {
 			setMinFragLength(Integer.parseInt(value));
 		} else {
-			MessageDisplay.unknownAttributeWarning(name, getElementName());
+			final String theCMDMessage = "WARNING: Unknown XML attribute "
+					+ name + " found for " + getElementName() + " ";
+			LOG.warn(theCMDMessage);
 		}
 	}
 

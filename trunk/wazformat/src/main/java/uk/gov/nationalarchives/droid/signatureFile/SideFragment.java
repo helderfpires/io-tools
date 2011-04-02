@@ -24,7 +24,9 @@ package uk.gov.nationalarchives.droid.signatureFile;
 
 import java.util.ArrayList;
 
-import uk.gov.nationalarchives.droid.base.MessageDisplay;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.gov.nationalarchives.droid.base.SimpleElement;
 
 /**
@@ -34,12 +36,14 @@ import uk.gov.nationalarchives.droid.base.SimpleElement;
  * @version 4.0.0
  */
 public class SideFragment extends SimpleElement {
+	private static final Logger LOG = LoggerFactory
+			.getLogger(SideFragment.class);
 	ArrayList<ByteSeqSpecifier> myByteSpecifierSequence;
-	int myMaxOffset;
-	int myMinOffset;
-	int myPosition;
-	String mySequenceFragment;
-	int numBytes;
+	private int myMaxOffset;
+	private int myMinOffset;
+	private int myPosition;
+	private String mySequenceFragment;
+	private int numBytes;
 
 	/**
 	 * Set the sideFragment sequence (this will have been stored in the text
@@ -106,7 +110,9 @@ public class SideFragment extends SimpleElement {
 		} else if (name.equals("MaxOffset")) {
 			setMaxOffset(Integer.parseInt(value));
 		} else {
-			MessageDisplay.unknownAttributeWarning(name, getElementName());
+			final String theCMDMessage = "WARNING: Unknown XML attribute "
+					+ name + " found for " + getElementName() + " ";
+			LOG.warn(theCMDMessage);
 		}
 	}
 

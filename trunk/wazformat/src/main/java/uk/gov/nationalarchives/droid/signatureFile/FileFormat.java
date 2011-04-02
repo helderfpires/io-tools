@@ -11,7 +11,9 @@ package uk.gov.nationalarchives.droid.signatureFile;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.gov.nationalarchives.droid.base.MessageDisplay;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.gov.nationalarchives.droid.base.SimpleElement;
 
 /**
@@ -21,16 +23,19 @@ import uk.gov.nationalarchives.droid.base.SimpleElement;
  * @version 4.0.0
  */
 public class FileFormat extends SimpleElement {
-	private List<String> extensions = new ArrayList<String>();
-	List<Integer> hasPriorityOver = new ArrayList<Integer>();
-	int identifier;
-	List<Integer> internalSigIDs = new ArrayList<Integer>();
-	String mimeType;
-	String name;
-	String PUID;
-	String version;
+	private static final Logger LOG = LoggerFactory
+	.getLogger(FileFormat.class);
+	private final List<String> extensions = new ArrayList<String>();
+	private List<Integer> hasPriorityOver = new ArrayList<Integer>();
+	private int identifier;
+	private List<Integer> internalSigIDs = new ArrayList<Integer>();
+	private String mimeType;
+	private String name;
+	private String PUID;
+	private String version;
 
-// TODO from UCDetector: Change visibility of Method "FileFormat.getExtension(int)" to private
+	// TODO from UCDetector: Change visibility of Method
+	// "FileFormat.getExtension(int)" to private
 	public String getExtension(final int theIndex) { // NO_UCD
 		return this.extensions.get(theIndex);
 	}
@@ -107,8 +112,9 @@ public class FileFormat extends SimpleElement {
 		} else if (theName.equals("MIMEType")) {
 			this.mimeType = theValue;
 		} else {
-			MessageDisplay.unknownAttributeWarning(this.name,
-					getElementName());
+			final String theCMDMessage = "WARNING: Unknown XML attribute "
+					+ this.name + " found for " + getElementName() + " ";
+			LOG.warn(theCMDMessage);
 		}
 	}
 

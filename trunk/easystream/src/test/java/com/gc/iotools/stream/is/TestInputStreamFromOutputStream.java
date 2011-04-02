@@ -1,15 +1,19 @@
 package com.gc.iotools.stream.is;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+
+import com.gc.iotools.stream.base.ExecutionModel;
 
 public class TestInputStreamFromOutputStream {
 	@Test
@@ -110,6 +114,40 @@ public class TestInputStreamFromOutputStream {
 		assertEquals("Return value", "return", isos.getResult());
 		Thread.sleep(1000);
 		assertEquals("Active threads ", 0, es.getActiveCount());
+	}
+
+	private class MyISOS extends InputStreamFromOutputStream<String> {
+		private String variableToInitialize = "notInitialized";
+
+		public MyISOS() {
+			super();
+			try {
+				//some lengthly operation
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			this.variableToInitialize = "initialized";
+		}
+
+		@Override
+		protected String produce(OutputStream sink) throws Exception {
+			return this.variableToInitialize;
+		}
+
+	}
+
+	/**
+	 * Tests that the constructor completes before the produce is called.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testExplicitSubclassing() throws Exception {
+		InputStreamFromOutputStream<String> isos = new MyISOS();
+		isos.close();
+		assertEquals("method produce was called before "
+				+ "the constructor end.", "initialized", isos.getResult());
 	}
 
 	@Test
