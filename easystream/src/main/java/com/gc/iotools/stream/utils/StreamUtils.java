@@ -7,15 +7,18 @@ package com.gc.iotools.stream.utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 import com.gc.iotools.stream.base.EasyStreamConstants;
 
 /**
  * General utilities for handling streams.
- *
+ * 
  * @author dvd.smnt
  * @since 1.0.9
- * @version $Id$
+ * @version $Id: StreamUtils.java 463 2011-01-21 23:54:17Z dvd.smnt@gmail.com
+ *          $
  */
 public final class StreamUtils {
 	private static final double ONE_THOUSAND = 1000D;
@@ -23,7 +26,7 @@ public final class StreamUtils {
 	/**
 	 * Returns a string representing the transfer rate. The unit is chosen
 	 * automatically to keep the size of the string small.
-	 *
+	 * 
 	 * @param bytes
 	 *            bytes transferred
 	 * @param milliseconds
@@ -33,6 +36,25 @@ public final class StreamUtils {
 	 */
 	public static String getRateString(final long bytes,
 			final long milliseconds) {
+		return getRateString(bytes, milliseconds, Locale.getDefault());
+	}
+
+	/**
+	 * Returns a string representing the transfer rate. The unit is chosen
+	 * automatically to keep the size of the string small.
+	 * 
+	 * @param bytes
+	 *            bytes transferred
+	 * @param milliseconds
+	 *            time in milliseconds
+	 * @param locale
+	 *            the current locale to get the right decimal separators. If
+	 *            null default locale will be used.
+	 * @return a string containing the bit rate in a convenient unit.
+	 * @since 1.2.13
+	 */
+	public static String getRateString(final long bytes,
+			final long milliseconds, final Locale locale) {
 		final String[] units = new String[] { "Byte", "KB", "MB", "GB" };
 		final double bytesSec = (bytes * StreamUtils.ONE_THOUSAND)
 				/ milliseconds;
@@ -48,6 +70,9 @@ public final class StreamUtils {
 				0));
 		df.setMinimumFractionDigits(0);
 		df.setGroupingUsed(false);
+		if (locale != null) {
+			df.setDecimalFormatSymbols(new DecimalFormatSymbols(locale));
+		}
 		df.setMaximumFractionDigits(Math.max(0, 2 - ndigit));
 		return df.format(reducedRate) + " " + units[intIdx] + "/sec";
 	}
@@ -60,7 +85,7 @@ public final class StreamUtils {
 	 * <p>
 	 * This utility ensures that either <code>size</code> bytes are read or
 	 * the end of the stream has been reached.
-	 *
+	 * 
 	 * @param source
 	 *            Stream from which the data is read.
 	 * @param size
@@ -72,7 +97,8 @@ public final class StreamUtils {
 	 *                than end of file, or if the input stream has been
 	 *                closed, or if some other I/O error occurs.
 	 * @since 1.0.9
-	 * @throws java.io.IOException if any.
+	 * @throws java.io.IOException
+	 *             if any.
 	 */
 	public static byte[] read(final InputStream source, final int size)
 			throws IOException {
@@ -99,7 +125,7 @@ public final class StreamUtils {
 	 * This utility ensures that either <code>len</code> bytes are read or the
 	 * end of the stream has been reached.
 	 * </p>
-	 *
+	 * 
 	 * @see InputStream#read(byte[] buf,int off, int len)
 	 * @param source
 	 *            Stream from which the data is read.
