@@ -10,7 +10,7 @@ io-tools artifacts are deployed on Maven central repository. So if you want to u
 <dependency>
 	<groupId>net.sf.jsignature.io-tools</groupId>
 	<artifactId>easystream</artifactId>
-	<version>[1.1.5,)</version>
+	<version>1.2.12</version>
 	<type>jar</type>
 </dependency>
 }}}
@@ -21,7 +21,7 @@ While if you're interested in the format detection library you have to add:
 <dependency>
 	<groupId>net.sf.jsignature.io-tools</groupId>
 	<artifactId>wazformat</artifactId>
-	<version>[1.1.5,)</version>
+	<version>1.2.12</version>
 	<type>jar</type>
 </dependency>
 }}}
@@ -57,8 +57,7 @@ Release candidates are deployed on `oss sonatype` repository. You have to add th
 <repository>
   <id>maven2-sonaype.net</id>
   <name>oss Repository for Maven</name>
-  <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-  <layout>default</layout>
+  <url>https://oss.sonatype.org/content/groups/public</url>
 </repository>
 }}}
 
