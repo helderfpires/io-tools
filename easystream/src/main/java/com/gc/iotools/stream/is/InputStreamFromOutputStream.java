@@ -172,8 +172,6 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 		return result;
 	}
 
-
-
 	/**
 	 * Set the size for the pipe circular buffer for the newly created
 	 * <code>InputStreamFromOutputStream</code>. Default is 4096 bytes.
@@ -189,7 +187,6 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 	private boolean closeCalled = false;
 	private final Future<T> futureResult;
 	private final boolean joinOnClose;
-
 
 	/**
 	 * <p>
@@ -269,6 +266,12 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 	 */
 	public InputStreamFromOutputStream(final boolean joinOnClose,
 			final ExecutorService executor, final int pipeBufferSize) {
+		this(false, joinOnClose, executor, pipeBufferSize);
+	}
+
+	public InputStreamFromOutputStream(final boolean startImmediately,
+			final boolean joinOnClose, final ExecutorService executor,
+			final int pipeBufferSize) {
 		super(pipeBufferSize);
 		final String callerId = LogUtils.getCaller(this.getClass());
 		this.joinOnClose = joinOnClose;
