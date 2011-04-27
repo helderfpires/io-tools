@@ -5,7 +5,6 @@ package com.gc.iotools.stream.is;
  * under the BSD License.
  */
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -184,9 +183,12 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 		InputStreamFromOutputStream.defaultPipeSize = defaultPipeSize;
 	}
 
+	private final String callerId;
 	private boolean closeCalled = false;
-	private final Future<T> futureResult;
+	private final ExecutorService executorService;
+	private Future<T> futureResult;
 	private final boolean joinOnClose;
+	private boolean started = false;
 
 	/**
 	 * <p>
@@ -198,6 +200,18 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 	 */
 	public InputStreamFromOutputStream() {
 		this(ExecutionModel.THREAD_PER_INSTANCE);
+	}
+
+	public InputStreamFromOutputStream(final boolean startImmediately,
+			final boolean joinOnClose, final ExecutorService executor,
+			final int pipeBufferSize) {
+		super(pipeBufferSize);
+		this.callerId = LogUtils.getCaller(this.getClass());
+		this.joinOnClose = joinOnClose;
+		this.executorService = executor;
+		if (startImmediately) {
+			checkInitialized();
+		}
 	}
 
 	/**
@@ -269,25 +283,6 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 		this(false, joinOnClose, executor, pipeBufferSize);
 	}
 
-	public InputStreamFromOutputStream(final boolean startImmediately,
-			final boolean joinOnClose, final ExecutorService executor,
-			final int pipeBufferSize) {
-		super(pipeBufferSize);
-		final String callerId = LogUtils.getCaller(this.getClass());
-		this.joinOnClose = joinOnClose;
-		PipedOutputStream pipedOS = null;
-		try {
-			pipedOS = new PipedOutputStream(this);
-		} catch (final IOException e) {
-			throw new RuntimeException("Error during pipe creaton", e);
-		}
-		final Callable<T> executingCallable = new DataProducer(callerId,
-				pipedOS);
-		this.futureResult = executor.submit(executingCallable);
-		InputStreamFromOutputStream.LOG.debug(
-				"thread invoked by[{}] queued for start.", callerId);
-	}
-
 	/**
 	 * <p>
 	 * It creates a <code>InputStreamFromOutputStream</code> and let the user
@@ -356,9 +351,32 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 		}
 	}
 
+	private synchronized void checkInitialized() {
+		if (!this.started) {
+			this.started = true;
+			PipedOutputStream pipedOS = null;
+			try {
+				pipedOS = new PipedOutputStream(this);
+			} catch (final IOException e) {
+				throw new RuntimeException("Error during pipe creaton", e);
+			}
+			final Callable<T> executingCallable = new DataProducer(
+					this.callerId, pipedOS);
+			this.futureResult = this.executorService
+					.submit(executingCallable);
+			InputStreamFromOutputStream.LOG.debug(
+					"thread invoked by[{}] queued for start.", this.callerId);
+			this.futureResult = this.executorService
+					.submit(executingCallable);
+			InputStreamFromOutputStream.LOG.debug(
+					"thread invoked by[{}] queued for start.", this.callerId);
+		}
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public final void close() throws IOException {
+		checkInitialized();
 		if (!this.closeCalled) {
 			this.closeCalled = true;
 			super.close();
@@ -447,6 +465,7 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 	/** {@inheritDoc} */
 	@Override
 	public final int read() throws IOException {
+		checkInitialized();
 		final int result = super.read();
 		if (result < 0) {
 			checkException();
@@ -458,11 +477,11 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 	@Override
 	public final int read(final byte[] b, final int off, final int len)
 			throws IOException {
+		checkInitialized();
 		final int result = super.read(b, off, len);
 		if (result < 0) {
 			checkException();
 		}
 		return result;
 	}
-
 }

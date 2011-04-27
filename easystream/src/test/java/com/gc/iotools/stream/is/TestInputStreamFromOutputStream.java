@@ -6,14 +6,11 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-
-import com.gc.iotools.stream.base.ExecutionModel;
 
 public class TestInputStreamFromOutputStream {
 	@Test
