@@ -49,7 +49,7 @@ public final class StreamUtils {
 	 *            time in milliseconds
 	 * @param locale
 	 *            the current locale to get the right decimal separators. If
-	 *            null default locale will be used.
+	 *            null default localroe will be used.
 	 * @return a string containing the bit rate in a convenient unit.
 	 * @since 1.2.13
 	 */
