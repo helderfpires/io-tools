@@ -117,7 +117,6 @@ public class TestInputStreamFromOutputStream {
 		private String variableToInitialize = "notInitialized";
 
 		public MyISOS() {
-			super();
 			try {
 				//some lengthly operation
 				Thread.sleep(100);
