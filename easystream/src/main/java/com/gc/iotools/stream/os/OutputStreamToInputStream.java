@@ -118,6 +118,7 @@ public abstract class OutputStreamToInputStream<T> extends PipedOutputStream {
 				OutputStreamToInputStream.this.abort = true;
 				throw e;
 			} finally {
+				//empty the internal inputstream so the outer thread doesn't lock
 				emptyInputStream();
 				OutputStreamToInputStream.this.inputstream.close();
 			}

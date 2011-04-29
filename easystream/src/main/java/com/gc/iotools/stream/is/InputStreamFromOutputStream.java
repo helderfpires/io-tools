@@ -88,24 +88,15 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 	 */
 	private final class DataProducer implements Callable<T> {
 
-		private final String name;
-
-		private final OutputStream outputStream;
-
-		DataProducer(final String threadName, final OutputStream ostream) {
-			this.outputStream = ostream;
-			this.name = threadName;
-		}
-
 		@Override
 		public T call() throws Exception {
-			final String threadName = getName();
+			final String threadName = Thread.currentThread().getName();
 			T result;
 			InputStreamFromOutputStream.ACTIVE_THREAD_NAMES.add(threadName);
 			InputStreamFromOutputStream.LOG.debug("thread [" + threadName
 					+ "] started.");
 			try {
-				result = produce(this.outputStream);
+				result = produce(InputStreamFromOutputStream.this.pipedOs);
 			} finally {
 				closeStream();
 				InputStreamFromOutputStream.ACTIVE_THREAD_NAMES
@@ -118,7 +109,7 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 
 		private void closeStream() {
 			try {
-				this.outputStream.close();
+				InputStreamFromOutputStream.this.pipedOs.close();
 			} catch (final IOException e) {
 				if ((e.getMessage() != null)
 						&& (e.getMessage().indexOf("closed") > 0)) {
@@ -136,9 +127,6 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 			}
 		}
 
-		String getName() {
-			return this.name;
-		}
 
 	}
 
@@ -189,6 +177,7 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 	private Future<T> futureResult;
 	private final boolean joinOnClose;
 	private boolean started = false;
+	private final PipedOutputStream pipedOs = new PipedOutputStream();
 
 	/**
 	 * <p>
@@ -209,6 +198,11 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 		this.callerId = LogUtils.getCaller(this.getClass());
 		this.joinOnClose = joinOnClose;
 		this.executorService = executor;
+		try {
+			connect(this.pipedOs);
+		} catch (final IOException e) {
+			throw new RuntimeException("Error during pipe creaton", e);
+		}
 		if (startImmediately) {
 			checkInitialized();
 		}
@@ -354,18 +348,7 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 	private synchronized void checkInitialized() {
 		if (!this.started) {
 			this.started = true;
-			PipedOutputStream pipedOS = null;
-			try {
-				pipedOS = new PipedOutputStream(this);
-			} catch (final IOException e) {
-				throw new RuntimeException("Error during pipe creaton", e);
-			}
-			final Callable<T> executingCallable = new DataProducer(
-					this.callerId, pipedOS);
-			this.futureResult = this.executorService
-					.submit(executingCallable);
-			InputStreamFromOutputStream.LOG.debug(
-					"thread invoked by[{}] queued for start.", this.callerId);
+			final Callable<T> executingCallable = new DataProducer();
 			this.futureResult = this.executorService
 					.submit(executingCallable);
 			InputStreamFromOutputStream.LOG.debug(
