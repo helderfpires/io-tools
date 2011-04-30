@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>net.sf.jsignature.io-tools</groupId>
+	<artifactId>wazformat</artifactId>
+	<version>1.2.13</version>
+	<parent>
+		<groupId>net.sf.jsignature.io-tools</groupId>
+		<artifactId>io-tools</artifactId>
+		<version>1.2.13</version>
+	</parent>
+	<packaging>jar</packaging>
+	<name>WaZFormat</name>
+	<description>Format identification utilities</description>
+	<url>http://code.google.com/p/io-tools/source/browse/www/io-tools/wazformat/</url>
+	<inceptionYear>2008</inceptionYear>
+	<distributionManagement>
+		<site>
+			<id>googlecode.svn</id>
+			<url>scm:svn:https://io-tools.googlecode.com/svn/www/io-tools/wazformat</url>
+		</site>
+	</distributionManagement>
+	<issueManagement>
+		<system>GoogleIssues</system>
+		<url>http://code.google.com/p/io-tools/issues/list</url>
+	</issueManagement>
+	<developers>
+		<developer>
+			<name>Davide Simonetti</name>
+			<id>dvd.smnt</id>
+			<email>dvd.smnt@gmail.com</email>
+		</developer>
+		<developer>
+			<name>Gabriele Contini</name>
+			<id>gcontini</id>
+			<email>contini.mailing@gmail.com</email>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>The BSD Software License</name>
+			<url>http://www.opensource.org/licenses/bsd-license.php</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<!-- scm> <connection>scm:svn:http://io-tools.googlecode.com/svn/trunk/wazformat</connection> 
+		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk/wazformat</developerConnection> 
+		</scm -->
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>easystream</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk16</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcmail-jdk16</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>stax</groupId>
+			<artifactId>stax</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.iharder</groupId>
+			<artifactId>base64</artifactId>
+		</dependency>
+		<!-- dependency> <groupId>net.sf.mime-util</groupId> <artifactId>mime-util</artifactId> 
+			</dependency -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jmock</groupId>
+			<artifactId>jmock-junit4</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<encoding>US-ASCII</encoding>
+					<fork>true</fork>
+					<meminitial>128m</meminitial>
+					<maxmem>512m</maxmem>
+					<optimize>true</optimize>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>retrotranslator-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+	<!-- reporting> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
+		<artifactId>maven-javadoc-plugin</artifactId> </plugin> </plugins> </reporting -->
+</project>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>net.sf.jsignature.io-tools</groupId>
+	<artifactId>easystream</artifactId>
+	<version>1.2.13</version>
+	<packaging>jar</packaging>
+	<description>
+Small set of Java tools for dealing with streams (InputStreams and OutputStreams). 
+The aim is to ease the use of pipes when they're required. 
+Main features are: 
+ * "Convert" an OutputStream to an InputStream.
+ * Count the number of bytes read or wrote to a given stream.
+ * While reading the data from an InputStream copy it to a supplied OutputStream. 
+ * Read the content of an InputStream multiple times or seek to a definite position  
+</description>
+	<parent>
+		<groupId>net.sf.jsignature.io-tools</groupId>
+		<artifactId>io-tools</artifactId>
+		<version>1.2.13</version>
+	</parent>
+	<name>EasyStream</name>
+	<url>http://io-tools.googlecode.com/svn/www/io-tools/easystream/</url>
+	<inceptionYear>2008</inceptionYear>
+	<issueManagement>
+		<system>GoogleIssues</system>
+		<url>http://code.google.com/p/io-tools/issues/list</url>
+	</issueManagement>
+	<distributionManagement>
+		<site>
+			<id>googlecode.svn</id>
+			<url>scm:svn:https://io-tools.googlecode.com/svn/www/io-tools/easystream</url>
+		</site>
+	</distributionManagement>
+	<dependencies>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<encoding>US-ASCII</encoding>
+					<fork>true</fork>
+					<source>1.5</source>
+					<target>1.5</target>
+					<meminitial>128m</meminitial>
+					<maxmem>512m</maxmem>
+					<optimize>true</optimize>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadoc</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>retrotranslator-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</reporting>
+</project>
