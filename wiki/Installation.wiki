@@ -10,7 +10,7 @@ io-tools artifacts are deployed on Maven central repository. So if you want to u
 <dependency>
 	<groupId>net.sf.jsignature.io-tools</groupId>
 	<artifactId>easystream</artifactId>
-	<version>1.2.12</version>
+	<version>1.2.13</version>
 	<type>jar</type>
 </dependency>
 }}}
@@ -21,20 +21,20 @@ While if you're interested in the format detection library you have to add:
 <dependency>
 	<groupId>net.sf.jsignature.io-tools</groupId>
 	<artifactId>wazformat</artifactId>
-	<version>1.2.12</version>
+	<version>1.2.13</version>
 	<type>jar</type>
 </dependency>
 }}}
 
 === Logging configuration ===
-You further have to configure the logging use your favourite logging engine. This library uses slf4j engine, so if you already use it in your application no configuration is needed.
+You further have to configure the logging use your favourite logging engine. This library uses slf4j engine, if you already use it in your application no configuration is needed.
 
 If you want to redirect the logs on the jdk logging you must add the following dependency to your pom.xml:
 {{{
   <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-jdk14</artifactId>
-      <version>1.5.6</version>
+      <version>1.6.0</version>
   </dependency>
 }}} 
 
@@ -43,7 +43,7 @@ While to use commons logging you must add the following dependency to your pom.x
   <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-jcl</artifactId>
-      <version>1.5.6</version>
+      <version>1.6.0</version>
   </dependency>
 }}} 
 
@@ -51,13 +51,13 @@ For further information go to the [http://www.slf4j.org/ slf4j] web site.
 
 === Release Candidates===
 *This step is optional* :
-Release candidates are deployed on `oss sonatype` repository. You have to add the following lines to your pom.xml to download them:
+Release candidates are deployed on `oss sonatype` repository. You have to add the following lines to your pom.xml to get the latest (but yet untested) version:
 
 {{{
 <repository>
   <id>maven2-sonaype.net</id>
   <name>oss Repository for Maven</name>
-  <url>https://oss.sonatype.org/content/groups/public</url>
+  <url>http://oss.sonatype.org/content/groups/staging</url>
 </repository>
 }}}
 
@@ -65,4 +65,4 @@ Release candidates are not tested as much as standard builds. You should downloa
 
 ==Other==
 Non maven2 users should download the zip distribution and unpack it. All the jars in the `lib` directory of the distribution zip must be added to your classpath in order 
-to get the libraries working. The zip distribution is not kept up to date frequently.
+to get the libraries working. The zip distribution may be older than the maven 2 release.
