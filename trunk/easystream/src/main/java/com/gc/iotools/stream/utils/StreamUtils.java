@@ -84,14 +84,17 @@ public final class StreamUtils {
 	 * </p>
 	 * <p>
 	 * This utility ensures that either <code>size</code> bytes are read or
-	 * the end of the stream has been reached.
+	 * the end of the stream has been reached. If the end of stream has been
+	 * reached the returned array length is the length of the data read.
+	 * </p>
 	 * 
 	 * @param source
 	 *            Stream from which the data is read.
 	 * @param size
 	 *            The maximum length of the data read.
 	 * @return byte[] containing the data read from the stream.
-	 *         <code>null</code> if the End Of File has been reached.
+	 *         <code>null</code> if the stream was 0 length, or a byte[] whose
+	 *         length is the length of the stream if the EOS has been reached.
 	 * @exception IOException
 	 *                If the first byte cannot be read for any reason other
 	 *                than end of file, or if the input stream has been

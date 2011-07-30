@@ -6,8 +6,8 @@
 	<classpathentry kind="src" path="wazformat/src/main/java"/>
 	<classpathentry kind="src" path="wazformat/src/test/java"/>
 	<classpathentry kind="src" path="wazformat/src/test/resources"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/ant/ant/1.8.1/ant-1.8.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/ant/ant-launcher/1.8.1/ant-launcher-1.8.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/ant/ant/1.8.2/ant-1.8.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/ant/ant-launcher/1.8.2/ant-launcher-1.8.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcmail-jdk16/1.46/bcmail-jdk16-1.46.jar" sourcepath="M2_REPO/org/bouncycastle/bcmail-jdk16/1.46/bcmail-jdk16-1.46-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcprov-jdk16/1.46/bcprov-jdk16-1.46.jar" sourcepath="M2_REPO/org/bouncycastle/bcprov-jdk16/1.46/bcprov-jdk16-1.46-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar" sourcepath="M2_REPO/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1-sources.jar"/>
