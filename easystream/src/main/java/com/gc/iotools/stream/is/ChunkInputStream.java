@@ -1,14 +1,12 @@
 package com.gc.iotools.stream.is;
 
 /*
- * Copyright (c) 2008,2011 Davide Simonetti. This source code is released
+ * Copyright (c) 2008,2013 Davide Simonetti. This source code is released
  * under the BSD License.
  */
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import org.apache.commons.lang.ArrayUtils;
 
 import com.gc.iotools.stream.base.EasyStreamConstants;
 import com.gc.iotools.stream.utils.ArrayTools;
@@ -247,7 +245,7 @@ public final class ChunkInputStream extends InputStream {
 								+ this.start.length);
 				if (n > 0) {
 					final int pos = ArrayTools.indexOf(
-							ArrayUtils.subarray(buffer, 0, n), this.start);
+							ArrayTools.subarray(buffer, 0, n), this.start);
 					if (pos >= 0) {
 						// found
 						found = true;
