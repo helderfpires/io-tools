@@ -1,13 +1,15 @@
 package com.gc.iotools.stream.utils;
 
+import java.lang.reflect.Array;
+
 /*
- * Copyright (c) 2008,2011 Davide Simonetti. This source code is released
+ * Copyright (c) 2008,2013 Davide Simonetti. This source code is released
  * under the BSD License.
  */
 
 /**
  * Miscellaneous utilities for Arrays, i haven't found anywhere.
- *
+ * 
  * @author dvd.smnt
  * @since 1.0.9
  * @version $Id$
@@ -15,7 +17,7 @@ package com.gc.iotools.stream.utils;
 public final class ArrayTools {
 	/**
 	 * Find the index of the contained array in the src array.
-	 *
+	 * 
 	 * @param src
 	 *            Source array.
 	 * @param contained
@@ -40,6 +42,24 @@ public final class ArrayTools {
 			result = (found ? (pos - 1) : -1);
 		}
 		return result;
+	}
+
+	public static byte[] subarray(final byte[] array,
+			int startIndexInclusive, int endIndexExclusive) {
+		if (array == null) {
+			return null;
+		}
+		if (endIndexExclusive > array.length) {
+			endIndexExclusive = array.length;
+		}
+		int newSize = endIndexExclusive - startIndexInclusive;
+		if (newSize <= 0) {
+			return new byte[0];
+		}
+
+		byte[] subarray = new byte[newSize];
+		System.arraycopy(array, startIndexInclusive, subarray, 0, newSize);
+		return subarray;
 	}
 
 	/*
