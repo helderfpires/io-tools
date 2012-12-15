@@ -13,7 +13,7 @@ import com.gc.iotools.fmt.base.FormatEnum;
 /**
  * Decoder for TSD (TimeStampedData) documents.
  * 
- * @author gboccardo Jan 4, 2011
+ * @author gboccardo Jan 4, 2013
  * @see Decoder
  */
 public class TSDDecoder implements Decoder {
