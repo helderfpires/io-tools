@@ -1,7 +1,7 @@
 package com.gc.iotools.fmt.base;
 
 /*
- * Copyright (c) 2008, 2009 Davide Simonetti. This source code is released
+ * Copyright (c) 2008,2012 Gabriele Contini. This source code is released
  * under the BSD License.
  */
 import java.io.IOException;

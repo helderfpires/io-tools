@@ -1,14 +1,12 @@
 package com.gc.iotools.fmt.base;
 
 /*
- * Copyright (c) 2008,2011 Davide Simonetti. This source code is released
+ * Copyright (c) 2008,2013 Gabriele Contini. This source code is released
  * under the BSD License.
  */
 
-import java.util.List;
-
-import org.apache.commons.lang.enums.Enum;
-import org.apache.commons.lang.enums.ValuedEnum;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Enum of detected formats. Some format is "simple", some other is just a way
@@ -395,17 +393,13 @@ import org.apache.commons.lang.enums.ValuedEnum;
  * @since 1.0
  * @author dvd.smnt
  */
-public class FormatEnum extends ValuedEnum {
+public class FormatEnum {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5685026597452193393L;
 
 	/**
 	 * Constant integer for enum : ADVANCED_SYSTEMS_FORMAT .
 	 */
-	public static final int ADVANCED_SYSTEMS_FORMAT_INT = 691;
+	public static int ADVANCED_SYSTEMS_FORMAT_INT = 691;
 	/**
 	 * Enum : ADVANCED_SYSTEMS_FORMAT : this enum describes format Advanced
 	 * Systems Format.
@@ -1158,15 +1152,23 @@ public class FormatEnum extends ValuedEnum {
 	public static final FormatEnum UNKNOWN = new FormatEnum("UNKNOWN",
 			UNKNOWN_INT);
 
-	public static FormatEnum getEnum(final Class<? extends FormatEnum> clazz,
-			final String name) {
-		return (FormatEnum) Enum.getEnum(clazz, name);
+	/**
+	 * @see getEnum(String name)
+	 * @deprecated use only for backward compatibility
+	 * @param clazz
+	 * @param name
+	 * @return
+	 */
+	public static FormatEnum getEnum(Class clazz, final String name) {
+		return enumMap.get(name);
+	}
+	
+	public static FormatEnum getEnum(final String name) {
+		return enumMap.get(name);
 	}
 
-	@SuppressWarnings("unchecked")
 	public static FormatEnum[] values() {
-		final List<FormatEnum> enumList = getEnumList(FormatEnum.class);
-		return enumList.toArray(new FormatEnum[0]);
+		return enumMap.values().toArray(new FormatEnum[0]);
 	}
 
 	/**
@@ -1175,9 +1177,24 @@ public class FormatEnum extends ValuedEnum {
 	 * @param enumName
 	 * @param enumInt
 	 */
+	public final String name;
+	public final int enumInt;
+	
+	private static Map<String, FormatEnum> enumMap;
+	
 	protected FormatEnum(final String enumName, final int enumInt) {
-		super(enumName, enumInt);
+		this.name = enumName;
+		this.enumInt = enumInt;
+		if (FormatEnum.enumMap == null){
+			FormatEnum.enumMap = new HashMap<String, FormatEnum>();
+		}
+		FormatEnum.enumMap.put(enumName, this);
 	}
+	
+	public String getName(){
+		return this.name;
+	}
+	
 
 	@Override
 	public String toString() {

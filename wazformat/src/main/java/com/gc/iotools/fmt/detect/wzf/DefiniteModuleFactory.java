@@ -1,7 +1,7 @@
 package com.gc.iotools.fmt.detect.wzf;
 
 /*
- * Copyright (c) 2008, Davide Simonetti.  All rights reserved.
+ * Copyright (c) 2008,2013 Gabriele Contini.  All rights reserved.
  * 
  * Redistribution and use in source and binary forms, 
  * with or without modification, are permitted provided that the following 
@@ -11,7 +11,7 @@ package com.gc.iotools.fmt.detect.wzf;
  *  * Redistributions in binary form must reproduce the above copyright notice, 
  *    this list of conditions and the following disclaimer in the documentation 
  *    and/or other materials provided with the distribution.
- *  * Neither the name of Davide Simonetti nor the names of its contributors may
+ *  * Neither the name of Gabriele Contini nor the names of its contributors may
  *    be used to endorse or promote products derived from this software without 
  *    specific prior written permission.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
@@ -33,14 +33,13 @@ import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
 
 public class DefiniteModuleFactory {
 	private static final String DEF_CONF = "deflen.properties";
-	private final Class<? extends FormatEnum> enumClazz;
 	private final DefiniteLengthModule[] modules;
 
 	DefiniteModuleFactory() {
@@ -48,7 +47,7 @@ public class DefiniteModuleFactory {
 	}
 
 	DefiniteModuleFactory(final String confFile, final Class<? extends FormatEnum> enumClass) {
-		this.enumClazz = (enumClass == null ? FormatEnum.class : enumClass);
+		//this.enumClazz = (enumClass == null ? FormatEnum.class : enumClass);
 		final String confFile1 = (StringUtils.isBlank(confFile) ? DEF_CONF
 				: confFile);
 		final InputStream istream = DefiniteModuleFactory.class
@@ -89,10 +88,10 @@ public class DefiniteModuleFactory {
 		FormatEnum fenum;
 		if (enumName.contains(":")) {
 			final String[] parts = enumName.split(":");
-			fenum = FormatEnum.getEnum(this.enumClazz, parts[0]);
+			fenum = FormatEnum.getEnum(parts[0]);
 			version = parts[1];
 		} else {
-			fenum = FormatEnum.getEnum(this.enumClazz, enumName);
+			fenum = FormatEnum.getEnum(enumName);
 			version = null;
 		}
 		final FormatId result = (fenum == null ? new FormatId(

@@ -1,17 +1,14 @@
 package com.gc.iotools.fmt;
 
 /*
- * Copyright (c) 2008, 2009 Davide Simonetti. This source code is released
+ * Copyright (c) 2008,2012 Gabriele Contini. This source code is released
  * under the BSD License.
  */
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.io.IOUtils;
-
 import com.gc.iotools.fmt.base.Decoder;
 import com.gc.iotools.fmt.base.ResettableInputStream;
-import com.gc.iotools.stream.is.SizeLimitInputStream;
 
 /**
  * Helps in mark and reset of decoded streams. Mark and reset are done on
