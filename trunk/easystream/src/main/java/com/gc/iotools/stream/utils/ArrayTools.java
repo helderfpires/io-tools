@@ -3,7 +3,7 @@ package com.gc.iotools.stream.utils;
 import java.lang.reflect.Array;
 
 /*
- * Copyright (c) 2008,2013 Davide Simonetti. This source code is released
+ * Copyright (c) 2008,2012 Gabriele Contini. This source code is released
  * under the BSD License.
  */
 

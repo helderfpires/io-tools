@@ -1,7 +1,7 @@
 package com.gc.iotools.stream.store;
 
 /*
- * Copyright (c) 2008,2011 Davide Simonetti. This source code is released
+ * Copyright (c) 2008,2012 Gabriele Contini. This source code is released
  * under the BSD License.
  */
 
@@ -20,7 +20,7 @@ import com.gc.iotools.stream.utils.LogUtils;
  * 
  * @author dvd.smnt
  * @since 1.2.0
- * @version $Id: ThresholdStore.java 463 2011-01-21 23:54:17Z
+ * @version $Id: ThresholdStore.java 463 2013-01-21 23:54:17Z
  *          dvd.smnt@gmail.com $
  */
 public class ThresholdStore implements SeekableStore {
