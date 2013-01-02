@@ -1,7 +1,7 @@
 package com.gc.iotools.stream.utils;
 
 /*
- * Copyright (c) 2008,2011 Davide Simonetti. This source code is released
+ * Copyright (c) 2008,2012 Gabriele Contini. This source code is released
  * under the BSD License.
  */
 import java.io.IOException;
@@ -17,7 +17,7 @@ import com.gc.iotools.stream.base.EasyStreamConstants;
  * 
  * @author dvd.smnt
  * @since 1.0.9
- * @version $Id: StreamUtils.java 463 2011-01-21 23:54:17Z dvd.smnt@gmail.com
+ * @version $Id: StreamUtils.java 463 2013-01-21 23:54:17Z dvd.smnt@gmail.com
  *          $
  */
 public final class StreamUtils {

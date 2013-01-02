@@ -1,7 +1,7 @@
 package com.gc.iotools.stream.base;
 
 /*
- * Copyright (c) 2008,2011 Davide Simonetti. This source code is released
+ * Copyright (c) 2008,2012 Gabriele Contini. This source code is released
  * under the BSD License.
  */
 
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * This class is responsible of instantiating the right executor given an
  * ExecutionModel.
  *
- * @author Davide Simonetti
+ * @author Gabriele Contini
  * @since 1.0.2
  * @version $Id$
  */

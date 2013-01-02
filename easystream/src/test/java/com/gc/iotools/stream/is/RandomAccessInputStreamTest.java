@@ -1,14 +1,14 @@
 package com.gc.iotools.stream.is;
 
 /*
- * Copyright (c) 2008, Davide Simonetti All rights reserved. Redistribution
+ * Copyright (c) 2008,2012 Gabriele Contini All rights reserved. Redistribution
  * and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met: * Redistributions
  * of source code must retain the above copyright notice, this list of
  * conditions and the following disclaimer. * Redistributions in binary form
  * must reproduce the above copyright notice, this list of conditions and the
  * following disclaimer in the documentation and/or other materials provided
- * with the distribution. * Neither the name of Davide Simonetti nor the names
+ * with the distribution. * Neither the name of Gabriele Contini nor the names
  * of its contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission. THIS SOFTWARE IS
  * PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
@@ -23,7 +23,9 @@ package com.gc.iotools.stream.is;
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
  */
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -31,7 +33,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Test;
 
 import com.gc.iotools.stream.utils.StreamUtils;
