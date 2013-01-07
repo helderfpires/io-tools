@@ -1,28 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="easystream/bin" path="easystream/src/main/java"/>
-	<classpathentry kind="src" output="easystream/bin" path="easystream/src/test/java"/>
-	<classpathentry kind="src" output="easystream/bin" path="easystream/src/test/resources"/>
-	<classpathentry kind="src" path="wazformat/src/main/java"/>
-	<classpathentry kind="src" path="wazformat/src/test/java"/>
-	<classpathentry kind="src" path="wazformat/src/test/resources"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/ant/ant/1.8.2/ant-1.8.2.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/ant/ant-launcher/1.8.2/ant-launcher-1.8.2.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcmail-jdk16/1.46/bcmail-jdk16-1.46.jar" sourcepath="M2_REPO/org/bouncycastle/bcmail-jdk16/1.46/bcmail-jdk16-1.46-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcprov-jdk16/1.46/bcprov-jdk16-1.46.jar" sourcepath="M2_REPO/org/bouncycastle/bcprov-jdk16/1.46/bcprov-jdk16-1.46-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar" sourcepath="M2_REPO/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-io/commons-io/2.0.1/commons-io-2.0.1.jar" sourcepath="M2_REPO/commons-io/commons-io/2.0.1/commons-io-2.0.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.5/commons-lang-2.5.jar" sourcepath="M2_REPO/commons-lang/commons-lang/2.5/commons-lang-2.5-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar" sourcepath="M2_REPO/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/hamcrest/hamcrest-library/1.1/hamcrest-library-1.1.jar" sourcepath="M2_REPO/org/hamcrest/hamcrest-library/1.1/hamcrest-library-1.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/jmock/jmock/2.5.1/jmock-2.5.1.jar" sourcepath="M2_REPO/org/jmock/jmock/2.5.1/jmock-2.5.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/jmock/jmock-junit4/2.5.1/jmock-junit4-2.5.1.jar" sourcepath="M2_REPO/org/jmock/jmock-junit4/2.5.1/jmock-junit4-2.5.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/junit/junit/4.8.2/junit-4.8.2.jar" sourcepath="M2_REPO/junit/junit/4.8.2/junit-4.8.2-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/junit/junit-dep/4.4/junit-dep-4.4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar" sourcepath="M2_REPO/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-simple/1.6.1/slf4j-simple-1.6.1.jar" sourcepath="M2_REPO/org/slf4j/slf4j-simple/1.6.1/slf4j-simple-1.6.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/stax/stax/1.2.0/stax-1.2.0.jar" sourcepath="M2_REPO/stax/stax/1.2.0/stax-1.2.0-sources.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="var" path="M2_REPO/net/iharder/base64/2.3.8/base64-2.3.8.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="src" output="easystream/bin"
+		path="easystream/src/main/java" />
+	<classpathentry kind="src" output="easystream/bin"
+		path="easystream/src/test/java" />
+	<classpathentry kind="src" output="easystream/bin"
+		path="easystream/src/test/resources" />
+	<classpathentry kind="src" path="wazformat/src/main/java" />
+	<classpathentry kind="src" path="wazformat/src/test/java" />
+	<classpathentry kind="src" path="wazformat/src/test/resources" />
+	<classpathentry kind="var"
+		path="M2_REPO/org/slf4j/slf4j-api/1.7.2/slf4j-api-1.7.2.jar"
+		sourcepath="M2_REPO/org/slf4j/slf4j-api/1.7.2/slf4j-api-1.7.2-sources.jar" />
+	<classpathentry kind="var"
+		path="M2_REPO/commons-io/commons-io/2.4/commons-io-2.4.jar"
+		sourcepath="M2_REPO/commons-io/commons-io/2.4/commons-io-2.4-sources.jar" />
+	<classpathentry kind="var"
+		path="M2_REPO/org/slf4j/slf4j-simple/1.7.2/slf4j-simple-1.7.2.jar"
+		sourcepath="M2_REPO/org/slf4j/slf4j-simple/1.7.2/slf4j-simple-1.7.2-sources.jar" />
+	<classpathentry kind="var"
+		path="M2_REPO/org/bouncycastle/bcprov-jdk16/1.46/bcprov-jdk16-1.46.jar"
+		sourcepath="M2_REPO/org/bouncycastle/bcprov-jdk16/1.46/bcprov-jdk16-1.46-sources.jar" />
+	<classpathentry kind="var"
+		path="M2_REPO/org/bouncycastle/bcmail-jdk16/1.46/bcmail-jdk16-1.46.jar"
+		sourcepath="M2_REPO/org/bouncycastle/bcmail-jdk16/1.46/bcmail-jdk16-1.46-sources.jar" />
+	<classpathentry kind="var"
+		path="M2_REPO/org/apache/ant/ant/1.8.4/ant-1.8.4.jar" sourcepath="M2_REPO/org/apache/ant/ant/1.8.4/ant-1.8.4-sources.jar" />
+	<classpathentry kind="var"
+		path="M2_REPO/org/apache/ant/ant-launcher/1.8.4/ant-launcher-1.8.4.jar"
+		sourcepath="M2_REPO/org/apache/ant/ant-launcher/1.8.4/ant-launcher-1.8.4-sources.jar" />
+	<classpathentry kind="var"
+		path="M2_REPO/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1.jar"
+		sourcepath="M2_REPO/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1-sources.jar" />
+	<classpathentry kind="var"
+		path="M2_REPO/stax/stax/1.2.0/stax-1.2.0.jar" sourcepath="M2_REPO/stax/stax/1.2.0/stax-1.2.0-sources.jar" />
+	<classpathentry kind="var"
+		path="M2_REPO/stax/stax-api/1.0.1/stax-api-1.0.1.jar" />
+	<classpathentry kind="var"
+		path="M2_REPO/net/iharder/base64/2.3.8/base64-2.3.8.jar" sourcepath="M2_REPO/net/iharder/base64/2.3.8/base64-2.3.8-sources.jar" />
+	<classpathentry kind="var"
+		path="M2_REPO/junit/junit/4.11/junit-4.11.jar" sourcepath="M2_REPO/junit/junit/4.11/junit-4.11-sources.jar" />
+	<classpathentry kind="var"
+		path="M2_REPO/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"
+		sourcepath="M2_REPO/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3-sources.jar" />
+	<classpathentry kind="var"
+		path="M2_REPO/org/jmock/jmock-junit4/2.5.1/jmock-junit4-2.5.1.jar"
+		sourcepath="M2_REPO/org/jmock/jmock-junit4/2.5.1/jmock-junit4-2.5.1-sources.jar" />
+	<classpathentry kind="var"
+		path="M2_REPO/org/jmock/jmock/2.5.1/jmock-2.5.1.jar" sourcepath="M2_REPO/org/jmock/jmock/2.5.1/jmock-2.5.1-sources.jar" />
+	<classpathentry kind="var"
+		path="M2_REPO/org/hamcrest/hamcrest-library/1.1/hamcrest-library-1.1.jar"
+		sourcepath="M2_REPO/org/hamcrest/hamcrest-library/1.1/hamcrest-library-1.1-sources.jar" />
+	<classpathentry kind="var"
+		path="M2_REPO/junit/junit-dep/4.4/junit-dep-4.4.jar" />
+	<classpathentry kind="var"
+		path="M2_REPO/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar"
+		sourcepath="M2_REPO/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1-sources.jar" />
+	<classpathentry kind="output" path="bin" />
+	<classpathentry kind="con"
+		path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6" />
+
 </classpath>
