@@ -55,5 +55,6 @@ public class OutputStreamDumperTest {
 		assertArrayEquals("the two arrays are equals", test,
 				destination1.toByteArray());
 		assertArrayEquals("Dumped data od", test, dump.getData());
+		dump.close();
 	}
 }

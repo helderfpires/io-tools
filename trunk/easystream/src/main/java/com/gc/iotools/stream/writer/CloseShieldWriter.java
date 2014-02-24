@@ -1,6 +1,6 @@
 package com.gc.iotools.stream.writer;
 /*
- * Copyright (c) 2008,2012 Gabriele Contini. This source code is released
+ * Copyright (c) 2008, 2014 Gabriele Contini. This source code is released
  * under the BSD License.
  */
 import java.io.IOException;

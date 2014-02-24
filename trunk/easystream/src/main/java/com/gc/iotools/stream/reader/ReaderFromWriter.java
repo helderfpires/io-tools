@@ -1,7 +1,7 @@
 package com.gc.iotools.stream.reader;
 
 /*
- * Copyright (c) 2008,2012 Gabriele Contini. This source code is released
+ * Copyright (c) 2008, 2014 Gabriele Contini. This source code is released
  * under the BSD License.
  */
 import java.io.IOException;
@@ -92,8 +92,8 @@ public abstract class ReaderFromWriter<T> extends Reader {
 
 		private final Writer writer;
 
-		DataProducer(final String threadName, final Writer ostream) {
-			this.writer = ostream;
+		DataProducer(final String threadName, final Writer writer) {
+			this.writer = writer;
 			this.name = threadName;
 		}
 
@@ -278,7 +278,20 @@ public abstract class ReaderFromWriter<T> extends Reader {
 		PipedWriter pipedOS = null;
 		try {
 			this.pipedReader = new MyPipedReader(pipeBufferSize);
-			pipedOS = new PipedWriter(this.pipedReader);
+			pipedOS = new PipedWriter(this.pipedReader){
+				private boolean writerCloseCalled = false;
+				//duplicate close hangs the pipeStream see issue #36
+				@Override
+				public void close() throws IOException {
+					synchronized (this) {
+						if (writerCloseCalled) {
+							return;
+						}
+						writerCloseCalled = true;
+					}
+					super.close();
+				}
+			};
 		} catch (final IOException e) {
 			throw new RuntimeException("Error during pipe creaton", e);
 		}

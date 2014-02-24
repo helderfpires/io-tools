@@ -1,6 +1,6 @@
 package com.gc.iotools.stream.is;
 /*
- * Copyright (c) 2008,2012 Gabriele Contini. This source code is released
+ * Copyright (c) 2008, 2014 Gabriele Contini. This source code is released
  * under the BSD License.
  */
 import java.io.FilterInputStream;
@@ -53,10 +53,13 @@ public class CloseOnceInputStream<T extends InputStream> extends
 	 */
 	@Override
 	public void close() throws IOException {
-		this.closeCount++;
-		if (this.closeCount <= 1) {
-			super.close();
+		synchronized (this) {
+			this.closeCount++;
+			if (this.closeCount > 1) {
+				return;
+			}
 		}
+		super.close();
 	}
 
 	/**
