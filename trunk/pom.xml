@@ -77,7 +77,7 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
-				<version>3.1</version>
+				<version>3.2.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
@@ -92,7 +92,7 @@
 			<dependency>
 				<groupId>org.apache.ant</groupId>
 				<artifactId>ant</artifactId>
-				<version>1.8.4</version>
+				<version>1.9.3</version>
 			</dependency>
 			<dependency>
 				<groupId>stax</groupId>
@@ -153,7 +153,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.0</version>
+					<version>3.1</version>
 					<configuration>
 						<encoding>US-ASCII</encoding>
 						<fork>true</fork>
@@ -208,7 +208,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.12.4</version>
+					<version>2.16</version>
 					<configuration>
 						<parallel>classes</parallel>
 						<threadCount>5</threadCount>
@@ -219,7 +219,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>2.9</version>
+					<version>2.9.1</version>
 					<configuration>
 						<charset>UTF-8</charset>
 						<encoding>US-ASCII</encoding>
@@ -253,21 +253,24 @@
 						<finalName>io-tools-${project.version}</finalName>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>2.7</version>
+					<configuration>
+						<updateReleaseInfo>true</updateReleaseInfo>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.7</version>
-				<configuration>
-					<updateReleaseInfo>true</updateReleaseInfo>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>2.4.1</version>
 				<configuration>
 					<!-- Workaround for gpg plugin hangs -->
 					<mavenExecutorId>forked-path</mavenExecutorId>
@@ -310,7 +313,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9</version>
+				<version>2.9.1</version>
 				<reportSets>
 					<reportSet>
 						<id>report-javadoc</id>
@@ -353,7 +356,7 @@
 				<configLocation>src/config/checks.xml</configLocation> </configuration> </plugin -->
 			<plugin>
 				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>2.12.4</version>
+				<version>2.16</version>
 			</plugin>
 			<plugin>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
