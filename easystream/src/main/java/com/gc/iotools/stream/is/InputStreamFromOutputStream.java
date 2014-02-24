@@ -1,7 +1,7 @@
 package com.gc.iotools.stream.is;
 
 /*
- * Copyright (c) 2008,2012 Gabriele Contini. This source code is released
+ * Copyright (c) 2008, 2014 Gabriele Contini. This source code is released
  * under the BSD License.
  */
 import java.io.IOException;
@@ -15,6 +15,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,8 +75,7 @@ import com.gc.iotools.stream.utils.LogUtils;
  * @param <T>
  *            Optional result returned by the function
  *            {@linkplain #produce(OutputStream)} after the data has been
- *            written. It can be obtained calling the
- *            {@linkplain #getResult()}
+ *            written. It can be obtained calling the {@linkplain #getResult()}
  * @see ExecutionModel
  * @author dvd.smnt
  * @since 1.0
@@ -121,12 +122,11 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 									+ " Thread might be locked", e);
 				}
 			} catch (final Throwable t) {
-				InputStreamFromOutputStream.LOG.error(
-						"Error closing InputStream"
+				InputStreamFromOutputStream.LOG
+						.error("Error closing InputStream"
 								+ " Thread might be locked", t);
 			}
 		}
-
 
 	}
 
@@ -177,7 +177,22 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 	private Future<T> futureResult;
 	private final boolean joinOnClose;
 	private boolean started = false;
-	private final PipedOutputStream pipedOs = new PipedOutputStream();
+
+	private final PipedOutputStream pipedOs = new PipedOutputStream() {
+		private boolean outputStreamCloseCalled = false;
+		//duplicate close hangs the pipeStream see issue #36
+		@Override
+		public void close() throws IOException {
+			synchronized (this) {
+				if (outputStreamCloseCalled) {
+					return;
+				}
+				outputStreamCloseCalled = true;
+			}
+			super.close();
+		}
+
+	};
 
 	/**
 	 * <p>
@@ -312,8 +327,8 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 
 	/**
 	 * <p>
-	 * This method is called just before the {@link #close()} method
-	 * completes, and after the eventual join with the internal thread.
+	 * This method is called just before the {@link #close()} method completes,
+	 * and after the eventual join with the internal thread.
 	 * </p>
 	 * <p>
 	 * It is an extension point designed for applications that need to perform
@@ -331,7 +346,7 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 
 	private void checkException() throws IOException {
 		try {
-			this.futureResult.get();
+			this.futureResult.get(1, TimeUnit.SECONDS);
 		} catch (final ExecutionException e) {
 			final Throwable t = e.getCause();
 			final IOException e1 = new IOException("Exception producing data");
@@ -341,7 +356,10 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 			final IOException e1 = new IOException("Thread interrupted");
 			e1.initCause(e);
 			throw e1;
-
+		} catch (final TimeoutException e) {
+			LOG.error("This timeout should never happen, "
+					+ "the thread should terminate correctly. "
+					+ "Please contact io-tools support.", e);
 		}
 	}
 
@@ -349,8 +367,7 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 		if (!this.started) {
 			this.started = true;
 			final Callable<T> executingCallable = new DataProducer();
-			this.futureResult = this.executorService
-					.submit(executingCallable);
+			this.futureResult = this.executorService.submit(executingCallable);
 			InputStreamFromOutputStream.LOG.debug(
 					"thread invoked by[{}] queued for start.", this.callerId);
 		}
@@ -421,8 +438,8 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 
 	/**
 	 * <p>
-	 * This method must be implemented by the user of this class to produce
-	 * the data that must be read from the external <code>InputStream</code>.
+	 * This method must be implemented by the user of this class to produce the
+	 * data that must be read from the external <code>InputStream</code>.
 	 * </p>
 	 * <p>
 	 * Special care must be paid passing arguments to this method or setting
@@ -439,8 +456,8 @@ public abstract class InputStreamFromOutputStream<T> extends PipedInputStream {
 	 * @param sink
 	 *            the implementing class should write its data to this stream.
 	 * @throws java.lang.Exception
-	 *             the exception eventually thrown by the implementing class
-	 *             is returned by the {@linkplain #read()} methods.
+	 *             the exception eventually thrown by the implementing class is
+	 *             returned by the {@linkplain #read()} methods.
 	 * @see #getResult()
 	 */
 	protected abstract T produce(final OutputStream sink) throws Exception;

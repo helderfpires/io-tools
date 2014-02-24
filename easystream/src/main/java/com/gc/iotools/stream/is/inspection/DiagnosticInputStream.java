@@ -1,7 +1,7 @@
 package com.gc.iotools.stream.is.inspection;
 
 /*
- * Copyright (c) 2008,2012 Gabriele Contini. This source code is released
+ * Copyright (c) 2008, 2014 Gabriele Contini. This source code is released
  * under the BSD License.
  */
 import java.io.FilterInputStream;
@@ -18,8 +18,9 @@ import com.gc.iotools.stream.utils.LogUtils;
 
 /**
  * <p>
- * Detects and log useful debug informations about the stream passed in the
- * constructor, and detects wrong usage patterns.
+ * A decorating <code>InputStream</code> that detects and log useful debug
+ * informations about the stream passed in the constructor, and detects wrong
+ * usage patterns.
  * </p>
  * <ul>
  * <li><code>InputStream</code> methods accessed after invocation of
@@ -34,15 +35,15 @@ import com.gc.iotools.stream.utils.LogUtils;
  * keeping track of the usage of the methods.
  * </p>
  * <p>
- * Errors are both logged at WARN level and available through the standard
- * class interface. Future version will allow the customization of this
- * behavior disable the logging.
+ * Errors are both logged at WARN level and available through the standard class
+ * interface. Future version will allow the customization of this behavior
+ * disable the logging.
  * </p>
  * <p>
- * It is designed to detect also errors that happens during object
- * finalization, but to detect these errors in tests you must be very careful
- * on your test design (see example). Errors in finalizers are available
- * trough the {@linkplain #getFinalizationErrors()} method.
+ * It is designed to detect also errors that happens during object finalization,
+ * but to detect these errors in tests you must be very careful on your test
+ * design (see example). Errors in finalizers are available trough the
+ * {@linkplain #getFinalizationErrors()} method.
  * </p>
  * <p>
  * It's an useful tool in unit tests to detect wrong handling of the streams,
@@ -65,20 +66,22 @@ import com.gc.iotools.stream.utils.LogUtils;
  * 			instanceWarnings.length == 0);
  * }
  * </pre>
+ * 
  * </p>
  * <p>
  * If your code free resources in <code>finalize()</code> methods, or the
- * libraries you use do so you must use a more complex testing strategy
- * because the references to to the active <code>DiagnosticInputStream</code>
- * instance in your Junit prevents the class from being garbage collected. See
- * the wiki for details and {@linkplain #getFinalizationErrors()}.
+ * libraries you use do so you must use a more complex testing strategy because
+ * the references to to the active <code>DiagnosticInputStream</code> instance
+ * in your Junit prevents the class from being garbage collected. See the wiki
+ * for details and {@linkplain #getFinalizationErrors()}.
  * </p>
  * 
  * @since 1.2.6
  * @author dvd.msnt
  * @param <T>
  *            Type of the wrapped (contained) <code>InputStream</code>.
- * @version $Id$
+ * @version $Id: DiagnosticInputStream.java 523 2013-01-02 15:46:17Z
+ *          gabriele.contini@gmail.com $
  */
 public class DiagnosticInputStream<T extends InputStream> extends
 		FilterInputStream {
@@ -154,8 +157,8 @@ public class DiagnosticInputStream<T extends InputStream> extends
 	 * @param inputStream
 	 *            the source InputStream
 	 * @param logDepth
-	 *            Number of stack frames to log. It overrides the default
-	 *            static value.
+	 *            Number of stack frames to log. It overrides the default static
+	 *            value.
 	 */
 	public DiagnosticInputStream(final T inputStream, final int logDepth) {
 		super(inputStream);
@@ -319,12 +322,12 @@ public class DiagnosticInputStream<T extends InputStream> extends
 	/**
 	 * <p>
 	 * Returns the wrapped (original) <code>InputStream</code> passed in the
-	 * constructor. Any calls made to the returned stream will not be tracked
-	 * by <code>DiagnosticInputStream</code>, so this method should be used
-	 * with care, and <code>close()</code> and <code>read()</code> methods
-	 * should'nt be called on the returned <code>InputStream</code>. Instead
-	 * these methods should be called on <code>DiagnosticInputStream</code>
-	 * that simply forwards them to the underlying stream.
+	 * constructor. Any calls made to the returned stream will not be tracked by
+	 * <code>DiagnosticInputStream</code>, so this method should be used with
+	 * care, and <code>close()</code> and <code>read()</code> methods should'nt
+	 * be called on the returned <code>InputStream</code>. Instead these methods
+	 * should be called on <code>DiagnosticInputStream</code> that simply
+	 * forwards them to the underlying stream.
 	 * </p>
 	 * 
 	 * @return The original <code>InputStream</code> passed in the constructor
