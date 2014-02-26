@@ -70,8 +70,6 @@ Main features are:
 				<configuration>
 					<encoding>US-ASCII</encoding>
 					<fork>true</fork>
-					<source>1.5</source>
-					<target>1.5</target>
 					<meminitial>128m</meminitial>
 					<maxmem>512m</maxmem>
 					<optimize>true</optimize>
