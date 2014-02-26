@@ -31,13 +31,12 @@ import com.gc.iotools.stream.utils.LogUtils;
  * </p>
  * <p>
  * To use this class you must subclass it and implement the abstract method
- * {@linkplain #produce(Writer)}. The data who is produced inside this
- * function can be written to the sink <code>Writer</code> passed as a
- * parameter. Later it can be read back from from the
- * <code>ReaderFromWriter</code> class (whose ancestor is
- * <code>java.io.Reader</code> ).
+ * {@linkplain #produce(Writer)}. The data who is produced inside this function
+ * can be written to the sink <code>Writer</code> passed as a parameter. Later
+ * it can be read back from from the <code>ReaderFromWriter</code> class (whose
+ * ancestor is <code>java.io.Reader</code> ).
  * </p>
- *
+ * 
  * <pre>
  * final String dataId=//id of some data.
  * final ReaderFromWriter&lt;String&gt; rfw
@@ -69,15 +68,16 @@ import com.gc.iotools.stream.utils.LogUtils;
  * allocating the internal thread or even specify the
  * {@linkplain ExecutorService} for thread execution.
  * </p>
- *
+ * 
  * @param <T>
  *            Optional result returned by the function
- *            {@linkplain #produce(Writer)} after the data has been written.
- *            It can be obtained calling the {@linkplain #getResult()}
+ *            {@linkplain #produce(Writer)} after the data has been written. It
+ *            can be obtained calling the {@linkplain #getResult()}
  * @see ExecutionModel
  * @author dvd.smnt
  * @since 1.2.7
- * @version $Id$
+ * @version $Id: ReaderFromWriter.java 527 2014-02-24 19:29:50Z
+ *          gabriele.contini@gmail.com $
  */
 public abstract class ReaderFromWriter<T> extends Reader {
 	/**
@@ -102,8 +102,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 			final String threadName = getName();
 			T result;
 			ReaderFromWriter.ACTIVE_THREAD_NAMES.add(threadName);
-			ReaderFromWriter.LOG
-					.debug("thread [" + threadName + "] started.");
+			ReaderFromWriter.LOG.debug("thread [" + threadName + "] started.");
 			try {
 				result = produce(this.writer);
 			} finally {
@@ -165,7 +164,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	/**
 	 * This method can be used for debugging purposes to get a list of the
 	 * currently active threads.
-	 *
+	 * 
 	 * @return Array containing names of the threads currently active.
 	 */
 	public static final String[] getActiveThreadNames() {
@@ -180,7 +179,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	/**
 	 * Set the size for the pipe circular buffer for the newly created
 	 * <code>ReaderFromWriter</code>. Default is 4096 bytes.
-	 *
+	 * 
 	 * @since 1.2.7
 	 * @param defaultPipeSize
 	 *            the default pipe buffer size in bytes.
@@ -190,17 +189,17 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	}
 
 	private boolean closeCalled = false;
-	private final Future<T> futureResult;
+	private Future<T> futureResult = null;
 	private final boolean joinOnClose;
-
 	private final PipedReader pipedReader;
+	protected final ExecutorService executorService;
 
 	/**
 	 * <p>
 	 * It creates a <code>ReaderFromWriter</code> with a THREAD_PER_INSTANCE
 	 * thread strategy.
 	 * </p>
-	 *
+	 * 
 	 * @see ExecutionModel#THREAD_PER_INSTANCE
 	 */
 	public ReaderFromWriter() {
@@ -215,7 +214,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 * <p>
 	 * This class executes the produce method in a thread created internally.
 	 * </p>
-	 *
+	 * 
 	 * @since 1.2.7
 	 * @see ExecutionModel
 	 * @param executionModel
@@ -235,7 +234,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 * ExecutorService that will execute the {@linkplain #produce(Writer)}
 	 * method.
 	 * </p>
-	 *
+	 * 
 	 * @since 1.2.7
 	 * @see ExecutorService
 	 * @param executor
@@ -259,7 +258,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 * <p>
 	 * Using this method the default size is ignored.
 	 * </p>
-	 *
+	 * 
 	 * @since 1.2.7
 	 * @see ExecutorService
 	 * @param executor
@@ -273,33 +272,41 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 */
 	public ReaderFromWriter(final boolean joinOnClose,
 			final ExecutorService executor, final int pipeBufferSize) {
-		final String callerId = LogUtils.getCaller(this.getClass());
 		this.joinOnClose = joinOnClose;
-		PipedWriter pipedOS = null;
-		try {
-			this.pipedReader = new MyPipedReader(pipeBufferSize);
-			pipedOS = new PipedWriter(this.pipedReader){
-				private boolean writerCloseCalled = false;
-				//duplicate close hangs the pipeStream see issue #36
-				@Override
-				public void close() throws IOException {
-					synchronized (this) {
-						if (writerCloseCalled) {
-							return;
+		this.pipedReader = new MyPipedReader(pipeBufferSize);
+		this.executorService = executor;
+
+	}
+
+	private void checkInitialized() {
+		if (futureResult == null) {
+			final String callerId = LogUtils.getCaller(this.getClass());
+			PipedWriter pipedWriter = null;
+			try {
+				pipedWriter = new PipedWriter(this.pipedReader) {
+					private boolean writerCloseCalled = false;
+
+					// duplicate close hangs the pipeStream see issue #36
+					@Override
+					public void close() throws IOException {
+						synchronized (this) {
+							if (writerCloseCalled) {
+								return;
+							}
+							writerCloseCalled = true;
 						}
-						writerCloseCalled = true;
+						super.close();
 					}
-					super.close();
-				}
-			};
-		} catch (final IOException e) {
-			throw new RuntimeException("Error during pipe creaton", e);
+				};
+			} catch (final IOException e) {
+				throw new RuntimeException("Error during pipe creaton", e);
+			}
+			final Callable<T> executingCallable = new DataProducer(callerId,
+					pipedWriter);
+			this.futureResult = this.executorService.submit(executingCallable);
+			ReaderFromWriter.LOG.debug(
+					"thread invoked by[{}] queued for start.", callerId);
 		}
-		final Callable<T> executingCallable = new DataProducer(callerId,
-				pipedOS);
-		this.futureResult = executor.submit(executingCallable);
-		ReaderFromWriter.LOG.debug("thread invoked by[{}] queued for start.",
-				callerId);
 	}
 
 	/**
@@ -310,7 +317,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 * <p>
 	 * This class executes the produce method in a thread created internally.
 	 * </p>
-	 *
+	 * 
 	 * @see ExecutionModel
 	 * @param executionModel
 	 *            Defines how the internal thread is allocated.
@@ -325,7 +332,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 * ExecutorService that will execute the {@linkplain #produce(Writer)}
 	 * method.
 	 * </p>
-	 *
+	 * 
 	 * @see ExecutorService
 	 * @param executor
 	 *            Defines the ExecutorService that will allocate the the
@@ -354,6 +361,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	/** {@inheritDoc} */
 	@Override
 	public final void close() throws IOException {
+		checkInitialized();
 		if (!this.closeCalled) {
 			this.closeCalled = true;
 			this.pipedReader.close();
@@ -373,21 +381,22 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	/**
 	 * <p>
 	 * Returns the object that was previously returned by the
-	 * {@linkplain #produce(Writer)} method. It performs all the
-	 * synchronization operations needed to read the result and waits for the
-	 * internal thread to terminate.
+	 * {@linkplain #produce(Writer)} method. It performs all the synchronization
+	 * operations needed to read the result and waits for the internal thread to
+	 * terminate.
 	 * </p>
 	 * <p>
 	 * This method must be called after the method {@linkplain #close()},
 	 * otherwise an IllegalStateException is thrown.
 	 * </p>
-	 *
+	 * 
 	 * @since 1.2.7
 	 * @return Object that was returned by the {@linkplain #produce(Writer)}
 	 *         method.
 	 * @throws java.lang.Exception
 	 *             If the {@linkplain #produce(Writer)} method threw an
-	 *             java.lang.Exception this method will throw again the same exception.
+	 *             java.lang.Exception this method will throw again the same
+	 *             exception.
 	 * @throws java.lang.IllegalStateException
 	 *             If the {@linkplain #close()} method hasn't been called yet.
 	 */
@@ -413,8 +422,8 @@ public abstract class ReaderFromWriter<T> extends Reader {
 
 	/**
 	 * <p>
-	 * This method must be implemented by the user of this class to produce
-	 * the data that must be read from the external <code>Reader</code>.
+	 * This method must be implemented by the user of this class to produce the
+	 * data that must be read from the external <code>Reader</code>.
 	 * </p>
 	 * <p>
 	 * Special care must be paid passing arguments to this method or setting
@@ -424,15 +433,15 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	 * The right way to set a field variable is to return a value in the
 	 * <code>produce</code>and retrieve it in the getResult().
 	 * </p>
-	 *
+	 * 
 	 * @return The implementing class can use this to return a result of data
 	 *         production. The result will be available through the method
 	 *         {@linkplain #getResult()}.
 	 * @param sink
 	 *            the implementing class should write its data to this stream.
 	 * @throws java.lang.Exception
-	 *             the exception eventually thrown by the implementing class
-	 *             is returned by the {@linkplain #read()} methods.
+	 *             the exception eventually thrown by the implementing class is
+	 *             returned by the {@linkplain #read()} methods.
 	 * @see #getResult()
 	 */
 	protected abstract T produce(final Writer sink) throws Exception;
@@ -440,6 +449,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	/** {@inheritDoc} */
 	@Override
 	public final int read() throws IOException {
+		checkInitialized();
 		final int result = this.pipedReader.read();
 		if (result < 0) {
 			checkException();
@@ -451,6 +461,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	@Override
 	public final int read(final char[] b, final int off, final int len)
 			throws IOException {
+		checkInitialized();
 		final int result = this.pipedReader.read(b, off, len);
 		if (result < 0) {
 			checkException();
