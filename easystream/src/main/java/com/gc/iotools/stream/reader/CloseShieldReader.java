@@ -3,9 +3,9 @@ package com.gc.iotools.stream.reader;
  * Copyright (c) 2008, 2014 Gabriele Contini. This source code is released
  * under the BSD License.
  */
+import java.io.FilterReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.nio.CharBuffer;
 
 /**
  * <p>
@@ -27,10 +27,9 @@ import java.nio.CharBuffer;
  *            Type of the Reader passed in the constructor.
  * @version $Id$
  */
-public class CloseShieldReader<T extends Reader> extends Reader {
+public class CloseShieldReader<T extends Reader> extends FilterReader {
 	private int closeCount = 0;
 
-	private final Reader source;
 
 	/**
 	 * Construct a <code>CloseShieldReader</code> that forwards the calls to
@@ -41,10 +40,10 @@ public class CloseShieldReader<T extends Reader> extends Reader {
 	 * @param <T> a T object.
 	 */
 	public CloseShieldReader(final T source) {
+		super(source);
 		if (source == null) {
 			throw new IllegalArgumentException("Source reader can't be null");
 		}
-		this.source = source;
 	}
 
 	/**
@@ -79,68 +78,9 @@ public class CloseShieldReader<T extends Reader> extends Reader {
 	 */
 	public T getWrappedReader() {
 		@SuppressWarnings("unchecked")
-		final T result = (T) this.source;
+		final T result = (T) this.in;
 		return result;
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	public void mark(final int readAheadLimit) throws IOException {
-		this.source.mark(readAheadLimit);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public boolean markSupported() {
-		return this.source.markSupported();
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public int read() throws IOException {
-		return this.source.read();
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public int read(final char[] cbuf) throws IOException {
-		return this.source.read(cbuf);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public int read(final char[] cbuf, final int off, final int len)
-			throws IOException {
-		return this.source.read(cbuf, off, len);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public int read(final CharBuffer target) throws IOException {
-		return this.source.read(target);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public boolean ready() throws IOException {
-		return this.source.ready();
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void reset() throws IOException {
-		this.source.reset();
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public long skip(final long n) throws IOException {
-		return this.source.skip(n);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public String toString() {
-		return this.source.toString();
-	}
+	
 }

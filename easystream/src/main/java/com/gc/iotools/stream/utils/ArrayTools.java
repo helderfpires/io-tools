@@ -1,6 +1,5 @@
 package com.gc.iotools.stream.utils;
 
-import java.lang.reflect.Array;
 
 /*
  * Copyright (c) 2008, 2014 Gabriele Contini. This source code is released
