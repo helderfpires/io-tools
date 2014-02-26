@@ -67,14 +67,14 @@ import com.gc.iotools.stream.utils.LogUtils;
  * </p>
  * <code>
  * <pre>
- * WriterToReader&lt;String&gt; oStream2IStream =
+ * WriterToReader&lt;String&gt; oStream2Reader =
  * new WriterToReader&lt;String&gt;() {
- * 	protected String doRead(final Reader istream) throws Exception {
+ * 	protected String doRead(final Reader reader) throws Exception {
  * 		// Users of this class should place all the code that need to read data
  *      // from the Reader in this method. Data available through the
  *      // Reader passed as a parameter is the data that is written to the
- * 		// Writer oStream2IStream through its write method.
- * 		final String result = IOUtils.toString(istream);
+ * 		// Writer oStream2Reader through its write method.
+ * 		final String result = IOUtils.toString(reader);
  * 		return result + &quot; was processed.&quot;;
  * 	}
  * };
@@ -82,12 +82,12 @@ import com.gc.iotools.stream.utils.LogUtils;
  * 	// some data is written to the Writer, will be passed to the method
  * 	// doRead(Reader i) above and after close() is called the results
  * 	// will be available through the getResults() method.
- * 	oStream2IStream.write(&quot;test&quot;.getBytes());
+ * 	oStream2Reader.write(&quot;test&quot;.getBytes());
  * } finally {
  * 	// don't miss the close (or a thread would not terminate correctly).
- * 	oStream2IStream.close();
+ * 	oStream2Reader.close();
  * }
- * String result = oStream2IStream.getResults();
+ * String result = oStream2Reader.getResults();
  * //result now contains the string &quot;test was processed.&quot;
  * </pre></code>
  *
@@ -108,8 +108,8 @@ public abstract class WriterToReader<T> extends Writer {
 
 		private final Reader reader;
 
-		DataConsumer(final Reader istream) {
-			this.reader = istream;
+		DataConsumer(final Reader reader) {
+			this.reader = reader;
 		}
 
 		@Override
@@ -117,9 +117,9 @@ public abstract class WriterToReader<T> extends Writer {
 			T processResult;
 			try {
 				// avoid the internal class close the stream.
-				final CloseShieldReader<Reader> istream = new CloseShieldReader<Reader>(
+				final CloseShieldReader<Reader> reader = new CloseShieldReader<Reader>(
 						this.reader);
-				processResult = doRead(istream);
+				processResult = doRead(reader);
 			} catch (final Exception e) {
 				WriterToReader.this.abort = true;
 				throw e;
@@ -165,25 +165,7 @@ public abstract class WriterToReader<T> extends Writer {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(WriterToReader.class);
 
-	/**
-	 * <p>
-	 * Set the size for the pipe circular buffer. This setting has effect for
-	 * the newly created <code>WriterToReader</code>. Default is 4096 bytes.
-	 * </p>
-	 * <p>
-	 * Will be removed in the 1.3 release. Use
-	 * {@link #setDefaultPipeSize(int)} instead.
-	 * </p>
-	 *
-	 * @since 1.2.0
-	 * @param defaultPipeSize
-	 *            The default pipe buffer size in bytes.
-	 * @see #setDefaultPipeSize(int)
-	 */
-	@Deprecated
-	public static void setDefaultBufferSize(final int defaultPipeSize) {
-		WriterToReader.defaultPipeSize = defaultPipeSize;
-	}
+
 
 	/**
 	 * Set the size for the pipe circular buffer. This setting has effect for
@@ -200,7 +182,7 @@ public abstract class WriterToReader<T> extends Writer {
 	private boolean abort = false;
 	private boolean closeCalled = false;
 	private final boolean joinOnClose;
-	private final PipedWriter pipedOs;
+	private final PipedWriter pipedWriter;
 	private final Future<T> writingResult;
 
 	/**
@@ -307,10 +289,10 @@ public abstract class WriterToReader<T> extends Writer {
 					"executor service can't be null");
 		}
 		final String callerId = LogUtils.getCaller(getClass());
-		this.pipedOs = new PipedWriter();
+		this.pipedWriter = new PipedWriter();
 		final PipedReader pipedIS = new PipedReader(pipeBufferSize);
 		try {
-			pipedIS.connect(this.pipedOs);
+			pipedIS.connect(this.pipedWriter);
 		} catch (final IOException e) {
 			throw new IllegalStateException("Error during pipe creaton", e);
 		}
@@ -360,7 +342,7 @@ public abstract class WriterToReader<T> extends Writer {
 	 * also be available by calling the method {@link #getResults()}.
 	 * </p>
 	 *
-	 * @param istream
+	 * @param reader
 	 *            The Reader where the data can be retrieved.
 	 * @return Optionally returns a result of the elaboration.
 	 * @throws java.lang.Exception
@@ -369,7 +351,7 @@ public abstract class WriterToReader<T> extends Writer {
 	 *             <code>Writer</code> and will be available calling the
 	 *             method {@link #getResults()}.
 	 */
-	protected abstract T doRead(Reader istream) throws Exception;
+	protected abstract T doRead(Reader reader) throws Exception;
 
 	/** {@inheritDoc} */
 	@Override
@@ -378,7 +360,7 @@ public abstract class WriterToReader<T> extends Writer {
 			// internal thread is already aborting. wait for short time.
 			internalClose(true, TimeUnit.SECONDS, 1);
 		} else {
-			this.pipedOs.flush();
+			this.pipedWriter.flush();
 		}
 	}
 
@@ -424,7 +406,7 @@ public abstract class WriterToReader<T> extends Writer {
 			final long timeout) throws IOException {
 		if (!this.closeCalled) {
 			this.closeCalled = true;
-			this.pipedOs.close();
+			this.pipedWriter.close();
 			if (join) {
 				// waiting for thread to finish..
 				try {
@@ -462,7 +444,7 @@ public abstract class WriterToReader<T> extends Writer {
 			// internal thread is already aborting. wait for short time.
 			internalClose(true, TimeUnit.SECONDS, 1);
 		} else {
-			this.pipedOs.write(bytes);
+			this.pipedWriter.write(bytes);
 		}
 	}
 
@@ -474,7 +456,7 @@ public abstract class WriterToReader<T> extends Writer {
 			// internal thread is already aborting. wait for short time.
 			internalClose(true, TimeUnit.SECONDS, 1);
 		} else {
-			this.pipedOs.write(bytes, offset, length);
+			this.pipedWriter.write(bytes, offset, length);
 		}
 	}
 
@@ -485,7 +467,7 @@ public abstract class WriterToReader<T> extends Writer {
 			// internal thread is already aborting. wait for short time.
 			internalClose(true, TimeUnit.SECONDS, 1);
 		} else {
-			this.pipedOs.write(chartowrite);
+			this.pipedWriter.write(chartowrite);
 		}
 	}
 
