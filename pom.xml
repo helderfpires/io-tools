@@ -226,7 +226,7 @@
 						<links>
 							<link>http://java.sun.com/javase/6/docs/api/
 							</link>
-							<link>http://commons.apache.org/io/api-release/
+							<link>http://commons.apache.org/proper/commons-io/javadocs/api-2.4/
 							</link>
 							<link>http://jakarta.apache.org/commons/lang/apidocs/
 							</link>
