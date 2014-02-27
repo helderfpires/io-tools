@@ -43,4 +43,4 @@ _ (released on oct 22, 2008) _
  * Tools for reading from an `InputStream` the data written to an `OutputStream`
  * Junit and documentation on wiki.
 
-<wiki:gadget url="http://www.ohloh.net/p/20446/widgets/project_basic_stats.xml" height="245" border="1"/>
+<wiki:gadget url="http://www.ohloh.net/p/20446/widgets/project_factoids_stats.xml" height="270" border="1"/>
