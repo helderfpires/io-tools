@@ -10,8 +10,7 @@ io-tools artifacts are deployed on Maven central repository. So if you want to u
 <dependency>
 	<groupId>net.sf.jsignature.io-tools</groupId>
 	<artifactId>easystream</artifactId>
-	<version>1.2.13</version>
-	<type>jar</type>
+	<version>1.2.12</version>
 </dependency>
 }}}
 
@@ -21,8 +20,7 @@ While if you're interested in the format detection library you have to add:
 <dependency>
 	<groupId>net.sf.jsignature.io-tools</groupId>
 	<artifactId>wazformat</artifactId>
-	<version>1.2.13</version>
-	<type>jar</type>
+	<version>1.2.12</version>
 </dependency>
 }}}
 
