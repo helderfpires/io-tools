@@ -6,7 +6,7 @@ import java.io.InputStream;
 
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.ASN1Primitive;
 
 /**
  * 
@@ -144,7 +144,8 @@ public final class ASN1Reader { // NO_UCD
 			final ASN1ObjectIdentifier expectedIdentifier) throws IOException,
 			FormatException {
 		final ASN1InputStream asn1Stream = new ASN1InputStream(is);
-		final DERObject doi = asn1Stream.readObject();
+		final ASN1Primitive doi = asn1Stream.readObject();
+		asn1Stream.close();
 		if (!expectedIdentifier.equals(doi)) {
 			throw new FormatException("Expected oid signedData["
 					+ expectedIdentifier + "] got[" + doi + "]");

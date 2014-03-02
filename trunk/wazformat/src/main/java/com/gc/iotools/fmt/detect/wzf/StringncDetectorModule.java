@@ -1,7 +1,7 @@
 package com.gc.iotools.fmt.detect.wzf;
 
 /*
- * Copyright (c) 2008,2012 Gabriele Contini.
+ * Copyright (c) 2008, 2014 Gabriele Contini.
  * This source code is released under the BSD License.
  */
 import com.gc.iotools.fmt.base.FormatId;
