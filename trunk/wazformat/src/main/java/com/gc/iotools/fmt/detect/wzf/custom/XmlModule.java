@@ -67,10 +67,6 @@ public final class XmlModule implements DefiniteLengthModule {
 	private static final int XML_GUESS_SIZE = 8192;
 
 	public boolean detect(final byte[] readBytes) {
-		/*
-		 * Don't change it for now: method newFactory is supported since jdk
-		 * 1.6.0_18. If substituted causes a backward compatibility issue.
-		 */
 		final XMLInputFactory factory = XMLInputFactory.newInstance();
 		factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
 		factory.setXMLReporter(new MyReporter());
@@ -89,9 +85,14 @@ public final class XmlModule implements DefiniteLengthModule {
 			xmlDetected = true;
 			XmlModule.LOGGER.debug("XML detected (EOF reach)");
 		} catch (final XMLStreamException e) {
-			if ((e.getMessage() != null)
-					&& (e.getMessage().indexOf("end of stream") >= 0)
-					&& (readBytes.length == XmlModule.XML_GUESS_SIZE)) {
+			final Location location = e.getLocation();
+			final String message = e.getMessage();
+			final boolean locationCondition = location != null
+					&& location.getCharacterOffset() == XmlModule.XML_GUESS_SIZE;
+			if (locationCondition
+					|| (message != null
+							&& (message.contains("must start and end") || (e
+									.getMessage().indexOf("end of stream") >= 0)) && readBytes.length == XML_GUESS_SIZE)) {
 				xmlDetected = evaluateException(currentEvent);
 			} else {
 				XmlModule.LOGGER.debug("XML not detected " + e);
