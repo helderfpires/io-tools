@@ -1,7 +1,7 @@
 package com.gc.iotools.fmt.detect.wzf.custom;
 
 /*
- * Copyright (c) 2008,2012 Gabriele Contini. All rights reserved. Redistribution
+ * Copyright (c) 2008, 2014 Gabriele Contini. All rights reserved. Redistribution
  * and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met: * Redistributions
  * of source code must retain the above copyright notice, this list of
@@ -36,7 +36,6 @@ import javax.xml.stream.events.XMLEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bea.xml.stream.MXParserFactory;
 import com.gc.iotools.fmt.base.FormatEnum;
 import com.gc.iotools.fmt.base.FormatId;
 import com.gc.iotools.fmt.detect.wzf.DefiniteLengthModule;
@@ -72,9 +71,7 @@ public final class XmlModule implements DefiniteLengthModule {
 		 * Don't change it for now: method newFactory is supported since jdk
 		 * 1.6.0_18. If substituted causes a backward compatibility issue.
 		 */
-		final XMLInputFactory factory = XMLInputFactory.newInstance(
-				MXParserFactory.class.getName(),
-				XmlModule.class.getClassLoader());
+		final XMLInputFactory factory = XMLInputFactory.newInstance();
 		factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
 		factory.setXMLReporter(new MyReporter());
 

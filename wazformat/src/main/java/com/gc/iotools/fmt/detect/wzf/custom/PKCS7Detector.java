@@ -13,7 +13,7 @@ import com.gc.iotools.fmt.base.FormatId;
 import com.gc.iotools.fmt.detect.wzf.DefiniteLengthModule;
 
 /*
- * Copyright (c) 2008,2012 Gabriele Contini
+ * Copyright (c) 2008, 2014 Gabriele Contini
  * All rights reserved.
  * Redistribution and use in source and binary forms, 
  * with or without modification, are permitted provided that the following 
