@@ -13,7 +13,8 @@ import org.bouncycastle.asn1.ASN1Primitive;
  * @since 02/oct/08
  * @author dvd.smnt
  */
-// TODO from UCDetector: Change visibility of Class "ASN1Reader" to default - May cause compile errors!
+// TODO from UCDetector: Change visibility of Class "ASN1Reader" to default -
+// May cause compile errors!
 public final class ASN1Reader { // NO_UCD
 	private static final int CONSTRUCTED = 32;
 	private static final int SEQUENCE = 16;
@@ -41,6 +42,9 @@ public final class ASN1Reader { // NO_UCD
 		try {
 			readSequence(this.istream);
 			readTagID(this.istream, expectedObjIdentifier);
+		} catch (final IOException e) {
+			throw new FormatException(
+					"Error reading pkcs7 or underlying stream", e);
 		} catch (final RuntimeException e) {
 			throw new FormatException("Error reading pkcs7", e);
 		}
