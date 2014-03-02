@@ -13,7 +13,7 @@ import java.io.InputStream;
  * <ul>
  * <li>holds a source InputStream</li>
  * <li>provide a {@linkplain #closeOnce()} method that's called exactly once.</li>
- * <li>provide an implementation of {@linkplain #skip()} and
+ * <li>provide an implementation of {@linkplain AbstractInputStreamWrapper#skip(final long n) } and
  * {@linkplain #read()} methods.</li>
  * <li>Keeps track of the position in the source stream over mark and reset.</li>
  * </ul>
@@ -32,7 +32,7 @@ public abstract class AbstractInputStreamWrapper extends InputStream {
 	/**
 	 * <p>Constructor for AbstractInputStreamWrapper.</p>
 	 *
-	 * @param the {@link java.io.InputStream} that is wrapped by this stream..
+	 * @param source the {@link java.io.InputStream} that is wrapped by this stream.
 	 */
 	protected AbstractInputStreamWrapper(final InputStream source) {
 		if (source == null) {

@@ -192,6 +192,8 @@ public abstract class ReaderFromWriter<T> extends Reader {
 	private Future<T> futureResult = null;
 	private final boolean joinOnClose;
 	private final PipedReader pipedReader;
+	private final String callerId;
+	
 	protected final ExecutorService executorService;
 
 	/**
@@ -275,12 +277,12 @@ public abstract class ReaderFromWriter<T> extends Reader {
 		this.joinOnClose = joinOnClose;
 		this.pipedReader = new MyPipedReader(pipeBufferSize);
 		this.executorService = executor;
+		this.callerId = LogUtils.getCaller(this.getClass());
 
 	}
 
 	private void checkInitialized() {
 		if (futureResult == null) {
-			final String callerId = LogUtils.getCaller(this.getClass());
 			PipedWriter pipedWriter = null;
 			try {
 				pipedWriter = new PipedWriter(this.pipedReader) {
@@ -305,7 +307,7 @@ public abstract class ReaderFromWriter<T> extends Reader {
 					pipedWriter);
 			this.futureResult = this.executorService.submit(executingCallable);
 			ReaderFromWriter.LOG.debug(
-					"thread invoked by[{}] queued for start.", callerId);
+					"thread created by[{}] queued for start.", this.callerId);
 		}
 	}
 
@@ -467,6 +469,13 @@ public abstract class ReaderFromWriter<T> extends Reader {
 			checkException();
 		}
 		return result;
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public long skip(long n) throws IOException {
+		checkInitialized();
+		return super.skip(n);
 	}
 
 }
