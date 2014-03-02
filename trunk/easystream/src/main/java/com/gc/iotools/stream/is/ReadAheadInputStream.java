@@ -21,13 +21,13 @@ import com.gc.iotools.stream.base.ExecutorServiceFactory;
  * </p>
  * <p>
  * This can speed up reading when the time spent in reading from the stream is
- * same order as the time spent in elaborating the stream, because it
- * decouples the reading process and the elaboration in two different threads
- * putting them in parallel.
+ * same order as the time spent in elaborating the stream, because it decouples
+ * the reading process and the elaboration in two different threads putting them
+ * in parallel.
  * </p>
  * <p>
  * Sample Usage:
- *
+ * 
  * <pre>
  * InputStream source = ... some slow InputStream.
  * InputStream fastIs = new ReadAheadInputStream(source);
@@ -36,56 +36,76 @@ import com.gc.iotools.stream.base.ExecutorServiceFactory;
  * fastIs.close();
  * </pre>
  * <p>
- *
+ * 
  * @author dvd.smnt
  * @since 1.2.6
- * @version $Id$
+ * @version $Id: ReadAheadInputStream.java 527 2014-02-24 19:29:50Z
+ *          gabriele.contini@gmail.com $
  */
 public class ReadAheadInputStream extends InputStreamFromOutputStream<Void> {
 	private final InputStream source;
 
 	/**
-	 * <p>Constructor for ReadAheadInputStream.</p>
-	 *
-	 * @param source a {@link java.io.InputStream} object.
+	 * <p>
+	 * Constructor for ReadAheadInputStream.
+	 * </p>
+	 * 
+	 * @param source
+	 *            a {@link java.io.InputStream} object.
 	 */
 	public ReadAheadInputStream(final InputStream source) {
 		this(source, -1);
 	}
 
 	/**
-	 * <p>Constructor for ReadAheadInputStream.</p>
-	 *
-	 * @param source a {@link java.io.InputStream} object.
-	 * @param bufferSize a int.
+	 * <p>
+	 * Constructor for ReadAheadInputStream.
+	 * </p>
+	 * 
+	 * @param source
+	 *            a {@link java.io.InputStream} object.
+	 * @param bufferSize
+	 *            a int.
 	 */
 	public ReadAheadInputStream(final InputStream source, final int bufferSize) {
 		this(source, bufferSize, ExecutionModel.THREAD_PER_INSTANCE);
 	}
 
 	/**
-	 * <p>Constructor for ReadAheadInputStream.</p>
-	 *
-	 * @param source a {@link java.io.InputStream} object.
-	 * @param bufferSize a int.
-	 * @param executionModel a {@link com.gc.iotools.stream.base.ExecutionModel} object.
+	 * <p>
+	 * Constructor for ReadAheadInputStream.
+	 * </p>
+	 * 
+	 * @param source
+	 *            a {@link java.io.InputStream} object.
+	 * @param bufferSize
+	 *            a int.
+	 * @param executionModel
+	 *            a {@link com.gc.iotools.stream.base.ExecutionModel} object.
 	 */
-	public ReadAheadInputStream(final InputStream source,
-			final int bufferSize, final ExecutionModel executionModel) {
+	public ReadAheadInputStream(final InputStream source, final int bufferSize,
+			final ExecutionModel executionModel) {
 		this(source, bufferSize, ExecutorServiceFactory
 				.getExecutor(executionModel));
 	}
 
 	/**
-	 * <p>Constructor for ReadAheadInputStream.</p>
-	 *
-	 * @param source a {@link java.io.InputStream} object.
-	 * @param bufferSize a int.
-	 * @param executorService a {@link java.util.concurrent.ExecutorService} object.
+	 * <p>
+	 * Constructor for ReadAheadInputStream.
+	 * </p>
+	 * 
+	 * @param source
+	 *            a {@link java.io.InputStream} object.
+	 * @param bufferSize
+	 *            a int.
+	 * @param executorService
+	 *            a {@link java.util.concurrent.ExecutorService} object.
 	 */
-	public ReadAheadInputStream(final InputStream source,
-			final int bufferSize, final ExecutorService executorService) {
-		super(false, executorService, (bufferSize > 0 ? bufferSize : 65536));
+	public ReadAheadInputStream(final InputStream source, final int bufferSize,
+			final ExecutorService executorService) {
+		// 256K buffer by default
+		super(false, executorService, (bufferSize > 0 ? bufferSize
+				: (65536 * 4)));
 		this.source = source;
 	}
 

@@ -23,17 +23,17 @@ import com.gc.iotools.stream.store.ThresholdStore;
  * </p>
  * <p>
  * When the <code>RandomAccessInputStream</code> is created, an internal
- * {@linkplain Store} is created. As bytes from the stream are read or
- * skipped, the internal <code>store</code> is refilled as necessary from the
- * source input stream. The implementation of <code>store</code> can be
- * changed to fit the application needs: cache on disk rather than in memory.
- * The default <code>store</code> implementation caches 64K in memory and then
- * write the content on disk.
+ * {@linkplain Store} is created. As bytes from the stream are read or skipped,
+ * the internal <code>store</code> is refilled as necessary from the source
+ * input stream. The implementation of <code>store</code> can be changed to fit
+ * the application needs: cache on disk rather than in memory. The default
+ * <code>store</code> implementation caches 64K in memory and then write the
+ * content on disk.
  * </p>
  * <p>
- * It also adds the functionality of marking an <code>InputStream</code>
- * without specifying a mark length, thus allowing a <code>reset</code> after
- * an indefinite length of bytes has been read. Check the {@link #mark(int))}
+ * It also adds the functionality of marking an <code>InputStream</code> without
+ * specifying a mark length, thus allowing a <code>reset</code> after an
+ * indefinite length of bytes has been read. Check the {@link #mark(int))}
  * javadoc for details.
  * </p>
  * <p>
@@ -43,11 +43,12 @@ import com.gc.iotools.stream.store.ThresholdStore;
  * {@link BufferedInputStream} to improve performances (especially if
  * <code>int read()</code> method is called).
  * </p>
- *
+ * 
  * @author dvd.smnt
  * @see Store
  * @since 1.2.0
- * @version $Id$
+ * @version $Id: RandomAccessInputStream.java 527 2014-02-24 19:29:50Z
+ *          gabriele.contini@gmail.com $
  */
 public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	/**
@@ -74,8 +75,10 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	private Store store;
 
 	/**
-	 * <p>Constructor for RandomAccessInputStream.</p>
-	 *
+	 * <p>
+	 * Constructor for RandomAccessInputStream.
+	 * </p>
+	 * 
 	 * @param source
 	 *            The underlying input stream.
 	 */
@@ -93,25 +96,27 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	 * When data read under threshold size <code>treshold</code> is kept into
 	 * memory. Over this size it is placed on disk.
 	 * </p>
-	 *
+	 * 
 	 * @see ThresholdStore
 	 * @param source
 	 *            The underlying input stream.
 	 * @param threshold
 	 *            Maximum number of bytes to keep into memory.
 	 */
-	public RandomAccessInputStream(final InputStream source,
-			final int threshold) {
+	public RandomAccessInputStream(final InputStream source, final int threshold) {
 		super(source);
 		this.store = new ThresholdStore(threshold);
 	}
 
 	/**
-	 * <p>Constructor for RandomAccessInputStream.</p>
-	 *
+	 * <p>
+	 * Constructor for RandomAccessInputStream.
+	 * </p>
+	 * 
 	 * @param source
 	 *            The underlying input stream.
-	 * @param store a {@link com.gc.iotools.stream.store.SeekableStore} object.
+	 * @param store
+	 *            a {@link com.gc.iotools.stream.store.SeekableStore} object.
 	 */
 	public RandomAccessInputStream(final InputStream source,
 			final SeekableStore store) {
@@ -125,9 +130,8 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	/** {@inheritDoc} */
 	@Override
 	public int available() throws IOException {
-		return (int) Math.min(this.sourcePosition
-				- this.randomAccessIsPosition + this.source.available(),
-				Integer.MAX_VALUE);
+		return (int) Math.min(this.sourcePosition - this.randomAccessIsPosition
+				+ this.source.available(), Integer.MAX_VALUE);
 	}
 
 	/** {@inheritDoc} */
@@ -139,7 +143,7 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 
 	/**
 	 * Return the underlying store where the cache of data is kept.
-	 *
+	 * 
 	 * @return The underlying store that caches data.
 	 */
 	public Store getStore() {
@@ -173,9 +177,8 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 		} else {
 			/*
 			 * shouldn't be here. refactor throw exception
-			 * randomAccessIsPosition > sourcePosition. A reset() was called
-			 * on the StorageBufInputStream. just read from source don't
-			 * buffer.
+			 * randomAccessIsPosition > sourcePosition. A reset() was called on
+			 * the StorageBufInputStream. just read from source don't buffer.
 			 */
 			// final int efflen = (int) Math.min(len,
 			// this.randomAccessIsPosition - this.sourcePosition);
@@ -190,11 +193,11 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 
 	/**
 	 * {@inheritDoc}
-	 *
+	 * 
 	 * <p>
-	 * Marks the current position in this input stream. A subsequent call to
-	 * the {@linkplain #reset()} method repositions this stream at the last
-	 * marked position so that subsequent reads re-read the same bytes.
+	 * Marks the current position in this input stream. A subsequent call to the
+	 * {@linkplain #reset()} method repositions this stream at the last marked
+	 * position so that subsequent reads re-read the same bytes.
 	 * </p>
 	 * <p>
 	 * This method extends the original behavior of the class
@@ -203,12 +206,13 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	 * <li><code>readLimit&gt; 0</code> The <code>readLimit</code> arguments
 	 * tells this input stream to allow that many bytes to be read before the
 	 * mark position gets invalidated.</li>
-	 * <li><code>readLimit == 0</code> Invalidate the all the current marks
-	 * and clean up the temporary files.</li>
+	 * <li><code>readLimit == 0</code> Invalidate the all the current marks and
+	 * clean up the temporary files.</li>
 	 * <li><code>readLimit &lt; 0 </code> Set up an indefinite mark: reset can
 	 * be invoked regardless on how many bytes have been read.</li>
 	 * </ul>
 	 * </p>
+	 * 
 	 * @see RandomAccessInputStream#reset()
 	 * @see java.io.InputStream#reset()
 	 */
@@ -220,9 +224,10 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 
 	/**
 	 * {@inheritDoc}
-	 *
+	 * 
 	 * Overrides the <code>markSupported()</code> method of the
 	 * <code>InputStream</code> class.
+	 * 
 	 * @see InputStream#markSupported();
 	 */
 	@Override
@@ -232,18 +237,19 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 
 	/**
 	 * {@inheritDoc}
-	 *
+	 * 
 	 * <p>
-	 * Repositions this stream to the position at the time the
-	 * <code>mark</code> method was last called on this input stream.
+	 * Repositions this stream to the position at the time the <code>mark</code>
+	 * method was last called on this input stream.
 	 * </p>
 	 * <p>
-	 * After invoking <code>mark</code> it can be invoked multiple times and
-	 * it always reset the stream at the previously marked position.
+	 * After invoking <code>mark</code> it can be invoked multiple times and it
+	 * always reset the stream at the previously marked position.
 	 * </p>
+	 * 
 	 * @exception IOException
-	 *                if this stream has not been marked or if the mark has
-	 *                been invalidated.
+	 *                if this stream has not been marked or if the mark has been
+	 *                invalidated.
 	 * @see RandomAccessInputStream#mark(int)
 	 * @see java.io.InputStream#reset()
 	 */
@@ -260,10 +266,17 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	}
 
 	/**
-	 * {@inheritDoc}.
-	 *
-	 * @param position a long.
-	 * @throws java.io.IOException if any.
+	 * <p>
+	 * Reposition the read pointer in the stream. Next read will start from the
+	 * position passed as argument.
+	 * </p>
+	 * 
+	 * @param position
+	 *            a long indicating the position in the stream we want to go.
+	 * @throws java.io.IOException
+	 *             throw if any IOException occurs reading the underlying stream
+	 *             or if it is attempted a seek to a position greater to the
+	 *             effective number of bytes in the stream.
 	 */
 	public void seek(final long position) throws IOException {
 		if (position < 0) {
@@ -294,9 +307,12 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 	}
 
 	/**
-	 * <p>Setter for the field <code>store</code>.</p>
-	 *
-	 * @param store a {@link com.gc.iotools.stream.store.Store} object.
+	 * <p>
+	 * Setter for the field <code>store</code>.
+	 * </p>
+	 * 
+	 * @param store
+	 *            a {@link com.gc.iotools.stream.store.Store} object.
 	 */
 	public void setStore(final Store store) {
 		this.store = store;
@@ -304,9 +320,9 @@ public class RandomAccessInputStream extends AbstractInputStreamWrapper {
 
 	/**
 	 * {@inheritDoc}
-	 *
-	 * Provides a String representation of the state of the stream for
-	 * debugging purposes.
+	 * 
+	 * Provides a String representation of the state of the stream for debugging
+	 * purposes.
 	 */
 	@Override
 	public String toString() {
