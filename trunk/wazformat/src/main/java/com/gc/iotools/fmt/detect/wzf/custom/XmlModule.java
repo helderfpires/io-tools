@@ -91,9 +91,15 @@ public final class XmlModule implements DefiniteLengthModule {
 					&& location.getCharacterOffset() == XmlModule.XML_GUESS_SIZE;
 			if (locationCondition
 					|| (message != null
-							&& (message.contains("must start and end") || (e
-									.getMessage().indexOf("end of stream") >= 0)) && readBytes.length == XML_GUESS_SIZE)) {
+							&& (message.contains("must start and end")
+									|| message.indexOf("end of stream") >= 0
+									|| message
+											.contains("must be terminated by the matching")
+									|| message
+											.contains("was expecting a close tag") || message
+										.contains("end of input block in end tag")) && readBytes.length == XML_GUESS_SIZE)) {
 				xmlDetected = evaluateException(currentEvent);
+
 			} else {
 				XmlModule.LOGGER.debug("XML not detected " + e);
 			}
