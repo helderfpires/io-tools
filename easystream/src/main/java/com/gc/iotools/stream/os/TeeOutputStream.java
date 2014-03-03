@@ -10,29 +10,31 @@ import java.util.Arrays;
 
 /**
  * <p>
- * Copies the data that is written to this class to the
- * <code>OutputStream(s)</code> passed in the constructor. It also collect
- * statistics on the operations done (time spent writing to the internal
- * streams, amount of data written).
+ * Copies the data that is written to this class to the array of
+ * <code>OutputStream</code> passed in the constructor, allowing to write to
+ * multiple <code>OutputStream</code> at once. It also collect statistics on the
+ * operations done (time spent writing to the internal streams, amount of data
+ * written).
  * </p>
  * <p>
  * Usage:
  * </p>
- *
+ * 
  * <pre>
  * 	 InputStream source=... //some data to be read.
  *   ByteArrayOutputStream destination1= new ByteArrayOutputStream();
  *   ByteArrayOutputStream destination2= new ByteArrayOutputStream();
- *
+ * 
  *   TeeOutputStream tee =  new TeeOutputStream(destination1,destination2);
  *   org.apache.commons.io.IOUtils.copy(source,tee);
  *   tee.close();
  *   //at this point both destination1 and destination2 contains the same bytes.
  * </pre>
- *
+ * 
  * @author dvd.smnt
  * @since 1.2.4
- * @version $Id$
+ * @version $Id: TeeOutputStream.java 527 2014-02-24 19:29:50Z
+ *          gabriele.contini@gmail.com $
  */
 public class TeeOutputStream extends OutputStream {
 
@@ -60,7 +62,7 @@ public class TeeOutputStream extends OutputStream {
 	 * This constructor allow to specify multiple <code>OutputStream</code> to
 	 * which the data will be copied.
 	 * </p>
-	 *
+	 * 
 	 * @since 1.2.4
 	 * @param destinations
 	 *            Data written to this <code>OutputStream</code> are copied to
@@ -108,14 +110,14 @@ public class TeeOutputStream extends OutputStream {
 	/**
 	 * <p>
 	 * Allow to switch off the copy to the underlying streams. The copy is
-	 * enabled by default. Setting the parameter to false will disable the
-	 * copy to all the underlying streams at once.
+	 * enabled by default. Setting the parameter to false will disable the copy
+	 * to all the underlying streams at once.
 	 * </p>
 	 * <p>
 	 * If you need more fine grained control you should use
 	 * {@link #enableCopy(boolean[])} .
 	 * </p>
-	 *
+	 * 
 	 * @since 1.2.8
 	 * @param enable
 	 *            whether to copy or not the bytes to the underlying stream.
@@ -136,7 +138,7 @@ public class TeeOutputStream extends OutputStream {
 	 * <code>true</code> the copy will be enabled.It can be invoked multiple
 	 * times.
 	 * </p>
-	 *
+	 * 
 	 * @since 1.2.9
 	 * @param enable
 	 *            whether to copy or not the bytes to the underlying stream.
@@ -173,7 +175,7 @@ public class TeeOutputStream extends OutputStream {
 	 * <p>
 	 * Returns the <code>OutputStream</code>(s) passed in the constructor.
 	 * </p>
-	 *
+	 * 
 	 * @since 1.2.9
 	 * @return Array of OutputStream passed in the constructor.
 	 */
@@ -187,7 +189,7 @@ public class TeeOutputStream extends OutputStream {
 	 * OutputStream. It can be used to collect statistics on the write
 	 * operations.
 	 * </p>
-	 *
+	 * 
 	 * @return size in bytes of the data written to the
 	 *         <code>OutputStreams</code>.
 	 */
@@ -204,9 +206,8 @@ public class TeeOutputStream extends OutputStream {
 	 * The returned array has one element for each <code>OutputStream</code>
 	 * passed in the constructor.
 	 * </p>
-	 *
-	 * @return time spent writing on the destination
-	 *         <code>OutputStreams</code>.
+	 * 
+	 * @return time spent writing on the destination <code>OutputStreams</code>.
 	 */
 	public long[] getWriteTime() {
 		return this.writeTime;
