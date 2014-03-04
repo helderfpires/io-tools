@@ -3,15 +3,15 @@
 	<packaging>pom</packaging>
 	<groupId>net.sf.jsignature.io-tools</groupId>
 	<artifactId>io-tools</artifactId>
-	<version>1.2.14</version>
+	<version>1.2.15-SNAPSHOT</version>
 	<name>IO-Toools</name>
 	<inceptionYear>2008</inceptionYear>
 	<description>IO-tools utilites for stream and format detection</description>
 	<url>http://code.google.com/p/io-tools/source/browse/www/io-tools</url>
 	<scm>
-		<connection>scm:svn:http://io-tools.googlecode.com/svn/tags/io-tools-1.2.14</connection>
-		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/tags/io-tools-1.2.14</developerConnection>
-		<url>http://code.google.com/p/io-tools/source/browse/tags/io-tools-1.2.14</url>
+		<connection>scm:svn:http://io-tools.googlecode.com/svn/trunk</connection>
+		<developerConnection>scm:svn:https://io-tools.googlecode.com/svn/trunk</developerConnection>
+		<url>http://code.google.com/p/io-tools/source/browse/trunk</url>
 	</scm>
 	<issueManagement>
 		<system>GoogleIssues</system>
