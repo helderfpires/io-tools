@@ -9,40 +9,34 @@ digraph G {
 	node [fontname="Helvetica",fontsize=10,shape=plaintext];
 	nodesep=0.25;
 	ranksep=0.5;
-	// com.gc.iotools.stream.reader.ReaderFromWriter<T>
-	c363 [label=<<table title="com.gc.iotools.stream.reader.ReaderFromWriter" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./ReaderFromWriter.html">
+	// com.gc.iotools.stream.reader.SizeLimitReader
+	c85 [label=<<table title="com.gc.iotools.stream.reader.SizeLimitReader" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./SizeLimitReader.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
-<tr><td align="center" balign="center"><font face="Helvetica-Oblique"> ReaderFromWriter&lt;T&gt; </font></td></tr>
-		</table></td></tr>
-		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// com.gc.iotools.stream.reader.TeeReaderWriter
-	c364 [label=<<table title="com.gc.iotools.stream.reader.TeeReaderWriter" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./TeeReaderWriter.html">
-		<tr><td><table border="0" cellspacing="0" cellpadding="1">
-<tr><td align="center" balign="center"> TeeReaderWriter </td></tr>
-		</table></td></tr>
-		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// com.gc.iotools.stream.reader.CloseShieldReader<T extends java.io.Reader>
-	c365 [label=<<table title="com.gc.iotools.stream.reader.CloseShieldReader" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./CloseShieldReader.html">
-		<tr><td><table border="0" cellspacing="0" cellpadding="1">
-<tr><td align="center" balign="center"> CloseShieldReader&lt;T extends Reader&gt; </td></tr>
+<tr><td align="center" balign="center"> SizeLimitReader </td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// com.gc.iotools.stream.reader.CloseOnceReader<T extends java.io.Reader>
-	c366 [label=<<table title="com.gc.iotools.stream.reader.CloseOnceReader" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./CloseOnceReader.html">
+	c86 [label=<<table title="com.gc.iotools.stream.reader.CloseOnceReader" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./CloseOnceReader.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> CloseOnceReader&lt;T extends Reader&gt; </td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// com.gc.iotools.stream.reader.SizeLimitInputStream
-	c367 [label=<<table title="com.gc.iotools.stream.reader.SizeLimitInputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./SizeLimitInputStream.html">
+	// com.gc.iotools.stream.reader.ReaderFromWriter<T>
+	c87 [label=<<table title="com.gc.iotools.stream.reader.ReaderFromWriter" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./ReaderFromWriter.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
-<tr><td align="center" balign="center"> SizeLimitInputStream </td></tr>
+<tr><td align="center" balign="center"><font face="Helvetica-Oblique"> ReaderFromWriter&lt;T&gt; </font></td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// com.gc.iotools.stream.reader.SizeLimitReader
-	c368 [label=<<table title="com.gc.iotools.stream.reader.SizeLimitReader" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./SizeLimitReader.html">
+	// com.gc.iotools.stream.reader.CloseShieldReader<T extends java.io.Reader>
+	c88 [label=<<table title="com.gc.iotools.stream.reader.CloseShieldReader" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./CloseShieldReader.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
-<tr><td align="center" balign="center"> SizeLimitReader </td></tr>
+<tr><td align="center" balign="center"> CloseShieldReader&lt;T extends Reader&gt; </td></tr>
+		</table></td></tr>
+		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// com.gc.iotools.stream.reader.TeeReaderWriter
+	c89 [label=<<table title="com.gc.iotools.stream.reader.TeeReaderWriter" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./TeeReaderWriter.html">
+		<tr><td><table border="0" cellspacing="0" cellpadding="1">
+<tr><td align="center" balign="center"> TeeReaderWriter </td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 }

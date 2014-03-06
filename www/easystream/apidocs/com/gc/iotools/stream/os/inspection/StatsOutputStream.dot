@@ -10,15 +10,15 @@ digraph G {
 	nodesep=0.25;
 	ranksep=0.5;
 	// com.gc.iotools.stream.os.inspection.StatsOutputStream
-	c409 [label=<<table title="com.gc.iotools.stream.os.inspection.StatsOutputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonChiffon" href="./StatsOutputStream.html">
+	c1703 [label=<<table title="com.gc.iotools.stream.os.inspection.StatsOutputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonChiffon" href="./StatsOutputStream.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> StatsOutputStream </td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	//com.gc.iotools.stream.os.inspection.StatsOutputStream extends java.io.OutputStream
-	c490:p -> c409:p [dir=back,arrowtail=empty];
+	c1712:p -> c1703:p [dir=back,arrowtail=empty];
 	// java.io.OutputStream
-	c490 [label=<<table title="java.io.OutputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="http://java.sun.com/j2se/1.5.0/docs/api/java/io/OutputStream.html">
+	c1712 [label=<<table title="java.io.OutputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="http://java.sun.com/javase/6/docs/api/java/io/OutputStream.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"><font face="Helvetica-Oblique"> OutputStream </font></td></tr>
 		</table></td></tr>

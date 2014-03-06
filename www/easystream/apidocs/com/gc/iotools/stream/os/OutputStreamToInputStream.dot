@@ -10,17 +10,17 @@ digraph G {
 	nodesep=0.25;
 	ranksep=0.5;
 	// com.gc.iotools.stream.os.OutputStreamToInputStream<T>
-	c570 [label=<<table title="com.gc.iotools.stream.os.OutputStreamToInputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonChiffon" href="./OutputStreamToInputStream.html">
+	c1744 [label=<<table title="com.gc.iotools.stream.os.OutputStreamToInputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonChiffon" href="./OutputStreamToInputStream.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"><font face="Helvetica-Oblique"> OutputStreamToInputStream&lt;T&gt; </font></td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	//com.gc.iotools.stream.os.OutputStreamToInputStream<T> extends java.io.OutputStream
-	c604:p -> c570:p [dir=back,arrowtail=empty];
-	// java.io.OutputStream
-	c604 [label=<<table title="java.io.OutputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="http://java.sun.com/j2se/1.5.0/docs/api/java/io/OutputStream.html">
+	//com.gc.iotools.stream.os.OutputStreamToInputStream<T> extends java.io.PipedOutputStream
+	c1752:p -> c1744:p [dir=back,arrowtail=empty];
+	// java.io.PipedOutputStream
+	c1752 [label=<<table title="java.io.PipedOutputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="http://java.sun.com/javase/6/docs/api/java/io/PipedOutputStream.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
-<tr><td align="center" balign="center"><font face="Helvetica-Oblique"> OutputStream </font></td></tr>
+<tr><td align="center" balign="center"> PipedOutputStream </td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 }

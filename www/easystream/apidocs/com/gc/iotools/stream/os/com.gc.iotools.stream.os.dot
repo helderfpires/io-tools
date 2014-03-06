@@ -9,16 +9,22 @@ digraph G {
 	node [fontname="Helvetica",fontsize=10,shape=plaintext];
 	nodesep=0.25;
 	ranksep=0.5;
-	// com.gc.iotools.stream.os.TeeOutputStream
-	c39 [label=<<table title="com.gc.iotools.stream.os.TeeOutputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./TeeOutputStream.html">
-		<tr><td><table border="0" cellspacing="0" cellpadding="1">
-<tr><td align="center" balign="center"> TeeOutputStream </td></tr>
-		</table></td></tr>
-		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// com.gc.iotools.stream.os.OutputStreamToInputStream<T>
-	c40 [label=<<table title="com.gc.iotools.stream.os.OutputStreamToInputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./OutputStreamToInputStream.html">
+	c382 [label=<<table title="com.gc.iotools.stream.os.OutputStreamToInputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./OutputStreamToInputStream.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"><font face="Helvetica-Oblique"> OutputStreamToInputStream&lt;T&gt; </font></td></tr>
+		</table></td></tr>
+		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// com.gc.iotools.stream.os.CloseOnceOutputStream<T extends java.io.OutputStream>
+	c383 [label=<<table title="com.gc.iotools.stream.os.CloseOnceOutputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./CloseOnceOutputStream.html">
+		<tr><td><table border="0" cellspacing="0" cellpadding="1">
+<tr><td align="center" balign="center"> CloseOnceOutputStream&lt;T extends OutputStream&gt; </td></tr>
+		</table></td></tr>
+		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// com.gc.iotools.stream.os.TeeOutputStream
+	c384 [label=<<table title="com.gc.iotools.stream.os.TeeOutputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./TeeOutputStream.html">
+		<tr><td><table border="0" cellspacing="0" cellpadding="1">
+<tr><td align="center" balign="center"> TeeOutputStream </td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 }

@@ -10,18 +10,18 @@ digraph G {
 	nodesep=0.25;
 	ranksep=0.5;
 	// com.gc.iotools.stream.is.ReadAheadInputStream
-	c1066 [label=<<table title="com.gc.iotools.stream.is.ReadAheadInputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonChiffon" href="./ReadAheadInputStream.html">
+	c1418 [label=<<table title="com.gc.iotools.stream.is.ReadAheadInputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonChiffon" href="./ReadAheadInputStream.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> ReadAheadInputStream </td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// com.gc.iotools.stream.is.InputStreamFromOutputStream<T>
-	c1069 [label=<<table title="com.gc.iotools.stream.is.InputStreamFromOutputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./InputStreamFromOutputStream.html">
+	c1419 [label=<<table title="com.gc.iotools.stream.is.InputStreamFromOutputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./InputStreamFromOutputStream.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"><font face="Helvetica-Oblique"> InputStreamFromOutputStream&lt;T&gt; </font></td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	//com.gc.iotools.stream.is.ReadAheadInputStream extends com.gc.iotools.stream.is.InputStreamFromOutputStream<java.lang.Void>
-	c1069:p -> c1066:p [dir=back,arrowtail=empty];
+	c1419:p -> c1418:p [dir=back,arrowtail=empty];
 }
 

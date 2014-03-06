@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>EasyStream - Project Dependency Management</title>
+    <title>EasyStream - Dependency Information</title>
     <style type="text/css" media="all">
       @import url("./css/maven-base.css");
       @import url("./css/maven-theme.css");
@@ -63,8 +63,8 @@
                           <a href="distribution-management.html" title="Distribution Management">Distribution Management</a>
             </li>
                       <li class="none">
-                          <a href="dependency-info.html" title="Dependency Information">Dependency Information</a>
-            </li>
+            <strong>Dependency Information</strong>
+          </li>
                       <li class="none">
                           <a href="source-repository.html" title="Source Repository">Source Repository</a>
             </li>
@@ -84,8 +84,8 @@
                           <a href="license.html" title="Project License">Project License</a>
             </li>
                       <li class="none">
-            <strong>Dependency Management</strong>
-          </li>
+                          <a href="dependency-management.html" title="Dependency Management">Dependency Management</a>
+            </li>
                       <li class="none">
                           <a href="team-list.html" title="Project Team">Project Team</a>
             </li>
@@ -111,103 +111,43 @@
     <div id="bodyColumn">
       <div id="contentBox">
         <div class="section">
-<h2>Project Dependency Management<a name="Project_Dependency_Management"></a></h2><a name="Project_Dependency_Management"></a>
+<h2>Dependency Information<a name="Dependency_Information"></a></h2><a name="Dependency_Information"></a>
 <div class="section">
-<h3>compile<a name="compile"></a></h3><a name="compile"></a>
-<p>The following is a list of compile dependencies in the DependencyManagement of this project. These dependencies can be included in the submodules to compile and run the submodule:</p>
-<table border="0" class="bodyTable">
-<tr class="a">
-<th>GroupId</th>
-<th>ArtifactId</th>
-<th>Version</th>
-<th>Type</th>
-<th>License</th></tr>
-<tr class="b">
-<td>commons-collections</td>
-<td><a class="externalLink" href="http://commons.apache.org/collections/">commons-collections</a></td>
-<td>3.2.1</td>
-<td>jar</td>
-<td><a class="externalLink" href="http://www.apache.org/licenses/LICENSE-2.0.txt">The Apache Software License, Version 2.0</a></td></tr>
-<tr class="a">
-<td>commons-io</td>
-<td><a class="externalLink" href="http://commons.apache.org/io/">commons-io</a></td>
-<td>2.4</td>
-<td>jar</td>
-<td><a class="externalLink" href="http://www.apache.org/licenses/LICENSE-2.0.txt">The Apache Software License, Version 2.0</a></td></tr>
-<tr class="b">
-<td>net.iharder</td>
-<td><a class="externalLink" href="http://iharder.net/base64/">base64</a></td>
-<td>2.3.8</td>
-<td>jar</td>
-<td>Public domain</td></tr>
-<tr class="a">
-<td>org.apache.ant</td>
-<td><a class="externalLink" href="http://ant.apache.org/">ant</a></td>
-<td>1.9.3</td>
-<td>jar</td>
-<td><a class="externalLink" href="http://www.apache.org/licenses/LICENSE-2.0.txt">The Apache Software License, Version 2.0</a></td></tr>
-<tr class="b">
-<td>org.apache.commons</td>
-<td><a class="externalLink" href="http://commons.apache.org/proper/commons-lang/">commons-lang3</a></td>
-<td>3.2.1</td>
-<td>jar</td>
-<td><a class="externalLink" href="http://www.apache.org/licenses/LICENSE-2.0.txt">The Apache Software License, Version 2.0</a></td></tr>
-<tr class="a">
-<td>org.bouncycastle</td>
-<td><a class="externalLink" href="http://www.bouncycastle.org/java.html">bcmail-jdk15on</a></td>
-<td>1.50</td>
-<td>jar</td>
-<td><a class="externalLink" href="http://www.bouncycastle.org/licence.html">Bouncy Castle Licence</a></td></tr>
-<tr class="b">
-<td>org.bouncycastle</td>
-<td><a class="externalLink" href="http://www.bouncycastle.org/java.html">bcprov-jdk15on</a></td>
-<td>1.50</td>
-<td>jar</td>
-<td><a class="externalLink" href="http://www.bouncycastle.org/licence.html">Bouncy Castle Licence</a></td></tr>
-<tr class="a">
-<td>org.slf4j</td>
-<td><a class="externalLink" href="http://www.slf4j.org">slf4j-api</a></td>
-<td>[1.6.1,)</td>
-<td>jar</td>
-<td><a class="externalLink" href="http://www.opensource.org/licenses/mit-license.php">MIT License</a></td></tr></table></div>
+<h3>Apache Maven<a name="Apache_Maven"></a></h3><a name="Apache_Maven"></a>
+<div class="source">
+<pre>&lt;dependency&gt;
+  &lt;groupId&gt;net.sf.jsignature.io-tools&lt;/groupId&gt;
+  &lt;artifactId&gt;easystream&lt;/artifactId&gt;
+  &lt;version&gt;1.2.14&lt;/version&gt;
+&lt;/dependency&gt;</pre></div></div>
 <div class="section">
-<h3>test<a name="test"></a></h3><a name="test"></a>
-<p>The following is a list of test dependencies in the DependencyManagement of this project. These dependencies can be included in the submodules to compile and run unit tests for the submodule:</p>
-<table border="0" class="bodyTable">
-<tr class="a">
-<th>GroupId</th>
-<th>ArtifactId</th>
-<th>Version</th>
-<th>Type</th>
-<th>License</th></tr>
-<tr class="b">
-<td>junit</td>
-<td><a class="externalLink" href="http://junit.org">junit</a></td>
-<td>4.11</td>
-<td>jar</td>
-<td><a class="externalLink" href="http://www.opensource.org/licenses/cpl1.0.txt">Common Public License Version 1.0</a></td></tr>
-<tr class="a">
-<td>org.jmock</td>
-<td><a class="externalLink" href="http://codehaus.org/jmock-parent/jmock-junit4/">jmock-junit4</a></td>
-<td>[2.5,)</td>
-<td>jar</td>
-<td><a class="externalLink" href="http://jmock.org/license.html">BSD style</a></td></tr></table></div>
+<h3>Apache Buildr<a name="Apache_Buildr"></a></h3><a name="Apache_Buildr"></a>
+<div class="source">
+<pre>'net.sf.jsignature.io-tools:easystream:jar:1.2.14'</pre></div></div>
 <div class="section">
-<h3>provided<a name="provided"></a></h3><a name="provided"></a>
-<p>The following is a list of provided dependencies in the DependencyManagement of this project. These dependencies can be included in the submodules to compile the submodule, but should be provided by default when using the library:</p>
-<table border="0" class="bodyTable">
-<tr class="a">
-<th>GroupId</th>
-<th>ArtifactId</th>
-<th>Version</th>
-<th>Type</th>
-<th>License</th></tr>
-<tr class="b">
-<td>org.slf4j</td>
-<td><a class="externalLink" href="http://www.slf4j.org">slf4j-simple</a></td>
-<td>[1.6.1,)</td>
-<td>jar</td>
-<td><a class="externalLink" href="http://www.opensource.org/licenses/mit-license.php">MIT License</a></td></tr></table></div></div>
+<h3>Apache Ant<a name="Apache_Ant"></a></h3><a name="Apache_Ant"></a>
+<div class="source">
+<pre>&lt;dependency org=&quot;net.sf.jsignature.io-tools&quot; name=&quot;easystream&quot; rev=&quot;1.2.14&quot;&gt;
+  &lt;artifact name=&quot;easystream&quot; type=&quot;jar&quot; /&gt;
+&lt;/dependency&gt;</pre></div></div>
+<div class="section">
+<h3>Groovy Grape<a name="Groovy_Grape"></a></h3><a name="Groovy_Grape"></a>
+<div class="source">
+<pre>@Grapes(
+@Grab(group='net.sf.jsignature.io-tools', module='easystream', version='1.2.14')
+)</pre></div></div>
+<div class="section">
+<h3>Grails<a name="Grails"></a></h3><a name="Grails"></a>
+<div class="source">
+<pre>compile 'net.sf.jsignature.io-tools:easystream:1.2.14'</pre></div></div>
+<div class="section">
+<h3>Leiningen<a name="Leiningen"></a></h3><a name="Leiningen"></a>
+<div class="source">
+<pre>[net.sf.jsignature.io-tools/easystream &quot;1.2.14&quot;]</pre></div></div>
+<div class="section">
+<h3>SBT<a name="SBT"></a></h3><a name="SBT"></a>
+<div class="source">
+<pre>libraryDependencies += &quot;net.sf.jsignature.io-tools&quot; %% &quot;easystream&quot; % &quot;1.2.14&quot;</pre></div></div></div>
       </div>
     </div>
     <div class="clear">

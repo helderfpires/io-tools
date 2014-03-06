@@ -9,8 +9,14 @@ digraph G {
 	node [fontname="Helvetica",fontsize=10,shape=plaintext];
 	nodesep=0.25;
 	ranksep=0.5;
+	// com.gc.iotools.stream.reader.inspection.DiagnosticReader<T extends java.io.Reader>
+	c129 [label=<<table title="com.gc.iotools.stream.reader.inspection.DiagnosticReader" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./DiagnosticReader.html">
+		<tr><td><table border="0" cellspacing="0" cellpadding="1">
+<tr><td align="center" balign="center"> DiagnosticReader&lt;T extends Reader&gt; </td></tr>
+		</table></td></tr>
+		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// com.gc.iotools.stream.reader.inspection.StatsReader
-	c406 [label=<<table title="com.gc.iotools.stream.reader.inspection.StatsReader" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./StatsReader.html">
+	c130 [label=<<table title="com.gc.iotools.stream.reader.inspection.StatsReader" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./StatsReader.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> StatsReader </td></tr>
 		</table></td></tr>

@@ -9,20 +9,20 @@ digraph G {
 	node [fontname="Helvetica",fontsize=10,shape=plaintext];
 	nodesep=0.25;
 	ranksep=0.5;
+	// com.gc.iotools.stream.store.OnOffStore
+	c1867 [label=<<table title="com.gc.iotools.stream.store.OnOffStore" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonChiffon" href="./OnOffStore.html">
+		<tr><td><table border="0" cellspacing="0" cellpadding="1">
+<tr><td align="center" balign="center"> OnOffStore </td></tr>
+		</table></td></tr>
+		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// com.gc.iotools.stream.store.SeekableStore
-	c759 [label=<<table title="com.gc.iotools.stream.store.SeekableStore" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./SeekableStore.html">
+	c1869 [label=<<table title="com.gc.iotools.stream.store.SeekableStore" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./SeekableStore.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> &#171;interface&#187; </td></tr>
 <tr><td align="center" balign="center"> SeekableStore </td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// com.gc.iotools.stream.store.OnOffStore
-	c761 [label=<<table title="com.gc.iotools.stream.store.OnOffStore" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonChiffon" href="./OnOffStore.html">
-		<tr><td><table border="0" cellspacing="0" cellpadding="1">
-<tr><td align="center" balign="center"> OnOffStore </td></tr>
-		</table></td></tr>
-		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	//com.gc.iotools.stream.store.OnOffStore implements com.gc.iotools.stream.store.SeekableStore
-	c759:p -> c761:p [dir=back,arrowtail=empty,style=dashed];
+	c1869:p -> c1867:p [dir=back,arrowtail=empty,style=dashed];
 }
 

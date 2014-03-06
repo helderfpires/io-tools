@@ -10,31 +10,31 @@ digraph G {
 	nodesep=0.25;
 	ranksep=0.5;
 	// com.gc.iotools.stream.base.AbstractInputStreamWrapper
-	c913 [label=<<table title="com.gc.iotools.stream.base.AbstractInputStreamWrapper" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonChiffon" href="./AbstractInputStreamWrapper.html">
+	c431 [label=<<table title="com.gc.iotools.stream.base.AbstractInputStreamWrapper" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonChiffon" href="./AbstractInputStreamWrapper.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"><font face="Helvetica-Oblique"> AbstractInputStreamWrapper </font></td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// com.gc.iotools.stream.is.RandomAccessInputStream
-	c918 [label=<<table title="com.gc.iotools.stream.is.RandomAccessInputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="../is/RandomAccessInputStream.html">
-		<tr><td><table border="0" cellspacing="0" cellpadding="1">
-<tr><td align="center" balign="center"> RandomAccessInputStream </td></tr>
-		</table></td></tr>
-		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// com.gc.iotools.stream.is.TeeInputStreamOutputStream
-	c923 [label=<<table title="com.gc.iotools.stream.is.TeeInputStreamOutputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="../is/TeeInputStreamOutputStream.html">
+	c477 [label=<<table title="com.gc.iotools.stream.is.TeeInputStreamOutputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="../is/TeeInputStreamOutputStream.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> TeeInputStreamOutputStream </td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// com.gc.iotools.stream.is.RandomAccessInputStream
+	c489 [label=<<table title="com.gc.iotools.stream.is.RandomAccessInputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="../is/RandomAccessInputStream.html">
+		<tr><td><table border="0" cellspacing="0" cellpadding="1">
+<tr><td align="center" balign="center"> RandomAccessInputStream </td></tr>
+		</table></td></tr>
+		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	//com.gc.iotools.stream.base.AbstractInputStreamWrapper extends java.io.InputStream
-	c938:p -> c913:p [dir=back,arrowtail=empty];
-	//com.gc.iotools.stream.is.RandomAccessInputStream extends com.gc.iotools.stream.base.AbstractInputStreamWrapper
-	c913:p -> c918:p [dir=back,arrowtail=empty];
+	c518:p -> c431:p [dir=back,arrowtail=empty];
 	//com.gc.iotools.stream.is.TeeInputStreamOutputStream extends com.gc.iotools.stream.base.AbstractInputStreamWrapper
-	c913:p -> c923:p [dir=back,arrowtail=empty];
+	c431:p -> c477:p [dir=back,arrowtail=empty];
+	//com.gc.iotools.stream.is.RandomAccessInputStream extends com.gc.iotools.stream.base.AbstractInputStreamWrapper
+	c431:p -> c489:p [dir=back,arrowtail=empty];
 	// java.io.InputStream
-	c938 [label=<<table title="java.io.InputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="http://java.sun.com/j2se/1.5.0/docs/api/java/io/InputStream.html">
+	c518 [label=<<table title="java.io.InputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="http://java.sun.com/javase/6/docs/api/java/io/InputStream.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"><font face="Helvetica-Oblique"> InputStream </font></td></tr>
 		</table></td></tr>

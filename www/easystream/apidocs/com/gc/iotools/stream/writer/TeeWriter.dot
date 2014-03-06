@@ -10,15 +10,15 @@ digraph G {
 	nodesep=0.25;
 	ranksep=0.5;
 	// com.gc.iotools.stream.writer.TeeWriter
-	c1453 [label=<<table title="com.gc.iotools.stream.writer.TeeWriter" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonChiffon" href="./TeeWriter.html">
+	c1214 [label=<<table title="com.gc.iotools.stream.writer.TeeWriter" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonChiffon" href="./TeeWriter.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> TeeWriter </td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	//com.gc.iotools.stream.writer.TeeWriter extends java.io.Writer
-	c1465:p -> c1453:p [dir=back,arrowtail=empty];
+	c1235:p -> c1214:p [dir=back,arrowtail=empty];
 	// java.io.Writer
-	c1465 [label=<<table title="java.io.Writer" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="http://java.sun.com/j2se/1.5.0/docs/api/java/io/Writer.html">
+	c1235 [label=<<table title="java.io.Writer" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="http://java.sun.com/javase/6/docs/api/java/io/Writer.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"><font face="Helvetica-Oblique"> Writer </font></td></tr>
 		</table></td></tr>

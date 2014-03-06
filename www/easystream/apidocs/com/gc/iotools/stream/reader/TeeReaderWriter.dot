@@ -10,15 +10,15 @@ digraph G {
 	nodesep=0.25;
 	ranksep=0.5;
 	// com.gc.iotools.stream.reader.TeeReaderWriter
-	c1650 [label=<<table title="com.gc.iotools.stream.reader.TeeReaderWriter" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonChiffon" href="./TeeReaderWriter.html">
+	c925 [label=<<table title="com.gc.iotools.stream.reader.TeeReaderWriter" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonChiffon" href="./TeeReaderWriter.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> TeeReaderWriter </td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	//com.gc.iotools.stream.reader.TeeReaderWriter extends java.io.Reader
-	c1656:p -> c1650:p [dir=back,arrowtail=empty];
+	c953:p -> c925:p [dir=back,arrowtail=empty];
 	// java.io.Reader
-	c1656 [label=<<table title="java.io.Reader" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="http://java.sun.com/j2se/1.5.0/docs/api/java/io/Reader.html">
+	c953 [label=<<table title="java.io.Reader" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="http://java.sun.com/javase/6/docs/api/java/io/Reader.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"><font face="Helvetica-Oblique"> Reader </font></td></tr>
 		</table></td></tr>

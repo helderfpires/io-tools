@@ -9,45 +9,45 @@ digraph G {
 	node [fontname="Helvetica",fontsize=10,shape=plaintext];
 	nodesep=0.25;
 	ranksep=0.5;
-	// com.gc.iotools.stream.store.ThresholdStore
-	c78 [label=<<table title="com.gc.iotools.stream.store.ThresholdStore" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./ThresholdStore.html">
+	// com.gc.iotools.stream.store.OnOffStore
+	c424 [label=<<table title="com.gc.iotools.stream.store.OnOffStore" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./OnOffStore.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
-<tr><td align="center" balign="center"> ThresholdStore </td></tr>
+<tr><td align="center" balign="center"> OnOffStore </td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// com.gc.iotools.stream.store.Store
-	c79 [label=<<table title="com.gc.iotools.stream.store.Store" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./Store.html">
+	c425 [label=<<table title="com.gc.iotools.stream.store.Store" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./Store.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> &#171;interface&#187; </td></tr>
 <tr><td align="center" balign="center"> Store </td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// com.gc.iotools.stream.store.SeekableStore
-	c80 [label=<<table title="com.gc.iotools.stream.store.SeekableStore" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./SeekableStore.html">
+	c426 [label=<<table title="com.gc.iotools.stream.store.SeekableStore" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./SeekableStore.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> &#171;interface&#187; </td></tr>
 <tr><td align="center" balign="center"> SeekableStore </td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// com.gc.iotools.stream.store.ThresholdStore
+	c427 [label=<<table title="com.gc.iotools.stream.store.ThresholdStore" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./ThresholdStore.html">
+		<tr><td><table border="0" cellspacing="0" cellpadding="1">
+<tr><td align="center" balign="center"> ThresholdStore </td></tr>
+		</table></td></tr>
+		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// com.gc.iotools.stream.store.MemoryStore
-	c81 [label=<<table title="com.gc.iotools.stream.store.MemoryStore" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./MemoryStore.html">
+	c428 [label=<<table title="com.gc.iotools.stream.store.MemoryStore" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./MemoryStore.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> MemoryStore </td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// com.gc.iotools.stream.store.OnOffStore
-	c82 [label=<<table title="com.gc.iotools.stream.store.OnOffStore" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./OnOffStore.html">
-		<tr><td><table border="0" cellspacing="0" cellpadding="1">
-<tr><td align="center" balign="center"> OnOffStore </td></tr>
-		</table></td></tr>
-		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	//com.gc.iotools.stream.store.ThresholdStore implements com.gc.iotools.stream.store.SeekableStore
-	c80:p -> c78:p [dir=back,arrowtail=empty,style=dashed];
-	//com.gc.iotools.stream.store.SeekableStore implements com.gc.iotools.stream.store.Store
-	c79:p -> c80:p [dir=back,arrowtail=empty,style=dashed];
-	//com.gc.iotools.stream.store.MemoryStore implements com.gc.iotools.stream.store.SeekableStore
-	c80:p -> c81:p [dir=back,arrowtail=empty,style=dashed];
 	//com.gc.iotools.stream.store.OnOffStore implements com.gc.iotools.stream.store.SeekableStore
-	c80:p -> c82:p [dir=back,arrowtail=empty,style=dashed];
+	c426:p -> c424:p [dir=back,arrowtail=empty,style=dashed];
+	//com.gc.iotools.stream.store.SeekableStore implements com.gc.iotools.stream.store.Store
+	c425:p -> c426:p [dir=back,arrowtail=empty,style=dashed];
+	//com.gc.iotools.stream.store.ThresholdStore implements com.gc.iotools.stream.store.SeekableStore
+	c426:p -> c427:p [dir=back,arrowtail=empty,style=dashed];
+	//com.gc.iotools.stream.store.MemoryStore implements com.gc.iotools.stream.store.SeekableStore
+	c426:p -> c428:p [dir=back,arrowtail=empty,style=dashed];
 }
 

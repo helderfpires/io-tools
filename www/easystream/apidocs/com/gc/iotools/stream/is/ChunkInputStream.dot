@@ -10,15 +10,15 @@ digraph G {
 	nodesep=0.25;
 	ranksep=0.5;
 	// com.gc.iotools.stream.is.ChunkInputStream
-	c1142 [label=<<table title="com.gc.iotools.stream.is.ChunkInputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonChiffon" href="./ChunkInputStream.html">
+	c1499 [label=<<table title="com.gc.iotools.stream.is.ChunkInputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonChiffon" href="./ChunkInputStream.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> ChunkInputStream </td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	//com.gc.iotools.stream.is.ChunkInputStream extends java.io.InputStream
-	c1161:p -> c1142:p [dir=back,arrowtail=empty];
+	c1513:p -> c1499:p [dir=back,arrowtail=empty];
 	// java.io.InputStream
-	c1161 [label=<<table title="java.io.InputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="http://java.sun.com/j2se/1.5.0/docs/api/java/io/InputStream.html">
+	c1513 [label=<<table title="java.io.InputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="http://java.sun.com/javase/6/docs/api/java/io/InputStream.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"><font face="Helvetica-Oblique"> InputStream </font></td></tr>
 		</table></td></tr>

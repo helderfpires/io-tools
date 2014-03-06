@@ -9,22 +9,16 @@ digraph G {
 	node [fontname="Helvetica",fontsize=10,shape=plaintext];
 	nodesep=0.25;
 	ranksep=0.5;
-	// com.gc.iotools.stream.is.inspection.DiagnosticInputStream<T extends java.io.InputStream>
-	c245 [label=<<table title="com.gc.iotools.stream.is.inspection.DiagnosticInputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./DiagnosticInputStream.html">
-		<tr><td><table border="0" cellspacing="0" cellpadding="1">
-<tr><td align="center" balign="center"> DiagnosticInputStream&lt;T extends InputStream&gt; </td></tr>
-		</table></td></tr>
-		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// com.gc.iotools.stream.is.inspection.StatsInputStream
-	c246 [label=<<table title="com.gc.iotools.stream.is.inspection.StatsInputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./StatsInputStream.html">
+	c300 [label=<<table title="com.gc.iotools.stream.is.inspection.StatsInputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./StatsInputStream.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> StatsInputStream </td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// com.gc.iotools.stream.is.inspection.InputStreamDumper
-	c247 [label=<<table title="com.gc.iotools.stream.is.inspection.InputStreamDumper" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./InputStreamDumper.html">
+	// com.gc.iotools.stream.is.inspection.DiagnosticInputStream<T extends java.io.InputStream>
+	c301 [label=<<table title="com.gc.iotools.stream.is.inspection.DiagnosticInputStream" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./DiagnosticInputStream.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
-<tr><td align="center" balign="center"> InputStreamDumper </td></tr>
+<tr><td align="center" balign="center"> DiagnosticInputStream&lt;T extends InputStream&gt; </td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 }

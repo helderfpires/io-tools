@@ -9,22 +9,28 @@ digraph G {
 	node [fontname="Helvetica",fontsize=10,shape=plaintext];
 	nodesep=0.25;
 	ranksep=0.5;
-	// com.gc.iotools.stream.writer.TeeWriter
-	c285 [label=<<table title="com.gc.iotools.stream.writer.TeeWriter" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./TeeWriter.html">
-		<tr><td><table border="0" cellspacing="0" cellpadding="1">
-<tr><td align="center" balign="center"> TeeWriter </td></tr>
-		</table></td></tr>
-		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// com.gc.iotools.stream.writer.WriterToReader<T>
-	c286 [label=<<table title="com.gc.iotools.stream.writer.WriterToReader" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./WriterToReader.html">
+	c211 [label=<<table title="com.gc.iotools.stream.writer.WriterToReader" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./WriterToReader.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"><font face="Helvetica-Oblique"> WriterToReader&lt;T&gt; </font></td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// com.gc.iotools.stream.writer.CloseShieldWriter<T extends java.io.Writer>
-	c287 [label=<<table title="com.gc.iotools.stream.writer.CloseShieldWriter" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./CloseShieldWriter.html">
+	c212 [label=<<table title="com.gc.iotools.stream.writer.CloseShieldWriter" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./CloseShieldWriter.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> CloseShieldWriter&lt;T extends Writer&gt; </td></tr>
+		</table></td></tr>
+		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// com.gc.iotools.stream.writer.TeeWriter
+	c213 [label=<<table title="com.gc.iotools.stream.writer.TeeWriter" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./TeeWriter.html">
+		<tr><td><table border="0" cellspacing="0" cellpadding="1">
+<tr><td align="center" balign="center"> TeeWriter </td></tr>
+		</table></td></tr>
+		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// com.gc.iotools.stream.writer.CloseOnceWriter<T extends java.io.Writer>
+	c214 [label=<<table title="com.gc.iotools.stream.writer.CloseOnceWriter" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./CloseOnceWriter.html">
+		<tr><td><table border="0" cellspacing="0" cellpadding="1">
+<tr><td align="center" balign="center"> CloseOnceWriter&lt;T extends Writer&gt; </td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 }

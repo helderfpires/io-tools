@@ -10,9 +10,15 @@ digraph G {
 	nodesep=0.25;
 	ranksep=0.5;
 	// com.gc.iotools.stream.writer.inspection.WriterDumper<T extends java.io.Writer>
-	c325 [label=<<table title="com.gc.iotools.stream.writer.inspection.WriterDumper" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./WriterDumper.html">
+	c170 [label=<<table title="com.gc.iotools.stream.writer.inspection.WriterDumper" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./WriterDumper.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> WriterDumper&lt;T extends Writer&gt; </td></tr>
+		</table></td></tr>
+		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// com.gc.iotools.stream.writer.inspection.StatsWriter
+	c171 [label=<<table title="com.gc.iotools.stream.writer.inspection.StatsWriter" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./StatsWriter.html">
+		<tr><td><table border="0" cellspacing="0" cellpadding="1">
+<tr><td align="center" balign="center"> StatsWriter </td></tr>
 		</table></td></tr>
 		</table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 }
