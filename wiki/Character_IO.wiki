@@ -1,19 +1,26 @@
-#labels Phase-Implementation
+#labels Phase-Implementation,draft
 #Character I/O oriented classes.
 = Introduction =
-These classes address character `I/O` namely deal with `Reader` and `Writers`.
+These classes address `character I/O`: they are subclasses of `Reader` and `Writer`.
 
-= Readers =
+= [http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/reader/package-frame.html Readers] =
 
-= Writers =
+= [http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/writer/package-frame.html Writers] =
+== !CloseOnceWriter ==
+
+For further information read the [http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/writer/CloseShieldWriter.html api javadoc].
+
 
 == !CloseShieldWriter ==
-== !TeeWriter ==
-== !WriterToReader ==
- 
-= Details =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+For further information read the [http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/writer/CloseShieldWriter.html api javadoc].
+
+== !TeeWriter ==
+
+
+For further information read the [http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/writer/TeeWriter.html api javadoc].
+
+== !WriterToReader ==
+
+For further information read the [http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/writer/WriterToReader.html api javadoc].
+ 
