@@ -97,10 +97,6 @@ putDataOnOutputStream(out);
 Here is a good discussion on the problems you might run into:
 http://www.coderanch.com/t/499592/Streams/java/PipedOUtputStream-PipedInputStream
 
-== Circular Buffers ==
-There is a well known library that uses this method. In fact it doesn't have many advantages compared to pipes (still need to handle two threads instantiation/execution) like in previous example.
-If you want further details you can have a look here http://ostermiller.org/convert_java_outputstream_inputstream.html
-
 == Use `InputStreamFromOutputStream` and `OutputStreamToInputStream` ==
 
 If you want fixed memory fingerprint, speed and ease of use ehm... here are a couple of classes that you should consider to put in your code.
