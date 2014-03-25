@@ -1,6 +1,8 @@
-#summary Convert an OutputStream into an InputStream
+#summary OutputStream to an InputStream
+#labels Deprecated
 
 = Convert `OutputStream` into an `InputStream` or a `Writer` into a `Reader` =
+(this page has been moved here: [OutputStream_to_InputStream])
 
 If are programming using java streams, sometimes you'll find yourself in a situation in which a method creates data and writes them into an `OutputStream` and you need to use them in another method that expects to read the data from an `InputStream`.
 
