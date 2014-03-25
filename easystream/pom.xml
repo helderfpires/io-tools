@@ -32,6 +32,13 @@ Main features are:
 			<url>scm:svn:https://io-tools.googlecode.com/svn/www/io-tools/easystream</url>
 		</site>
 	</distributionManagement>
+  <licenses>
+        <license>
+            <name>The BSD Software License</name>
+            <url>http://www.opensource.org/licenses/bsd-license.php</url>
+            <distribution>repo</distribution>
+        </license>
+  </licenses>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
