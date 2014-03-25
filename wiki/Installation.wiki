@@ -49,9 +49,9 @@ While to use commons logging you must add the following dependency to your pom.x
 For further information go to the [http://www.slf4j.org/ slf4j] web site.
 
 === Release Candidates ===
-_ there are no release candidates at the moment _ :
+_ there are no release candidates at the moment _ .
  ~~ Release candidates are deployed on `oss sonatype` repository. You have to add the following lines to your pom.xml to get the latest (but yet untested) version:
-
+~~
 {{{
 <repository>
   <id>maven2-sonaype.net</id>
@@ -59,7 +59,7 @@ _ there are no release candidates at the moment _ :
   <url>http://oss.sonatype.org/content/groups/staging</url>
 </repository>
 }}}
-
+~~
 Release candidates are not tested as much as standard builds. You should download them only if the main release has a stopper bug not yet fixed. ~~
 
 ==Other==
