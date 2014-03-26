@@ -1,11 +1,11 @@
+#summary Character I/O oriented classes.
 #labels Phase-Implementation,draft
-#Character I/O oriented classes.
 = Introduction =
 These classes address `character I/O`: they are subclasses of `Reader` and `Writer`.
 
 = [http://io-tools.googlecode.com/svn/www/easystream/apidocs/index.html?com/gc/iotools/stream/reader/package-summary.html Readers] =
 
-== ReaderFromWriter ==
+== !ReaderFromWriter ==
 This class allow to read the data written to an Writer from an Reader.
 
 To use this class users must subclass it and implement the abstract method produce(Writer). The data who is produced inside this function can be written to the sink Writer passed as a parameter. Later it can be read back from from the ReaderFromWriter class (whose ancestor is java.io.Reader ).
