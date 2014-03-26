@@ -34,7 +34,8 @@ To use this class users must subclass it and implement the abstract method produ
  }
  //You can get the result of produceMyData after the stream has been closed.
  String resultOfProduction = rfw.getResult();
-}}
+}}}
+
 This class encapsulates a pipe and a Thread, hiding the complexity of using them. It is possible to select different strategies for allocating the internal thread or even specify the ExecutorService for thread execution.
 
 
