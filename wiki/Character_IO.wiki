@@ -3,7 +3,40 @@
 = Introduction =
 These classes address `character I/O`: they are subclasses of `Reader` and `Writer`.
 
-= [http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/reader/package-frame.html Readers] =
+= [http://io-tools.googlecode.com/svn/www/easystream/apidocs/index.html?com/gc/iotools/stream/reader/package-summary.html Readers] =
+
+== ReaderFromWriter ==
+This class allow to read the data written to an Writer from an Reader.
+
+To use this class users must subclass it and implement the abstract method produce(Writer). The data who is produced inside this function can be written to the sink Writer passed as a parameter. Later it can be read back from from the ReaderFromWriter class (whose ancestor is java.io.Reader ).
+
+{{{
+ final String dataId=//id of some data.
+ final ReaderFromWriter<String> rfw
+                          = new ReaderFromWriter<String>() {
+   @Override
+   public String produce(final Writer dataSink) throws Exception {
+      //call your application function who produces the data here
+      //WARNING: we're in another thread here, so this method shouldn't
+      //write any class field or make assumptions on the state of the class.
+      return produceMydata(dataId,dataSink)
+   }
+ };
+  try {
+    //now you can read from the Reader the data that was written to the
+    //dataSink Writer
+     char[] read=IOUtils.toCharArray(rfw);
+     //Use data here
+   } catch (final IOException e) {
+     //Handle exception here
+   } finally {
+   rfw.close();
+ }
+ //You can get the result of produceMyData after the stream has been closed.
+ String resultOfProduction = rfw.getResult();
+}}
+This class encapsulates a pipe and a Thread, hiding the complexity of using them. It is possible to select different strategies for allocating the internal thread or even specify the ExecutorService for thread execution.
+
 
 = [http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/writer/package-frame.html Writers] =
 == !CloseOnceWriter ==
