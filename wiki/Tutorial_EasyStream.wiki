@@ -11,8 +11,6 @@ Here i'm assuming you know it's not an easy problem, and you already are prepare
 Users must extend this abstract class and implement the abstract metod `produce(OutputStream)`.
 This function is called back by the library when the `InputStreamFromOutputStream` is used. The library pass an `OutputStream` as a parameter and the user should produce its data inside the `produce()` method, and write it to the supplied `OutputStream`. The data is then available for reading through the `InputStreamFromOutputStream` class (that is an `InputSream` subclass).
 
-This is the preferred way to convert data written from an `OutputStream` into an `InputStream`, because the behaviour of the code tends to be more clear.
-
 Sample usage:
 
 {{{
@@ -48,7 +46,9 @@ Some programmers might be unfamiliar with the syntax of this example. It `isos` 
 For further information read the [http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/is/InputStreamFromOutputStream.html api javadoc].
 
 === !OutputStreamToInputStream ===
-Another class that you can use if you need to write to an !OutputStream and read the data written from an !InputStream is `OutputStreamToInputStream` . It works opposite way than the previous one and allow some result to be returned after the processing of the !InputStream.
+
+Another class that you can use if you need to write to an !OutputStream and read the data written from an !InputStream is `OutputStreamToInputStream` . It works in the opposite direction to previous one: it is a subclass of !OutputStream, you can write your data to. The function `doRead` is called and data can be read from the !InputStream passed as a parameter. It also allow some result to be returned after the processing of the !InputStream.
+
 
 Sample usage:
 {{{
