@@ -12,7 +12,7 @@ Bad news: there is no (both easy and efficient) way to get the `OutputStream` to
  * Use `InputStreamFromOutputStream` and `OutputStreamToInputStream` from this library.
 
 == Copy the data into memory ==
-This is the easiest approach if your data easily fit into memory. I don't recommend this approach if the data you're reading is more than 100Mb (because it's it's not the only one object in your heap and if you're in a web application 10-15 simultaneous users can easily eat up all your jvm heap). 
+This is the easiest approach if your data easily fit into memory. I don't recommend this approach if the data you're reading is more than 100Mb (because your heap needs space for other objects and if you're in a web application 10-15 simultaneous users that allocate hundreds of megabytes can easily eat up all your memory). 
 
 This approach also supports multiple reads of the same data:
 
@@ -34,8 +34,8 @@ This is the easiest approach if you don't know in advance the size of data and y
 
 The main disadvantages are :
  * It's utterly slow.
- * If used on large scale file handlers tend to finish.
- * File handlers might be a serious problem if you're not very careful closing all the streams: temporary files might not be deleted and file handlers might be still in use.
+ * If used on large scale file handlers tend to finish. File handlers might be a serious problem if you're not very careful closing all the streams: temporary files might not be deleted and file handlers might be still in use.
+ * In clustered environments writing a file in a server directory should be done with care: your session may be serialized and sent to another server. The file you just wrote may not be there again the next request.   
 
 {{{
 // create a temporary file.
@@ -60,7 +60,8 @@ tempFile.delete();
 }}}
 
 == Pipes ==
-The two ends (`PipedInputStream` and `PipedOutputStream`) must be in two different `Threads`.
+This is probably the best compromise between performances and memory consumption (and for large quantity of data outperforms the copy into memory). It tends however to be complicated. In order to work it is required to create a `PipedInputStream` a `PipedOutputStream` and a new `Thread`:
+ * The two ends (`PipedInputStream` and `PipedOutputStream`) must be in two different `Threads`.
 
 {{{
   PipedInputStream in = new PipedInputStream();
@@ -76,8 +77,10 @@ The two ends (`PipedInputStream` and `PipedOutputStream`) must be in two differe
   //data can be read from the pipedInputStream here.	
   processDataFromInputStream(in);
 }}}
-This code is just a little example, and pipes look very easy to use.
-In fact they provide a very good performance and low memory usage. But don't be fooled by the example. It's very easy you forget to close the `PipedInputStream` (maybe for an exception) and you end up with a dangling Thread that never completes. So you must take special care of exception handling and closing all the streams with care.
+
+This code is just a little example, and pipes look easy to use.
+Our tests demonstrates they provide very good performances on multi-core processor systems and low memory footprint. 
+But the example code is over simplified. If for some reason the function `processDataFromInputStream` don't close the `PipedInputStream` (maybe for an internal exception), the internal buffer of the pipe fills up, the  thread suspends waiting for somebody to empty the buffer, and you end up with a dangling thread that never completes. So you must take special care of exception handling and closing all the streams in `finally` blocks.
 
 There is also the other way round of this example:
 {{{
@@ -99,10 +102,10 @@ http://www.coderanch.com/t/499592/Streams/java/PipedOUtputStream-PipedInputStrea
 
 == Use `InputStreamFromOutputStream` and `OutputStreamToInputStream` ==
 
-If you want fixed memory fingerprint, speed and ease of use ehm... here are a couple of classes that you should consider to put in your code.
+If you want fixed memory footprint, speed and ease of use you can consider using the classes developed in this project (easystream):
 
- * These classes internally use pipes, so they have a fixed memory fingerprint (doesn't fill up your memory with data).
- * Details of threads are hidden from the user. You don't have to deal with instantiation/start/synchronization/stop. Also exception handling is already done in a nice way.
+ * These classes internally use pipes, they have a fixed memory footprint (don't fill up your memory with data).
+ * Details of threads are hidden from the user. You don't have to deal with instantiation/start/synchronization/stop. Also exception handling and propagation is already taken care of.
  * You can easily choose between many [ExecutionModel options] for instantiating new `Threads` (thread pool, thread per instance ...) or just don't care and get the default. 
  * Details of pipes are hidden. No  `PipeInputStream` or `PipeOutputStream` in your code.
  * The internal pipe size can be adjusted to fit your needs.
