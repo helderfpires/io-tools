@@ -50,7 +50,8 @@ out.close();
 //get an InputStream from the previous file.
 InputStream istream = new FileInputStream(tempFile);
 				
-//process the data as you like.				processDataFromInputStream(istream);
+//process the data as you like.
+processDataFromInputStream(istream);
 
 //be sure to close here.
 istream.close();
