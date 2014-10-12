@@ -61,7 +61,7 @@ tempFile.delete();
 }}}
 
 == Pipes ==
-This is probably the best compromise between performances and memory consumption (and for large quantity of data outperforms the copy into memory). It tends however to be complicated. In order to work it is required to create a `PipedInputStream` a `PipedOutputStream` and a new `Thread`:
+This is probably the best compromise between performances and memory consumption (and for large quantity of data outperforms the copy into memory). It tends however to be complicated to implement and mantain. In order to work it is required to create a `PipedInputStream` a `PipedOutputStream` and a new `Thread`:
  * The two ends (`PipedInputStream` and `PipedOutputStream`) must be in two different `Threads`.
 
 {{{
@@ -79,9 +79,9 @@ This is probably the best compromise between performances and memory consumption
   processDataFromInputStream(in);
 }}}
 
-This code is just a little example, and pipes look easy to use.
-Our tests demonstrates they provide very good performances on multi-core processor systems and low memory footprint. 
-But the example code is over simplified. If for some reason the function `processDataFromInputStream` don't close the `PipedInputStream` (maybe for an internal exception), the internal buffer of the pipe fills up, the  thread suspends waiting for somebody to empty the buffer, and you end up with a dangling thread that never completes. So you must take special care of exception handling and closing all the streams in `finally` blocks.
+
+Our tests demonstrates it provides very good performances on multi-core processor systems and low memory footprint. 
+This code is just a little example, and pipes look easy to use. But the example code is over-simplified. If for some reason the function `processDataFromInputStream` don't close the `PipedInputStream` (maybe for an internal exception), the internal buffer of the pipe fills up, the  thread suspends waiting for somebody to empty the buffer, and you end up with a dangling thread that never completes. So you must take special care of exception handling and closing all the streams in `finally` blocks.
 
 There is also the other way round of this example:
 {{{
