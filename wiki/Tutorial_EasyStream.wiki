@@ -15,7 +15,7 @@ Sample usage:
 
 {{{
 final String dataId=//id of some data.
-final InputStreamFromOutputStream<String> isos = new InputStreamFromOutputStream<String>() {
+final InputStreamFromOutputStream<String> isOs = new InputStreamFromOutputStream<String>() {
    @Override
    public String produce(final OutputStream dataSink) throws Exception {
       /*
@@ -28,16 +28,16 @@ final InputStreamFromOutputStream<String> isos = new InputStreamFromOutputStream
  };
  try {
   //now you can read from the InputStream the data that was written to the 
-  //dataSink OutputStream
-  byte[] readed=IOUtils.toByteArray(isos);
+  //dataSink OutputStream (the usage of org.apache.commons.io.IOUtils is merely an example)
+  byte[] readed=IOUtils.toByteArray( isOs );
   //Use data here
  } catch (final IOException e) {
   //Handle exception here
  } finally {
-  isos.close();
+  isOs.close();
  }
-  //You can get the result of produceMyData after the stream has been closed.
-  String resultOfProduction = isos.getResult();
+  //You can get the result of produceMyData after the InputStream has been closed.
+  String resultOfProduction = isOs.getResult();
 }
 }}}
 
