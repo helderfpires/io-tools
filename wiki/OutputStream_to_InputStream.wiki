@@ -1,6 +1,8 @@
 #summary Convert an OutputStream into an InputStream
+#labels Featured,Phase-Support
 
-= Convert `OutputStream` into an `InputStream` or a `Writer` into a `Reader` =
+= Convert `OutputStream` into an `InputStream` = 
+== (or a `Writer` into a `Reader`) ==
 
 If are programming using java streams, sometimes you'll find yourself in a situation in which a method creates data and writes them into an `OutputStream` and you need to use them in another method that expects to read the data from an `InputStream`.
 
@@ -29,7 +31,7 @@ This approach also supports multiple reads of the same data:
   //processAgainDataFromInputSream(new ByteArrayInputStream(data));
 }}}
 
-== Copy your data into a temporary File ==
+== Copy data into a temporary File ==
 This is the easiest approach if you don't know in advance the size of data and you suspect it might be huge (>100Mb). 
 
 The main disadvantages are :
@@ -60,7 +62,7 @@ istream.close();
 tempFile.delete();
 }}}
 
-== Pipes ==
+== Use Pipes ==
 This is probably the best compromise between performances and memory consumption (and for large quantity of data outperforms the copy into memory). It tends however to be complicated to implement and mantain. In order to work it is required to create a `PipedInputStream` a `PipedOutputStream` and a new `Thread`:
  * The two ends (`PipedInputStream` and `PipedOutputStream`) must be in two different `Threads`.
 
