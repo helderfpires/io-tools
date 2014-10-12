@@ -81,6 +81,7 @@ This is probably the best compromise between performances and memory consumption
 
 
 Our tests demonstrates it provides very good performances on multi-core processor systems and low memory footprint. 
+
 This code is just a little example, and pipes look easy to use. But the example code is over-simplified. If for some reason the function `processDataFromInputStream` don't close the `PipedInputStream` (maybe for an internal exception), the internal buffer of the pipe fills up, the  thread suspends waiting for somebody to empty the buffer, and you end up with a dangling thread that never completes. So you must take special care of exception handling and closing all the streams in `finally` blocks.
 
 There is also the other way round of this example:
