@@ -4,9 +4,36 @@
 = Convert `OutputStream` into an `InputStream` = 
 == (or a `Writer` into a `Reader`) ==
 
-If are programming using java streams, sometimes you'll find yourself in a situation in which a method creates data and writes them into an `OutputStream` and you need to use them in another method that expects to read the data from an `InputStream`.
+If are programming using java streams, sometimes you'll find yourself in a situation in which a method creates data and writes them into an `OutputStream` and you need to use them in another method that expects to read the data from an `InputStream`. Most of the times it happens when using ill designed external libraries.
 
-Bad news: there is no (both easy and efficient) way to get the `OutputStream` to fit the `InputStream` interface or to get the first converted into the latter. However there are some different strategies: 
+== Basic Concepts ==
+
+ * `InputStream` and `Reader` are two interfaces that you use as a _source_ of data. You use them when reading data from a file, a database a socket... The data is "coming in" your application to be processed. 
+
+ * `OutputStream` and `Writer` are two interfaces that you use as a _sink_ of data. You use them when writing data to a file a database, a socket... The data is "going out" your application after it has been processed. 
+
+=== Why so difficult to pass the data?  ===
+_ From !InputStream to !OutputStream it is easy, i can't see anything the other way round. _
+
+You can think to `InputStreams` as a "tap" for your data, and `OutputStreams` as a sink. Water flows naturally from the tap to the sink, as your application naturally processes data from an `InputStream` and saves to an `OutputStream`. If you have no special processing to do it's just one line of commons-io: `org.apache.commons.io.IOUtils.copy(InputStream is, OutputStream os)`, is a single method, single thread. 
+
+Now imagine somebody is already throwing the water into the sink, and you want to use that water again. Either you need a vase (a buffer) or you have to use a pump (a thread) to bring the water up again.
+
+Speaking in java you have a library that ask you an `OutputStream` to write the data and a second class that wants to process the results from the previous write from an `InputStream`:
+
+{{{
+   OutputStream out = ?;
+   InputStream in = ?;
+
+   Library1Class.save(out);
+   ???
+   MyClass2.read(in);
+}}} 
+
+
+== Possible implementations  ==
+
+As you probably guessed there is no (both easy and efficient) way to get the data written to an `OutputStream` to fit the `InputStream` interface or to get the first converted into the latter. However there are some different strategies: 
  * write the data the data into a memory buffer (`ByteArrayOutputStream`) get the byteArray and read it again with a `ByteArrayInputStream`. This is the best approach if you're sure your data fits into memory.
  * copy your data to a temporary file and read it back.
  * use pipes: this is the best approach both for memory usage and speed (you can take full advantage of the multi-core processors) and also the standard solution offered by Sun.
