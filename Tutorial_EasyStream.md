@@ -1,0 +1,165 @@
+# Stream Utilities #
+
+## Convert `OutputStream` to an `InputStream` ##
+Here i'm assuming you know it's not an easy problem, and you already are prepared to go for the hard way because the easy solutions doesn't fit your needs for performance and memory usage. If you came here at first and you don't understand why this is so complicated you can have a look at this [preamble](OutputStream_to_InputStream.md), while if you are interested in character `I/O` (`Readers` and `Writers`) you should proceed [to the next section](Character_IO.md).
+
+### InputStreamFromOutputStream ###
+
+Users must extend this abstract class and implement the abstract metod `produce(OutputStream)`.
+This function is called back by the library when the `InputStreamFromOutputStream` is used. The library pass an `OutputStream` as a parameter and the user should produce its data inside the `produce()` method, and write it to the supplied `OutputStream`. The data is then available for reading through the `InputStreamFromOutputStream` class (that is an `InputSream` subclass).
+
+Sample usage:
+
+```
+final String dataId=//id of some data.
+final InputStreamFromOutputStream<String> isOs = new InputStreamFromOutputStream<String>() {
+   @Override
+   public String produce(final OutputStream dataSink) throws Exception {
+      /*
+       * call your application function who produces the data here
+       * WARNING: we're in another thread here, so this method shouldn't 
+       * write any class field or make assumptions on the state of the class. 
+       */
+      return produceMydata(dataId,dataSink)
+   }
+ };
+ try {
+  //now you can read from the InputStream the data that was written to the 
+  //dataSink OutputStream (the usage of org.apache.commons.io.IOUtils is merely an example)
+  byte[] readed=IOUtils.toByteArray( isOs );
+  //Use data here
+ } catch (final IOException e) {
+  //Handle exception here
+ } finally {
+  isOs.close();
+ }
+  //You can get the result of produceMyData after the InputStream has been closed.
+  String resultOfProduction = isOs.getResult();
+}
+```
+
+Some programmers might be unfamiliar with the syntax of this example. It `isos` is an anonymous inner class that overrides the method `produce(OutputStream)`. You can still use standard inheritance if you prefer.
+
+For further information read the [api javadoc](http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/is/InputStreamFromOutputStream.html).
+
+### OutputStreamToInputStream ###
+
+Another class that you can use if you need to write to an OutputStream and read the data written from an InputStream is `OutputStreamToInputStream` . It works in the opposite direction to previous one: it is a subclass of OutputStream, you can write your data to. The function `doRead` is called and data can be read from the InputStream passed as a parameter. It also allow some result to be returned after the processing of the InputStream.
+
+
+Sample usage:
+```
+final OutputStreamToInputStream<String> oStream2IStream = new OutputStreamToInputStream<String>() {
+    @Override
+    protected String doRead(final InputStream istream) throws Exception {
+        /*
+         * read the data from the InputStream. All the operations that need to read 
+         * from an InputStream should be placed in this method. The data you read here
+         * is the one supplied in "oStream2IStream.write()". 
+         * Any exception eventually threw here is propagated to the enclosing OutputStream
+         */
+        final String result = IOUtils.toString(istream);
+              return result + " was processed.";
+        }
+    };
+
+try {   
+     /*
+     * some data is written to the OutputStream, will be passed to the method
+     * doRead(InputStream i) above and after close() is called the results 
+     * will be available through the getResults() method.
+     */
+     oStream2IStream.write("test".getBytes());
+} finally {
+     // don't miss the close (or a thread would not terminate correctly).
+     oStream2IStream.close();
+}
+String result = oStream2IStream.getResults();
+//result now contains the string "test was processed."
+```
+
+This class propagates the `Exception` from the internal `doRead()` to the external `OutputStream`, and closing the `oStream2IStream` `OutputStream` will cause an EOF on the `InputStream` passed as `doRead()` parameter.
+
+For further information see the [api javadoc](http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/os/OutputStreamToInputStream.html).
+
+## Statistics gathering ##
+
+Two main classes in this section: `StatsInputStream` and `StatsOutputStream`
+
+### [StatsInputStream](http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/is/inspection/StatsInputStream.html) ###
+Gathers statistics of the InputStream passed in the constructor. It can be used to:
+  * determine the size of the read data
+  * the time spent reading from the internal InputStream.
+  * the bit rate of the internal stream.
+
+```
+StatsInputStream srIstream = new StatsInputStream(originalStream);
+//performs all the application operation on stream
+...
+srIstream.close();
+long size = srIstream.getSize();
+String bitRate = srIstream.getBitRateString();
+```
+
+### [StatsOutputStream](http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/os/inspection/StatsOutputStream.html) ###
+Gathers statistics of the OutputStream passed in the constructor. It can be used to determine the number of bytes written or the time spent writing to the OutputStream.
+```
+StatsOutputStream srStream = new StatsOutputStream(originalStream);
+//performs all the application operation on stream
+...
+srStream.close();
+long size = srStream.getSize();
+```
+
+## Other Stream utilities ##
+
+Other classes in this library are:
+  * `RandomAccessInputStream` allows to read the content of an `InputStream` multiple times or seek to a definite position.
+  * `ChunkInputStream` filter some parts of an `InputStream` basing on its content.
+  * `StatsInputStream` and `StatsOutputStream`: Collects some statistics (bytes read or wrote, bandwidth...) of a given stream.
+  * `TeeInputStreamOutputStream` allows to "tee" the data read from a source `InputStream` to a supplied `OutputStream`.
+
+### [RandomAccessInputStream](http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/is/RandomAccessInputStream.html) ###
+Adds the following functionality to another input stream:
+  * the ability to be read multiple times
+  * `seek()` to a random position.
+  * Support the `mark` and `reset` methods.
+Caching of data is done in a [Store](http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/store/Store.html), so every application can choose where to store its temporary data. Default implementation cache first 64K in memory and then on disk.
+
+How to read two times the content of a file:
+```
+ InputStream source=... //some data to be readed multiple times.
+ final RandomAccessInputStream ris = new RandomAccessInputStream(source);
+ final byte[] b = new byte[5];
+ ris.read(b);
+ //seek back to beginning of file
+ ris.seek(0);
+ final byte[] b1 = new byte[5];
+ ris.read(b1);
+ //arrays b and b1 are equals.
+```
+
+Method `mark()` and `reset()` are also supported.
+For further information read the [api javadoc](http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/is/RandomAccessInputStream.html).
+
+### ChunkInputStream ###
+This class is useful when you have an `InputStream` and you want to filter some parts of it basing on its content without reading it into memory.
+
+For further information read the [api javadoc](http://io-tools.googlecode.com/svn/www/easystream/apidocs/com/gc/iotools/stream/is/ChunkInputStream.html).
+
+### TeeInputStreamOutputStream ###
+While data is being read from the source `InputStream` (passed in the constructor) it is also copied to the `OutputStream` passed in the constructor. The data copied are similar to the underlying `InputStream`.
+
+Sample usage:
+```
+ InputStream source=... //some data to be readed.
+ ByteArrayOutputStream destination1= new ByteArrayOutputStream();
+ ByteArrayOutputStream destination2= new ByteArrayOutputStream();
+  
+ TeeInputStreamOutputStream tee=new TeeInputStreamOutputStream(source,destination1);
+ org.apache.commons.io.IOUtils.copy(tee,destination2);
+ tee.close();
+ //at this point both destination1 and destination2 contains the same bytes.
+ byte[] bytes1=destination1.getBytes();
+ byte[] bytes2=destination2.getBytes();
+```

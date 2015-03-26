@@ -1,0 +1,17 @@
+# Introduction #
+
+Add your content here.
+
+
+## if you have a File ##
+
+
+## your stream is a "pure" `InputStream` ##
+
+
+ok, make a file (poor performance)
+make a byte array (memory, available)
+
+## `RandomAccessInputStream` ##
+
+## `MultiplyInputStream` (sandbox) ##

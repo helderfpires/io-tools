@@ -1,0 +1,116 @@
+# Stream Utilities #
+
+Sometimes a library writes its results to an `OutputStream` and you need to read them back from an `InputStream`. The common answer is "use pipes". But it's not as easy at is seems. Classes in the com.gc.iotools.stream package should help.
+
+Two main classes in this section are `InputStreamFromOutputStream` and `OutputStreamToInputStream`
+
+### InputStreamFromOutputStream ###
+
+This abstract class must be extended and the metod `produce()` implemented.
+The data who is produced inside the function produce() is written to an `OutputStream` and can be readed back from from this class.
+This is the preferred way to convert data written from an `OutputStream` into an `InputStream`, because the behaviour of the code tends to be more clear.
+
+Sample usage:
+
+```
+
+final String dataId=//id of some data.
+final InputStreamFromOutputStream isos = new InputStreamFromOutputStream() {
+   @Override
+   public void produce(final OutputStream dataSink) throws Exception {
+      /*
+       * call your application function who produces the data here
+       * WARNING: we're in another thread here, so this method shouldn't 
+       * write any class field or make assumptions on the state of the class.
+       */
+      produceMydata(dataId,dataSink)
+   }
+ };
+ try {
+  //now you can read from the InputStream the data that was written to the 
+  //OutputStream
+  byte[] readed=IOUtils.toByteArray(isos);
+  //Use data here
+ } catch (final IOException e) {
+  //Handle exception here
+ } finally {
+  isos.close();
+ }
+
+}
+```
+
+For further information consult the [api javadoc](http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/is/InputStreamFromOutputStream.html).
+
+### OutputStreamToInputStream ###
+Another class that you can use if you need to write to an OutputStream and read the data written from an InputStream is `OutputStreamToInputStream` . It works opposite way than the previous one and allow some result to be returned after the processing of the InputStream.
+
+Sample usage:
+```
+final OutputStreamToInputStream<String> oStream2IStream = new OutputStreamToInputStream<String>() {
+    @Override
+    protected String doRead(final InputStream istream) throws Exception {
+        /*
+         * read from InputStream into a string. Data will be written to the outer class
+         * later (oStream2IStream.write). 
+         */
+        final String result = IOUtils.toString(istream);
+              return result + " was processed.";
+        }
+    };
+
+try {   
+     /*
+     * some data is written to the OutputStream, will be passed to the method
+     * doRead(InputStream i) above and after close() is called the results 
+     * will be available through the getResults() method.
+     */
+     oStream2IStream.write("test".getBytes());
+} finally {
+     // don't miss the close (or a thread would not terminate correctly).
+     oStream2IStream.close();
+}
+String result = oStream2IStream.getResults();
+//result now contains the string "test was processed."
+```
+
+For further information see the [api javadoc](http://jtools.heliohost.org/iotools/easystream/apidocs/com/gc/iotools/stream/os/OutputStreamToInputStream.html).
+
+### Why ExecutionModel ? ###
+To convert an `OutputStream` into an `InputStream` you need a pipe. And to use a pipe you need Threads. [Here](ExecutionModel.md) are io-tools options.
+
+### TeeInputStreamOutputStream ###
+Copies the data from the underlying `InputStream` to the `OutputStream` passed in the constructor. The data copied are similar to the underlying `InputStream`.
+
+Sample usage:
+```
+ InputStream source=... //some data to be readed.
+ ByteArrayOutputStream destination1= new ByteArrayOutputStream();
+ ByteArrayOutputStream destination2= new ByteArrayOutputStream();
+  
+ TeeInputStreamOutputStream tee=new TeeInputStreamOutputStream(source,destination1);
+ org.apache.commons.io.IOUtils.copy(tee,destination2);
+ tee.close();
+ //at this point both destination1 and destination2 contains the same bytes.
+ byte[] bytes1=destination1.getBytes();
+ byte[] bytes2=destination2.getBytes();
+```
+
+### ChunkInputStream ###
+TODO.
+
+
+# Format Detection #
+
+WazFormat allows to take decision based on the content of a stream without knowing it.
+A common problem is: if the stream is base64 encoded decode it, otherwise use it unchanged.
+
+```
+InputStream data=//can be either base64 or raw
+GuessInputStream gis = GuessInputStream.getInstance(data, new FormatEnum[] { FormatEnum.BASE64 });
+InputStream dataDecoded = (FormatEnum.BASE64.equals(gis.getFormat()) ? new Base64.InputStream(gis) : gis);
+```
+
+Further information are available [here](FormatDetection.md).
+
+(

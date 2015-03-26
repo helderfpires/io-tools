@@ -1,0 +1,10 @@
+If you look the code you shout "Get me out of here!". Yes, agree. But there is a reason why it's so complicated.
+  * To convert an `OutputStream` into an `InputStream` you need a pipe.
+  * To use a pipe and avoid a sure lock you must put the 2 ends of the pipe on different Threads.
+  * To use threads Java 5 offers a wide range of options, including pools of Threads. In my library i limited these options to a reasonable number and ease of use. The enum `ThreadModel` helps selecting a mode suitable for your application.
+
+# Execution Model #
+Here are the way io-tools use threads when instantiating `InputStreamFromOutputStream` or `OutputStreamToInputStream` classes. You can specify this parameter in the constructor of these classes.
+  * STATIC\_THREAD\_POOL : Threads are taken from a static pool. If the pool is full (10 threads) some slow thread might lock up the pool and other processes might be slowed down.
+  * THREAD\_PER\_INSTANCE : One thread per instance of `InputStreamFromOutputStream` or `OutputStreamToInputStream`. Slow but each instance can work in isolation. Also if some thread is not correctly closed it might bring to thread leaks.
+  * SINGLE\_THREAD : Only one thread is shared by all instances.

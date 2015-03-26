@@ -1,0 +1,141 @@
+# Convert `OutputStream` into an `InputStream` #
+## (or a `Writer` into a `Reader`) ##
+
+If are programming using java streams, sometimes you'll find yourself in a situation in which a method creates data and writes them into an `OutputStream` and you need to use them in another method that expects to read the data from an `InputStream`. Most of the times it happens when using ill designed external libraries.
+
+## Basic Concepts ##
+
+  * `InputStream` and `Reader` are two interfaces that you use as a _source_ of data. You use them when reading data from a file, a database a socket... The data is "coming in" your application to be processed.
+
+  * `OutputStream` and `Writer` are two interfaces that you use as a _sink_ of data. You use them when writing data to a file a database, a socket... The data is "going out" your application after it has been processed.
+
+### Why so difficult to pass the data? ###
+_From InputStream to OutputStream it is easy, i can't see anything the other way round._
+
+You can think to `InputStreams` as a "tap" for your data, and `OutputStreams` as a sink. Water flows naturally from the tap to the sink, as your application naturally processes data from an `InputStream` and saves to an `OutputStream`. If you have no special processing to do it's just one line of commons-io: `org.apache.commons.io.IOUtils.copy(InputStream is, OutputStream os)`, is a single method, single thread.
+
+Now imagine somebody is already throwing the water into the sink, and you want to use that water again. Either you need a vase (a buffer) or you have to use a pump (a thread) to bring the water up again.
+
+Speaking in java you have a library that ask you an `OutputStream` to write the data and a second class that wants to process the results from the previous write from an `InputStream`:
+
+```
+   OutputStream out = ?;
+   InputStream in = ?;
+
+   Library1Class.save(out);
+   ???
+   MyClass2.read(in);
+```
+
+
+## Possible implementations ##
+
+As you probably guessed there is no (both easy and efficient) way to get the data written to an `OutputStream` to fit the `InputStream` interface or to get the first converted into the latter. However there are some different strategies:
+  * write the data the data into a memory buffer (`ByteArrayOutputStream`) get the byteArray and read it again with a `ByteArrayInputStream`. This is the best approach if you're sure your data fits into memory.
+  * copy your data to a temporary file and read it back.
+  * use pipes: this is the best approach both for memory usage and speed (you can take full advantage of the multi-core processors) and also the standard solution offered by Sun.
+  * use "circular buffers".
+  * Use `InputStreamFromOutputStream` and `OutputStreamToInputStream` from this library.
+
+## Copy the data into memory ##
+This is the easiest approach if your data easily fit into memory. I don't recommend this approach if the data you're reading is more than 100Mb (because your heap needs space for other objects and if you're in a web application 10-15 simultaneous users that allocate hundreds of megabytes can easily eat up all your memory).
+
+This approach also supports multiple reads of the same data:
+
+```
+  ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+  //write data on your OutputStream here
+  writeDataOnTheOutputStream(out);
+
+  byte[] data = out.toByteArray();
+  ByteArrayInputStream istream = new ByteArrayInputStream(data);
+  processDataFromInputStream(istream);
+  //eventually you can use it twice:
+  //processAgainDataFromInputSream(new ByteArrayInputStream(data));
+```
+
+## Copy data into a temporary File ##
+This is the easiest approach if you don't know in advance the size of data and you suspect it might be huge (>100Mb).
+
+The main disadvantages are :
+  * It's utterly slow.
+  * If used on large scale file handlers tend to finish. File handlers might be a serious problem if you're not very careful closing all the streams: temporary files might not be deleted and file handlers might be still in use.
+  * In clustered environments writing a file in a server directory should be done with care: your session may be serialized and sent to another server. The file you just wrote may not be there again the next request.
+
+```
+// create a temporary file.
+File tempFile = File.createTempFile("tempFile", ".tmp");
+OutputStream out = new FileOutputStream(tempFile);
+
+// write data on your OutputStream here
+writeDataOnTheOutputStream(out);
+//be sure to close the OutputStream 
+//(be sure the previous method doesn't throw exceptions)
+out.close();
+//get an InputStream from the previous file.
+InputStream istream = new FileInputStream(tempFile);
+				
+//process the data as you like.
+processDataFromInputStream(istream);
+
+//be sure to close here.
+istream.close();
+//delete temporary file when you finish to use it.
+//if streams where not correctly closed this might fail (return false)
+tempFile.delete();
+```
+
+## Use Pipes ##
+This is probably the best compromise between performances and memory consumption (and for large quantity of data outperforms the copy into memory). It tends however to be complicated to implement and mantain. In order to work it is required to create a `PipedInputStream` a `PipedOutputStream` and a new `Thread`:
+  * The two ends (`PipedInputStream` and `PipedOutputStream`) must be in two different `Threads`.
+
+```
+  PipedInputStream in = new PipedInputStream();
+  PipedOUtputStream out = new PipedOutputStream(in);
+  new Thread(
+    new Runnable(){
+      public void run(){
+        //put your code that writes data to the outputstream here.
+        putDataOnOutputStream(out);
+      }
+    }
+  ).start();
+  //data can be read from the pipedInputStream here.	
+  processDataFromInputStream(in);
+```
+
+
+Our tests demonstrates it provides very good performances on multi-core processor systems and low memory footprint.
+
+This code is just a little example, and pipes look easy to use. But the example code is over-simplified. If for some reason the function `processDataFromInputStream` don't close the `PipedInputStream` (maybe for an internal exception), the internal buffer of the pipe fills up, the  thread suspends waiting for somebody to empty the buffer, and you end up with a dangling thread that never completes. So you must take special care of exception handling and closing all the streams in `finally` blocks.
+
+There is also the other way round of this example:
+```
+  PipedInputStream in = new PipedInputStream();
+  PipedOUtputStream out = new PipedOutputStream(in);
+  new Thread(
+    new Runnable(){
+      public void run(){
+        //data can be read from the pipedInputStream here.	
+        processDataFromInputStream(in);
+      }
+    }
+  ).start();
+//put your code that writes data to the outputstream here.
+putDataOnOutputStream(out);
+```
+Here is a good discussion on the problems you might run into:
+http://www.coderanch.com/t/499592/Streams/java/PipedOUtputStream-PipedInputStream
+
+## Use `InputStreamFromOutputStream` and `OutputStreamToInputStream` ##
+
+If you want fixed memory footprint, speed and ease of use you can consider using the classes developed in this project (easystream):
+
+  * These classes internally use pipes, they have a fixed memory footprint (don't fill up your memory with data).
+  * Details of threads are hidden from the user. You don't have to deal with instantiation/start/synchronization/stop. Also exception handling and propagation is already taken care of.
+  * You can easily choose between many [options](ExecutionModel.md) for instantiating new `Threads` (thread pool, thread per instance ...) or just don't care and get the default.
+  * Details of pipes are hidden. No  `PipeInputStream` or `PipeOutputStream` in your code.
+  * The internal pipe size can be adjusted to fit your needs.
+
+So if you like this last approach you read the [tutorial](Tutorial_EasyStream.md) and see how to use these classes.

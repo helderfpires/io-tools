@@ -1,0 +1,61 @@
+# Installation #
+_Latest version 1.2.14 (25/Mar/2014)_
+
+## Maven 2 ##
+io-tools artifacts are deployed on Maven central repository. So if you want to use the stream utilities you just have to add the following dependency to your pom.xml:
+
+```
+<dependency>
+	<groupId>net.sf.jsignature.io-tools</groupId>
+	<artifactId>easystream</artifactId>
+	<version>1.2.14</version>
+</dependency>
+```
+
+While if you're interested in the format detection library you have to add:
+
+```
+<dependency>
+	<groupId>net.sf.jsignature.io-tools</groupId>
+	<artifactId>wazformat</artifactId>
+	<version>1.2.14</version>
+</dependency>
+```
+
+### Logging configuration ###
+You further have to configure the logging use your favourite logging engine. This library uses slf4j engine, if you already use it in your application no configuration is needed.
+
+If you want to redirect the logs on the jdk logging you must add the following dependency to your pom.xml:
+```
+  <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jdk14</artifactId>
+      <version>1.7.6</version>
+  </dependency>
+```
+
+While to use commons logging you must add the following dependency to your pom.xml:
+```
+  <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jcl</artifactId>
+      <version>1.7.6</version>
+  </dependency>
+```
+
+For further information go to the [slf4j](http://www.slf4j.org/) web site.
+
+### Release Candidates ###
+_there are no release candidates at the moment_ .
+> ~~Release candidates are deployed on `oss sonatype` repository. You have to add the following lines to your pom.xml to get the latest (but yet untested) version:~~
+```
+<repository>
+  <id>maven2-sonaype.net</id>
+  <name>oss Repository for Maven</name>
+  <url>http://oss.sonatype.org/content/groups/staging</url>
+</repository>
+```
+~~Release candidates are not tested as much as standard builds. You should download them only if the main release has a stopper bug not yet fixed.~~
+
+## Other ##
+Non maven2 users should download the zip distribution and unpack it. All the jars in the `lib` directory of the distribution zip must be added to your classpath in order to get the libraries working. The zip distribution may be older than the maven 2 release.
